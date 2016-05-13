@@ -2,6 +2,8 @@
 
 1. With what version of python you work.
     Python 2.7
+1.1. Django version?
+
 2. Do you have a ssh access to your server.
 
 3. I hope you do not require REST interface, because you did not describe it at your task. 
@@ -25,6 +27,9 @@ should be references to another tables (foreign keys)? Or it is just CHAR values
 2.2. I need a logic (pseudocode) generating and a sample of RFID code
 
 2.3. What does it mean --- "commodity tag". What it should looks like?
+
+2.4. Only authenticated user can access to commodity views?
+
 
 3. User profile
 
