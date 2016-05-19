@@ -12,7 +12,7 @@ But I saw some code using Django REST Framework in project that you have sent me
 4. That project. (my task). Will it be absolutely independent project from other part? 
 Or it will using the same database?
 
-
+5. I need a ssh public key of your server (need to deploy this project). Not now.
 Questions about the project:
 
 1. Login page
