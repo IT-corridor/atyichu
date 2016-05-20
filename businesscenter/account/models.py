@@ -3,7 +3,9 @@ from __future__ import unicode_literals
 from django.db import models
 
 from django.contrib.auth.models import AbstractUser
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
+from django.db.models.signals import pre_delete
+from receivers import cleanup_files
 # Create your models here.
 
 
@@ -19,6 +21,7 @@ class State(AbsLocation):
     class Meta:
         verbose_name = _('State')
         verbose_name_plural = _('States')
+        ordering = ('id',)
 
     def __unicode__(self):
         return self.title
@@ -49,7 +52,8 @@ class District(AbsLocation):
 
 class Store(models.Model):
 
-    logo = models.ImageField(_('Logo'))
+    logo = models.ImageField(_('Logo'), upload_to='stores',
+                             blank=True, null=True)
     district = models.ForeignKey(District, verbose_name=_('District'))
     street = models.CharField(_('Street'), max_length=100)
     build_name = models.CharField(_('Building name'), max_length=50)
@@ -67,7 +71,11 @@ class Store(models.Model):
 
 
 class Profile(AbstractUser):
-    avatar = models.ImageField(_('Avatar'), null=True, blank=True)
+    avatar = models.ImageField(_('Avatar'), upload_to='profiles',
+                               null=True, blank=True)
     store = models.ForeignKey(Store, verbose_name=_('Store'),
                               null=True, blank=True)
 
+
+pre_delete.connect(cleanup_files, sender=Profile)
+pre_delete.connect(cleanup_files, sender=Store)

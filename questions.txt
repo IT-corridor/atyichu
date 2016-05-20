@@ -1,34 +1,44 @@
 0. TERMS
 
 1. With what version of python you work.
-    Python 2.7
+    - Python 2.7
 1.1. Django version?
+    - 1.9
 
 2. Do you have a ssh access to your server.
 
 3. I hope you do not require REST interface, because you did not describe it at your task. 
 But I saw some code using Django REST Framework in project that you have sent me. 
-
+    - Required
 4. That project. (my task). Will it be absolutely independent project from other part? 
 Or it will using the same database?
 
 5. I need a ssh public key of your server (need to deploy this project). Not now.
 Questions about the project:
 
+6. Can we use postgres db (it will depends on django features and sql table structure)
+
 1. Login page
 
 1.1 Only login page, without registration?
+    - Later
 
 2. Commodity
 
 2.1. Commodity model / table structure. Does catalog, size, color and etc 
 should be references to another tables (foreign keys)? Or it is just CHAR values?
+    - Tables
 
 2.2. I need a logic (pseudocode) generating and a sample of RFID code
+    - Waiting...
 
 2.3. What does it mean --- "commodity tag". What it should looks like?
+    - User customs tags (structure depends of db)
 
 2.4. Only authenticated user can access to commodity views?
+    - Yes
+
+2.5. Does each user must have his own data with colors, sizes, brands, etc?
 
 
 3. User profile
@@ -37,5 +47,7 @@ should be references to another tables (foreign keys)? Or it is just CHAR values
 Does it describes a fields in the db? Or is it a format of one db field? 
 If it is a list of db fields: should state and city be represented by own tables
  and referenced by foreign keys in the user table?
-3.2. Pretty strange to have a "brand name" at user model/table. 
+    - Db table + representing string
 
+3.2. Pretty strange to have a "brand name" at user model/table. 
+    - Brand is for the STORE!

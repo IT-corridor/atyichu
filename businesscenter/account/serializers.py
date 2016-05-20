@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.utils.translation import ugettext as _
 from rest_framework import serializers
 from . import models
@@ -107,3 +109,4 @@ class UserPasswordSerializer(serializers.ModelSerializer):
         fields = ('password', 'confirm_password', 'new_password', 'username')
         write_only_fields = ('password',)
         read_only_fields = ('username',)
+
