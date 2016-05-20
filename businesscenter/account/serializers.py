@@ -34,7 +34,9 @@ class StoreSerializer(serializers.ModelSerializer):
         model = models.Store
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
+    """ Serializer for creating new profile """
+
     url = serializers.HyperlinkedIdentityField(view_name='account:profile-detail')
     confirm_password = serializers.CharField(allow_blank=False, write_only=True)
     store = StoreSerializer(read_only=True)
@@ -46,6 +48,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         return attrs
 
     def validate_password(self, value):
+        """ Validate password with django password validation """
         vp(value)
         return value
 
@@ -58,6 +61,49 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Profile
-        fields = ('url', 'password', 'confirm_password', 'store',
-                  'username')
+        exclude = ('is_staff', 'is_superuser', 'is_active', 'groups',
+                   'user_permissions', )
         write_only_fields = ('password',)
+        read_only_fields = ('date_joined', 'last_login')
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    """ Serializer for update account """
+    def update(self, instance, validated_data):
+        for k, v in validated_data.items():
+            setattr(instance, k, v)
+        instance.save()
+        return instance
+
+    class Meta:
+        model = models.Profile
+        exclude = ('is_staff', 'is_superuser', 'is_active', 'groups',
+                   'user_permissions', 'password',)
+        read_only_fields = ('date_joined', 'last_login')
+
+
+class UserPasswordSerializer(serializers.ModelSerializer):
+    """ Serializer for resetting user`s password """
+    confirm_password = serializers.CharField(allow_blank=False, write_only=True)
+    new_password = serializers.CharField(allow_blank=False, write_only=True)
+
+    def validate(self, attrs):
+        if attrs['new_password'] != attrs.pop('confirm_password'):
+            raise serializers.ValidationError({'confirm_password':
+                                                   _('Passwords do not match')})
+        return attrs
+
+    def validate_password(self, value):
+        vp(value)
+        return value
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        return instance
+
+    class Meta:
+        model = models.Profile
+        fields = ('password', 'confirm_password', 'new_password', 'username')
+        write_only_fields = ('password',)
+        read_only_fields = ('username',)

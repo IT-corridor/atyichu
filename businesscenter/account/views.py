@@ -2,8 +2,7 @@ from django.utils.translation import ugettext as _
 from rest_framework import viewsets, generics
 from . import serializers, models
 from rest_framework.response import Response
-
-# Create your views here.
+from utils import permissions
 
 
 class StoreViewSet(viewsets.ModelViewSet):
@@ -12,14 +11,6 @@ class StoreViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return models.Store.objects.select_related('district__city__state')
-
-
-class ProfileViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.ProfileSerializer
-
-    def get_queryset(self):
-        return models.Profile.objects.all().\
-            select_related('store__district__city__state')
 
 
 class AbsListView(generics.ListAPIView):
@@ -48,3 +39,22 @@ class District(AbsListView):
 
     queryset = models.District.objects.select_related('city__state')
     serializers = serializers.DistrictSerializer
+
+
+class UserMixin:
+    queryset = models.Profile.objects.select_related\
+        ('store__district__city__state')
+    permission_classes = (permissions.IsUserOrReadOnly,)
+
+
+class ProfileListCreateView(UserMixin, generics.ListCreateAPIView):
+    """ Python MRO """
+    serializer_class = serializers.UserCreateSerializer
+
+
+class ProfileRetrieveUpdateView(UserMixin, generics.RetrieveUpdateAPIView):
+    serializer_class = serializers.UserUpdateSerializer
+
+
+class ProfilePasswordUpdatedView(UserMixin, generics.UpdateAPIView):
+    serializer_class = serializers.UserPasswordSerializer

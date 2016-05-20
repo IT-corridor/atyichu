@@ -7,8 +7,6 @@ from rest_framework.routers import DefaultRouter
 store_router = DefaultRouter()
 store_router.register(r'stores', views.StoreViewSet, 'stores')
 
-profile_router = DefaultRouter()
-profile_router.register(r'profiles', views.ProfileViewSet, 'profile')
 
 urlpatterns = (
     url(r'^states/$', cache_page(300)(views.StateView.as_view()),
@@ -17,9 +15,14 @@ urlpatterns = (
         name='city-list'),
     url(r'^districts/$', cache_page(300)(views.District.as_view()),
         name='district-list'),
+    url(r'^users/$', views.ProfileListCreateView.as_view(),
+        name='profile-list'),
+    url(r'^users/(?P<pk>\d+)/$',
+        views.ProfileRetrieveUpdateView.as_view(), name='profile-detail'),
+    url(r'^users/(?P<pk>\d+)/password/$',
+        views.ProfilePasswordUpdatedView.as_view(), name='profile-password'),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)
 urlpatterns += store_router.urls
-urlpatterns += profile_router.urls
 
