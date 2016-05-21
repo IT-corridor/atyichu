@@ -51,3 +51,10 @@ If it is a list of db fields: should state and city be represented by own tables
 
 3.2. Pretty strange to have a "brand name" at user model/table. 
     - Brand is for the STORE!
+
+3.3. Does one store should be belong to the ONE user?
+
+3.4. Does vendors (users) will be the only kind of users?
+    - No.
+
+3.5. Can user (vendor) see and use records (size, color, brand, etc) made by other vendors?

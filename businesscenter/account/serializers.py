@@ -62,7 +62,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return user
 
     class Meta:
-        model = models.Profile
+        model = models.Vendor
         exclude = ('is_staff', 'is_superuser', 'is_active', 'groups',
                    'user_permissions', )
         write_only_fields = ('password',)
@@ -78,7 +78,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        model = models.Profile
+        model = models.Vendor
         exclude = ('is_staff', 'is_superuser', 'is_active', 'groups',
                    'user_permissions', 'password',)
         read_only_fields = ('date_joined', 'last_login')
@@ -105,7 +105,7 @@ class UserPasswordSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        model = models.Profile
+        model = models.Vendor
         fields = ('password', 'confirm_password', 'new_password', 'username')
         write_only_fields = ('password',)
         read_only_fields = ('username',)

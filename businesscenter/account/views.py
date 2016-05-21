@@ -44,7 +44,7 @@ class District(AbsListView):
 
 
 class UserMixin:
-    queryset = models.Profile.objects.select_related\
+    queryset = models.Vendor.objects.select_related\
         ('store__district__city__state')
     permission_classes = (permissions.IsUserOrReadOnly,)
 

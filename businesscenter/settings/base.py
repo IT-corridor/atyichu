@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+from django.utils.translation import ugettext_lazy as _
 from .rest import *
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -37,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'vendor_admin',
     'account',
     'catalog',
 ]
@@ -101,6 +105,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+LANGUAGES = [
+    ('en', _('English')),
+    ('zh-hans', _('Simplified Chinese')),
+    ('zh-hant', _('Traditional Chinese')),
+    ('ru', _('Russian')),
+]
+
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -114,3 +125,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
+
+# AUTH model
+#AUTH_USER_MODEL = 'account.Profile'

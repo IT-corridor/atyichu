@@ -2,10 +2,10 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import pre_delete
-from receivers import cleanup_files
+from django.db.models.signals import pre_delete, post_save
+from receivers import cleanup_files, add_to_vendor_group
 # Create your models here.
 
 
@@ -70,12 +70,21 @@ class Store(models.Model):
         return self.brand
 
 
-class Profile(AbstractUser):
-    avatar = models.ImageField(_('Avatar'), upload_to='profiles',
+class Vendor(User):
+    # TODO: Replace store relation to store model (One-to-One field)
+    # What with the store?
+    # TODO: Add something to identify that it is
+    # a vendor and not a regular user
+
+    avatar = models.ImageField(_('Avatar'), upload_to='vendors',
                                null=True, blank=True)
     store = models.ForeignKey(Store, verbose_name=_('Store'),
                               null=True, blank=True)
 
+    class Meta:
+        verbose_name = _('Vendor')
+        verbose_name_plural = _('Vendors')
 
-pre_delete.connect(cleanup_files, sender=Profile)
+pre_delete.connect(cleanup_files, sender=Vendor)
 pre_delete.connect(cleanup_files, sender=Store)
+post_save.connect(add_to_vendor_group, sender=Vendor)

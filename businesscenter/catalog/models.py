@@ -10,7 +10,7 @@ from utils import utils, receivers
 class AbsCategory(models.Model):
     """ Each record of ref. model has its own title and priority for sorting"""
     title = models.CharField(_('Title'), max_length=50)
-    priority = models.PositiveSmallIntegerField(_('Priority'))
+    priority = models.PositiveSmallIntegerField(_('Priority'), default=0)
 
     class Meta:
         abstract = True
@@ -76,7 +76,8 @@ class Commodity(models.Model):
     kind = models.ForeignKey(Kind, verbose_name=_('Kind'))
     brand = models.ForeignKey(Brand, verbose_name=_('Brand'))
     store = models.ForeignKey('account.Store', verbose_name=_('Store'))
-    owner = models.ForeignKey('account.Profile', verbose_name=_('Owner'))
+    add_date = models.DateTimeField(_('Date added'), auto_now_add=True)
+    modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
 
     def __unicode__(self):
         # TITLE OR BRAND:KIND:YEAR

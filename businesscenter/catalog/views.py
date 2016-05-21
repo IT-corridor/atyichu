@@ -43,5 +43,10 @@ class CommodityViewSet(viewsets.ModelViewSet):
 class StockViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.StockSerializer
     queryset = models.Stock.objects.\
-        select_releated('color', 'size', 'commodity__brand',
-                        'commodity__kind__category')
+        select_related('color', 'size', 'commodity__brand',
+                       'commodity__kind__category')
+
+
+class GalleryViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.GallerySerializer
+    queryset = models.Gallery.objects.all()

@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
@@ -7,10 +9,10 @@ from . import models
 
 class ProfileChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
-        model = models.Profile
+        model = models.Vendor
 
 
-class AdminProfile(UserAdmin):
+class AdminVendor(UserAdmin):
 
     list_display = ('first_name', 'username', 'email')
     form = ProfileChangeForm
@@ -30,4 +32,4 @@ admin.site.register(models.State)
 admin.site.register(models.City)
 admin.site.register(models.District)
 admin.site.register(models.Store, AdminStore)
-admin.site.register(models.Profile, AdminProfile)
+admin.site.register(models.Vendor, AdminVendor)
