@@ -1,8 +1,11 @@
+from __future__ import unicode_literals
+
 from django.conf.urls import url
 from django.views.decorators.cache import cache_page
 from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 from rest_framework.routers import DefaultRouter
+
 
 store_router = DefaultRouter()
 store_router.register(r'stores', views.StoreViewSet, 'stores')
@@ -15,12 +18,14 @@ urlpatterns = (
         name='city-list'),
     url(r'^districts/$', cache_page(300)(views.District.as_view()),
         name='district-list'),
-    url(r'^users/$', views.ProfileListCreateView.as_view(),
+    url(r'^vendors/$', views.ProfileListCreateView.as_view(),
         name='profile-list'),
-    url(r'^users/(?P<pk>\d+)/$',
+    url(r'^vendors/(?P<pk>\d+)/$',
         views.ProfileRetrieveUpdateView.as_view(), name='profile-detail'),
-    url(r'^users/(?P<pk>\d+)/password/$',
+    url(r'^vendors/(?P<pk>\d+)/password/$',
         views.ProfilePasswordUpdatedView.as_view(), name='profile-password'),
+    url(r'^login/$', views.login_view, name='login'),
+    url(r'^logout/$', views.logout_view, name='logout'),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)

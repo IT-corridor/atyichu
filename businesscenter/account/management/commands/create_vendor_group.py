@@ -13,8 +13,7 @@ class Command(BaseCommand):
             filter(content_type__app_label__iexact='catalog')
         try:
             group = Group.objects.create(name='vendors')
-            group.permissions = permissions
-
+            group.permissions.set(permissions)
         except Exception as e:
             raise CommandError('An error has been occurred: {}'.format(e))
         else:

@@ -4,6 +4,7 @@ from django.utils.translation import ugettext as _
 from rest_framework import serializers
 from . import models
 from django.contrib.auth.password_validation import validate_password as vp
+from django.db import transaction
 
 
 class StateSerializer(serializers.ModelSerializer):
@@ -31,6 +32,28 @@ class DistrictSerializer(serializers.ModelSerializer):
 class StoreSerializer(serializers.ModelSerializer):
     district = DistrictSerializer()
     location = serializers.CharField(source='get_location', read_only=True)
+
+    def create(self, validated_data):
+        with transaction.atomic():
+            district_args = validated_data.pop('district')
+            city_args = district_args.pop('city')
+            state_args = city_args.pop('state')
+
+            state, _ = models.State.get_or_create(**state_args)
+
+            city_args['state'] = state
+
+            city, _ = models.City.objects.get_or_create(**city_args)
+
+            district_args['city'] = city
+
+            district, _ = models.District.objects.get_or_create(**district_args)
+
+            validated_data['district'] = district
+
+            store = models.Store.objects.create(**validated_data)
+
+        return store
 
     class Meta:
         model = models.Store

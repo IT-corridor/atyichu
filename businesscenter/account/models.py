@@ -4,8 +4,7 @@ from django.db import models
 
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import pre_delete, post_save
-from receivers import cleanup_files, add_to_vendor_group
+
 # Create your models here.
 
 
@@ -72,9 +71,6 @@ class Store(models.Model):
 
 class Vendor(User):
     # TODO: Replace store relation to store model (One-to-One field)
-    # What with the store?
-    # TODO: Add something to identify that it is
-    # a vendor and not a regular user
 
     avatar = models.ImageField(_('Avatar'), upload_to='vendors',
                                null=True, blank=True)
@@ -84,7 +80,3 @@ class Vendor(User):
     class Meta:
         verbose_name = _('Vendor')
         verbose_name_plural = _('Vendors')
-
-pre_delete.connect(cleanup_files, sender=Vendor)
-pre_delete.connect(cleanup_files, sender=Store)
-post_save.connect(add_to_vendor_group, sender=Vendor)

@@ -1,9 +1,12 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
+from django.contrib.auth import logout, authenticate, login
 from rest_framework import viewsets, generics
-from . import serializers, models
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+
+from . import serializers, models
 from utils import permissions
 
 
@@ -50,7 +53,7 @@ class UserMixin:
 
 
 class ProfileListCreateView(UserMixin, generics.ListCreateAPIView):
-    """ Python MRO """
+    """ READ Python MRO """
     serializer_class = serializers.UserCreateSerializer
 
 
@@ -60,3 +63,34 @@ class ProfileRetrieveUpdateView(UserMixin, generics.RetrieveUpdateAPIView):
 
 class ProfilePasswordUpdatedView(UserMixin, generics.UpdateAPIView):
     serializer_class = serializers.UserPasswordSerializer
+
+
+@api_view(['GET'])
+@permission_classes(())
+def logout_view(request):
+    logout(request)
+    return Response({'logout': True}, status=200)
+
+
+@api_view(['POST'])
+@permission_classes(())
+def login_view(request):
+    data = {}
+    status = 401
+    try:
+        username = request.data['username']
+        password = request.data['password']
+        user = authenticate(username=username, password=password)
+        login(request, user)
+        data.update({'username': user.username, 'id': user.pk})
+        status = 200
+    except KeyError as e:
+        # missing parameter
+        data.update({'error': _('Missed parameter {}').format(e)})
+        status = 400
+    except AttributeError:
+        # Unauthenticated user
+        data.update({'error': _('Invalid combination of username and password')})
+
+    return Response(data, status=status)
+

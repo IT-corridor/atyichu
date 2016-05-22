@@ -23,7 +23,7 @@ class CommodityAdmin(admin.ModelAdmin):
     list_display = ('title', 'brand', 'kind', 'season', 'year', 'store')
     list_filter = ('brand', 'kind', 'season', 'year', 'store')
     inlines = (StockInline, GalleryInline)
-
+    # list_select_related = True
 
 admin.site.register(models.Category)
 admin.site.register(models.Kind)

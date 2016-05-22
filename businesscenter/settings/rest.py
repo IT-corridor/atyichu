@@ -6,9 +6,10 @@ REST_FRAMEWORK = {
     'ORDERING_PARAM': 'o',
     #'DATE_INPUT_FORMATS': ['iso-8601', '%d.%m.%Y'],
     'DEFAULT_PERMISSION_CLASSES': (
-        'utils.permissions.IsAdminOrReadOnly',
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ),
     'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.AnonRateThrottle',
-    )
+    ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
