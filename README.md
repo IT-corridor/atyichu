@@ -25,7 +25,7 @@ Later we will have to merge all parts into one project.
 Maybe it will necessarily to completely rewrite the first part.
 
 3. Can we use postgres db (it will depends on django features and sql table structure)?
->
+> No. We will use mysql db.
 
 ## PROJECT`S APPLICATIONS
 
@@ -50,13 +50,13 @@ If it is a list of db fields: should state and city be represented by own tables
 > No.
 
 6. Can user (vendor) see and use records (size, color, brand, etc) made by other vendors?
->
+> No. Vendor can use and see only data of his store.
 
 7. Who creates the store?
->
+> Vendor. But ONLY after admin (employee, manager) will register him OFFLINE.
 
 8. Does store creates after new user(vendor)? Or does store creates before the new user?
->
+> VENDOR. look p. 7.
 
 ### COMMODITY
 
@@ -73,9 +73,9 @@ The relation structure between commodity table and tag depends of the db choice.
 POSTGRES IS BETTER. But it is up to you. 
 
 4. For what purpose are these tags? I need to imagine how they will be used?
-
+> For search.
 5. Only authenticated user can access to commodity views?
 > Yes.
 
 6. Does each user must have his own data with colors, sizes, brands, etc?
->
+> YES.
