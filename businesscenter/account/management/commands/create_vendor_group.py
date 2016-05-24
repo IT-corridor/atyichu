@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import Group, Permission
-
+from django.db.models import Q
 
 class Command(BaseCommand):
     help = 'Creates a vendor group. Run this only after migration' \
@@ -10,7 +10,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         permissions = Permission.objects.\
-            filter(content_type__app_label__iexact='catalog')
+            filter(Q(content_type__app_label__iexact='catalog') |
+                   Q(content_type__model__iexact='store'))
         try:
             group = Group.objects.create(name='vendors')
             group.permissions.set(permissions)

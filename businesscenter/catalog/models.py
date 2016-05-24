@@ -11,6 +11,7 @@ class AbsCategory(models.Model):
     """ Each record of ref. model has its own title and priority for sorting"""
     title = models.CharField(_('Title'), max_length=50)
     priority = models.PositiveSmallIntegerField(_('Priority'), default=0)
+    store = models.ForeignKey('account.Store', verbose_name=_('Store'))
 
     class Meta:
         abstract = True
@@ -130,5 +131,12 @@ class Gallery(models.Model):
         verbose_name_plural = _('Gallery')
         ordering = ('id',)
 
-pre_delete.connect(receivers.cleanup_files, sender=Gallery)
-post_save.connect(receivers.create_thumb, sender=Gallery)
+
+class Tags(models.Model):
+    title = models.CharField(_('Title'), max_length=50)
+    commodity = models.ForeignKey(Commodity, verbose_name=_('Commodity'))
+
+    class Meta:
+        verbose_name = _('Tag')
+        verbose_name_plural = _('Tags')
+        ordering = ('id',)

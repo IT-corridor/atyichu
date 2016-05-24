@@ -4,49 +4,63 @@ from django.utils.translation import ugettext as _
 from rest_framework import viewsets, generics
 from . import serializers, models
 from rest_framework.response import Response
-from utils import permissions
+from . import permissions
 
 # TODO: Add permissions for the ViewSets
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class ReferenceMixin(object):
+    permission_classes = (permissions.IsOwnerOrReadOnly,)
+
+    def get_queryset(self):
+        return self.model.objects.filter(store=self.request.user.store)
+
+
+class CategoryViewSet(ReferenceMixin, viewsets.ModelViewSet):
     serializer_class = serializers.CategorySerializer
-    queryset = models.Category.objects.all()
+    model = models.Category
 
 
-class KindViewSet(viewsets.ModelViewSet):
+class KindViewSet(ReferenceMixin, viewsets.ModelViewSet):
     serializer_class = serializers.KindSerializer
-    queryset = models.Kind.objects.all()
+    model = models.Kind
 
 
-class BrandViewSet(viewsets.ModelViewSet):
+class BrandViewSet(ReferenceMixin, viewsets.ModelViewSet):
     serializer_class = serializers.BrandSerializer
-    queryset = models.Brand.objects.all()
+    model = models.Brand
 
 
-class ColorViewSet(viewsets.ModelViewSet):
+class ColorViewSet(ReferenceMixin, viewsets.ModelViewSet):
     serializer_class = serializers.ColorSerializer
-    queryset = models.Color.objects.all()
+    model = models.Color
 
 
-class SizeViewSet(viewsets.ModelViewSet):
+class SizeViewSet(ReferenceMixin, viewsets.ModelViewSet):
     serializer_class = serializers.SizeSerializer
-    queryset = models.Size.objects.all()
+    model = models.Size
 
 
-class CommodityViewSet(viewsets.ModelViewSet):
+class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
     serializer_class = serializers.CommoditySerializer
-    queryset = models.Commodity.objects\
-        .select_related('brand', 'kind__category')
+    model = models.Commodity
+
+    def get_queryset(self):
+        qs = super(CommodityViewSet, self).get_queryset()
+        return qs.select_related('brand', 'kind__category')
 
 
-class StockViewSet(viewsets.ModelViewSet):
+class StockViewSet(ReferenceMixin, viewsets.ModelViewSet):
     serializer_class = serializers.StockSerializer
-    queryset = models.Stock.objects.\
-        select_related('color', 'size', 'commodity__brand',
-                       'commodity__kind__category')
+    model = models.Stock
+
+    def get_queryset(self):
+        qs = super(StockViewSet, self).get_queryset()
+        return qs.select_related('color', 'size', 'commodity__brand',
+                                 'commodity__kind__category')
 
 
 class GalleryViewSet(viewsets.ModelViewSet):
+    # TODO: implement permissions
     serializer_class = serializers.GallerySerializer
     queryset = models.Gallery.objects.all()

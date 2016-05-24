@@ -8,7 +8,7 @@ from rest_framework.routers import DefaultRouter
 
 
 store_router = DefaultRouter()
-store_router.register(r'stores', views.StoreViewSet, 'stores')
+store_router.register(r'stores', views.StoreViewSet, 'store')
 
 
 urlpatterns = (

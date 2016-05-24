@@ -8,6 +8,15 @@ from django.utils.translation import ugettext_lazy as _
 # Create your models here.
 
 
+class Vendor(User):
+    avatar = models.ImageField(_('Avatar'), upload_to='vendors',
+                               null=True, blank=True)
+
+    class Meta:
+        verbose_name = _('Vendor')
+        verbose_name_plural = _('Vendors')
+
+
 class AbsLocation(models.Model):
     title = models.CharField(_('Title'), db_index=True, max_length=100)
 
@@ -58,7 +67,9 @@ class Store(models.Model):
     build_name = models.CharField(_('Building name'), max_length=50)
     build_no = models.CharField(_('Building number'), max_length=5)
     apt = models.CharField(_('Apartments'), max_length=5)
-    brand = models.CharField(_('Brand'), max_length=50)
+    brand_name = models.CharField(_('Brand name'), max_length=50)
+    owner = models.OneToOneField(Vendor, on_delete=models.CASCADE,
+                                 verbose_name=_('Owner'))
 
     def get_location(self):
         return '{}:{}:{}:{}:{}'.format(self.district, self.street,
@@ -66,17 +77,5 @@ class Store(models.Model):
                                        self.apt)
 
     def __unicode__(self):
-        return self.brand
+        return self.brand_name
 
-
-class Vendor(User):
-    # TODO: Replace store relation to store model (One-to-One field)
-
-    avatar = models.ImageField(_('Avatar'), upload_to='vendors',
-                               null=True, blank=True)
-    store = models.ForeignKey(Store, verbose_name=_('Store'),
-                              null=True, blank=True)
-
-    class Meta:
-        verbose_name = _('Vendor')
-        verbose_name_plural = _('Vendors')

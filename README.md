@@ -56,7 +56,11 @@ If it is a list of db fields: should state and city be represented by own tables
 > Vendor. But ONLY after admin (employee, manager) will register him OFFLINE.
 
 8. Does store creates after new user(vendor)? Or does store creates before the new user?
+<<<<<<< Updated upstream
 > VENDOR. look p. 7.
+>
+9. Can registered vendor edit his profile?
+> Yes.
 
 ### COMMODITY
 

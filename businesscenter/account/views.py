@@ -8,14 +8,30 @@ from rest_framework.decorators import api_view, permission_classes
 
 from . import serializers, models
 from utils import permissions
+from .permissions import IsStoreOwnerOrReadOnly
 
 
 class StoreViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.StoreSerializer
-    #permissions = (IsOwnerOrReadOnly, )
+    permission_classes = (IsStoreOwnerOrReadOnly, )
 
     def get_queryset(self):
         return models.Store.objects.select_related('district__city__state')
+
+    def create(self, request, *args, **kwargs):
+        request.data['owner'] = request.user
+        return super(StoreViewSet, self).create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data['owner'] = request.user
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=data,
+                                         partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
 
 class AbsListView(generics.ListAPIView):
@@ -47,8 +63,8 @@ class District(AbsListView):
 
 
 class UserMixin:
-    queryset = models.Vendor.objects.select_related\
-        ('store__district__city__state')
+    queryset = models.Vendor.objects.\
+        select_related('store__district__city__state')
     permission_classes = (permissions.IsUserOrReadOnly,)
 
 

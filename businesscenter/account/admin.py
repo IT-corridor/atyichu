@@ -7,6 +7,11 @@ from django.contrib.auth.forms import UserChangeForm
 from . import models
 
 
+class StoreInline(admin.StackedInline):
+    model = models.Store
+    extra = 0
+
+
 class ProfileChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
         model = models.Vendor
@@ -18,8 +23,9 @@ class AdminVendor(UserAdmin):
     form = ProfileChangeForm
 
     fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('avatar', 'store')}),
+        (None, {'fields': ('avatar',)}),
     )
+    inlines = StoreInline,
 
 
 class AdminStore(admin.ModelAdmin):
