@@ -8,9 +8,15 @@ from django.utils.translation import ugettext_lazy as _
 # Create your models here.
 
 
-class Vendor(User):
+class Vendor(models.Model):
+    # TODO: Fix auto creation with empty params
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                primary_key=True)
     avatar = models.ImageField(_('Avatar'), upload_to='vendors',
                                null=True, blank=True)
+
+    def __unicode__(self):
+        return self.user.username
 
     class Meta:
         verbose_name = _('Vendor')

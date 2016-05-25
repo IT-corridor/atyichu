@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
-from rest_framework import serializers
-from . import models
 from django.contrib.auth.password_validation import validate_password as vp
 from django.db import transaction
+from django.contrib.auth import get_user_model
+from rest_framework import serializers
 
+
+from . import models
 
 class StateSerializer(serializers.ModelSerializer):
 
@@ -98,12 +100,17 @@ class StoreSerializer(serializers.ModelSerializer):
         model = models.Store
 
 
+class VendorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Vendor
+
+
 class UserCreateSerializer(serializers.ModelSerializer):
     """ Serializer for creating new profile """
-
     url = serializers.HyperlinkedIdentityField(view_name='account:profile-detail')
     confirm_password = serializers.CharField(allow_blank=False, write_only=True)
-    store = StoreSerializer(read_only=True)
+    vendor = VendorSerializer()
 
     def validate(self, attrs):
         if attrs['password'] != attrs.pop('confirm_password'):
@@ -118,13 +125,15 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
+        vendor_args = validated_data.pop('vendor', None)
         user = self.Meta.model(**validated_data)
         user.set_password(password)
         user.save()
+        models.Vendor.objects.create(user=user, **vendor_args)
         return user
 
     class Meta:
-        model = models.Vendor
+        model = get_user_model()
         exclude = ('is_staff', 'is_superuser', 'is_active', 'groups',
                    'user_permissions', )
         write_only_fields = ('password',)
@@ -133,14 +142,21 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     """ Serializer for update account """
+    vendor = VendorSerializer()
+
     def update(self, instance, validated_data):
+        vendor_args = validated_data.pop('vendor', None)
         for k, v in validated_data.items():
             setattr(instance, k, v)
         instance.save()
+        print (vendor_args)
+        if vendor_args:
+            vendor_args.pop('user')
+            models.Vendor.objects.update_or_create(user=instance, defaults=vendor_args)
         return instance
 
     class Meta:
-        model = models.Vendor
+        model = get_user_model()
         exclude = ('is_staff', 'is_superuser', 'is_active', 'groups',
                    'user_permissions', 'password',)
         read_only_fields = ('date_joined', 'last_login')
@@ -167,7 +183,7 @@ class UserPasswordSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        model = models.Vendor
+        model = get_user_model()
         fields = ('password', 'confirm_password', 'new_password', 'username')
         write_only_fields = ('password',)
         read_only_fields = ('username',)

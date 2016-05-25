@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import pre_delete, post_save
 from .validators import SizeValidator
 from utils import utils, receivers
 
@@ -47,7 +46,7 @@ class Brand(AbsCategory):
 
 
 class Color(AbsCategory):
-    html = models.CharField(_('Html code'), max_length=7)
+    html = models.CharField(_('Html code'), max_length=7, blank=True)
 
     class Meta:
         verbose_name = _('Color')
@@ -74,16 +73,19 @@ class Commodity(models.Model):
     title = models.CharField(_('Title'), max_length=100, blank=True)
     year = models.CharField(_('Year'), max_length=4)
     season = models.CharField(_('Season'), choices=SEASONS, max_length=1)
-    kind = models.ForeignKey(Kind, verbose_name=_('Kind'))
-    brand = models.ForeignKey(Brand, verbose_name=_('Brand'))
-    store = models.ForeignKey('account.Store', verbose_name=_('Store'))
     add_date = models.DateTimeField(_('Date added'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
+    kind = models.ForeignKey(Kind, verbose_name=_('Kind'))
+    brand = models.ForeignKey(Brand, verbose_name=_('Brand'))
+    color = models.ForeignKey(Color, verbose_name=_('Color'))
+    size = models.ForeignKey(Size, verbose_name=_('Size'))
+    store = models.ForeignKey('account.Store', verbose_name=_('Store'))
 
     def __unicode__(self):
-        # TITLE OR BRAND:KIND:YEAR
-        return self.title if self.title else\
-            '{}+{}+{}'.format(self.brand, self.kind, self.year)
+        # BRAND+COLOR+KIND+SIZE+YEAR
+        return self.title if self.title else \
+            '{}+{}+{}'.format(self.brand, self.color, self.kind,
+                              self.size, self.year)
 
     class Meta:
         verbose_name = _('Commodity')
@@ -91,32 +93,9 @@ class Commodity(models.Model):
         ordering = ('id',)
 
 
-class Stock(models.Model):
-
-    """ Nested Commodity, based on Commodity """
-    # TODO: Find out what is RFID code and implement it
-    # TODO: tags ArrayField or new Table
-    title = models.CharField(_('Title'), max_length=100, blank=True)
-    commodity = models.ForeignKey(Commodity, verbose_name=_('Commodity'),
-                                  on_delete=models.CASCADE)
-    color = models.ForeignKey(Color, verbose_name=_('Color'))
-    size = models.ForeignKey(Size, verbose_name=_('Size'))
-
-    def __unicode__(self):
-        # BRAND+COLOR+KIND+SIZE+YEAR
-        return self.title if self.title else \
-            '{}+{}+{}'.format(self.brand, self.color, self.commodity.kind,
-                              self.size, self.commodity.year)
-
-    class Meta:
-        verbose_name = _('Stock')
-        verbose_name_plural = _('Stocks')
-        unique_together = ('commodity', 'color', 'size')
-        ordering = ('id',)
-
-
 class Gallery(models.Model):
     # TODO: add a count constraint for the commodity equal 5
+    # TODO: make it with viewset in the perform_create
 
     path_photo = utils.UploadPath('gallery', 'commodity')
     path_thumb = utils.UploadPath('gallery/thumbs', 'commodity', suff='thumb')
@@ -132,7 +111,7 @@ class Gallery(models.Model):
         ordering = ('id',)
 
 
-class Tags(models.Model):
+class Tag(models.Model):
     title = models.CharField(_('Title'), max_length=50)
     commodity = models.ForeignKey(Commodity, verbose_name=_('Commodity'))
 

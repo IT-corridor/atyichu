@@ -8,23 +8,22 @@ from rest_framework.decorators import api_view, permission_classes
 
 from . import serializers, models
 from utils import permissions
-from .permissions import IsStoreOwnerOrReadOnly
 
 
 class StoreViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.StoreSerializer
-    permission_classes = (IsStoreOwnerOrReadOnly, )
+    permission_classes = (permissions.IsStoreOwnerOrReadOnly, )
 
     def get_queryset(self):
         return models.Store.objects.select_related('district__city__state')
 
     def create(self, request, *args, **kwargs):
-        request.data['owner'] = request.user
+        request.data['owner'] = request.user.vendor.pk
         return super(StoreViewSet, self).create(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         data = request.data.copy()
-        data['owner'] = request.user
+        data['owner'] = request.user.vendor.pk
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=data,
@@ -63,8 +62,8 @@ class District(AbsListView):
 
 
 class UserMixin:
-    queryset = models.Vendor.objects.\
-        select_related('store__district__city__state')
+    queryset = models.User.objects.\
+        select_related('vendor__store__district__city__state')
     permission_classes = (permissions.IsUserOrReadOnly,)
 
 
@@ -98,7 +97,11 @@ def login_view(request):
         password = request.data['password']
         user = authenticate(username=username, password=password)
         login(request, user)
+
         data.update({'username': user.username, 'id': user.pk})
+        if hasattr(request.user, 'vendor') \
+                and hasattr(request.user.vendor, 'store'):
+            data.update({'store': request.user.vendor.store.id})
         status = 200
     except KeyError as e:
         # missing parameter

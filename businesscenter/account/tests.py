@@ -25,23 +25,24 @@ class VendorTests(APITestCase):
         cls.customer_data = {'username': 'peter', 'password': 'frAnKly12'}
 
         cls.admin = User.objects.create_superuser(**cls.admin_data)
-        cls.vendor = Vendor.objects.create_user(**cls.vendor_data)
+        user = User.objects.create_user(**cls.vendor_data)
+        cls.vendor = Vendor.objects.create(user=user)
         cls.customer = User.objects.create_user(**cls.customer_data)
 
     def test_admin_password(self):
         self.assertTrue(self.admin.check_password(self.admin_data['password']))
 
     def test_vendor_password(self):
-        self.assertTrue(self.vendor.check_password(self.vendor_data['password']))
+        self.assertTrue(self.vendor.user.check_password(self.vendor_data['password']))
 
     def test_rest_login_success(self):
         """ Test login view for all accounts """
-        user = self.vendor
+        user = self.vendor.user
         data_compare = {'username': user.username, 'id': user.id}
         url = reverse('account:login')
         response = self.client.post(url, data=self.vendor_data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, data_compare)
+        self.assertDictContainsSubset(response.data, data_compare)
 
     def test_rest_login_error_400(self):
         """ Test login view for missing parameter """
@@ -64,8 +65,6 @@ class VendorTests(APITestCase):
         self.assertEqual(response.status_code, 405)
 
 
-
-
 class StoreTests(APITestCase):
 
     @classmethod
@@ -75,8 +74,10 @@ class StoreTests(APITestCase):
         cls.vendor_data_1 = {'username': 'jack', 'password': 'proPer76'}
         cls.vendor_data_2 = {'username': 'john', 'password': 'groNasd12'}
         cls.customer_data = {'username': 'peter', 'password': 'frAnKly12'}
-        cls.vendor_1 = Vendor.objects.create_user(**cls.vendor_data_1)
-        cls.vendor_2 = Vendor.objects.create_user(**cls.vendor_data_2)
+        vendor_1 = User.objects.create_user(**cls.vendor_data_1)
+        vendor_2 = User.objects.create_user(**cls.vendor_data_2)
+        cls.vendor_1 = Vendor.objects.create(user=vendor_1)
+        cls.vendor_2 = Vendor.objects.create(user=vendor_2)
         cls.customer = User.objects.create_user(**cls.customer_data)
 
         state = State.objects.create(title='Shanghai')
@@ -105,6 +106,15 @@ class StoreTests(APITestCase):
             }
         }
 
+    def test_rest_login_success(self):
+        """ Test login view for all accounts """
+        user = self.vendor_2.user
+        data_compare = {'username': user.username, 'id': user.id, 'store': 1}
+        url = reverse('account:login')
+        response = self.client.post(url, data=self.vendor_data_2)
+        self.assertEqual(response.status_code, 200)
+        self.assertDictContainsSubset(response.data, data_compare)
+
     def test_create_vendor_store(self):
 
         self.client.login(username=self.vendor_data_1['username'],
@@ -112,6 +122,7 @@ class StoreTests(APITestCase):
         url = reverse('account:store-list')
         response = self.client.post(url, json.dumps(self.data),
                                     content_type='application/json')
+
         self.client.logout()
         self.assertEqual(response.status_code, 201)
 

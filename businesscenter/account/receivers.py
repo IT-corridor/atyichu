@@ -17,7 +17,7 @@ def cleanup_files(sender, **kwargs):
 
 def add_to_vendor_group(sender, instance=None, created=False, **kwargs):
     if created:
-        instance.groups.add(Group.objects.get(name='vendors'))
+        instance.user.groups.add(Group.objects.get(name='vendors'))
 
 
 def create_vendor_group(sender, **kwargs):

@@ -15,6 +15,6 @@ class CatalogConfig(AppConfig):
         # TODO: maybe it is not necessary to add here permission
 
         Gallery = self.get_model('Gallery')
-        post_migrate.connect(receiver=add_vendor_catalog_perms,sender=self)
+        post_migrate.connect(receiver=add_vendor_catalog_perms, sender=self)
         pre_delete.connect(receivers.cleanup_files, sender=Gallery)
         post_save.connect(receivers.create_thumb, sender=Gallery)

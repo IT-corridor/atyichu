@@ -6,8 +6,8 @@ from . import models
 from vendor_admin.admin import site
 
 
-class StockInline(admin.TabularInline):
-    model = models.Stock
+class TagInline(admin.TabularInline):
+    model = models.Tag
     extra = 0
     # exclude = ()
 
@@ -22,7 +22,7 @@ class CommodityAdmin(admin.ModelAdmin):
 
     list_display = ('title', 'brand', 'kind', 'season', 'year', 'store')
     list_filter = ('brand', 'kind', 'season', 'year', 'store')
-    inlines = (StockInline, GalleryInline)
+    inlines = (TagInline, GalleryInline)
     # list_select_related = True
 
 admin.site.register(models.Category)
