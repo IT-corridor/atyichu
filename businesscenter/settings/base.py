@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'account',
     'catalog',
     'vendor_admin',
+    'visitor',
     'utils',
 ]
 
@@ -130,3 +131,6 @@ MEDIA_URL = '/media/'
 
 # AUTH model
 #AUTH_USER_MODEL = 'account.Profile'
+
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',
+                           'visitor.auth.WeixinBackend']

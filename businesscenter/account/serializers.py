@@ -6,8 +6,8 @@ from django.db import transaction
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-
 from . import models
+
 
 class StateSerializer(serializers.ModelSerializer):
 
@@ -187,4 +187,3 @@ class UserPasswordSerializer(serializers.ModelSerializer):
         fields = ('password', 'confirm_password', 'new_password', 'username')
         write_only_fields = ('password',)
         read_only_fields = ('username',)
-

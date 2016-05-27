@@ -6,7 +6,6 @@ from django.contrib.auth.models import Group, Permission
 def add_to_vendor_group(sender, instance=None, created=False, **kwargs):
     if created:
         instance.user.groups.add(Group.objects.get(name='vendors'))
-        print ('hello')
 
 
 def create_vendor_group(sender, **kwargs):

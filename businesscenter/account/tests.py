@@ -3,8 +3,6 @@ from __future__ import unicode_literals, absolute_import
 import json
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission
-from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
 from account.models import Vendor, Store, District, City, State

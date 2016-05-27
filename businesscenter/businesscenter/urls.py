@@ -27,7 +27,8 @@ urlpatterns = [
     url(r'^api-auth/',
         include('rest_framework.urls', namespace='rest_framework')),
     url(r'^account/', include('account.urls', namespace='account')),
-    url(r'^catalog/', include('catalog.urls', namespace='catalog'))
+    url(r'^catalog/', include('catalog.urls', namespace='catalog')),
+    url(r'^visitor/', include('visitor.urls', namespace='visitor')),
 ]
 
 

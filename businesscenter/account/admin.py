@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.models import User
 from . import models
 
@@ -10,6 +9,7 @@ from . import models
 class VendorInline(admin.StackedInline):
     model = models.Vendor
     extra = 0
+
 
 class AdminVendor(UserAdmin):
 
@@ -29,5 +29,4 @@ admin.site.register(models.City)
 admin.site.register(models.District)
 admin.site.register(models.Store, AdminStore)
 admin.site.register(models.Vendor)
-admin.site.register(models.Visitor)
 admin.site.register(User, AdminVendor)
