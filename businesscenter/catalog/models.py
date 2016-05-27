@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from .validators import SizeValidator
+from utils.validators import SizeValidator
 from utils import utils, receivers
 
 
@@ -103,7 +103,8 @@ class Gallery(models.Model):
     commodity = models.ForeignKey(Commodity, verbose_name=_('Commodity'))
     photo = models.ImageField(_('Photo'), upload_to=path_photo,
                               validators=[SizeValidator(2)])
-    thumb = models.ImageField(_('Thumbnail'), upload_to=path_thumb)
+    thumb = models.ImageField(_('Thumbnail'), upload_to=path_thumb,
+                              null=True, blank=True)
 
     class Meta:
         verbose_name = _('Gallery')

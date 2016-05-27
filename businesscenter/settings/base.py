@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'account',
     'catalog',
     'vendor_admin',
+    'utils',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -113,7 +114,7 @@ LANGUAGES = [
     ('ru', _('Russian')),
 ]
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 

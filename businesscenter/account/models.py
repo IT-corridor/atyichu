@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
+from utils.validators import SizeValidator
 # Create your models here.
 
 
@@ -12,8 +13,12 @@ class Vendor(models.Model):
     # TODO: Fix auto creation with empty params
     user = models.OneToOneField(User, on_delete=models.CASCADE,
                                 primary_key=True)
+
     avatar = models.ImageField(_('Avatar'), upload_to='vendors',
-                               null=True, blank=True)
+                               null=True, blank=True,
+                               validators=[SizeValidator(0.5)])
+    thumb = models.ImageField(_('Thumbnail'),
+                              upload_to='vendors/thumbs', null=True, blank=True)
 
     def __unicode__(self):
         return self.user.username
@@ -21,6 +26,21 @@ class Vendor(models.Model):
     class Meta:
         verbose_name = _('Vendor')
         verbose_name_plural = _('Vendors')
+
+
+class Visitor(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                primary_key=True)
+    avatar = models.ImageField(_('Avatar'), upload_to='visitors',
+                               null=True, blank=True,
+                               validators=[SizeValidator(0.5)])
+    thumb = models.ImageField(_('Thumbnail'),
+                              upload_to='visitors/thumbs',
+                              null=True, blank=True)
+
+    class Meta:
+        verbose_name = _('Visitor')
+        verbose_name_plural = _('Visitors')
 
 
 class AbsLocation(models.Model):
@@ -66,7 +86,7 @@ class District(AbsLocation):
 
 class Store(models.Model):
 
-    logo = models.ImageField(_('Logo'), upload_to='stores',
+    photo = models.ImageField(_('Logo'), upload_to='stores',
                              blank=True, null=True)
     district = models.ForeignKey(District, verbose_name=_('District'))
     street = models.CharField(_('Street'), max_length=100)
@@ -84,4 +104,3 @@ class Store(models.Model):
 
     def __unicode__(self):
         return self.brand_name
-

@@ -10,12 +10,18 @@ class AccountConfig(AppConfig):
 
     def ready(self):
         from django.db.models.signals import pre_delete, post_save, post_migrate
-        from .receivers import cleanup_files, add_to_vendor_group, create_vendor_group
+        from .receivers import add_to_vendor_group, create_vendor_group
+        from utils import receivers
 
         Vendor = self.get_model('Vendor')
+        Visitor = self.get_model('Visitor')
         Store = self.get_model('Store')
         post_migrate.connect(create_vendor_group, sender=self)
-        pre_delete.connect(cleanup_files, sender=Vendor)
-        pre_delete.connect(cleanup_files, sender=Store)
+        pre_delete.connect(receivers.cleanup_files_avatar, sender=Vendor)
+        pre_delete.connect(receivers.cleanup_files_avatar, sender=Visitor)
+        pre_delete.connect(receivers.cleanup_files_photo, sender=Store)
+
+        post_save.connect(receivers.create_thumb_avatar, sender=Vendor)
+        post_save.connect(receivers.create_thumb_avatar, sender=Visitor)
         post_save.connect(add_to_vendor_group, sender=Vendor)
 
