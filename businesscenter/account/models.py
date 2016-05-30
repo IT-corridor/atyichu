@@ -5,7 +5,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
-from utils.validators import SizeValidator
+from vutils.validators import SizeValidator
 # Create your models here.
 
 

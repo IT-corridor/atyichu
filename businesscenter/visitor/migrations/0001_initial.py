@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import utils.validators
+import vutils.validators
 
 
 class Migration(migrations.Migration):
@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             name='Visitor',
             fields=[
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
-                ('avatar', models.ImageField(blank=True, null=True, upload_to='visitors', validators=[utils.validators.SizeValidator(0.5)], verbose_name='Avatar')),
+                ('avatar', models.ImageField(blank=True, null=True, upload_to='visitors', validators=[vutils.validators.SizeValidator(0.5)], verbose_name='Avatar')),
                 ('thumb', models.ImageField(blank=True, null=True, upload_to='visitors/thumbs', verbose_name='Thumbnail')),
             ],
             options={

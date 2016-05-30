@@ -7,9 +7,6 @@ from rest_framework.test import APITestCase, APIClient
 
 from account.models import Vendor, Store, District, City, State
 
-# TODO: CREATE TEST CASES!
-# TODO: CREATE TEST FOR THE STORE
-
 
 # Create your tests here.
 class VendorTests(APITestCase):

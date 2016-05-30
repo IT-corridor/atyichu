@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from utils.validators import SizeValidator
-from utils import utils, receivers
+from vutils.validators import SizeValidator
+from vutils import utils, receivers
 
 
 class AbsCategory(models.Model):

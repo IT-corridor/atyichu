@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import catalog.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import utils.utils
+import vutils.utils
 
 
 class Migration(migrations.Migration):
@@ -82,8 +82,8 @@ class Migration(migrations.Migration):
             name='Gallery',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('photo', models.ImageField(upload_to=utils.utils.UploadPath('gallery', 'commodity'), validators=[catalog.validators.SizeValidator(2)], verbose_name='Photo')),
-                ('thumb', models.ImageField(upload_to=utils.utils.UploadPath('gallery/thumbs', 'commodity', suff='thumb'), verbose_name='Thumbnail')),
+                ('photo', models.ImageField(upload_to=vutils.utils.UploadPath('gallery', 'commodity'), validators=[catalog.validators.SizeValidator(2)], verbose_name='Photo')),
+                ('thumb', models.ImageField(upload_to=vutils.utils.UploadPath('gallery/thumbs', 'commodity', suff='thumb'), verbose_name='Thumbnail')),
                 ('commodity', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='catalog.Commodity', verbose_name='Commodity')),
             ],
             options={

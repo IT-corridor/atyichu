@@ -12,7 +12,7 @@ class VisitorConfig(AppConfig):
 
     def ready(self):
         from django.db.models.signals import pre_delete, post_save
-        from utils import receivers
+        from vutils import receivers
 
         Visitor = self.get_model('Visitor')
         pre_delete.connect(receivers.cleanup_files_avatar, sender=Visitor)

@@ -6,7 +6,7 @@ from rest_framework.filters import DjangoFilterBackend, OrderingFilter, SearchFi
 
 from . import serializers, models
 from .filters import CommodityFilter
-from utils import permissions
+from vutils import permissions
 
 
 class ReferenceMixin(object):

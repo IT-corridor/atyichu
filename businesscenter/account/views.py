@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
 from . import serializers, models
-from utils import permissions
+from vutils import permissions
 
 
 class StoreViewSet(viewsets.ModelViewSet):
