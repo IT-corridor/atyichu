@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from __future__ import unicode_literals
 
 import time
@@ -42,7 +43,7 @@ def push_unicast(appkey, app_master_secret, device_token, text):
                 #{
                 #    "expire_time":"%s"%(datetime.datetime.now())
                 #},
-                "description":"测试单播消息-Android"
+                "description": "测试单播消息-Android"
              }
 
 

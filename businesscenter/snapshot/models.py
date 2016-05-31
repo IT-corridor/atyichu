@@ -6,8 +6,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
 from visitor.models import Visitor
-from sutils.utils import UploadPath
-from sutils.validators import SizeValidator
+from utils.utils import UploadPath
+from utils.validators import SizeValidator
 
 
 class MirrorManager(models.Manager):

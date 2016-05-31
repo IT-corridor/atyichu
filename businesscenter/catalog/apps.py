@@ -10,7 +10,7 @@ class CatalogConfig(AppConfig):
 
     def ready(self):
         from django.db.models.signals import pre_delete, post_save, post_migrate
-        from vutils import receivers
+        from utils import receivers
         from .receivers import add_vendor_catalog_perms
         # TODO: maybe it is not necessary to add here permission
         # NOT TESTED

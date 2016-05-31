@@ -2,18 +2,25 @@ from __future__ import unicode_literals
 
 import json
 import logging
+import pickle
+import os
 from datetime import timedelta
+from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.utils import timezone
+from django.core.urlresolvers import reverse
 from rest_framework import viewsets
-from rest_framework.decorators import detail_route, list_route
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import list_route
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
 from .models import Mirror, Photo
 from .serializers import MirrorSerializer, PhotoSerializer
 from .sutils import check_sign
 from utils.permissions import IsVisitor
 from vutils.umeng_push import push_unicast
+from vutils.wzhifuSDK import JsApi_pub
+
 
 log = logging.getLogger(__name__)
 
@@ -42,7 +49,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
         """
         mirrors = self.get_queryset()
         if not mirrors:
-            log.info("User {} has not locked devices ".format(request.user))
+            log.info('User {} has not locked devices '.format(request.user))
         else:
             # release all lock mirror of the user
             mirrors.unlock()
@@ -85,7 +92,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
         mirrors = self.get_queryset()
         if not mirrors:
             # release all lock mirror of the user
-            log.info("User {} has not locked devices ".format(request.user))
+            log.info('User {} has not locked devices '.format(request.user))
         else:
             mirrors.unlock()
 
@@ -99,7 +106,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
             mirror = Mirror.objects.get(id=pk)
 
         except Mirror.DoesNotExist:
-            log.warn("user provide mirror id is not existed")
+            log.warn('user provide mirror id is not existed')
             return Response(data={'error': _('Mirror does not exists')},
                             status=400)
         # mirror is  unlock  or the lock time is expired 1 minutes
@@ -148,13 +155,13 @@ class MirrorViewSet(viewsets.GenericViewSet):
               paramType: query
 
         """
-        timestamp = request.data.get("timestamp", None)
-        checksum = request.data.get("checksum", None)
-        token = request.data.get("token", None)
+        timestamp = request.data.get('timestamp', None)
+        checksum = request.data.get('checksum', None)
+        token = request.data.get('token', None)
 
         if not check_sign(timestamp, checksum):
             return Response(data={'error': _('Checksum error')}, status=400)
-        log.info("sign correct")
+        log.info('sign correct')
 
         if not token:
             return Response(data={'error': _('Token is required')}, status=400)
@@ -210,15 +217,15 @@ class PhotoViewSet(viewsets.ModelViewSet):
         visitor = request.user.visitor
         photo = Photo.objects.create(owner=visitor, mirror=mirror)
 
-        log.info("create photo id: {}".format(photo.id))
+        log.info('create photo id: {}'.format(photo.id))
         # send photo id to the mirror on android
-        content = {"photo_id": photo.id}
-        send_json, receive_info = push_unicast("571459b267e58e826f000239",
-                                               "ydcfc8leufv2efcm4slwmhb2pfffaiop",
+        content = {'photo_id': photo.id}
+        send_json, receive_info = push_unicast('571459b267e58e826f000239',
+                                               'ydcfc8leufv2efcm4slwmhb2pfffaiop',
                                                mirror.token, json.dumps(content))
 
-        log.info("umeng json: {}, {}".format(send_json, receive_info))
-        return Response(data={"photo_id": photo.id}, status=201)
+        log.info('umeng json: {}, {}'.format(send_json, receive_info))
+        return Response(data={'photo_id': photo.id}, status=201)
 
     def list(self, request, *args, **kwargs):
         """
@@ -248,11 +255,11 @@ class PhotoViewSet(viewsets.ModelViewSet):
             #- name: id
             #  paramType: query
         """
-        timestamp = request.data.get("timestamp", None)
-        checksum = request.data.get("checksum", None)
+        timestamp = request.data.get('timestamp', None)
+        checksum = request.data.get('checksum', None)
         if not check_sign(timestamp, checksum):
             return Response(data={'error': _('Checksum error')})
-        log.info("sign correct")
+        log.info('sign correct')
         pid = kwargs.get('pk', None)
         if not pid:
             return Response(data={'error': _})
@@ -269,3 +276,45 @@ class PhotoViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data=serializer.data)
+
+
+def index(request):
+    return render(request, 'index.html')
+
+
+@api_view(['GET', 'POST'])
+def get_signature(request):
+    """ Previously it was mirror and photos views pages. Now it is API. """
+    # TODO: replace file serving with redis
+    # TODO: for what purpose are these signature?
+
+    # HOOK for ANGULARJS APP for wxlib purpose
+    location = request.data.get('location', None)
+    if not location:
+        return Response(status=400)
+
+    jsapi = JsApi_pub()
+    filename = '/tmp/mirrors_weixin_status'
+    data = None
+    if os.path.exists(filename):
+        with open(filename, 'r') as f:
+            data = pickle.load(f)
+    if data and data['time'] + timedelta(seconds=7200) >= timezone.now():
+        ticket = data['ticket']
+    else:
+        client_access_token_info = json.loads(jsapi.get_access_tocken())
+        client_access_token = client_access_token_info['access_token']
+        ticket_info = jsapi.get_jsapi_ticket(client_access_token)
+        ticket = json.loads(ticket_info)['ticket']
+
+        with open(filename, 'w+') as f:
+            ticket_info = {'ticket': ticket, 'time': timezone.now()}
+            f.truncate()
+            pickle.dump(ticket_info, f)
+
+    url = '{}{}'.format(request.get_host(), location)
+    logging.info(url)
+
+    js_info = jsapi.get_signature(url=url, ticket=ticket)
+
+    return Response(data=js_info)

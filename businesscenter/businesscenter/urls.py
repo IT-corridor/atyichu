@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^account/', include('account.urls', namespace='account')),
     url(r'^catalog/', include('catalog.urls', namespace='catalog')),
     url(r'^visitor/', include('visitor.urls', namespace='visitor')),
+    url(r'^snapshot/', include('snapshot.urls', namespace='snapshot')),
 ]
 
 

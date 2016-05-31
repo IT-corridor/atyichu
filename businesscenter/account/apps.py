@@ -11,7 +11,7 @@ class AccountConfig(AppConfig):
     def ready(self):
         from django.db.models.signals import pre_delete, post_save, post_migrate
         from .receivers import add_to_vendor_group, create_vendor_group
-        from vutils import receivers
+        from utils import receivers
 
         Vendor = self.get_model('Vendor')
         Store = self.get_model('Store')
