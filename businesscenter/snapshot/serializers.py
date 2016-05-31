@@ -9,7 +9,7 @@ class MirrorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Mirror
-        fields = ('id', 'name', 'latitude', 'longitude', 'is_locked')
+        fields = ('id', 'title', 'latitude', 'longitude', 'is_locked')
 
 
 class PhotoSerializer(serializers.ModelSerializer):

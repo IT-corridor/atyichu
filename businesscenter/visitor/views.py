@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
-from .serializers import CaptchaSerializer
+from .serializers import WeixinSerializer
 from vutils.wzhifuSDK import JsApi_pub
 
 
@@ -17,7 +17,7 @@ from vutils.wzhifuSDK import JsApi_pub
 def login_view(request):
     # USE openid
     # ALSO with captcha look pretty stupid
-    serializer = CaptchaSerializer(data=request.data)
+    serializer = WeixinSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     visitor = serializer.save()
     user = authenticate(weixin=visitor.weixin)
@@ -56,7 +56,7 @@ def verify_captcha(request, captcha_key, captcha_value):
 
 
 def index(request):
-    """ Formerly index """
+    """ Formerly index. Entry point to weixin oauth2 """
     url = request.GET.get("url")
     jsapi = JsApi_pub()
     redirect_url = reverse('visitor:oauth2')
@@ -89,7 +89,7 @@ def get_oauth2(request):
     if not open_id:
         return Response({'error': _('Fail getting openid')})
 
-    serializer = CaptchaSerializer(data=request.data)
+    serializer = WeixinSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     visitor = serializer.save()
     user = authenticate(weixin=visitor.weixin)

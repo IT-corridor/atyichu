@@ -8,7 +8,6 @@ from rest_framework.test import APITestCase, APIClient
 from visitor.models import Visitor
 
 # TODO: CREATE TEST CASES!
-# TODO: CREATE TEST FOR THE STORE
 
 
 # Create your tests here.
@@ -22,5 +21,5 @@ class VendorTests(APITestCase):
         """ Test login view for all accounts """
         url = reverse('visitor:login')
         response = self.client.post(url, data=self.vendor_data)
-        print (response.data)
         self.assertEqual(response.status_code, 200)
+        self.client.logout()

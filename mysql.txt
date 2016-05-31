@@ -1,0 +1,11 @@
+
+sudo apt-get install mysql-server libmysqlclient-dev
+
+
+CREATE USER 'dummy'@'localhost' IDENTIFIED BY 'dindOng';
+
+CREATE DATABASE atyichu CHARACTER SET UTF8;
+CREATE DATABASE atyichu_test CHARACTER SET UTF8;
+
+GRANT ALL PRIVILEGES ON atyichu.* TO dummy@localhost;
+GRANT ALL PRIVILEGES ON atyichu_test.* TO dummy@localhost;

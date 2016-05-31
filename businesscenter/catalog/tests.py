@@ -72,7 +72,6 @@ COMMODITIES = [
 
 class CatalogTests(APITestCase):
 
-    @classmethod
     def setUpTestData(cls):
         User = get_user_model()
 

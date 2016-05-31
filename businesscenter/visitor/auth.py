@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from .models import Visitor
-from .serializers import CaptchaSerializer
+from .serializers import WeixinSerializer
 
 
 class WeixinBackend(object):
@@ -16,8 +16,8 @@ class WeixinBackend(object):
             user = None
         return user
 
-    def get_user(self, weixin):
+    def get_user(self, pk):
         try:
-            return Visitor.objects.get(weixin=weixin).user
+            return Visitor.objects.get(pk=pk).user
         except User.DoesNotExist:
             return None

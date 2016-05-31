@@ -10,15 +10,25 @@ from utils.utils import UploadPath
 from utils.validators import SizeValidator
 
 
-class MirrorManager(models.Manager):
+class MirrorQuerySet(models.query.QuerySet):
 
     def lock(self):
-        qs = self.get_queryset()
-        return qs.update(is_locked=True, lock_date=timezone.now())
+        return self.update(is_locked=True, lock_date=timezone.now())
 
     def unlock(self):
-        qs = self.get_queryset()
-        return qs.update(is_locked=False)
+        return self.update(is_locked=False)
+
+
+class MirrorManager(models.Manager):
+
+    def get_queryset(self):
+        return MirrorQuerySet(self.model, using=self._db)
+
+    def lock(self):
+        return self.get_queryset().lock()
+
+    def unlock(self):
+        return self.get_queryset().unlock()
 
     def get_by_distance(self, lat, lon):
         # IT IS NOT MY QUERY

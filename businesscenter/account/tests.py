@@ -145,6 +145,7 @@ class StoreTests(APITestCase):
         response = self.client.put(url, json.dumps(data),
                                     content_type='application/json')
         self.client.logout()
+        print (response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_partial_update_vendor_store(self):

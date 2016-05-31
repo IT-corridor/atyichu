@@ -8,8 +8,7 @@ from .models import Visitor
 
 # PART 1 FEATURES #
 
-class CaptchaSerializer(serializers.ModelSerializer):
-    # TODO: Rename it WeixinSerializer
+class WeixinSerializer(serializers.ModelSerializer):
     # EXTEND LATER
     # We assume that we get a validated data from weixin open id
     def create(self, validated_data):

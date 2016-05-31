@@ -31,7 +31,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
 
     def get_queryset(self):
         visitor = self.request.user.visitor
-        return Mirror.objects.filter(owner=visitor, is_lock=True)
+        return Mirror.objects.filter(owner=visitor, is_locked=True)
 
     @list_route(methods=['post'])
     def unlock(self, request, *args, **kwargs):
@@ -119,7 +119,6 @@ class MirrorViewSet(viewsets.GenericViewSet):
         mirror.user = request.user
         mirror.save()
         serializer = MirrorSerializer(mirror)
-        serializer.is_valid(raise_exception=True)
         return Response(data=serializer.data, status=200)
 
     def retrieve(self, request, *args, **kwargs):
