@@ -24,6 +24,8 @@ from vutils.wzhifuSDK import JsApi_pub
 
 log = logging.getLogger(__name__)
 
+# TODO: maybe it is necessary to turn off pagination
+
 
 class MirrorViewSet(viewsets.GenericViewSet):
     serializer_class = MirrorSerializer
@@ -130,11 +132,22 @@ class MirrorViewSet(viewsets.GenericViewSet):
             - form
         # THERE NEED TO PASS A PK PARAM!
         """
+        status = 400
         pk = kwargs.get('pk', None)
-        mirrors = self.get_queryset()
-        serializer = MirrorSerializer(mirrors, data={'id': pk})
-        serializer.is_valid(raise_exception=True)
-        return Response(data=serializer.data)
+        try:
+            mirror = self.get_queryset().get(id=pk)
+            if not mirror.is_online():
+                data = {'error': _('Mirror is offline')}
+            elif mirror.is_overtime():
+                data = {'error': _('Mirror is unavailable')}
+            else:
+                serializer = MirrorSerializer(mirror)
+                data = serializer.data
+                status = 200
+        except Mirror.DoesNotExist:
+            data = {'error': _('Mirror not available')}
+
+        return Response(data=data, status=status)
 
     @list_route(methods=['post'])
     def status(self, request, *args, **kwargs):

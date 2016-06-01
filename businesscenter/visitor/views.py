@@ -72,10 +72,13 @@ def get_oauth2(request):
     # This one is working
     # Formerly openid
     url = request.GET.get("url")
+
+    redirect = reverse('snapshot:index')
+
     if url == '2':
-        response = HttpResponseRedirect(reverse('visitor:dummy'))  # photos
+        response = HttpResponseRedirect(redirect+'#!/photos')
     else:
-        response = HttpResponseRedirect(reverse('visitor:dummy')) # mirrors
+        response = HttpResponseRedirect(reverse(redirect+'#!/mirrors'))
 
     if request.user.is_authenticated():
         return response
@@ -94,12 +97,12 @@ def get_oauth2(request):
     visitor = serializer.save()
     user = authenticate(weixin=visitor.weixin)
     login(request, user)
-
+    # Cookie can set here
+    response.set_cookie('weixin', visitor.weixin)
     return response
 
 
 @api_view(['GET', 'POST'])
 @permission_classes((AllowAny,))
 def dummy_api(request):
-    data = {'visitor': request.user.visitor}
-    return Response(data, status=200)
+    return Response(data={'message': 'Hello'}, status=200)

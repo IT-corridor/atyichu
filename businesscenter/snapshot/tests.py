@@ -96,9 +96,10 @@ class MirrorTests(APITestCase):
 
     def test_mirror_view_detail(self):
         self.force_login()
+        Mirror.objects.lock()
         response = self.client.get(reverse('snapshot:mirror-detail',
                                            kwargs={'pk': 2}))
-
+        print (response.data)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
 
@@ -110,6 +111,7 @@ class MirrorTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.client.logout()
 
+    @unittest.expectedFailure
     def test_mirror_view_status(self):
         # EXPECTED ERROR
         self.force_login()
