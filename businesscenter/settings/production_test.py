@@ -1,7 +1,10 @@
 import os
+import json
 from .base import *
 
-SECRET_KEY = os.environ['SECRET_KEY']
+with open('config.json', 'r') as f:
+    data = json.load(f)
+SECRET_KEY = data['SECRET_KEY']
 
 # RESOURCE_DIR = os.path.join(os.path.dirname(BASE_DIR), 'a-static')
 
@@ -9,7 +12,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['.atyichu.com']
 USE_X_FORWARDED_HOST = True
-ADMINS = ((os.environ['ADMIN'], os.environ['ADMIN_EMAIL']),)   # hide
+ADMINS = ((data['ADMIN'], data['ADMIN_EMAIL']),)   # hide
 
 
 # Database
@@ -19,9 +22,9 @@ ADMINS = ((os.environ['ADMIN'], os.environ['ADMIN_EMAIL']),)   # hide
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ['DB_NAME'],
-        'USER': os.environ['DB_USER'],
-        'PASSWORD': os.environ['DB_PASSWORD'],
+        'NAME': data['DB_NAME'],
+        'USER': data['DB_USER'],
+        'PASSWORD': data['DB_PASSWORD'],
         'HOST': 'rm-2ze8182fmzl45fh0r.mysql.rds.aliyuncs.com',
         'PORT': 3306,
         'TEST': {

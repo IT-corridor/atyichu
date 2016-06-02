@@ -1,5 +1,5 @@
 /deploy/deploy.py
-/deploy/config.json
+/businesscenter/settings/config.json
 /businesscenter/media
 /ServerInfo.docx
 /.~lock.11*
