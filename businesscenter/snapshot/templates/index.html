@@ -44,7 +44,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.3.3/ui-bootstrap-tpls.min.js"></script>
         {% get_current_language as LANGUAGE %}
         {% if LANGUAGE == 'zh-hans'  or LANGUAGE == 'zh-hant' %}
-            {% include 'include/scripts.html' with LANG='zh' %}
+            {% include 'include/scripts.html' with LANG='en' %}
         {% else %}
             {% include 'include/scripts.html' with LANG='en' %}
         {% endif %}
