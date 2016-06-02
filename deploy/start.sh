@@ -1,12 +1,12 @@
 #!/bin/bash
 
 NAME=atyichu
-BASEDIR =/home/django
+BASEDIR=/home/django
 ENVDIR="${BASEDIR}/venv"
 DJANGODIR="${BASEDIR}/${NAME}/businesscenter"
 SOCKFILE="/tmp/${NAME}.sock"
 NUM_WORKERS=3
-DJANGO_WSGI_MODULE="${NAME}.wsgi"
+DJANGO_WSGI_MODULE="businesscenter.wsgi"
 GUNICORN=gunicorn
 
 cd $DJANGODIR
