@@ -2,7 +2,8 @@ import os
 import json
 from .base import *
 
-with open('config.json', 'r') as f:
+config_path = os.path.join(BASE_DIR, 'config.json')
+with open(config_path, 'r') as f:
     data = json.load(f)
 SECRET_KEY = data['SECRET_KEY']
 
