@@ -54,9 +54,11 @@ class WxPayConf_pub(object):
 
     #=======【基本信息设置】=====================================
     #微信公众号身份的唯一标识。审核通过后，在微信发送的邮件中查看
-    APPID = "wx923ca88a0f604e90"
+    #APPID = "wx923ca88a0f604e90"
+    APPID = 'wx423081074a2632f9'
     #JSAPI接口中获取openid，审核后在公众平台开启开发模式后可查看
-    APPSECRET = "392aad4be93c5bf2a535d5b932186b7b"
+    #APPSECRET = "392aad4be93c5bf2a535d5b932186b7b"
+    APPSECRET = '6e427d96460dfca0d1a71f02cba10432'
     #受理商ID，身份标识
     MCHID = ""
     #商户支付密钥Key。审核通过后，在微信发送的邮件中查看
