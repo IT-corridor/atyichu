@@ -77,7 +77,7 @@ def get_oauth2(request):
     # Formerly openid
     url = request.GET.get("url")
 
-    redirect = reverse('index')
+    redirect = reverse('visitor:index')
 
     if url and  url == '2':
         response = HttpResponseRedirect(redirect+'#!/photos')
