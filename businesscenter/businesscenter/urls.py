@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 from django.conf.urls import url, include
 from django.contrib import admin
@@ -25,7 +25,6 @@ from snapshot import views
 urlpatterns = [
     # temporary
     url(r'^$', views.index, name='index'),
-    url(r'^openid$', views.openid, name='oauth2'),
     url(r'^admin/', admin.site.urls),
     url(r'^business_center/', site.urls),
     url(r'^api-auth/',
