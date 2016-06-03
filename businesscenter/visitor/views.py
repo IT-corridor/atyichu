@@ -76,9 +76,9 @@ def get_oauth2(request):
     redirect = reverse('snapshot:index')
 
     if url == '2':
-        response = HttpResponseRedirect(redirect+'#!/photos')
+        response = HttpResponseRedirect(redirect+'app/#!/photos')
     else:
-        response = HttpResponseRedirect(reverse(redirect+'#!/mirrors'))
+        response = HttpResponseRedirect(reverse(redirect+'app/#!/mirrors'))
 
     if request.user.is_authenticated():
         return response
