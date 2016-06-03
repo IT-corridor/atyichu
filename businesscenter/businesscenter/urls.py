@@ -23,7 +23,7 @@ from vendor_admin.admin import site
 
 urlpatterns = [
     # temporary
-    url(r'^$', include('visitor.urls', namespace='visitor')),
+    url(r'^/', include('visitor.urls', namespace='visitor')),
     url(r'^admin/', admin.site.urls),
     url(r'^business_center/', site.urls),
     url(r'^api-auth/',
