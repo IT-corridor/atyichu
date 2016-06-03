@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import login, logout, authenticate
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.core.mail import send_mail, mail_admins
+
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -71,6 +73,7 @@ def index(request):
 
 
 def openid(request):
+    mail_admins('From Atyichu', 'I touched the openid')
     # Get weixin openid then login
     # Else print you are not weixin user
     # This one is working
@@ -79,15 +82,18 @@ def openid(request):
     redirect = reverse('index')
 
     if url and url == "2":
-
+        mail_admins('From Atyichu', 'I have url = 2')
         response = HttpResponseRedirect(redirect+'#!/photo/')
     else:
+        mail_admins('From Atyichu', 'I do not have url = 2')
         response = HttpResponseRedirect(redirect+'#!/mirror/')
 
     if request.user.is_authenticated():
+
         return response
 
     code = request.GET.get("code", None)
+    mail_admins('From Atyichu', 'Code is {}'.format(code))
     if not code:
         return Response({'error': _('You don`t have weixin code.')})
 
@@ -95,15 +101,19 @@ def openid(request):
     jsapi.code = code
     open_id, user_info = jsapi.getOpenid()
     if not open_id:
+        mail_admins('From Atyichu', 'Fail getting openid')
         return Response({'error': _('Fail getting openid')})
 
+    mail_admins('From Atyichu', 'Prepare to serialize')
     serializer = WeixinSerializer(data=open_id)
     serializer.is_valid(raise_exception=True)
+    mail_admins('From Atyichu', 'Data is valid')
     visitor = serializer.save()
     user = authenticate(weixin=open_id)
     login(request, user)
     # Cookie can set here
     response.set_cookie('weixin', visitor.weixin)
+    mail_admins('From Atyichu', 'I have finished')
     return response
 
 
