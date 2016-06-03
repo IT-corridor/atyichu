@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from urllib import quote_plus
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import login, logout, authenticate
 from django.core.urlresolvers import reverse
@@ -64,7 +65,7 @@ def index(request):
     redirect_url = '{}://{}{}'.format(request.scheme,
                                       request.get_host(),
                                       reverse('visitor:oauth2'))
-    url = jsapi.createOauthUrlForCode(r_url)
+    url = jsapi.createOauthUrlForCode(quote_plus(r_url))
     response = HttpResponseRedirect(url)
     return response
 
