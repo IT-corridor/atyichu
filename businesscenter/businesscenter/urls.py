@@ -25,6 +25,7 @@ from snapshot import views
 urlpatterns = [
     # temporary
     url(r'^$', views.index, name='index'),
+    url(r'^openid$', views.get_oauth2, name='oauth2'),
     url(r'^admin/', admin.site.urls),
     url(r'^business_center/', site.urls),
     url(r'^api-auth/',
