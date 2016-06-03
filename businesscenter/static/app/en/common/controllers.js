@@ -1,13 +1,15 @@
-angular.module('common.controllers', [])
-.controller('CtrlDummy', ['$scope', '$rootScope', '$http',
-'$location', 'Auth',
-    function($scope, $rootScope, $http, $location, Auth) {
+angular.module('common.controllers', ['auth.services'])
+.controller('CtrlDummy', ['$scope', '$rootScope','$http',
+'$location', '$route','Auth',
+    function($scope, $rootScope, $http, $location, $route, Auth) {
         $rootScope.title = 'Dummy page';
 
-
         $rootScope.alerts.push({ type: 'info', msg: 'Welcome, stranger!' });
-        if (Auth.is_authenticated()){
-            $location.path('/');
+
+        $scope.logout = function(){
+            Auth.remove();
+            $route.reload();
+
         }
     }
 ]);
