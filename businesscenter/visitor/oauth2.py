@@ -21,8 +21,8 @@ class WeixinBackend(object):
 
     user_url = 'https://api.wechat.com/sns/userinfo'
 
-    appid = settings['WEIXIN_APP_ID']
-    secret = settings['WEIXIN_SECRET']
+    appid = settings.WEIXIN_APP_ID
+    secret = settings.WEIXIN_SECRET
 
     def get_authorize_uri(self, redirect_uri):
         params = self.authorize['extra']
