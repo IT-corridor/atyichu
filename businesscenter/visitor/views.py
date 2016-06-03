@@ -70,7 +70,7 @@ def index(request):
     return response
 
 
-def get_oauth2(request):
+def openid(request):
     # Get weixin openid then login
     # Else print you are not weixin user
     # This one is working
