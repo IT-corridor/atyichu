@@ -14,10 +14,8 @@ var navbar = angular.module('navbar', ['auth.services'])
 
             $scope.auth = Auth;
 
-            $window.location.replace("/visitor/");
-
             if (!Auth.is_authenticated()){
-
+                $window.location.replace("/visitor/");
             }
             $scope.logout = function(){
                 $scope.r = Logout.query(function(r){
