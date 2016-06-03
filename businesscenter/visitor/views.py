@@ -59,12 +59,10 @@ def verify_captcha(request, captcha_key, captcha_value):
 
 def index(request):
     """ Formerly index. Entry point to weixin oauth2 """
-    url = request.GET.get("url")
     jsapi = JsApi_pub()
-    redirect_url = '{}://{}{}?url={}'.format(request.scheme,
+    redirect_url = '{}://{}{}'.format(request.scheme,
                                       request.get_host(),
-                                      reverse('visitor:oauth2'),
-                                      url)
+                                      reverse('visitor:oauth2'))
     url = jsapi.createOauthUrlForCode(redirect_url)
     response = HttpResponseRedirect(url)
     return response
@@ -75,14 +73,10 @@ def get_oauth2(request):
     # Else print you are not weixin user
     # This one is working
     # Formerly openid
-    url = request.GET.get("url")
 
     redirect = reverse('visitor:index')
 
-    if url and url == '2':
-        response = HttpResponseRedirect(redirect+'#!/photos')
-    else:
-        response = HttpResponseRedirect(redirect+'#!/mirrors')
+    response = HttpResponseRedirect(redirect+'#!/mirrors')
 
     if request.user.is_authenticated():
         return response
@@ -90,6 +84,7 @@ def get_oauth2(request):
     code = request.GET.get("code", None)
     if not code:
         return Response({'error': _('You don`t have weixin code.')})
+
     jsapi = JsApi_pub()
     jsapi.code = code
     open_id, user_info = jsapi.getOpenid()
