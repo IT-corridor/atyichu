@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
 from .serializers import WeixinSerializer
+from .oauth2 import WeixinBackend
+
 from vutils.wzhifuSDK import JsApi_pub
 
 
@@ -76,9 +78,9 @@ def get_oauth2(request):
     redirect = reverse('snapshot:index')
 
     if url == '2':
-        response = HttpResponseRedirect(redirect+'app/#!/photos')
+        response = HttpResponseRedirect(redirect+'#!/photos')
     else:
-        response = HttpResponseRedirect(reverse(redirect+'app/#!/mirrors'))
+        response = HttpResponseRedirect(reverse(redirect+'#!/mirrors'))
 
     if request.user.is_authenticated():
         return response
@@ -92,10 +94,10 @@ def get_oauth2(request):
     if not open_id:
         return Response({'error': _('Fail getting openid')})
 
-    serializer = WeixinSerializer(data=request.data)
+    serializer = WeixinSerializer(data=open_id)
     serializer.is_valid(raise_exception=True)
     visitor = serializer.save()
-    user = authenticate(weixin=visitor.weixin)
+    user = authenticate(weixin=open_id)
     login(request, user)
     # Cookie can set here
     response.set_cookie('weixin', visitor.weixin)
@@ -106,3 +108,49 @@ def get_oauth2(request):
 @permission_classes((AllowAny,))
 def dummy_api(request):
     return Response(data={'message': 'Hello'}, status=200)
+
+
+def index_(request):
+    url = request.GET.get("url")
+    weixin_oauth2 = WeixinBackend()
+    redirect_url = reverse('visitor:oauth2')
+    redirect_url += '?url={}'.format(url)
+    url = weixin_oauth2.get_authorize_uri(redirect_url)
+    return HttpResponseRedirect(url)
+
+
+def get_oauth2_(request):
+    # Get weixin openid then login
+    # Else print you are not weixin user
+    # This one is working
+    # Formerly openid
+    url = request.GET.get("url")
+
+    redirect = reverse('snapshot:index')
+
+    if url == '2':
+        response = HttpResponseRedirect(redirect + '#!/photos')
+    else:
+        response = HttpResponseRedirect(reverse(redirect + '#!/mirrors'))
+
+    if request.user.is_authenticated():
+        return response
+
+    code = request.GET.get("code", None)
+    if not code:
+        return Response({'error': _('You don`t have weixin code.')})
+    weixin_oauth = WeixinBackend()
+    try:
+        access_token, openid = weixin_oauth.get_access_token(code)
+    except TypeError:
+        return Response({'error': _('You got error trying to get openid')})
+
+    user_info = weixin_oauth.get_user_info(access_token, openid)
+    serializer = WeixinSerializer(data=openid)
+    serializer.is_valid(raise_exception=True)
+    visitor = serializer.save()
+    user = authenticate(weixin=visitor.weixin)
+    login(request, user)
+    # Cookie can set here
+    response.set_cookie('weixin', visitor.weixin)
+    return response

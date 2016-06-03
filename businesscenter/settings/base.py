@@ -135,3 +135,6 @@ MEDIA_URL = '/media/'
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',
                            'visitor.auth.WeixinBackend']
+
+WEIXIN_APP_ID = 'wx423081074a2632f9'
+WEIXIN_SECRET = '6e427d96460dfca0d1a71f02cba10432'
