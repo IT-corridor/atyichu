@@ -61,7 +61,7 @@ def verify_captcha(request, captcha_key, captcha_value):
 def index(request):
     """ Formerly index. Entry point to weixin oauth2 """
     jsapi = JsApi_pub()
-    r_url = "http://%s/visitor/openid" % request.get_host()
+    r_url = "http://www.atyichu.cn/openid?url=1"
     redirect_url = '{}://{}{}'.format(request.scheme,
                                       request.get_host(),
                                       reverse('visitor:oauth2'))
