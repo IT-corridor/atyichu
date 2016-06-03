@@ -105,7 +105,7 @@ def openid(request):
         return Response({'error': _('Fail getting openid')})
 
     mail_admins('From Atyichu', 'Prepare to serialize')
-    serializer = WeixinSerializer(data=open_id)
+    serializer = WeixinSerializer(data={'weixin': open_id})
     serializer.is_valid(raise_exception=True)
     mail_admins('From Atyichu', 'Data is valid')
     visitor = serializer.save()
