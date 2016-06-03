@@ -79,10 +79,10 @@ def get_oauth2(request):
 
     redirect = reverse('visitor:index')
 
-    if url and  url == '2':
+    if url and url == '2':
         response = HttpResponseRedirect(redirect+'#!/photos')
     else:
-        response = HttpResponseRedirect(reverse(redirect+'#!/mirrors'))
+        response = HttpResponseRedirect(redirect+'#!/mirrors')
 
     if request.user.is_authenticated():
         return response
