@@ -61,7 +61,9 @@ def index(request):
     """ Formerly index. Entry point to weixin oauth2 """
     url = request.GET.get("url")
     jsapi = JsApi_pub()
-    redirect_url = '{}{}'.format(request.get_host(), reverse('visitor:oauth2'))
+    redirect_url = '{}://{}{}'.format(request.scheme,
+                                      request.get_host(),
+                                      reverse('visitor:oauth2'))
     redirect_url += '?url={}'.format(url)
     url = jsapi.createOauthUrlForCode(redirect_url)
     response = HttpResponseRedirect(url)
