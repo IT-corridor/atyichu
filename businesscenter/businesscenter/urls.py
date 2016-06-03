@@ -20,8 +20,11 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from vendor_admin.admin import site
+from snapshot import views
 
 urlpatterns = [
+    # temporary
+    url(r'^$', views.index, name='index'),
     url(r'^admin/', admin.site.urls),
     url(r'^business_center/', site.urls),
     url(r'^api-auth/',

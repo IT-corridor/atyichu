@@ -11,7 +11,6 @@ snapshot_router.register(r'mirror', views.MirrorViewSet, 'mirror')
 snapshot_router.register(r'photo', views.PhotoViewSet, 'photo')
 
 urlpatterns = [
-    url(r'^app/$', views.index, name='index'),
     url(r'^signature/$', views.get_signature, name='signature'),
 ]
 
