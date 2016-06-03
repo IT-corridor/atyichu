@@ -24,7 +24,7 @@ from snapshot import views
 
 urlpatterns = [
     # temporary
-    url(r'^$', views.index, name='index'),
+    url(r'^$', views.index_, name='index'),
     url(r'^admin/', admin.site.urls),
     url(r'^business_center/', site.urls),
     url(r'^api-auth/',

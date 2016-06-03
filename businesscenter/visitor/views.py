@@ -74,7 +74,6 @@ def index(request):
 
 
 def openid(request):
-    mail_admins('From Atyichu', 'I touched the openid')
     # Get weixin openid then login
     # Else print you are not weixin user
     # This one is working
@@ -105,14 +104,12 @@ def openid(request):
     except Visitor.DoesNotExist:
         serializer = WeixinSerializer(data={'weixin': open_id})
         serializer.is_valid(raise_exception=True)
-        mail_admins('From Atyichu', 'Data is valid')
         visitor = serializer.save()
 
     user = authenticate(weixin=open_id)
     login(request, user)
     # Cookie can set here
     response.set_cookie('weixin', visitor.weixin)
-    mail_admins('From Atyichu', 'I have finished')
     return response
 
 
@@ -125,20 +122,17 @@ def dummy_api(request):
 def index_(request):
     url = request.GET.get("url")
     weixin_oauth2 = WeixinBackend()
-    redirect_url = reverse('visitor:oauth2')
+    redirect_url = "http://www.atyichu.com/visitor/openid"
     redirect_url += '?url={}'.format(url)
     url = weixin_oauth2.get_authorize_uri(redirect_url)
     return HttpResponseRedirect(url)
 
 
-def get_oauth2_(request):
-    # Get weixin openid then login
-    # Else print you are not weixin user
-    # This one is working
-    # Formerly openid
+def openid_(request):
+    mail_admins('From atyichu', 'i touched openid')
     url = request.GET.get("url")
 
-    redirect = reverse('snapshot:index')
+    redirect = reverse('index')
 
     if url == '2':
         response = HttpResponseRedirect(redirect + '#!/photos')
@@ -149,20 +143,28 @@ def get_oauth2_(request):
         return response
 
     code = request.GET.get("code", None)
+
     if not code:
         return Response({'error': _('You don`t have weixin code.')})
+
     weixin_oauth = WeixinBackend()
     try:
+        mail_admins('From atyichu', 'try to get access_token and openid')
         access_token, openid = weixin_oauth.get_access_token(code)
     except TypeError:
         return Response({'error': _('You got error trying to get openid')})
 
     user_info = weixin_oauth.get_user_info(access_token, openid)
-    serializer = WeixinSerializer(data=openid)
-    serializer.is_valid(raise_exception=True)
-    visitor = serializer.save()
+    mail_admins('From atyichu', user_info)
+    try:
+        visitor = Visitor.objects.get(weixin=openid)
+    except Visitor.DoesNotExist:
+        serializer = WeixinSerializer(data={'weixin': openid})
+        serializer.is_valid(raise_exception=True)
+        visitor = serializer.save()
     user = authenticate(weixin=visitor.weixin)
     login(request, user)
     # Cookie can set here
     response.set_cookie('weixin', visitor.weixin)
+    mail_admins('From atyichu', 'Finishing')
     return response

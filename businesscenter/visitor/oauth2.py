@@ -15,11 +15,11 @@ class WeixinBackend(object):
                            }
                  }
 
-    access = {'url': 'https://api.wechat.com/sns/oauth2/access_token',
+    access = {'url': 'https://api.weixin.qq.com/sns/oauth2/access_token',
               'extra': {'grant_type': 'authorization_code'}
               }
 
-    user_url = 'https://api.wechat.com/sns/userinfo'
+    user_url = 'https://api.weixin.qq.com/sns/userinfo'
 
     appid = settings.WEIXIN_APP_ID
     secret = settings.WEIXIN_SECRET
