@@ -61,10 +61,10 @@ def index(request):
     """ Formerly index. Entry point to weixin oauth2 """
     url = request.GET.get("url")
     jsapi = JsApi_pub()
-    redirect_url = '{}://{}{}'.format(request.scheme,
+    redirect_url = '{}://{}{}?url={}'.format(request.scheme,
                                       request.get_host(),
-                                      reverse('visitor:oauth2'))
-    redirect_url += '?url={}'.format(url)
+                                      reverse('visitor:oauth2'),
+                                      url)
     url = jsapi.createOauthUrlForCode(redirect_url)
     response = HttpResponseRedirect(url)
     return response
@@ -77,7 +77,7 @@ def get_oauth2(request):
     # Formerly openid
     url = request.GET.get("url")
 
-    redirect = reverse('snapshot:index')
+    redirect = reverse('index')
 
     if url and  url == '2':
         response = HttpResponseRedirect(redirect+'#!/photos')
