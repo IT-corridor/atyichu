@@ -12,16 +12,13 @@ class WeixinSerializer(serializers.ModelSerializer):
     # EXTEND LATER
     # We assume that we get a validated data from weixin open id
     def create(self, validated_data):
-        try:
-            visitor = Visitor.objects.get(weixin=validated_data['weixin'])
-        except Visitor.DoesNotExist:
-            user_model = get_user_model()
-            user = user_model(username=validated_data['weixin'])
-            password = user_model.objects.make_random_password()
-            user.set_password(password)
-            user.save()
-            visitor = Visitor.objects.create(weixin=validated_data['weixin'],
-                                             user=user)
+        user_model = get_user_model()
+        user = user_model(username=validated_data['weixin'])
+        password = user_model.objects.make_random_password()
+        user.set_password(password)
+        user.save()
+        visitor = Visitor.objects.create(weixin=validated_data['weixin'],
+                                         user=user)
         return visitor
 
     class Meta:

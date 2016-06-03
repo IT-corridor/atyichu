@@ -13,6 +13,7 @@ from rest_framework.decorators import api_view, permission_classes
 
 from .serializers import WeixinSerializer
 from .oauth2 import WeixinBackend
+from .models import Visitor
 
 from vutils.wzhifuSDK import JsApi_pub
 
@@ -82,10 +83,8 @@ def openid(request):
     redirect = reverse('index')
 
     if url and url == "2":
-        mail_admins('From Atyichu', 'I have url = 2')
         response = HttpResponseRedirect(redirect+'#!/photo/')
     else:
-        mail_admins('From Atyichu', 'I do not have url = 2')
         response = HttpResponseRedirect(redirect+'#!/mirror/')
 
     if request.user.is_authenticated():
@@ -93,7 +92,6 @@ def openid(request):
         return response
 
     code = request.GET.get("code", None)
-    mail_admins('From Atyichu', 'Code is {}'.format(code))
     if not code:
         return Response({'error': _('You don`t have weixin code.')})
 
@@ -101,14 +99,15 @@ def openid(request):
     jsapi.code = code
     open_id, user_info = jsapi.getOpenid()
     if not open_id:
-        mail_admins('From Atyichu', 'Fail getting openid')
         return Response({'error': _('Fail getting openid')})
+    try:
+        visitor = Visitor.objects.get(weixin=open_id)
+    except Visitor.DoesNotExist:
+        serializer = WeixinSerializer(data={'weixin': open_id})
+        serializer.is_valid(raise_exception=True)
+        mail_admins('From Atyichu', 'Data is valid')
+        visitor = serializer.save()
 
-    mail_admins('From Atyichu', 'Prepare to serialize')
-    serializer = WeixinSerializer(data={'weixin': open_id})
-    serializer.is_valid(raise_exception=True)
-    mail_admins('From Atyichu', 'Data is valid')
-    visitor = serializer.save()
     user = authenticate(weixin=open_id)
     login(request, user)
     # Cookie can set here
