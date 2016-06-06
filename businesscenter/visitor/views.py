@@ -98,7 +98,7 @@ def openid(request):
 
     if request.user.is_authenticated():
 
-        return response
+        logout(request)
 
     code = request.GET.get("code", None)
     if not code:
