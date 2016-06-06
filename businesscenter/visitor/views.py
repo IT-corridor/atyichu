@@ -109,7 +109,7 @@ def openid(request):
     user = authenticate(weixin=open_id)
     login(request, user)
     # Cookie can set here
-    response.set_cookie('weixin', visitor.weixin)
+    response.set_cookie('weixin', visitor.weixin, max_age=300)
     return response
 
 
@@ -165,6 +165,6 @@ def openid_(request):
     user = authenticate(weixin=visitor.weixin)
     login(request, user)
     # Cookie can set here
-    response.set_cookie('weixin', visitor.weixin)
+    response.set_cookie('weixin', visitor.weixin, max_age=300)
     mail_admins('From atyichu', 'Finishing')
     return response

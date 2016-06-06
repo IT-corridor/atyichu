@@ -87,6 +87,9 @@ class Mirror(models.Model):
             return True
         return False
 
+    def __unicode__(self):
+        return self.token
+
     class Meta:
         verbose_name = _('Mirror')
         verbose_name_plural = _('Mirrors')
