@@ -295,7 +295,7 @@ def index(request):
     return render(request, 'index.html')
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 @permission_classes(())
 def get_signature(request):
     """ Previously it was mirror and photos views pages. Now it is API. """
@@ -304,7 +304,7 @@ def get_signature(request):
     mail_admins('From atyichu', 'Touched the signature view')
 
     # HOOK for ANGULARJS APP for wxlib purpose
-    location = request.data.get('location', None)
+    location = request.query_params.get('location', None)
     mail_admins('From atyichu', 'Location is {}'.format(location))
 
     if not location:
