@@ -24,7 +24,7 @@ auth.factory('IsAuthenticated', ['$resource',
     }
 ]);
 auth.factory('Auth', ['$cookies', 'IsAuthenticated',
-function($cookies, $q, $rootScope, IsAuthenticated){
+function($cookies, IsAuthenticated){
     var auth = {};
     auth.get = function(key){
         return $cookies.get(key) ? $cookies.get(key) : null;

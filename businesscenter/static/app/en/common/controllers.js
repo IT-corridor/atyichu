@@ -1,6 +1,6 @@
 angular.module('common.controllers', ['auth.services'])
 .controller('CtrlDummy', ['$scope', '$rootScope','$http',
-'$location', '$route', '$window', 'Auth','Signature', 'Logout'
+'$location', '$route', '$window', 'Auth','Signature', 'Logout',
     function($scope, $rootScope, $http, $location, $route, $window, Auth, Signature, Logout) {
         $rootScope.title = 'Dummy page';
 
