@@ -42,13 +42,14 @@ function($cookies, IsAuthenticated){
     };
     auth.username = auth.get('weixin');
     auth.is_authenticated = function(){
-        var auth = IsAuthenticated.get(
-            function(success){return true;}
-            function(error){return false;}
+        var response;
+        IsAuthenticated.get(
+            function(success){ response = true;}
+            function(error){ response = false;}
         );
         //return this.username !== null;
     };
-    return auth;
+    return response;
 }]);
 
 
