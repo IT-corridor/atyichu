@@ -23,12 +23,19 @@ angular.module('common.controllers', ['auth.services'])
                         alert("get location!");
                         $scope.lat = res.latitude;
                         $scope.lon = res.longitude;
-                        $scope.$apply();
+                        console.log(res);
+
                     },
                     cancel: function (res) {
                         alert('Cancel');
                     }
                 });
+                $scope.$apply();
+            });
+            wx.error(function(res){
+
+                $scope.error = res;
+                $scope.apply();
             });
         });
 

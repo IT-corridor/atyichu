@@ -4,7 +4,7 @@ from urllib import quote_plus
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import login, logout, authenticate
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.core.mail import send_mail, mail_admins
 
 from rest_framework.permissions import AllowAny
@@ -33,6 +33,16 @@ def login_view(request):
     except Exception as e:
         user_data = {'error': e.message}
     return Response(user_data, status=200)
+
+
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def is_authenticated(request):
+    if request.user.is_authenticated() and hasattr(request.user, 'visitor'):
+
+        return Response({'is_authenticated': True}, status=200)
+    else:
+        return Response({'is_authenticated': False}, status=400)
 
 
 @api_view(['GET'])
@@ -92,13 +102,13 @@ def openid(request):
 
     code = request.GET.get("code", None)
     if not code:
-        return Response({'error': _('You don`t have weixin code.')})
+        return JsonResponse({'error': _('You don`t have weixin code.')})
 
     jsapi = JsApi_pub()
     jsapi.code = code
     open_id, user_info = jsapi.getOpenid()
     if not open_id:
-        return Response({'error': _('Fail getting openid')})
+        return JsonResponse({'error': _('Fail getting openid')})
     try:
         visitor = Visitor.objects.get(weixin=open_id)
     except Visitor.DoesNotExist:
@@ -108,7 +118,7 @@ def openid(request):
 
     user = authenticate(weixin=open_id)
     login(request, user)
-    # Cookie can set here
+    # Cookie can set here, delete later
     response.set_cookie('weixin', visitor.weixin, max_age=300)
     return response
 

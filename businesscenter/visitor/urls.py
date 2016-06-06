@@ -10,6 +10,7 @@ urlpatterns = (
     url(r'^logout/$', views.logout_view, name='logout'),
     url(r'^openid$', views.openid, name='openid'),
     url(r'^dummy/$', views.dummy_api, name='dummy'),
+    url(r'^is_authenticated/$', views.is_authenticated, name='is_auth'),
 )
 
 

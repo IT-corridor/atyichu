@@ -16,7 +16,15 @@ auth.factory('Logout', ['$resource',
     }
 ]);
 
-auth.factory('Auth', ['$cookies', function($cookies){
+auth.factory('IsAuthenticated', ['$resource',
+    function($resource){
+        return $resource('visitor/is_authenticated/', {}, {
+            get: {method:'GET', responseType:'json'},
+        });
+    }
+]);
+auth.factory('Auth', ['$cookies', 'IsAuthenticated',
+function($cookies, IsAuthenticated){
     var auth = {};
     auth.get = function(key){
         return $cookies.get(key) ? $cookies.get(key) : null;
@@ -34,7 +42,9 @@ auth.factory('Auth', ['$cookies', function($cookies){
     };
     auth.username = auth.get('weixin');
     auth.is_authenticated = function(){
-        return this.username !== null;
+        var auth = IsAuthenticated.get();
+
+        return auth.is_authenticated === true;
     };
     return auth;
 }]);
