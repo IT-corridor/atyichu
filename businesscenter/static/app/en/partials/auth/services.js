@@ -24,7 +24,7 @@ auth.factory('IsAuthenticated', ['$resource',
     }
 ]);
 auth.factory('Auth', ['$cookies', 'IsAuthenticated',
-function($cookies, IsAuthenticated){
+function($cookies, $q, $rootScope, IsAuthenticated){
     var auth = {};
     auth.get = function(key){
         return $cookies.get(key) ? $cookies.get(key) : null;
@@ -42,14 +42,11 @@ function($cookies, IsAuthenticated){
     };
     auth.username = auth.get('weixin');
     auth.is_authenticated = function(){
-        var response;
-        IsAuthenticated.get(
-            function(success){ response = true;}
-            function(error){ response = false;}
-        );
+
+        return IsAuthenticated.get().$promise;
         //return this.username !== null;
     };
-    return response;
+    return auth;
 }]);
 
 

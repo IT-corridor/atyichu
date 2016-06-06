@@ -1,7 +1,7 @@
 angular.module('common.controllers', ['auth.services'])
 .controller('CtrlDummy', ['$scope', '$rootScope','$http',
-'$location', '$route', '$window', 'Auth','Signature',
-    function($scope, $rootScope, $http, $location, $route, $window, Auth, Signature) {
+'$location', '$route', '$window', 'Auth','Signature', 'Logout'
+    function($scope, $rootScope, $http, $location, $route, $window, Auth, Signature, Logout) {
         $rootScope.title = 'Dummy page';
 
         $rootScope.alerts.push({ type: 'info', msg: 'Welcome, stranger!' });
@@ -40,9 +40,11 @@ angular.module('common.controllers', ['auth.services'])
         });*/
 
         $scope.logout = function(){
-            Auth.remove();
-            $route.reload();
-
-        }
+            $scope.r = Logout.query(function(r){
+                $rootScope.alerts.push({ type: 'info', msg: 'Good by.'});
+                $route.reload();
+                //$scope.auth.remove();
+            });
+        };
     }
 ]);

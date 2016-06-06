@@ -14,13 +14,19 @@ var navbar = angular.module('navbar', ['auth.services'])
 
             $scope.auth = Auth;
 
-            if (!Auth.is_authenticated()){
-                $window.location.replace("/visitor/");
-            }
+            var auth_promise = Auth.is_authenticated();
+
+            auth_promise.then(function(result){
+                if (!result.is_authenticated){
+                    $window.location.replace("/visitor/");
+                }
+            });
+
+
             $scope.logout = function(){
                 $scope.r = Logout.query(function(r){
                     $rootScope.alerts.push({ type: 'info', msg: 'Good by.'});
-                    $scope.auth.remove();
+                    //$scope.auth.remove();
                 });
             }
 

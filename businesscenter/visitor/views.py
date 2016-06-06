@@ -40,9 +40,10 @@ def login_view(request):
 def is_authenticated(request):
     if request.user.is_authenticated() \
             and hasattr(request.user, 'visitor'):
-        return Response({'is_authenticated': True}, status=200)
+        r = True
     else:
-        return Response({'is_authenticated': False}, status=400)
+        r = False
+    return Response({'is_authenticated': r})
 
 
 @api_view(['GET'])
