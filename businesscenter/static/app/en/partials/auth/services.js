@@ -43,7 +43,7 @@ auth.factory('Auth', ['$cookies', function($cookies){
 auth.factory('Signature', ['$resource',
     function($resource){
         return $resource('snapshot/signature', {}, {
-            get: {method:'GET', {location: '@location'} responseType:'json'},
+            get: {method:'GET', responseType:'json'},
         });
     }
 ]);
