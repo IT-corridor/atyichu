@@ -34,7 +34,7 @@ auth.factory('Auth', ['$cookies', function($cookies){
     };
     auth.username = auth.get('weixin');
     auth.is_authenticated = function(){
-        this.username !== null;
+        return this.username !== null;
     };
     return auth;
 }]);
