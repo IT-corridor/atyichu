@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 
 from .models import Mirror, Photo
 from .serializers import MirrorSerializer, PhotoSerializer
@@ -295,6 +295,7 @@ def index(request):
 
 
 @api_view(['GET', 'POST'])
+@permission_classes(())
 def get_signature(request):
     """ Previously it was mirror and photos views pages. Now it is API. """
     # TODO: replace file serving with redis
