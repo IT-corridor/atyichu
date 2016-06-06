@@ -97,16 +97,18 @@ def openid(request):
         response = HttpResponseRedirect(redirect+'#!/mirror/')
 
     if request.user.is_authenticated():
-
+        mail_admins('From atyichu', 'user authenticated, logout')
         logout(request)
 
     code = request.GET.get("code", None)
+    mail_admins('From atyichu', 'code: {}'.format(code))
     if not code:
         return JsonResponse({'error': _('You don`t have weixin code.')})
 
     jsapi = JsApi_pub()
     jsapi.code = code
     open_id, user_info = jsapi.getOpenid()
+    mail_admins('From atyichu', 'user authenticated, {} {}'.format(open_id, str(user_info)))
     if not open_id:
         return JsonResponse({'error': _('Fail getting openid')})
     try:
@@ -115,10 +117,11 @@ def openid(request):
         serializer = WeixinSerializer(data={'weixin': open_id})
         serializer.is_valid(raise_exception=True)
         visitor = serializer.save()
-
+    mail_admins('From atyichu', 'visitor weixin {}'.format(visitor.weixin))
     user = authenticate(weixin=open_id)
     login(request, user)
     # Cookie can set here, delete later
+    mail_admins('From atyichu', 'after login')
     response.set_cookie('weixin', visitor.weixin, max_age=300)
     return response
 
