@@ -42,9 +42,9 @@ function($cookies, IsAuthenticated){
     };
     auth.username = auth.get('weixin');
     auth.is_authenticated = function(){
-        var auth = IsAuthenticated.get();
+        //var auth = IsAuthenticated.get();
 
-        return auth.is_authenticated === true;
+        return this.username !== null;
     };
     return auth;
 }]);
