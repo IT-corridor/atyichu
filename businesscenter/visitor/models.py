@@ -21,6 +21,9 @@ class Visitor(models.Model):
                               upload_to='visitors/thumbs',
                               null=True, blank=True)
 
+    def __unicode__(self):
+        return self.weixin
+
     class Meta:
         verbose_name = _('Visitor')
         verbose_name_plural = _('Visitors')
