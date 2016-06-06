@@ -19,10 +19,10 @@ auth.factory('Logout', ['$resource',
 auth.factory('Auth', ['$cookies', function($cookies){
     var auth = {};
     auth.get = function(key){
-        return $cookies.getObject(key) ? $cookies.getObject(key) : null;
+        return $cookies.get(key) ? $cookies.get(key) : null;
     };
     auth.set = function(username){
-        $cookies.putObject('weixin', username);
+        $cookies.put('weixin', username);
         this.refresh();
     };
     auth.refresh = function(){
@@ -40,3 +40,10 @@ auth.factory('Auth', ['$cookies', function($cookies){
 }]);
 
 
+auth.factory('Signature', ['$resource',
+    function($resource){
+        return $resource('snapshot/get_signature', {}, {
+            get: {method:'GET', responseType:'json'},
+        });
+    }
+]);
