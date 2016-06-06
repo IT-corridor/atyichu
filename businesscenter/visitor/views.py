@@ -40,10 +40,8 @@ def login_view(request):
 def is_authenticated(request):
     if request.user.is_authenticated() \
             and hasattr(request.user, 'visitor'):
-        mail_admins('Form atyichu', 'is auth')
         return Response({'is_authenticated': True}, status=200)
     else:
-        mail_admins('Form atyichu', 'not is auth')
         return Response({'is_authenticated': False}, status=400)
 
 

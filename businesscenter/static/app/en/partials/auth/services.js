@@ -42,9 +42,10 @@ function($cookies, IsAuthenticated){
     };
     auth.username = auth.get('weixin');
     auth.is_authenticated = function(){
-        var auth = IsAuthenticated.get();
-        console.log(auth);
-        return auth.is_authenticated;
+        var auth = IsAuthenticated.get(
+            function(success){return true;}
+            function(error){return false;}
+        );
         //return this.username !== null;
     };
     return auth;
