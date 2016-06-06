@@ -301,11 +301,9 @@ def get_signature(request):
     """ Previously it was mirror and photos views pages. Now it is API. """
     # TODO: replace file serving with redis
 
-    mail_admins('From atyichu', 'Touched the signature view')
 
     # HOOK for ANGULARJS APP for wxlib purpose
     location = request.query_params.get('location', None)
-    mail_admins('From atyichu', 'Location is {}'.format(location))
 
     if not location:
         return Response(status=400)
@@ -319,8 +317,6 @@ def get_signature(request):
     if data and data['time'] + timedelta(seconds=7200) >= timezone.now():
         ticket = data['ticket']
     else:
-
-        mail_admins('From atyichu', 'Creating new ticket')
         client_access_token_info = json.loads(jsapi.get_access_tocken())
         client_access_token = client_access_token_info['access_token']
         ticket_info = jsapi.get_jsapi_ticket(client_access_token)
@@ -330,11 +326,8 @@ def get_signature(request):
             ticket_info = {'ticket': ticket, 'time': timezone.now()}
             f.truncate()
             pickle.dump(ticket_info, f)
-            mail_admins('From atyichu', 'Dumping ticket')
 
     url = location
-    logging.info(url)
 
     js_info = jsapi.get_signature(url=url, ticket=ticket)
-    mail_admins('From atyichu', '{}'.format(str(js_info)))
     return Response(data=js_info)
