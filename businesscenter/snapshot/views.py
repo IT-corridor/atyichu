@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.core.urlresolvers import reverse
+from django.core.mail import mail_admins
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
@@ -299,10 +300,13 @@ def index(request):
 def get_signature(request):
     """ Previously it was mirror and photos views pages. Now it is API. """
     # TODO: replace file serving with redis
-    # TODO: for what purpose are these signature?
+
+    mail_admins('From atyichu', 'Touched the signature view')
 
     # HOOK for ANGULARJS APP for wxlib purpose
     location = request.data.get('location', None)
+    mail_admins('From atyichu', 'Location is {}'.format(location))
+
     if not location:
         return Response(status=400)
 
@@ -315,6 +319,8 @@ def get_signature(request):
     if data and data['time'] + timedelta(seconds=7200) >= timezone.now():
         ticket = data['ticket']
     else:
+
+        mail_admins('From atyichu', 'Creating new ticket')
         client_access_token_info = json.loads(jsapi.get_access_tocken())
         client_access_token = client_access_token_info['access_token']
         ticket_info = jsapi.get_jsapi_ticket(client_access_token)
@@ -324,10 +330,11 @@ def get_signature(request):
             ticket_info = {'ticket': ticket, 'time': timezone.now()}
             f.truncate()
             pickle.dump(ticket_info, f)
+            mail_admins('From atyichu', 'Dumping ticket')
 
-    url = '{}{}'.format(request.get_host(), location)
+    url = location
     logging.info(url)
 
     js_info = jsapi.get_signature(url=url, ticket=ticket)
-
+    mail_admins('From atyichu', '{}'.format(str(js_info)))
     return Response(data=js_info)
