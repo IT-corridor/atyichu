@@ -3,7 +3,7 @@ angular.module('mirror.services', ['ngResource'])
 .factory('Mirror', ['$resource', 'source_path',
     function($resource, source_path){
         return $resource(source_path + '/:pk/', {}, {
-            query: {method:'GET', params:{pk: null}, responseType:'json',},
+            query: {method:'GET', params:{pk: null}, responseType:'json', isArray: true},
             update: {method: 'PATCH'},
     });
 }])

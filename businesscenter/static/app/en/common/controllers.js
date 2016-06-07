@@ -2,12 +2,13 @@ angular.module('common.controllers', ['auth.services'])
 .controller('CtrlDummy', ['$scope', '$rootScope','$http',
 '$location', '$route', '$window', 'Auth','Signature', 'Logout',
     function($scope, $rootScope, $http, $location, $route, $window, Auth, Signature, Logout) {
+
         $rootScope.title = 'Dummy page';
 
         $rootScope.alerts.push({ type: 'info', msg: 'Welcome, stranger!' });
 
         $scope.loc = $window.location.href;
-        /*$scope.js_info = Signature.get({location: $scope.loc}, function (success){
+        $scope.js_info = Signature.get({location: $scope.loc}, function (success){
             wx.config({
                 debug: false,
                 appId: success.appId,
@@ -37,7 +38,7 @@ angular.module('common.controllers', ['auth.services'])
                 $scope.error = res;
                 $scope.apply();
             });
-        });*/
+        });
 
         $scope.logout = function(){
             $scope.r = Logout.query(function(r){
