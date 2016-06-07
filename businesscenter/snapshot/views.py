@@ -4,6 +4,7 @@ import json
 import logging
 import pickle
 import os
+from urlparse import urldefrag
 from datetime import timedelta
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
@@ -327,7 +328,7 @@ def get_signature(request):
             f.truncate()
             pickle.dump(ticket_info, f)
 
-    url = location
+    url, frag = urldefrag(location)
 
     js_info = jsapi.get_signature(url=url, ticket=ticket)
     return Response(data=js_info)

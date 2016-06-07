@@ -10,7 +10,7 @@ angular.module('common.controllers', ['auth.services'])
         $scope.loc = $window.location.href;
         $scope.js_info = Signature.get({location: $scope.loc}, function (success){
             wx.config({
-                debug: false,
+                debug: true,
                 appId: success.appId,
                 timestamp: success.timestamp,
                 nonceStr: success.noncestr,
@@ -25,13 +25,14 @@ angular.module('common.controllers', ['auth.services'])
                         $scope.lat = res.latitude;
                         $scope.lon = res.longitude;
                         console.log(res);
+                        $scope.$apply();
 
                     },
                     cancel: function (res) {
                         alert('Cancel');
                     }
                 });
-                $scope.$apply();
+
             });
             wx.error(function(res){
 
