@@ -4,6 +4,7 @@ var app = angular.module('app.main', [
     'ui.bootstrap',
     'ngAnimate',
     'auth.services',
+    'weixinapi',
     'navbar',
     'footer',
     'alert',

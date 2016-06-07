@@ -1,44 +1,16 @@
 angular.module('common.controllers', ['auth.services'])
 .controller('CtrlDummy', ['$scope', '$rootScope','$http',
-'$location', '$route', '$window', 'Auth','Signature', 'Logout',
-    function($scope, $rootScope, $http, $location, $route, $window, Auth, Signature, Logout) {
+'$location', '$route', '$window', 'Auth', 'Logout', 'WXI',
+    function($scope, $rootScope, $http, $location, $route, $window, Auth, Logout, WXI) {
 
         $rootScope.title = 'Dummy page';
 
         $rootScope.alerts.push({ type: 'info', msg: 'Welcome, stranger!' });
 
-        $scope.loc = $window.location.href;
-        $scope.js_info = Signature.get({location: $scope.loc}, function (success){
-            wx.config({
-                debug: true,
-                appId: success.appId,
-                timestamp: success.timestamp,
-                nonceStr: success.noncestr,
-                signature: success.signature,
-                jsApiList: ['getLocation']
-            });
-            wx.ready(function () {
-
-                wx.getLocation({
-                    success: function (res) {
-                        alert("get location!");
-                        $scope.lat = res.latitude;
-                        $scope.lon = res.longitude;
-                        console.log(res);
-                        $scope.$apply();
-
-                    },
-                    cancel: function (res) {
-                        alert('Cancel');
-                    }
-                });
-
-            });
-            wx.error(function(res){
-
-                $scope.error = res;
-                $scope.apply();
-            });
+        var promise = WXI.get_location();
+        promise.then(function(success){
+            $scope.lat = success.latitude;
+            $scope.lon = success.longitude;
         });
 
         $scope.logout = function(){

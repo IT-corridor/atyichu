@@ -48,12 +48,3 @@ function($cookies, IsAuthenticated){
     };
     return auth;
 }]);
-
-
-auth.factory('Signature', ['$resource',
-    function($resource){
-        return $resource('snapshot/signature', {}, {
-            get: {method:'GET', responseType:'json'},
-        });
-    }
-]);
