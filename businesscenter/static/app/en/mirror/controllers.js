@@ -54,7 +54,7 @@ angular.module('mirror.controllers', ['mirror.services'])
                 },
                 function(error){
                     $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
-                },
+                }
             );
         }
     }
