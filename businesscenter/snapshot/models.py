@@ -75,6 +75,10 @@ class Mirror(models.Model):
         self.lock_date = timezone.now()
         self.save(update_fields=['is_locked', 'is_locked'])
 
+    def is_available(self):
+        return self.is_locked and \
+               timezone.now() < (self.modify_date + timedelta(minutes=1))
+
     def is_online(self):
         return timezone.now() < (self.last_login + timedelta(seconds=66))
 

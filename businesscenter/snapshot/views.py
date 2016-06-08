@@ -115,7 +115,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
                             status=400)
         # mirror is  unlock  or the lock time is expired 1 minutes
         # todo if the mirror is offline return error
-        if mirror.is_locked:
+        if mirror.is_available():
             return Response(data={'error': _('Mirror is already locked')},
                             status=400)
         mirror.lock()

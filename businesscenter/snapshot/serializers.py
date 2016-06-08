@@ -7,9 +7,12 @@ from . import models
 
 class MirrorSerializer(serializers.ModelSerializer):
 
+    is_online = serializers.BooleanField(source='is_online', read_only=True)
+
     class Meta:
         model = models.Mirror
-        fields = ('id', 'title', 'latitude', 'longitude', 'is_locked')
+        fields = ('id', 'title', 'latitude', 'longitude', 'is_locked',
+                  'is_online')
 
 
 class PhotoSerializer(serializers.ModelSerializer):

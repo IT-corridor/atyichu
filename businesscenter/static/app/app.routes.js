@@ -11,8 +11,11 @@ angular.module('app.route', [
             templateUrl: PATH + 'common/common.html',
             controller: 'CtrlDummy'}).
         when('/mirror/', {
-            templateUrl: PATH + 'mirror/mirror.html',
-            controller: 'CtrlMirror'}).
+            templateUrl: PATH + 'mirror/list.html',
+            controller: 'CtrlMirrorList'}).
+        when('/mirror/:pk', {
+            templateUrl: PATH + 'mirror/detail.html',
+            controller: 'CtrlMirrorDetail'}).
         when('/photo/', {
             templateUrl: PATH + 'photo/photo.html',
             controller: 'CtrlPhoto'}).
