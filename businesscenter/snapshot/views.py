@@ -75,11 +75,16 @@ class MirrorViewSet(viewsets.GenericViewSet):
         latitude = request.query_params.get('latitude', 0)
         longitude = request.query_params.get('longitude', 0)
         mirrors = Mirror.objects.get_by_distance(latitude, longitude)
+
         # TODO: optimize with db query!
         #online_mirrors = [i for i in mirrors if i.is_online()]
-        online_mirrors = [i for i in mirrors]
+        #online_mirrors = [i for i in mirrors]
+        # Mirror available if it is not locked or owner is current_user
+        visitor = self.request.user.visitor
+        a_mirrors = [i for i in mirrors if not i.is_locked or
+                     i.owner_id == visitor.id]
         # TODO remove next line
-        serializer = MirrorSerializer(instance=online_mirrors, many=True)
+        serializer = MirrorSerializer(instance=a_mirrors, many=True)
         return Response(data=serializer.data)
 
     def partial_update(self, request, *args, **kwargs):

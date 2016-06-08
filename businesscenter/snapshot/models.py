@@ -33,7 +33,7 @@ class MirrorManager(models.Manager):
 
     def get_by_distance(self, lat, lon):
         # IT IS NOT MY QUERY
-        sql = "SELECT * FROM (SELECT id,longitude,latitude, " \
+        sql = "SELECT * FROM (SELECT id,longitude,latitude, is_locked, owner_id, " \
                "ROUND(6378.138*2*ASIN(SQRT(POW(SIN((%s*PI()/" \
               "180-latitude*PI()/180)/2),2)+COS(%s*PI()/180)*COS(latitude*PI()/180)" \
                "*POW(SIN((%s*PI()/180-longitude*PI()/180)/2),2)))*1000) " \
