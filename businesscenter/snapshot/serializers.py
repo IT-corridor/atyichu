@@ -7,7 +7,7 @@ from . import models
 
 class MirrorSerializer(serializers.ModelSerializer):
 
-    is_online = serializers.BooleanField(source='is_online', read_only=True)
+    is_online = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = models.Mirror
