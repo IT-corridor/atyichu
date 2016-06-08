@@ -15,7 +15,7 @@ angular.module('mirror.controllers', ['mirror.services'])
                 },
                 function(error){
                     $rootScope.alerts.push({ type: 'danger',
-                        msg: 'Fail trying fetch mirror list.'});
+                        msg: error.data.error});
                 }
             );
         });
