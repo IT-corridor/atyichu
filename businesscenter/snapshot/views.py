@@ -82,7 +82,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
         # Mirror available if it is not locked or owner is current_user
         visitor = self.request.user.visitor
         a_mirrors = [i for i in mirrors if not i.is_locked or
-                     i.owner_id == visitor.id]
+                     i.owner_id == visitor.pk]
         # TODO remove next line
         serializer = MirrorSerializer(instance=a_mirrors, many=True)
         return Response(data=serializer.data)
