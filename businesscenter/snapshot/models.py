@@ -13,10 +13,11 @@ from utils.validators import SizeValidator
 class MirrorQuerySet(models.query.QuerySet):
 
     def lock(self):
-        return self.update(is_locked=True, lock_date=timezone.now())
+        return self.update(is_locked=True, lock_date=timezone.now(),
+                           last_login=timezone.now())
 
     def unlock(self):
-        return self.update(is_locked=False)
+        return self.update(is_locked=False, last_login=timezone.now())
 
 
 class MirrorManager(models.Manager):

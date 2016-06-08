@@ -76,8 +76,8 @@ class MirrorViewSet(viewsets.GenericViewSet):
         longitude = request.query_params.get('longitude', 0)
         mirrors = Mirror.objects.get_by_distance(latitude, longitude)
         # TODO: optimize with db query!
-        #online_mirrors = [i for i in mirrors if i.is_online()]
-        online_mirrors = [i for i in mirrors]
+        online_mirrors = [i for i in mirrors if i.is_online()]
+        #online_mirrors = [i for i in mirrors]
         # TODO remove next line
         serializer = MirrorSerializer(instance=online_mirrors, many=True)
         return Response(data=serializer.data)
