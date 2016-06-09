@@ -60,7 +60,7 @@ def create_thumb(instance, fieldname):
             h = m
             w = int(w * ratio)
 
-        name, _ = filename.split('.')
+        name, _ = field.name.split('.')
         ext = imghdr.what(filename)
         n_fn = name + '_thumb.' + ext
         img = img.resize((w, h), Image.ANTIALIAS)

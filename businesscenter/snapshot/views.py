@@ -257,7 +257,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         """
         visitor = request.user.visitor
         photos = Photo.objects.filter(owner=visitor).\
-            prefetc_related('comment_set__author')
+            prefetch_related('comment_set__author')
 
         serializer = PhotoSerializer(instance=photos, many=True)
         return Response(data=serializer.data)
