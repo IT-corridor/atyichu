@@ -103,12 +103,12 @@ class Mirror(models.Model):
 
 
 class Photo(models.Model):
-    path_photo = UploadPath('mirror/photo', 'owner')
-    path_thumb = UploadPath('mirror/photo/thumbs', 'owner', suff='thumb')
+    path_photo = UploadPath('mirror/photo', None, *('owner',))
+    path_thumb = UploadPath('mirror/photo/thumbs', None, 'thumb', *('owner',))
     owner = models.ForeignKey(Visitor, verbose_name=_('Photo owner'))
     mirror = models.ForeignKey(Mirror, verbose_name=_('Mirror'))
     # FOR WHAT IS SESSION??? Looks like it redundant. Remove later.
-    title = models.CharField(_('Title'), max_length=200, null=True)
+    title = models.CharField(_('Title'), max_length=200, blank=True)
     photo = models.ImageField(_('Photo'), upload_to=path_photo,
                               null=True, blank=True,
                               validators=[SizeValidator(2)])
