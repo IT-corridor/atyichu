@@ -305,7 +305,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.select_realted('author')
+    queryset = Comment.objects.select_related('author')
     serializer_class = CommentSerializer
     permission_classes = [IsVisitor]
 
