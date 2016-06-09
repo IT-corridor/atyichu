@@ -16,8 +16,8 @@ from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
-from .models import Mirror, Photo
-from .serializers import MirrorSerializer, PhotoSerializer
+from .models import Mirror, Photo, Comment
+from .serializers import MirrorSerializer, PhotoSerializer, CommentSerializer
 from .sutils import check_sign
 from utils.permissions import IsVisitor
 from vutils.umeng_push import push_unicast
@@ -26,7 +26,7 @@ from vutils.wzhifuSDK import JsApi_pub
 
 log = logging.getLogger(__name__)
 
-# TODO: maybe it is necessary to turn off pagination
+# API VIEWSETS
 
 
 class MirrorViewSet(viewsets.GenericViewSet):
@@ -79,7 +79,9 @@ class MirrorViewSet(viewsets.GenericViewSet):
         # TODO: optimize with db query!
         #online_mirrors = [i for i in mirrors if i.is_online()]
         #online_mirrors = [i for i in mirrors]
+
         # Mirror available if it is not locked or owner is current_user
+        # Also mirror should be online.
         visitor = self.request.user.visitor
         a_mirrors = [i for i in mirrors if not i.is_locked or
                      i.owner_id == visitor.pk]
@@ -159,7 +161,8 @@ class MirrorViewSet(viewsets.GenericViewSet):
     @list_route(methods=['post'])
     def status(self, request, *args, **kwargs):
         """
-        set a mirror online status
+        THIS REQUEST CALLED FROM ANDROID APP.
+        Set a mirror online status.
         ---
 
         omit_serializer: true
@@ -199,11 +202,12 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
     # TODO: test delete
     # TODO: TEST retrieve somehow
+    # TODO: maybe it is necessary to turn off pagination
 
     def create(self, request, *args, **kwargs):
-        # create a photo
         """
-        insert a photo
+        Creates a primary photo record without actual photo.
+        Photo will be provided (as update) through android app.
         ---
         # YAML (must be separated by `---`)
 
@@ -237,8 +241,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
         photo = Photo.objects.create(owner=visitor, mirror=mirror)
 
         log.info('create photo id: {}'.format(photo.id))
-        # send photo id to the mirror on android
         content = {'photo_id': photo.id}
+        # SENDING A request to umeng push service,
+        # which will push the ANDROID APP.
         send_json, receive_info = push_unicast('571459b267e58e826f000239',
                                                'ydcfc8leufv2efcm4slwmhb2pfffaiop',
                                                mirror.token, json.dumps(content))
@@ -251,15 +256,17 @@ class PhotoViewSet(viewsets.ModelViewSet):
         get all photo order by time desc
         """
         visitor = request.user.visitor
-        photos = Photo.objects.filter(owner=visitor).select_related('mirror')
+        photos = Photo.objects.filter(owner=visitor).\
+            prefetc_related('comment_set__author')
 
         serializer = PhotoSerializer(instance=photos, many=True)
         return Response(data=serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
         """
+        THIS REQUEST CALLED FROM ANDROID APP.
         Upload pictures url parameters plus time parameters also sign
-        == + key time field value of md5 value
+        == + key time field value of md5 value.
         ---
         # YAML (must be separated by `---`)
 
@@ -297,8 +304,10 @@ class PhotoViewSet(viewsets.ModelViewSet):
         return Response(data=serializer.data)
 
 
-def index(request):
-    return render(request, 'index.html')
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.select_realted('author')
+    serializer_class = CommentSerializer
+    permission_classes = [IsVisitor]
 
 
 @api_view(['GET'])
@@ -306,8 +315,6 @@ def index(request):
 def get_signature(request):
     """ Previously it was mirror and photos views pages. Now it is API. """
     # TODO: replace file serving with redis
-
-
     # HOOK for ANGULARJS APP for wxlib purpose
     location = request.query_params.get('location', None)
 
@@ -337,3 +344,9 @@ def get_signature(request):
 
     js_info = jsapi.get_signature(url=url, ticket=ticket)
     return Response(data=js_info)
+
+
+def index(request):
+    """ A simple view, which presents only a starting template.
+     It is an entry. Later should be migrate to static service like Nginx."""
+    return render(request, 'index.html')

@@ -1,7 +1,7 @@
 angular.module('weixinapi', [])
 .factory('Signature', ['$resource',
     function($resource){
-        return $resource('snapshot/signature', {}, {
+        return $resource('api/v1/signature', {}, {
             get: {method:'GET', responseType:'json'},
         });
     }

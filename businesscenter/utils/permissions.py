@@ -61,4 +61,4 @@ class IsVisitor(permissions.IsAuthenticated):
         if base_perm:
             if hasattr(request.user, 'visitor'):
                 return True
-        return False
+        return request.user.is_staff

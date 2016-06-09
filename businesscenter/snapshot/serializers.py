@@ -15,7 +15,17 @@ class MirrorSerializer(serializers.ModelSerializer):
                   'is_online')
 
 
+class CommentSerializer(serializers.ModelSerializer):
+
+    name = serializers.CharField(source='author__weixin', read_only=True)
+
+    class Meta:
+        model = models.Comment
+
+
 class PhotoSerializer(serializers.ModelSerializer):
+
+    comments = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Photo

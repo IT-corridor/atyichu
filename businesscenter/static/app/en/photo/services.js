@@ -1,5 +1,5 @@
 angular.module('photo.services', ['ngResource'])
-.constant('source_path', 'snapshot/photo')
+.constant('source_path', 'api/v1/photo')
 .factory('Photo', ['$resource', 'source_path',
     function($resource, source_path){
         return $resource(source_path + '/:pk/', {}, {
