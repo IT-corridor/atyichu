@@ -18,8 +18,13 @@ class StoreViewSet(viewsets.ModelViewSet):
         return models.Store.objects.select_related('district__city__state')
 
     def create(self, request, *args, **kwargs):
-        request.data['owner'] = request.user.vendor.pk
-        return super(StoreViewSet, self).create(request, *args, **kwargs)
+        data = request.data.copy()
+        data['owner'] = request.user
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
 
     def update(self, request, *args, **kwargs):
         data = request.data.copy()

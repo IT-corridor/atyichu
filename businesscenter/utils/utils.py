@@ -43,13 +43,12 @@ def cleanup_files(instance, fieldname):
         thumb.delete(save=False)
 
 
-def create_thumb(instance, fieldname):
+def create_thumb(instance, fieldname, m=100):
     field = getattr(instance, fieldname)
     if field and not instance.thumb.name:
         filename = field.path
         img = Image.open(filename)
         w, h = img.size
-        m = 100
         if w > m:
             ratio = m / w
             w = m

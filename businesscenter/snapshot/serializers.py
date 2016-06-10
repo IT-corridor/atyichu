@@ -17,15 +17,28 @@ class MirrorSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source='author__weixin', read_only=True)
+    name = serializers.CharField(source='author', read_only=True)
 
     class Meta:
         model = models.Comment
 
 
-class PhotoSerializer(serializers.ModelSerializer):
+class PhotoListSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='snapshot:photo-detail')
+    comment_count = serializers.IntegerField(source='comment_set.count',
+                                             read_only=True)
 
-    comments = CommentSerializer(many=True, read_only=True)
+    class Meta:
+        model = models.Photo
+        fields = ('id', 'url', 'create_date', 'comment_count',
+                  'owner', 'title', 'thumb',
+                  )
+
+
+class PhotoDetailSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(source='comment_set', many=True,
+                                 read_only=True)
 
     class Meta:
         model = models.Photo

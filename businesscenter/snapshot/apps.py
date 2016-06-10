@@ -13,4 +13,4 @@ class SnapshotConfig(AppConfig):
         Photo = self.get_model('Photo')
         pre_delete.connect(receivers.cleanup_files_photo, sender=Photo)
 
-        post_save.connect(receivers.create_thumb_photo, sender=Photo)
+        post_save.connect(receivers.create_thumb_photo_320, sender=Photo)

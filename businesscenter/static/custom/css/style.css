@@ -1,0 +1,15 @@
+.absolute {
+    position: absolute;
+}
+.row-label {
+    background-color: rgba(224, 224, 224, 0.5);
+}
+
+.thumbnail a img{
+    height: 200px;
+    max-width: 100%;
+    vertical-align: middle;
+}
+
+.img-center {margin:0 auto;}
+.fixed-alerts { position: fixed; z-index:99; top: 50px;}

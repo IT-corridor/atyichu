@@ -15,6 +15,12 @@ def create_thumb_photo(sender, **kwargs):
         create_thumb(instance, 'photo')
 
 
+def create_thumb_photo_320(sender, **kwargs):
+    instance = kwargs.get('instance', None)
+    if instance:
+        create_thumb(instance, 'photo', 320)
+
+
 def cleanup_files_avatar(sender, **kwargs):
     # Pass false so FileField doesn't save the model.
     instance = kwargs.get('instance', None)

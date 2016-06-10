@@ -117,7 +117,7 @@ class Photo(models.Model):
     description = models.TextField(_('Description'), null=True,
                                    blank=True, max_length=5000)
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
-    modify_data = models.DateTimeField(_('Date modified'), auto_now=True)
+    modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
 
     def __unicode__(self):
         return '{}: {}'.format(self.owner, self.pk)
@@ -134,7 +134,7 @@ class Comment(models.Model):
     author = models.ForeignKey(Visitor, verbose_name=_('Author'))
     message = models.CharField(_('Message'), max_length=160)
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
-    modify_data = models.DateTimeField(_('Date modified'), auto_now=True)
+    modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
 
     def __unicode__(self):
 

@@ -12,12 +12,13 @@ from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.core.mail import mail_admins
 from rest_framework import viewsets
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
 from .models import Mirror, Photo, Comment
-from .serializers import MirrorSerializer, PhotoSerializer, CommentSerializer
+from .serializers import MirrorSerializer, PhotoListSerializer, \
+    PhotoDetailSerializer, CommentSerializer
 from .sutils import check_sign
 from utils.permissions import IsVisitor
 from vutils.umeng_push import push_unicast
@@ -197,7 +198,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
 
 class PhotoViewSet(viewsets.ModelViewSet):
     queryset = Photo.objects.all()
-    serializer_class = PhotoSerializer
+    serializer_class = PhotoDetailSerializer
     permission_classes = [IsVisitor]
 
     # TODO: test delete
@@ -215,7 +216,6 @@ class PhotoViewSet(viewsets.ModelViewSet):
         omit_parameters:
             - form
         """
-        # IT IS UGLY!!!
         try:
             mirror = Mirror.objects.filter(user=request.user, is_lock=True)[0]
         except IndexError:
@@ -249,7 +249,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
                                                mirror.token, json.dumps(content))
 
         log.info('umeng json: {}, {}'.format(send_json, receive_info))
-        return Response(data={'photo_id': photo.id}, status=201)
+        return Response(data={'id': photo.id}, status=201)
 
     def list(self, request, *args, **kwargs):
         """
@@ -259,7 +259,8 @@ class PhotoViewSet(viewsets.ModelViewSet):
         photos = Photo.objects.filter(owner=visitor).\
             prefetch_related('comment_set__author')
 
-        serializer = PhotoSerializer(instance=photos, many=True)
+        serializer = PhotoListSerializer(instance=photos, many=True,
+                                         context={'request': request})
         return Response(data=serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
@@ -288,7 +289,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         log.info('sign correct')
         pid = kwargs.get('pk', None)
         if not pid:
-            return Response(data={'error': _})
+            return Response(data={'error': _('Missed argument  - pk')})
 
         # CLEAR THIS
         try:
@@ -296,8 +297,29 @@ class PhotoViewSet(viewsets.ModelViewSet):
         except Photo.DoesNotExist:
             return Response(data={'error': _('Photo does not exist')})
 
-        serializer = PhotoSerializer(instance=photo, data=request.data,
-                                     partial=True)
+        serializer = self.serializer_class(instance=photo, data=request.data,
+                                           partial=True)
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(data=serializer.data)
+
+    @detail_route(methods=['patch'])
+    def edit(self, request, *args, **kwargs):
+        # TODO: SET object permissions
+        pid = kwargs.get('pk', None)
+        try:
+            photo = Photo.objects.get(id=pid)
+        except Photo.DoesNotExist:
+            return Response(data={'error': _('Photo does not exist')})
+
+        visitor = request.user.visitor
+
+        if visitor.pk != photo.owner_id:
+            return Response(data={'error': _('Only the owner can edit photo')})
+
+        serializer = self.serializer_class(instance=photo, data=request.data,
+                                           partial=True)
 
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -308,6 +330,16 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.select_related('author')
     serializer_class = CommentSerializer
     permission_classes = [IsVisitor]
+    pagination_class = None
+
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data['author'] = request.user
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
 
 
 @api_view(['GET'])
