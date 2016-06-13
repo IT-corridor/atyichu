@@ -150,7 +150,7 @@ def openid(request):
     if url == '2':
         response = HttpResponseRedirect(redirect + '#!/photo/')
     else:
-        response = HttpResponseRedirect(reverse(redirect + '#!/mirror/'))
+        response = HttpResponseRedirect(redirect + '#!/mirror/')
 
     if request.user.is_authenticated():
         mail_admins('From atyichu', 'user authenticated')
