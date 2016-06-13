@@ -132,9 +132,10 @@ def dummy_api(request):
 def index(request):
     url = request.GET.get("url")
     weixin_oauth2 = WeixinBackend()
-    redirect_url = "http://www.atyichu.com/visitor/openid"
+    redirect_url = reverse('visitor:openid')
     redirect_url += '?url={}'.format(url)
     url = weixin_oauth2.get_authorize_uri(redirect_url)
+    mail_admins('From atyichu', 'url is {}'.format(url))
     return HttpResponseRedirect(url)
 
 
@@ -144,14 +145,17 @@ def openid(request):
     redirect = reverse('index')
 
     if url == '2':
-        response = HttpResponseRedirect(redirect + '#!/photo')
+        response = HttpResponseRedirect(redirect + '#!/photo/')
     else:
-        response = HttpResponseRedirect(reverse(redirect + '#!/mirror'))
+        response = HttpResponseRedirect(reverse(redirect + '#!/mirror/'))
 
     if request.user.is_authenticated():
+        mail_admins('From atyichu', 'user authenticated')
         return response
 
     code = request.GET.get("code", None)
+
+    mail_admins('From atyichu', 'code is {}'.format(code))
 
     if not code:
         return Response({'error': _('You don`t have weixin code.')})
