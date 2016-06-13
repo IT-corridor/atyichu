@@ -144,9 +144,9 @@ def openid(request):
     redirect = reverse('index')
 
     if url == '2':
-        response = HttpResponseRedirect(redirect + '#!/photos')
+        response = HttpResponseRedirect(redirect + '#!/photo')
     else:
-        response = HttpResponseRedirect(reverse(redirect + '#!/mirrors'))
+        response = HttpResponseRedirect(reverse(redirect + '#!/mirror'))
 
     if request.user.is_authenticated():
         return response
