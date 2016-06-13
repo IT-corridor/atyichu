@@ -2,10 +2,12 @@ from __future__ import unicode_literals, division
 
 import os
 import imghdr
+import requests
 from io import BytesIO
 from PIL import Image
 from django.core.files import File
 from django.utils.deconstruct import deconstructible
+from django.core.files.base import ContentFile
 
 
 
@@ -67,3 +69,9 @@ def create_thumb(instance, fieldname, m=100):
         img.save(output, ext)
         instance.thumb.save(n_fn, File(output), save=True)
         output.close()
+
+
+def get_content_file(url):
+    r = requests.get(url)
+    ext = r.headers['Content-Type'].split('/')[-1]
+    return ext, ContentFile(r.content)

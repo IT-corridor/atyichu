@@ -85,7 +85,6 @@ def index(request):
                                       reverse('visitor:openid'))
     redirect_url += '?url={}'.format(url)
     url = weixin_oauth2.get_authorize_uri(redirect_url)
-    mail_admins('From atyichu', 'url is {}'.format(url))
     return HttpResponseRedirect(url)
 
 
@@ -100,7 +99,6 @@ def openid(request):
         response = HttpResponseRedirect(redirect + '#!/mirror/')
 
     if request.user.is_authenticated():
-        mail_admins('From atyichu', 'user authenticated')
         return response
 
     code = request.GET.get("code", None)
@@ -115,12 +113,18 @@ def openid(request):
         return JsonResponse({'error': _('You got error trying to get openid')})
 
     user_info = weixin_oauth.get_user_info(access_token, openid)
+    data = {'avatar_url': user_info.get('headimgurl'),
+            'nickname': user_info.get('nickname'),
+            'weixin': openid}
     try:
         visitor = Visitor.objects.get(weixin=openid)
     except Visitor.DoesNotExist:
-        serializer = WeixinSerializer(data={'weixin': openid})
-        serializer.is_valid(raise_exception=True)
-        visitor = serializer.save()
+        serializer = WeixinSerializer(data=data)
+    else:
+        serializer = WeixinSerializer(instance=visitor, data=data)
+
+    serializer.is_valid(raise_exception=True)
+    visitor = serializer.save()
     user = authenticate(weixin=visitor.weixin)
     login(request, user)
     response.set_cookie('weixin', visitor.weixin, max_age=300)
