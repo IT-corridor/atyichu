@@ -171,7 +171,7 @@ def openid(request):
         return JsonResponse({'error': _('You got error trying to get openid')})
 
     user_info = weixin_oauth.get_user_info(access_token, openid)
-    mail_admins('From atyichu', user_info)
+    mail_admins('From atyichu', str(user_info))
     try:
         visitor = Visitor.objects.get(weixin=openid)
     except Visitor.DoesNotExist:
