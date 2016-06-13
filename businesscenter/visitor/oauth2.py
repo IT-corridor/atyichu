@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import requests
 from django.conf import settings
-from urllib import urlencode
+from urllib import urlencode, quote
 from urlparse import urljoin
 
 
@@ -28,7 +28,7 @@ class WeixinBackend(object):
         params = self.authorize['extra']
         params['redirect_uri'] = redirect_uri
         params['appid'] = self.appid
-        return urljoin(self.authorize['url'], '?' + urlencode(params))
+        return urljoin(self.authorize['url'], '?' + self.format_params(params))
 
     def get_access_token(self, code):
 
@@ -53,3 +53,9 @@ class WeixinBackend(object):
 
         response = requests.get(self.user_url, params=params)
         return response.json()
+
+    def format_params(self, param_map, encode=False):
+        li = sorted(param_map)
+        buff = [(k, quote(param_map[k]) if encode else param_map[k])
+                for k in li]
+        return '&'.join('{}={}'.format(k, v) for (k, v) in buff)
