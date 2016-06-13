@@ -15,8 +15,6 @@ from .serializers import WeixinSerializer
 from .oauth2 import WeixinBackend
 from .models import Visitor
 
-from vutils.wzhifuSDK import JsApi_pub
-
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -73,56 +71,6 @@ def verify_captcha(request, captcha_key, captcha_value):
     return Response(data, status=status)
 
 
-def index_(request):
-    """ Formerly index. Entry point to weixin oauth2 """
-    jsapi = JsApi_pub()
-    r_url = "http://www.atyichu.com/visitor/openid?url=1"
-    redirect_url = '{}://{}{}'.format(request.scheme,
-                                      request.get_host(),
-                                      reverse('visitor:openid'))
-    url = jsapi.createOauthUrlForCode(quote_plus(r_url))
-    response = HttpResponseRedirect(url)
-    return response
-
-
-def openid_(request):
-    # Get weixin openid then login
-    # Else print you are not weixin user
-    # This one is working
-    # Formerly openid
-    url = request.GET.get('url', None)
-    redirect = reverse('index')
-
-    if url and url == "2":
-        response = HttpResponseRedirect(redirect+'#!/photo/')
-    else:
-        response = HttpResponseRedirect(redirect+'#!/mirror/')
-
-    if request.user.is_authenticated():
-        logout(request)
-
-    code = request.GET.get("code", None)
-    if not code:
-        return JsonResponse({'error': _('You don`t have weixin code.')})
-
-    jsapi = JsApi_pub()
-    jsapi.code = code
-    open_id, user_info = jsapi.getOpenid()
-    if not open_id:
-        return JsonResponse({'error': _('Fail getting openid')})
-    try:
-        visitor = Visitor.objects.get(weixin=open_id)
-    except Visitor.DoesNotExist:
-        serializer = WeixinSerializer(data={'weixin': open_id})
-        serializer.is_valid(raise_exception=True)
-        visitor = serializer.save()
-    user = authenticate(weixin=open_id)
-    login(request, user)
-    # Cookie can set here, delete later
-    response.set_cookie('weixin', visitor.weixin, max_age=300)
-    return response
-
-
 @api_view(['GET', 'POST'])
 @permission_classes((AllowAny,))
 def dummy_api(request):
@@ -132,7 +80,6 @@ def dummy_api(request):
 def index(request):
     url = request.GET.get("url", "1")
     weixin_oauth2 = WeixinBackend()
-    #r_url = "http://www.atyichu.com/visitor/openid?url=1"
     redirect_url = '{}://{}{}'.format(request.scheme,
                                       request.get_host(),
                                       reverse('visitor:openid'))
@@ -158,20 +105,16 @@ def openid(request):
 
     code = request.GET.get("code", None)
 
-    mail_admins('From atyichu', 'code is {}'.format(code))
-
     if not code:
         return JsonResponse({'error': _('You don`t have weixin code.')})
 
     weixin_oauth = WeixinBackend()
     try:
-        mail_admins('From atyichu', 'try to get access_token and openid')
         access_token, openid = weixin_oauth.get_access_token(code)
     except TypeError:
         return JsonResponse({'error': _('You got error trying to get openid')})
 
     user_info = weixin_oauth.get_user_info(access_token, openid)
-    mail_admins('From atyichu', str(user_info))
     try:
         visitor = Visitor.objects.get(weixin=openid)
     except Visitor.DoesNotExist:
@@ -180,7 +123,5 @@ def openid(request):
         visitor = serializer.save()
     user = authenticate(weixin=visitor.weixin)
     login(request, user)
-    # Cookie can set here
     response.set_cookie('weixin', visitor.weixin, max_age=300)
-    mail_admins('From atyichu', 'Finishing')
     return response
