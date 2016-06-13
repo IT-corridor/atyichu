@@ -1,0 +1,12 @@
+{
+    "WEIXIN_SECRET": "392aad4be93c5bf2a535d5b932186b7b", 
+    "DB_USER": "db_atyichu", 
+    "WEIXIN_APP_ID": "wx923ca88a0f604e90", 
+    "DB_NAME": "db_atyichu", 
+    "MAILGUN_DOMAIN_NAME": "pythoness.pp.ua",
+    "ADMIN": "Nikolay", 
+    "DB_PASSWORD": "atyichu1qaz", 
+    "SECRET_KEY": "py**1!hib*z7v@bn!20kgym+(!5u%61u1ogan_1avdy(kqat@o", 
+    "ADMIN_EMAIL": "morgenpurple@gmail.com", 
+    "MAILGUN_API_KEY": "key-b6f2a1a56a2d5f9faaa9ffa9cfb818c6"
+}

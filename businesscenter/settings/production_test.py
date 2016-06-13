@@ -50,3 +50,7 @@ MAILGUN_DOMAIN_NAME = data['MAILGUN_DOMAIN_NAME']
 
 DEFAULT_FROM_EMAIL = 'post@atyichu.com'
 SERVER_EMAIL = 'beholder@atyichu.com'
+
+WEIXIN_APP_ID = data['WEIXIN_APP_ID']
+WEIXIN_SECRET = data['WEIXIN_SECRET']
+
