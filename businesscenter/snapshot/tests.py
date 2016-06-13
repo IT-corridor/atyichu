@@ -1,20 +1,23 @@
 from __future__ import unicode_literals, absolute_import
 
-import json
+import hashlib
+import md5
+import time
 import unittest
 from django.core.urlresolvers import reverse
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from rest_framework.test import APITestCase, APIClient
+from django.utils import timezone
 from django.db import connection
+from rest_framework.test import APITestCase, APIClient
 
 from visitor.models import Visitor
 
 from .models import Mirror, MirrorManager
 
 # TODO: CREATE TEST CASES!
-
 VENDOR = connection.vendor
+
+
 # Create your tests here.
 class MirrorTests(APITestCase):
 
@@ -52,6 +55,10 @@ class MirrorTests(APITestCase):
         cls.mirror_1 = Mirror.objects.create(**cls.data_1)
         cls.mirror_2 = Mirror.objects.create(**cls.data_2)
         cls.mirror_3 = Mirror.objects.create(**cls.data_3)
+
+        cls.now = time.time()
+        key = "sdlfkj9234kjlnzxcv90123098123asldjk"
+        cls.checksum = hashlib.md5('{}{}'.format(key, cls.now)).hexdigest()
 
     def test_mirror_last_login(self):
         self.mirror_1.update_last_login()
@@ -97,9 +104,9 @@ class MirrorTests(APITestCase):
     def test_mirror_view_detail(self):
         self.force_login()
         Mirror.objects.lock()
+        time.sleep(61)
         response = self.client.get(reverse('snapshot:mirror-detail',
                                            kwargs={'pk': 2}))
-        print (response.data)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
 
@@ -111,14 +118,30 @@ class MirrorTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.client.logout()
 
-    @unittest.expectedFailure
     def test_mirror_view_status(self):
-        # EXPECTED ERROR
+
+        data = {'token': 'Ar3dltB4VSVwaasOfRkJbPojq28Q2dzxC1vZ1TczDQBH',
+                'timestamp': self.now,
+                'checksum': self.checksum,
+        }
         self.force_login()
-        response = self.client.post(reverse('snapshot:mirror-status'))
+        response = self.client.post(reverse('snapshot:mirror-status'),
+                                    data=data)
 
         self.assertEqual(response.status_code, 200)
         self.client.logout()
+
+    def test_create_mirror(self):
+
+        data = {'token': 'weixin',
+                'latitude': 10,
+                'longitude': 10,
+                'title': 'iSmarror for e.g.',
+                'timestamp': self.now,
+                'checksum': self.checksum}
+        url = reverse('snapshot:mirror-list')
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 201)
 
     def force_login(self):
         user = User.objects.get(id=2)

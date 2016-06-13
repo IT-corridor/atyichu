@@ -15,7 +15,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-
+from rest_framework.permissions import AllowAny
 from .models import Mirror, Photo, Comment
 from .serializers import MirrorSerializer, PhotoListSerializer, \
     PhotoDetailSerializer, CommentSerializer
@@ -123,7 +123,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
                             status=400)
         # mirror is  unlock  or the lock time is expired 1 minutes
         # todo if the mirror is offline return error
-        if mirror.is_available():
+        if mirror.is_overtime():
             return Response(data={'error': _('Mirror is already locked')},
                             status=400)
         mirror.lock()
@@ -194,6 +194,41 @@ class MirrorViewSet(viewsets.GenericViewSet):
             return Response(data={'error': _('Mirror token does not exist')})
         mirror.update_last_login()
         return Response(data={'status': True})
+
+    def create(self, request, *args, **kwargs):
+        """
+        This request must be received only from android.
+        It uses POST method.
+        REQUEST PARAMS:
+            check:
+                checksum --- same as status request has. REQUIRED.
+                timestamp --- same as status request has. REQUIRED.
+            iSmarror data:
+                token --- device token. REQUIRED.
+                latitude --- latitude of the device. REQUIRED.
+                longitude --- longitude of the device. REQUIRED.
+                title --- title (name of device) --- NOT REQUIRED.
+        If request is successful response will something like that:
+            {u'title': u'iSmarror for e.g.', u'is_locked': False,
+             u'longitude': u'10.0000000000',
+             u'last_login': u'2016-06-13T10:02:14.011418Z',
+             u'is_online': True, u'latitude': u'10.0000000000', u'id': 4}
+        Response status in successful case is 201.
+        In case of any error server will return 400 status and
+        error description.
+
+        """
+
+        timestamp = request.data.pop('timestamp', None)
+        checksum = request.data.pop('checksum', None)
+
+        if not check_sign(timestamp, checksum):
+            return Response(data={'error': _('Checksum error')}, status=400)
+
+        serializer = MirrorSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(data=serializer.data, status=201)
 
 
 class PhotoViewSet(viewsets.ModelViewSet):

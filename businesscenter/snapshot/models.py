@@ -52,15 +52,15 @@ class Mirror(models.Model):
                               help_text=_('Mirror`s last user'))
     location = models.CharField(_('Location'), max_length=200, blank=True)
     latitude = models.DecimalField(_('Latitude'), max_digits=19,
-                                   decimal_places=10, null=True)
+                                   decimal_places=10)
     longitude = models.DecimalField(_('Longitude'), max_digits=19,
-                                    decimal_places=10, null=True)
+                                    decimal_places=10)
     # Formerly known as device_tokens
-    token = models.CharField(_('Device tokens'), max_length=200)
+    token = models.CharField(_('Device tokens'), max_length=200, unique=True)
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
     lock_date = models.DateTimeField(_('Date locked'), default=timezone.now)
-    is_locked = models.BooleanField(_('Locked'), default=True)
+    is_locked = models.BooleanField(_('Locked'), default=False)
     # Formerly online_time
     last_login = models.DateTimeField(_('Last login'), default=timezone.now)
 
@@ -76,10 +76,6 @@ class Mirror(models.Model):
         self.is_locked = True
         self.lock_date = timezone.now()
         self.save(update_fields=['is_locked', 'is_locked'])
-
-    def is_available(self):
-        return self.is_locked and \
-               timezone.now() < (self.modify_date + timedelta(minutes=1))
 
     def is_online(self):
         return timezone.now() < (self.last_login + timedelta(seconds=66))
@@ -107,7 +103,6 @@ class Photo(models.Model):
     path_thumb = UploadPath('mirror/photo/thumbs', None, 'thumb', *('owner',))
     owner = models.ForeignKey(Visitor, verbose_name=_('Photo owner'))
     mirror = models.ForeignKey(Mirror, verbose_name=_('Mirror'))
-    # FOR WHAT IS SESSION??? Looks like it redundant. Remove later.
     title = models.CharField(_('Title'), max_length=200, blank=True)
     photo = models.ImageField(_('Photo'), upload_to=path_photo,
                               null=True, blank=True,

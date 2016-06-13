@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from urllib import quote_plus
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.contrib.auth import login, logout, authenticate
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
@@ -47,6 +47,7 @@ def is_authenticated(request):
 
 
 @api_view(['GET'])
+@permission_classes((AllowAny,))
 def logout_view(request):
     logout(request)
     return Response(status=200)

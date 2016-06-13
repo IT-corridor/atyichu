@@ -12,7 +12,7 @@ class MirrorSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Mirror
         fields = ('id', 'title', 'latitude', 'longitude', 'is_locked',
-                  'is_online')
+                  'is_online', 'last_login')
 
 
 class CommentSerializer(serializers.ModelSerializer):
