@@ -132,11 +132,12 @@ def dummy_api(request):
 def index(request):
     url = request.GET.get("url")
     weixin_oauth2 = WeixinBackend()
+    r_url = "http://www.atyichu.com/visitor/openid?url=1"
     redirect_url = '{}://{}{}'.format(request.scheme,
                                       request.get_host(),
                                       reverse('visitor:openid'))
     redirect_url += '?url={}'.format(url)
-    url = weixin_oauth2.get_authorize_uri(redirect_url)
+    url = weixin_oauth2.get_authorize_uri(r_url)
     mail_admins('From atyichu', 'url is {}'.format(url))
     return HttpResponseRedirect(url)
 
