@@ -161,14 +161,14 @@ def openid(request):
     mail_admins('From atyichu', 'code is {}'.format(code))
 
     if not code:
-        return Response({'error': _('You don`t have weixin code.')})
+        return JsonResponse({'error': _('You don`t have weixin code.')})
 
     weixin_oauth = WeixinBackend()
     try:
         mail_admins('From atyichu', 'try to get access_token and openid')
         access_token, openid = weixin_oauth.get_access_token(code)
     except TypeError:
-        return Response({'error': _('You got error trying to get openid')})
+        return JsonResponse({'error': _('You got error trying to get openid')})
 
     user_info = weixin_oauth.get_user_info(access_token, openid)
     mail_admins('From atyichu', user_info)
