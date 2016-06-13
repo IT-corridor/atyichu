@@ -73,7 +73,7 @@ def verify_captcha(request, captcha_key, captcha_value):
     return Response(data, status=status)
 
 
-def index(request):
+def index_(request):
     """ Formerly index. Entry point to weixin oauth2 """
     jsapi = JsApi_pub()
     r_url = "http://www.atyichu.com/visitor/openid?url=1"
@@ -85,7 +85,7 @@ def index(request):
     return response
 
 
-def openid(request):
+def openid_(request):
     # Get weixin openid then login
     # Else print you are not weixin user
     # This one is working
@@ -129,7 +129,7 @@ def dummy_api(request):
     return Response(data={'message': 'Hello'}, status=200)
 
 
-def index_(request):
+def index(request):
     url = request.GET.get("url")
     weixin_oauth2 = WeixinBackend()
     redirect_url = "http://www.atyichu.com/visitor/openid"
@@ -138,7 +138,7 @@ def index_(request):
     return HttpResponseRedirect(url)
 
 
-def openid_(request):
+def openid(request):
     url = request.GET.get("url")
 
     redirect = reverse('index')
