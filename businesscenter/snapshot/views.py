@@ -216,7 +216,12 @@ class MirrorViewSet(viewsets.GenericViewSet):
         Response status in successful case is 201.
         In case of any error server will return 400 status and
         error description.
-
+        An example of request:
+        curl curl -H "Content-Type: application/json" -X \
+        POST -d '{"checksum":"hexdigest_data_here","timestamp":"time", \
+        "token": "mirror_token", "latitude": "10.23", "longitude": "10.23"}' \
+        http://atyichu.cn/api/v1/mirror/
+        But now we serving on atyichu.com. Keep in mind.
         """
 
         timestamp = request.data.pop('timestamp', None)
