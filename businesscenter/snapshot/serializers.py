@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 
 from . import models
+from visitor.serializers import WeixinSerializer
 
 
 class MirrorSerializer(serializers.ModelSerializer):
@@ -17,7 +18,7 @@ class MirrorSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source='author', read_only=True)
+    author_data = WeixinSerializer(source='author', read_only=True)
 
     class Meta:
         model = models.Comment

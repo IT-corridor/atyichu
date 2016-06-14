@@ -2,10 +2,11 @@ from __future__ import unicode_literals
 
 from urllib import quote_plus
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 from django.contrib.auth import login, logout, authenticate
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, JsonResponse
 from django.core.mail import send_mail, mail_admins
+from django.http import HttpResponseRedirect, JsonResponse
 
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -14,6 +15,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import WeixinSerializer
 from .oauth2 import WeixinBackend
 from .models import Visitor
+from utils.permissions import IsVisitor
 
 
 @api_view(['POST'])
@@ -108,17 +110,20 @@ def openid(request):
 
     weixin_oauth = WeixinBackend()
     try:
-        access_token, openid = weixin_oauth.get_access_token(code)
+        token_data = weixin_oauth.get_access_token(code)
     except TypeError:
         return JsonResponse({'error': _('You got error trying to get openid')})
 
-    user_info = weixin_oauth.get_user_info(access_token, openid)
-    mail_admins('From atyichu', str(user_info))
+    user_info = weixin_oauth.get_user_info(token_data['access_token'],
+                                           token_data['openid'])
     data = {'avatar_url': user_info.get('headimgurl'),
             'nickname': user_info.get('nickname'),
-            'weixin': openid}
+            'weixin': token_data['openid'],
+            'access_token': token_data['access_token'],
+            'expires_in': token_data['expires_in'],
+            'refresh_token': token_data['refresh_token']}
     try:
-        visitor = Visitor.objects.get(weixin=openid)
+        visitor = Visitor.objects.get(weixin=token_data['openid'])
     except Visitor.DoesNotExist:
         serializer = WeixinSerializer(data=data)
     else:
@@ -130,3 +135,29 @@ def openid(request):
     login(request, user)
     response.set_cookie('weixin', visitor.weixin, max_age=300)
     return response
+
+
+@api_view(['GET'])
+@permission_classes((IsVisitor,))
+def get_visitor(request):
+    visitor = request.user.visitor
+    serializer = WeixinSerializer(instance=visitor)
+    return Response(data=serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes((IsVisitor,))
+def update_visitor(request):
+    """ Updating user data from weixin """
+    wx = WeixinBackend()
+    visitor = request.user.visitor
+    data = {}
+    if visitor.is_expired():
+        data.update(wx.refresh_user_credentials(visitor.refresh_token))
+
+    user_info = wx.get_user_info(data['access_token'], data['openid'])
+    data.update(user_info)
+    serializer = WeixinSerializer(instance=visitor, data=data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(data=serializer.data)

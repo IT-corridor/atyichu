@@ -1,13 +1,15 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from .validators import validate_weixin
 from utils.validators import SizeValidator
 
 
 class Visitor(models.Model):
-    weixin = models.CharField(_('Weixin id'), max_length=30,
+    """ Only for Weixin Oauth2 """
+    weixin = models.CharField(_('Weixin open id'), max_length=30,
                               validators=[validate_weixin], unique=True,
                               help_text=_('4-30 characters, '
                                           'Chinese and English letters,'
@@ -20,6 +22,14 @@ class Visitor(models.Model):
     thumb = models.ImageField(_('Thumbnail'),
                               upload_to='visitors/thumbs',
                               null=True, blank=True)
+    access_token = models.CharField(_('Weixin Access Token'), max_length=255)
+    refresh_token = models.CharField(_('Weixin Refresh Token'), max_length=255)
+    expires_in = models.IntegerField(_('Token expires in'))
+    token_date = models.DateTimeField(_('Token date'), default=timezone.now)
+
+    def is_expired(self):
+        return (timezone.now() + timezone.timedelta(seconds=self.expires_in)) \
+               < self.token_date
 
     def __unicode__(self):
         return self.weixin

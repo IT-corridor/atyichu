@@ -1,16 +1,19 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
-from django.utils.encoding import smart_unicode, smart_str
+from django.utils.encoding import smart_unicode
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from .models import Visitor
 from utils.utils import get_content_file
 
+
 # PART 1 FEATURES #
 class WeixinSerializer(serializers.ModelSerializer):
     avatar_url = serializers.URLField(required=False)
     nickname = serializers.CharField()
+    username = serializers.CharField(source='user.username', read_only=True)
 
     # EXTEND LATER
     # We assume that we get a validated data from weixin open id
@@ -23,7 +26,9 @@ class WeixinSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         visitor = Visitor.objects.create(weixin=validated_data['weixin'],
-                                         user=user)
+                                         user=user,
+                                         access_token=validated_data['access_token'],
+                                         expires_in=validated_data['expires_in'])
         avatar_url = validated_data.pop('avatar_url', None)
         if avatar_url:
             ext, content_file = get_content_file(avatar_url)
@@ -33,9 +38,9 @@ class WeixinSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Later make a different view to update profile data
         # Later need to be switched off in the view
-        nickname = smart_unicode(validated_data['nickname'])
+        nickname = smart_unicode(validated_data.pop('nickname', None))
         user = self.instance.user
-        if user.username == self.instance.weixin:
+        if nickname:
             user.username = nickname
             user.save()
         if not instance.avatar.name:
@@ -44,11 +49,19 @@ class WeixinSerializer(serializers.ModelSerializer):
                 ext, content_file = get_content_file(avatar_url)
                 instance.avatar.save('{}.{}'.format(nickname,
                                                     ext), content_file)
+
+        if validated_data('expires_in'):
+            instance.token_date = timezone.now()
+
+        for k, v in validated_data.items():
+            if hasattr(instance, k):
+                setattr(instance, k, v)
+
         instance.save()
         return instance
 
-
-
     class Meta:
         model = Visitor
-        fields = ('weixin', 'avatar_url', 'nickname')
+        fields = ('weixin', 'avatar_url', 'nickname', 'thumb')
+        extra_kwargs = {'thumb': {'read_only': True},
+                        'weixin': {'write_only': True},}

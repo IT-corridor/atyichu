@@ -19,6 +19,10 @@ class WeixinBackend(object):
               'extra': {'grant_type': 'authorization_code'}
               }
 
+    refresh = {'url': 'https://api.weixin.qq.com/sns/oauth2/refresh_token',
+               'extra': {'grant_type': 'refresh_token'}
+              }
+
     user_url = 'https://api.weixin.qq.com/sns/userinfo'
 
     appid = settings.WEIXIN_APP_ID
@@ -39,13 +43,7 @@ class WeixinBackend(object):
 
         response = requests.get(self.access['url'], params=params)
         data = response.json()
-        try:
-            access_token = data['access_token']
-            openid = data['openid']
-        except KeyError:
-            return None
-        else:
-            return access_token, openid
+        return data
 
     def get_user_info(self, access_token, openid):
         params = {'access_token': access_token,
@@ -54,8 +52,17 @@ class WeixinBackend(object):
         response = requests.get(self.user_url, params=params)
         response.encoding = 'utf-8'
         data = response.json()
-        data['encoding'] = response.encoding
+        # data['encoding'] = response.encoding
         return data
+
+    def refresh_user_credentials(self, refresh_token):
+        params = self.refresh['extra']
+        params['appid'] = self.appid
+        params['refresh_token'] = refresh_token
+
+        response = requests.get(self.refresh['url'], params=params)
+        response.encoding = 'utf-8'
+        return response.json()
 
     def format_params(self, param_map, encode=False):
         li = sorted(param_map)

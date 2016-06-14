@@ -15,7 +15,6 @@ from rest_framework import viewsets
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
 from .models import Mirror, Photo, Comment
 from .serializers import MirrorSerializer, PhotoListSerializer, \
     PhotoDetailSerializer, CommentSerializer
