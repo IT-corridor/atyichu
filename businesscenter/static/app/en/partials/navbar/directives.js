@@ -38,7 +38,9 @@ var navbar = angular.module('navbar', ['auth.services'])
                     $location.path('/');
                 },
                 function(error){
-                    $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
+                    for (var e in error.data){
+                        $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
+                    }
                     $location.path('/');
                 }
 
