@@ -9,7 +9,7 @@ auth.factory('Login', ['$resource',
 ]);
 auth.factory('Update', ['$resource',
     function($resource){
-        return $resource('visitor/update', {}, {
+        return $resource('visitor/update/', {}, {
             post: {method:'POST', responseType:'json'},
         });
     }
