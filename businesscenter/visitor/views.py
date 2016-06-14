@@ -138,7 +138,7 @@ def openid(request):
 
 
 @api_view(['GET'])
-@permission_classes((IsVisitor,))
+@permission_classes((IsVisitorSimple,))
 def get_visitor(request):
     visitor = request.user.visitor
     serializer = WeixinSerializer(instance=visitor)
