@@ -111,6 +111,7 @@ def openid(request):
     weixin_oauth = WeixinBackend()
     try:
         token_data = weixin_oauth.get_access_token(code)
+        mail_admins('From atyichu', str(token_data))
     except TypeError:
         return JsonResponse({'error': _('You got error trying to get openid')})
 
@@ -122,6 +123,7 @@ def openid(request):
             'access_token': token_data['access_token'],
             'expires_in': token_data['expires_in'],
             'refresh_token': token_data['refresh_token']}
+    mail_admins('From atyichu', str(data))
     try:
         visitor = Visitor.objects.get(weixin=token_data['openid'])
     except Visitor.DoesNotExist:
@@ -131,6 +133,7 @@ def openid(request):
 
     serializer.is_valid(raise_exception=True)
     visitor = serializer.save()
+    mail_admins('From atyichu', str(visitor.data))
     user = authenticate(weixin=visitor.weixin)
     login(request, user)
     response.set_cookie('weixin', visitor.weixin, max_age=300)
