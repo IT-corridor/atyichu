@@ -15,7 +15,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import WeixinSerializer
 from .oauth2 import WeixinBackend
 from .models import Visitor
-from utils.permissions import IsVisitor
+from utils.permissions import IsVisitorSimple
 
 
 @api_view(['POST'])
@@ -146,7 +146,7 @@ def get_visitor(request):
 
 
 @api_view(['POST'])
-@permission_classes((IsVisitor,))
+@permission_classes((IsVisitorSimple,))
 def update_visitor(request):
     """ Updating user data from weixin """
     wx = WeixinBackend()

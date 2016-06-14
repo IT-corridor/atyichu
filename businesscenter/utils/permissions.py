@@ -65,3 +65,13 @@ class IsVisitor(permissions.IsAuthenticated):
             if hasattr(request.user, 'visitor'):
                 return True
         return request.user.is_staff
+
+
+class IsVisitorSimple(permissions.IsAuthenticated):
+
+    def has_permission(self, request, view):
+        base_perm = super(IsVisitor, self).has_permission(request, view)
+        if base_perm:
+            if hasattr(request.user, 'visitor'):
+                return True
+        return request.user.is_staff
