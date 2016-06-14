@@ -111,7 +111,6 @@ def openid(request):
     weixin_oauth = WeixinBackend()
     try:
         token_data = weixin_oauth.get_access_token(code)
-        mail_admins('From atyichu', str(token_data))
     except TypeError:
         return JsonResponse({'error': _('You got error trying to get openid')})
 
@@ -128,12 +127,14 @@ def openid(request):
         visitor = Visitor.objects.get(weixin=token_data['openid'])
     except Visitor.DoesNotExist:
         serializer = WeixinSerializer(data=data)
+        mail_admins('From atyichu', 'user not exists')
     else:
         serializer = WeixinSerializer(instance=visitor, data=data)
+        mail_admins('From atyichu', 'updating user')
 
     serializer.is_valid(raise_exception=True)
     visitor = serializer.save()
-    mail_admins('From atyichu', str(visitor.data))
+    mail_admins('From atyichu', str(serializer.data))
     user = authenticate(weixin=visitor.weixin)
     login(request, user)
     response.set_cookie('weixin', visitor.weixin, max_age=300)
