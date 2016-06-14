@@ -157,6 +157,7 @@ def update_visitor(request):
         data.update(wx.refresh_user_credentials(visitor.refresh_token))
     user_info = wx.get_user_info(data['access_token'], data['weixin'])
     data.update(user_info)
+    mail_admins('From atyichu', str(data))
     serializer = WeixinSerializer(instance=visitor, data=data, partial=True)
     serializer.is_valid(raise_exception=True)
     serializer.save()

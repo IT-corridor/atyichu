@@ -47,7 +47,7 @@ class WeixinSerializer(serializers.ModelSerializer):
             avatar_url = validated_data.pop('avatar_url', None)
             if avatar_url:
                 ext, content_file = get_content_file(avatar_url)
-                instance.avatar.save('{}.{}'.format(nickname,
+                instance.avatar.save('{}.{}'.format(user.username,
                                                     ext), content_file)
 
         if validated_data.get('expires_in', None):
