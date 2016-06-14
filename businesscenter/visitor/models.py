@@ -24,12 +24,12 @@ class Visitor(models.Model):
                               null=True, blank=True)
     access_token = models.CharField(_('Weixin Access Token'), max_length=255)
     refresh_token = models.CharField(_('Weixin Refresh Token'), max_length=255)
-    expires_in = models.IntegerField(_('Token expires in'))
+    expires_in = models.PositiveIntegerField(_('Token expires in'))
     token_date = models.DateTimeField(_('Token date'), default=timezone.now)
 
     def is_expired(self):
-        return (timezone.now() + timezone.timedelta(seconds=self.expires_in)) \
-               < self.token_date
+        return timezone.now() >\
+               self.token_date + timezone.timedelta(seconds=self.expires_in)
 
     def __unicode__(self):
         return self.weixin

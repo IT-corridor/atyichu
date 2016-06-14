@@ -7,7 +7,13 @@ auth.factory('Login', ['$resource',
         });
     }
 ]);
-
+auth.factory('Update', ['$resource',
+    function($resource){
+        return $resource('visitor/update', {}, {
+            post: {method:'POST', responseType:'json'},
+        });
+    }
+]);
 auth.factory('Logout', ['$resource',
     function($resource){
         return $resource('visitor/logout/', {}, {
