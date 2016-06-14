@@ -11,6 +11,7 @@ urlpatterns = (
     url(r'^openid$', views.openid, name='openid'),
     url(r'^dummy/$', views.dummy_api, name='dummy'),
     url(r'^is_authenticated/$', views.is_authenticated, name='is_auth'),
+    url(r'^update/$', views.update_visitor, name='update'),
 )
 
 

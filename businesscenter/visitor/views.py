@@ -131,7 +131,6 @@ def openid(request):
 
     serializer.is_valid(raise_exception=True)
     visitor = serializer.save()
-    mail_admins('From atyichu', str(serializer.data))
     user = authenticate(weixin=visitor.weixin)
     login(request, user)
     response.set_cookie('weixin', visitor.weixin, max_age=300)
