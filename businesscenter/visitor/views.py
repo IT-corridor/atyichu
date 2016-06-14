@@ -161,4 +161,5 @@ def update_visitor(request):
     serializer = WeixinSerializer(instance=visitor, data=data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
+    mail_admins('From atyichu', str(serializer.data))
     return Response(data=serializer.data)
