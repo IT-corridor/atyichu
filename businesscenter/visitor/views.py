@@ -153,6 +153,7 @@ def update_visitor(request):
     visitor = request.user.visitor
     data = {'access_token': visitor.access_token,
             'weixin': visitor.weixin}
+    mail_admins('From atyichu', str(data))
     if visitor.is_expired():
         data.update(wx.refresh_user_credentials(visitor.refresh_token))
         mail_admins('From atyichu', str(data))
