@@ -155,7 +155,7 @@ def update_visitor(request):
             'weixin': visitor.weixin}
     if visitor.is_expired():
         data.update(wx.refresh_user_credentials(visitor.refresh_token))
-
+        mail_admins('From atyichu', str(data))
     user_info = wx.get_user_info(data['access_token'], data['weixin'])
     data.update(user_info)
     serializer = WeixinSerializer(instance=visitor, data=data)
