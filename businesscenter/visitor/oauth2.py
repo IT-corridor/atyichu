@@ -52,6 +52,7 @@ class WeixinBackend(object):
                   'openid': openid}
 
         response = requests.get(self.user_url, params=params)
+        response.encoding = 'utf-8'
         data = response.json()
         data['encoding'] = response.encoding
         return data
