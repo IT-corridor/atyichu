@@ -38,8 +38,8 @@ var navbar = angular.module('navbar', ['auth.services'])
                     $location.path('/');
                 },
                 function(error){
-                    $rootScope.alerts.push({ type: 'danger',
-                        msg: 'Fail trying update profile.'});
+                    $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
+                    $location.path('/');
                 }
 
             );
