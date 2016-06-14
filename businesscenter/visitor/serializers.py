@@ -50,7 +50,7 @@ class WeixinSerializer(serializers.ModelSerializer):
                 instance.avatar.save('{}.{}'.format(nickname,
                                                     ext), content_file)
 
-        if validated_data('expires_in'):
+        if validated_data.get('expires_in', None):
             instance.token_date = timezone.now()
 
         for k, v in validated_data.items():
