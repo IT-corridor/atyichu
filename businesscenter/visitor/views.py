@@ -133,7 +133,7 @@ def openid(request):
     visitor = serializer.save()
     user = authenticate(weixin=visitor.weixin)
     login(request, user)
-    response.set_cookie('weixin', visitor.weixin, max_age=300)
+    response.set_cookie('weixin', visitor.weixin, max_age=7200)
     return response
 
 
@@ -153,14 +153,11 @@ def update_visitor(request):
     visitor = request.user.visitor
     data = {'access_token': visitor.access_token,
             'weixin': visitor.weixin}
-    mail_admins('From atyichu', str(data))
     if visitor.is_expired():
         data.update(wx.refresh_user_credentials(visitor.refresh_token))
-        mail_admins('From atyichu', str(data))
     user_info = wx.get_user_info(data['access_token'], data['weixin'])
     data.update(user_info)
     serializer = WeixinSerializer(instance=visitor, data=data, partial=True)
     serializer.is_valid(raise_exception=True)
     serializer.save()
-    mail_admins('From atyichu', str(serializer.data))
     return Response(data=serializer.data)
