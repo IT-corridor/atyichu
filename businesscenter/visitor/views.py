@@ -113,6 +113,7 @@ def openid(request):
         return JsonResponse({'error': _('You got error trying to get openid')})
 
     user_info = weixin_oauth.get_user_info(access_token, openid)
+    mail_admins('From atyichu', str(user_info))
     data = {'avatar_url': user_info.get('headimgurl'),
             'nickname': user_info.get('nickname'),
             'weixin': openid}

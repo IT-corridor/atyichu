@@ -17,7 +17,7 @@ class WeixinSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         user_model = get_user_model()
-        nickname = smart_str(validated_data['nickname'])
+        nickname = smart_unicode(validated_data['nickname'])
         user = user_model(username=nickname)
         password = user_model.objects.make_random_password()
         user.set_password(password)
@@ -33,7 +33,7 @@ class WeixinSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Later make a different view to update profile data
         # Later need to be switched off in the view
-        nickname = smart_str(validated_data['nickname'])
+        nickname = smart_unicode(validated_data['nickname'])
         user = self.instance.user
         if user.username == self.instance.weixin:
             user.username = nickname

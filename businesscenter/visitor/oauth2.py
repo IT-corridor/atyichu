@@ -52,7 +52,9 @@ class WeixinBackend(object):
                   'openid': openid}
 
         response = requests.get(self.user_url, params=params)
-        return response.json()
+        data = response.json()
+        data['encoding'] = response.encoding
+        return data
 
     def format_params(self, param_map, encode=False):
         li = sorted(param_map)
