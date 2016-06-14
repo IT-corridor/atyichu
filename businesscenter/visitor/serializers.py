@@ -62,6 +62,6 @@ class WeixinSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Visitor
-        fields = ('weixin', 'avatar_url', 'nickname', 'thumb')
+        fields = ('weixin', 'avatar_url', 'nickname', 'thumb', 'username')
         extra_kwargs = {'thumb': {'read_only': True},
                         'weixin': {'write_only': True},}
