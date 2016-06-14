@@ -122,15 +122,12 @@ def openid(request):
             'access_token': token_data['access_token'],
             'expires_in': token_data['expires_in'],
             'refresh_token': token_data['refresh_token']}
-    mail_admins('From atyichu', str(data))
     try:
         visitor = Visitor.objects.get(weixin=token_data['openid'])
     except Visitor.DoesNotExist:
         serializer = WeixinSerializer(data=data)
-        mail_admins('From atyichu', 'user not exists')
     else:
         serializer = WeixinSerializer(instance=visitor, data=data)
-        mail_admins('From atyichu', 'updating user')
 
     serializer.is_valid(raise_exception=True)
     visitor = serializer.save()
