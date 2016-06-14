@@ -151,11 +151,12 @@ def update_visitor(request):
     """ Updating user data from weixin """
     wx = WeixinBackend()
     visitor = request.user.visitor
-    data = {}
+    data = {'access_token': visitor.access_token,
+            'weixin': visitor.weixin}
     if visitor.is_expired():
         data.update(wx.refresh_user_credentials(visitor.refresh_token))
 
-    user_info = wx.get_user_info(data['access_token'], data['openid'])
+    user_info = wx.get_user_info(data['access_token'], data['weixin'])
     data.update(user_info)
     serializer = WeixinSerializer(instance=visitor, data=data)
     serializer.is_valid(raise_exception=True)
