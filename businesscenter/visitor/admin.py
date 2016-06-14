@@ -7,6 +7,5 @@ from . import models
 class VisitorAdmin(admin.ModelAdmin):
 
     list_display = ('user', 'is_expired')
-    readonly_fields = ('token_date')
 
 admin.site.register(models.Visitor, VisitorAdmin)
