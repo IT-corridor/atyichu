@@ -12,7 +12,7 @@ from utils.utils import get_content_file
 # PART 1 FEATURES #
 class WeixinSerializer(serializers.ModelSerializer):
     avatar_url = serializers.URLField(required=False, write_only=True)
-    nickname = serializers.CharField(write_only=True)
+    nickname = serializers.CharField(required=True, write_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
 
     # EXTEND LATER
@@ -38,7 +38,7 @@ class WeixinSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Later make a different view to update profile data
         # Later need to be switched off in the view
-        nickname = smart_unicode(validated_data.pop('nickname', None))
+        nickname = validated_data.pop('nickname', None)
         user = self.instance.user
         if nickname:
             user.username = nickname
