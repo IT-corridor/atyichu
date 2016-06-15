@@ -43,3 +43,25 @@ class PhotoDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Photo
+
+
+# Group serializers started
+
+class TagSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Tag
+
+
+class MemberSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Member
+
+
+class GroupSerializer(serializers.ModelSerializer):
+
+    members = MemberSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = models.Group

@@ -10,6 +10,9 @@ snapshot_router = DefaultRouter()
 snapshot_router.register(r'mirror', views.MirrorViewSet, 'mirror')
 snapshot_router.register(r'photo', views.PhotoViewSet, 'photo')
 snapshot_router.register(r'comment', views.CommentViewSet, 'comment')
+snapshot_router.register(r'tag', views.TagViewSet, 'tag')
+snapshot_router.register(r'member', views.MemberViewSet, 'member')
+snapshot_router.register(r'group', views.GroupViewSet, 'group')
 
 urlpatterns = [
     url(r'^signature/$', views.get_signature, name='signature'),

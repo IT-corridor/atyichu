@@ -25,6 +25,19 @@ class PhotoAdmin(admin.ModelAdmin):
     inlines = (CommentInline, )
 
 
+# GROUP
+class MemberInline(admin.TabularInline):
+    model = models.Member
+    extra = 0
+
+
+class GroupAdmin(admin.ModelAdmin):
+    list_display = ('title', 'owner', 'is_private')
+    inlines = (MemberInline,)
+
+# REGISTER models to admin
 admin.site.register(models.Mirror, MirrorAdmin)
 admin.site.register(models.Photo, PhotoAdmin)
 admin.site.register(models.Comment)
+admin.site.register(models.Group, GroupAdmin)
+admin.site.register(models.Tag)

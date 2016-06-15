@@ -9,15 +9,13 @@ from datetime import timedelta
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.utils import timezone
-from django.core.urlresolvers import reverse
 from django.core.mail import mail_admins
 from rest_framework import viewsets
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from .models import Mirror, Photo, Comment
-from .serializers import MirrorSerializer, PhotoListSerializer, \
-    PhotoDetailSerializer, CommentSerializer
+from .models import Mirror, Photo, Comment, Tag, Member, Group
+from . import serializers
 from .sutils import check_sign
 from utils.permissions import IsVisitor
 from vutils.umeng_push import push_unicast
@@ -30,7 +28,7 @@ log = logging.getLogger(__name__)
 
 
 class MirrorViewSet(viewsets.GenericViewSet):
-    serializer_class = MirrorSerializer
+    serializer_class = serializers.MirrorSerializer
     permission_classes = [IsVisitor]
 
     def get_queryset(self):
@@ -86,7 +84,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
         a_mirrors = [i for i in mirrors if not i.is_locked or
                      i.owner_id == visitor.pk]
         # TODO remove next line
-        serializer = MirrorSerializer(instance=a_mirrors, many=True)
+        serializer = serializers.MirrorSerializer(instance=a_mirrors, many=True)
         return Response(data=serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
@@ -129,7 +127,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
         # IT WILL REWRITE OWNER IF DIFFERENT PEOPLE USING MIRROR
         mirror.user = request.user
         mirror.save()
-        serializer = MirrorSerializer(mirror)
+        serializer = serializers.MirrorSerializer(mirror)
         return Response(data=serializer.data, status=200)
 
     def retrieve(self, request, *args, **kwargs):
@@ -150,7 +148,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
             elif mirror.is_overtime():
                 data = {'error': _('Mirror is unavailable')}
             else:
-                serializer = MirrorSerializer(mirror)
+                serializer = serializers.MirrorSerializer(mirror)
                 data = serializer.data
                 status = 200
         except Mirror.DoesNotExist:
@@ -229,7 +227,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
         if not check_sign(timestamp, checksum):
             return Response(data={'error': _('Checksum error')}, status=400)
 
-        serializer = MirrorSerializer(data=request.data)
+        serializer = serializers.MirrorSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data=serializer.data, status=201)
@@ -237,7 +235,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
 
 class PhotoViewSet(viewsets.ModelViewSet):
     queryset = Photo.objects.all()
-    serializer_class = PhotoDetailSerializer
+    serializer_class = serializers.PhotoDetailSerializer
     permission_classes = [IsVisitor]
 
     # TODO: test delete
@@ -298,9 +296,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
         photos = Photo.objects.filter(owner=visitor).\
             prefetch_related('comment_set__author')
 
-        serializer = PhotoListSerializer(instance=photos, many=True,
-                                         context={'request': request})
-        return Response(data=serializer.data)
+        ser = serializers.PhotoListSerializer(instance=photos,many=True,
+                                              context={'request': request})
+        return Response(data=ser.data)
 
     def partial_update(self, request, *args, **kwargs):
         """
@@ -367,7 +365,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.select_related('author')
-    serializer_class = CommentSerializer
+    serializer_class = serializers.CommentSerializer
     permission_classes = [IsVisitor]
     pagination_class = None
 
@@ -379,6 +377,55 @@ class CommentViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=201, headers=headers)
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    # TODO: create actual permissions
+    queryset = Tag.objects.prefetch_related('group_set__owner')
+    serializer_class = serializers.TagSerializer
+    pagination_class = None
+    permission_classes = []
+
+
+class MemberViewSet(viewsets.ModelViewSet):
+    queryset = Member.objects.select_related('group', 'visitor')
+    serializer_class = serializers.MemberSerializer
+    pagination_class = None
+    permission_classes = []
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    # TODO: Set up permissions. Add custom methods.
+    queryset = Group.objects.select_related('visitor').prefetch_related('tags')
+    serializer_class = serializers.GroupSerializer
+    pagination_class = None
+    permission_classes = []
+
+    @detail_route(methods=['post'])
+    def photo(self, request):
+        """ Handler to save an uploaded photo to the 'group' """
+        raise NotImplementedError
+
+    @detail_route(methods=['post'])
+    def snapshot(self, request):
+        """ Handler to save a photo taken from weixin JS API """
+        raise NotImplementedError
+
+    @detail_route(methods=['delete'])
+    def photo_remove(self, request):
+        """ Handler to remove photo which in the group """
+        raise NotImplementedError
+
+    @detail_route(methods=['post'])
+    def tags_add(self, request):
+        """ Handler to add tags. May be useless.
+        Need to check other opportunities. """
+        raise NotImplementedError
+
+    @detail_route(methods=['post'])
+    def tags_remove(self, request):
+        """ Handler to remove tags. Also may be useless. """
+        raise NotImplementedError
 
 
 @api_view(['GET'])

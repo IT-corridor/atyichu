@@ -113,6 +113,8 @@ class Photo(models.Model):
                                    blank=True, max_length=5000)
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
+    group = models.ForeignKey('snapshot.Group', on_delete=models.SET_NULL,
+                              null=True)
 
     def __unicode__(self):
         return '{}: {}'.format(self.owner, self.pk)
@@ -139,3 +141,52 @@ class Comment(models.Model):
         verbose_name = _('Comment')
         verbose_name_plural = _('Comments')
         ordering = ('create_date', 'pk')
+
+
+class Tag(models.Model):
+    """ Representation of tag for group """
+    title = models.CharField(_('Title'), max_length=200, blank=True)
+
+    def __unicode__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _('Group tag')
+        verbose_name_plural = _('Group tags')
+        ordering = ('pk',)
+
+
+class Group(models.Model):
+    """ This model represents visitor`s [virtual] wardrobe. """
+    # TODO: who can own the group? Only weixin user or any kind too?
+    title = models.CharField(_('Title'), max_length=200)
+    description = models.TextField(_('Description'), max_length=5000,
+                                   blank=True)
+    is_private = models.BooleanField(_('Private'), default=False)
+    create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
+    modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
+    owner = models.ForeignKey(Visitor, verbose_name=_('Group owner'))
+    tags = models.ManyToManyField(Tag, verbose_name=_('Tags'))
+
+    def __unicode__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _('Group')
+        verbose_name_plural = _('Groups')
+        ordering = ('create_date', 'pk',)
+
+
+class Member(models.Model):
+    """ Representation of a group member.
+    It not uses directly ManyToMany Relation. It is realized explicitly """
+    group = models.ForeignKey(Group, verbose_name=_('Group'))
+    visitor = models.ForeignKey(Visitor, verbose_name=_('Group'))
+
+    def __unicode__(self):
+        return '{}, {}'.format(self.group, self.visitor)
+
+    class Meta:
+        verbose_name = _('Member')
+        verbose_name_plural = _('Members')
+        ordering = ('pk',)
