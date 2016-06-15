@@ -21,6 +21,13 @@ auth.factory('Logout', ['$resource',
         });
     }
 ]);
+auth.factory('Me', ['$resource',
+    function($resource){
+        return $resource('visitor/me/', {}, {
+            get: {method:'GET', responseType:'json'},
+        });
+    }
+]);
 
 auth.factory('IsAuthenticated', ['$resource',
     function($resource){

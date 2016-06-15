@@ -22,17 +22,22 @@ from utils.permissions import IsVisitorSimple
 @permission_classes((AllowAny,))
 def login_view(request):
     # USE openid
-    # ALSO with captcha look pretty stupid
-    serializer = WeixinSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    visitor = serializer.save()
-    user = authenticate(weixin=visitor.weixin)
-    user_data = serializer.data
+    status = 400
     try:
+        visitor = Visitor.objects.get(weixin=request.data['weixin'])
+        serializer = WeixinSerializer(instance=visitor)
+        user_data = serializer.data
+        user = authenticate(weixin=visitor.weixin)
         login(request, user)
+    except KeyError as e:
+        user_data = {'weixin': _('Missed param')}
+    except Visitor.DoesNotExist:
+        user_data = {'weixin': _('User does not exists')}
     except Exception as e:
         user_data = {'error': e.message}
-    return Response(user_data, status=200)
+    else:
+        status = 200
+    return Response(user_data, status=status)
 
 
 @api_view(['GET'])
@@ -161,3 +166,13 @@ def update_visitor(request):
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(data=serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes((IsVisitorSimple,))
+def get_me(request):
+    """ Provides personal user data, username and thumb """
+    visitor = request.user.visitor
+    serializer = WeixinSerializer(instance=visitor)
+    return Response(data=serializer.data)
+

@@ -15,11 +15,29 @@ class VendorTests(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.vendor_data = {'weixin': 'weixinweixin'}
+        cls.data = {"weixin": "oRFOiwzjygVD6hwtyMFUZCZ299bo",
+                    "access_token": "ACCESS_TOKEN",
+                    "refresh_token": "REFRESH_TOKEN",
+                    "expires_in": 7200,
+                    "token_date": "2016-06-15T07:08:04.960Z"}
+        user = get_user_model().objects.create(username="Nikolay")
+        Visitor.objects.create(user=user, **cls.data)
 
     def test_rest_login_success(self):
         """ Test login view for all accounts """
         url = reverse('visitor:login')
-        response = self.client.post(url, data=self.vendor_data)
+        response = self.client.post(url, data={'weixin':self.data['weixin']})
         self.assertEqual(response.status_code, 200)
         self.client.logout()
+
+    def test_me(self):
+        """ Test retreiving own weixin data """
+        user = get_user_model().objects.first()
+        self.client.force_login(user=user)
+        url = reverse('visitor:me')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+
+
+

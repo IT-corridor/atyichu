@@ -1,10 +1,10 @@
-var navbar = angular.module('navbar', ['auth.services'])
-.directive('dNavbar', ['$window', 'PATH', 'Auth', 'Logout', 'Update',
-                        function($window, PATH, Logout, Auth, Update) {
+var navbar = angular.module('navbar', ['auth.services', 'selfie'])
+.directive('dNavbar', ['$window', 'PATH','Logout', 'Auth', 'Update', 'Me',
+                        function($window, PATH, Logout, Auth, Update, Me) {
     return {
         restrict: 'A',
         templateUrl: PATH + 'partials/navbar/navbar.html',
-        controller: function($scope, $rootScope, $window, PATH, Logout, Auth, Update ){
+        controller: function($scope, $rootScope, $window, PATH, Logout, Auth, Update, Me ){
 
             angular.element($window).bind('scroll', function() {
                 $scope.change_class = (this.pageYOffset >= 100) ? true : false;
@@ -19,6 +19,10 @@ var navbar = angular.module('navbar', ['auth.services'])
             auth_promise.then(function(result){
                 if (!result.is_authenticated){
                     $window.location.replace("/visitor/");
+                }
+                else{
+                    // Maybe need to optimize...
+                    visitor = Me.get();
                 }
             });
 
