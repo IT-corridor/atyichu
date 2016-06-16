@@ -1,7 +1,7 @@
-angular.module('common.controllers', ['auth.services'])
-.controller('CtrlDummy', ['$scope', '$rootScope','$http',
+angular.module('common.controllers', ['auth.services', 'ngCookies'])
+.controller('CtrlDummy', ['$scope', '$rootScope','$http', '$cookies',
 '$location', '$route', '$window', 'Auth', 'Logout', 'WXI',
-    function($scope, $rootScope, $http, $location, $route, $window, Auth, Logout, WXI) {
+    function($scope, $rootScope, $http, $cookies, $location, $route, $window, Auth, Logout, WXI) {
 
         $rootScope.title = 'Dummy page';
 
@@ -14,6 +14,7 @@ angular.module('common.controllers', ['auth.services'])
         });
 
         $scope.logout = function(){
+            $cookies.remove('sessionid');
             $scope.r = Logout.query(function(r){
                 $rootScope.alerts.push({ type: 'info', msg: 'Good by.'});
                 $route.reload();
