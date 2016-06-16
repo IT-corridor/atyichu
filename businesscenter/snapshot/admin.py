@@ -31,9 +31,14 @@ class MemberInline(admin.TabularInline):
     extra = 0
 
 
+class TagInline(admin.TabularInline):
+    model = models.Tag
+    extra = 0
+
+
 class GroupAdmin(admin.ModelAdmin):
     list_display = ('title', 'owner', 'is_private')
-    inlines = (MemberInline,)
+    inlines = (MemberInline, TagInline)
 
 # REGISTER models to admin
 admin.site.register(models.Mirror, MirrorAdmin)

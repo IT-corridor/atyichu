@@ -12,19 +12,36 @@ from rest_framework.test import APITestCase, APIClient
 
 from visitor.models import Visitor
 
-from .models import Mirror, MirrorManager
+from .models import Mirror, Group, Member, Tag
 
 # TODO: CREATE TEST CASES!
 VENDOR = connection.vendor
 
+visitor_data_1 = {"weixin": "oRFOiwzjygVD6hwtyMFUZCZ299bo",
+                  "access_token": "ACCESS_TOKEN",
+                  "refresh_token": "REFRESH_TOKEN",
+                  "expires_in": 7200,
+                  "token_date": "2016-06-15T07:08:04.960Z"}
+
+visitor_data_2 = {"weixin": "oRFOiwzjygVD6hwtyMFUZCZ299b1",
+                  "access_token": "ACCESS_TOKEN",
+                  "refresh_token": "REFRESH_TOKEN",
+                  "expires_in": 7200,
+                  "token_date": "2016-06-15T07:08:04.960Z"}
 
 # Create your tests here.
 class MirrorTests(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
+        user_1 = User.objects.create(username='Nikolay')
+        user_2 = User.objects.create(username='Jack')
+
+        Visitor.objects.create(user=user_1, **visitor_data_1)
+        Visitor.objects.create(user=user_2, **visitor_data_2)
+
         cls.vendor_data_1 = {'weixin': 'oRFOiwzjygVD6hwtyMFUZCZ299bo'}
-        cls.vendor_data_2 = {'weixin': 'oRFOiw7WT39SToNkgAIEg87BxqPw'}
+        cls.vendor_data_2 = {'weixin': 'oRFOiwzjygVD6hwtyMFUZCZ299b1'}
         url = reverse('visitor:login')
         client = APIClient()
         response = client.post(url, data=cls.vendor_data_1)
@@ -101,7 +118,9 @@ class MirrorTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.client.logout()
 
+    @unittest.skip("It works. just skippend")
     def test_mirror_view_detail(self):
+
         self.force_login()
         Mirror.objects.lock()
         time.sleep(61)
@@ -145,4 +164,145 @@ class MirrorTests(APITestCase):
 
     def force_login(self):
         user = User.objects.get(id=2)
+        self.client.force_login(user=user)
+
+
+class GroupTests(APITestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        user_1 = User.objects.create(username="Nikolay")
+        cls.owner = Visitor.objects.create(user=user_1, **visitor_data_1)
+
+        user_2 = User.objects.create(username="Jack")
+        cls.member = Visitor.objects.create(user=user_2, **visitor_data_2)
+
+        cls.group = Group.objects.create(owner=cls.owner, title='group 0')
+        cls.group_private = Group.objects.create(owner=cls.owner, title='G 0',
+                                                 is_private=True)
+        Member.objects.create(visitor=cls.member, group=cls.group_private)
+        Tag.objects.create(title='Primal', visitor=cls.owner, group=cls.group)
+        Tag.objects.create(title='Second', visitor=cls.member, group=cls.group_private)
+
+    def test_create_group(self):
+        """ Test creating public group """
+        data = {'title': 'test group'}
+        self.force_login(1)
+        url = reverse('snapshot:group-list')
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 201)
+        self.client.logout()
+
+    def test_access_group(self):
+        """Access to the public group for not authenticated person """
+        url = reverse('snapshot:group-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_access_group_private(self):
+        """Test access to the private group from not authenticated person.
+        Expect 403 Forbidden."""
+        url = reverse('snapshot:group-detail', kwargs={'pk': 2})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_access_group_private_member(self):
+        """Test access to the private group from member."""
+        self.force_login(2)
+        url = reverse('snapshot:group-detail', kwargs={'pk': 2})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+
+    def test_delete_group(self):
+        """Test delete group as group owner """
+        self.force_login(1)
+        url = reverse('snapshot:group-detail', kwargs={'pk': 1})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
+        self.client.logout()
+
+    def test_delete_group_as_member(self):
+        """Test delete group as group member. Expect 403 Forbidden. """
+        self.force_login(2)
+        url = reverse('snapshot:group-detail', kwargs={'pk': 2})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+
+    def test_update_put_as_member(self):
+        """ Attempt to update whole group. Expect 403 Forbidden."""
+        self.force_login(2)
+        url = reverse('snapshot:group-detail', kwargs={'pk': 2})
+        response = self.client.put(url, data={'title': 'New title'})
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+
+    def test_update_patch_as_member(self):
+        """ Attempt to update group partially.
+        Expect 403 for member / collaborator """
+        self.force_login(2)
+        url = reverse('snapshot:group-detail', kwargs={'pk': 2})
+        response = self.client.patch(url, data={'title': 'New title'})
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+
+    def test_create_tag_for_group(self):
+        """ Add tag as group owner """
+        self.force_login(1)
+        url = reverse('snapshot:tag-list')
+        response = self.client.post(url, data={'title': 'new tag', 'group': 2})
+        self.assertEqual(response.status_code, 201)
+        self.client.logout()
+
+    def test_create_tag_member_for_group(self):
+        """ Add tag as group owner """
+        self.force_login(2)
+        url = reverse('snapshot:tag-list')
+        response = self.client.post(url, data={'title': 'new tag2',
+                                               'group': 2})
+        self.assertEqual(response.status_code, 201)
+        self.client.logout()
+
+    def test_update_tag_group(self):
+        self.force_login(1)
+        url = reverse('snapshot:tag-detail', kwargs={'pk': 1})
+        response = self.client.patch(url, data={'title': 'updated'})
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+
+    def test_delete_group_tag(self):
+        """ Delete tag as group owner """
+        self.force_login(1)
+        url = reverse('snapshot:tag-detail', kwargs={'pk': 1})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
+        self.client.logout()
+
+    def test_update_tag_group_member(self):
+        """Expect 403."""
+        self.force_login(2)
+        url = reverse('snapshot:tag-detail', kwargs={'pk': 1})
+        response = self.client.patch(url, data={'title': 'updated'})
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+
+    def test_delete_tag_group_member(self):
+        """ Expect 403 """
+        self.force_login(2)
+        url = reverse('snapshot:tag-detail', kwargs={'pk': 1})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+
+    def test_delete_tag_group_member_own(self):
+        self.force_login(2)
+        url = reverse('snapshot:tag-detail', kwargs={'pk': 2})
+        response = self.client.delete(url)
+        print(response.data)
+        self.assertEqual(response.status_code, 204)
+        self.client.logout()
+
+    def force_login(self, pk):
+        user = User.objects.get(id=pk)
         self.client.force_login(user=user)

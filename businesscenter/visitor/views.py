@@ -15,7 +15,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import WeixinSerializer
 from .oauth2 import WeixinBackend
 from .models import Visitor
-from utils.permissions import IsVisitorSimple
+from .permissions import IsVisitorSimple
 
 
 @api_view(['POST'])
@@ -140,14 +140,6 @@ def openid(request):
     login(request, user)
     response.set_cookie('weixin', visitor.weixin, max_age=7200)
     return response
-
-
-@api_view(['GET'])
-@permission_classes((IsVisitorSimple,))
-def get_visitor(request):
-    visitor = request.user.visitor
-    serializer = WeixinSerializer(instance=visitor)
-    return Response(data=serializer.data)
 
 
 @api_view(['POST'])

@@ -143,30 +143,20 @@ class Comment(models.Model):
         ordering = ('create_date', 'pk')
 
 
-class Tag(models.Model):
-    """ Representation of tag for group """
-    title = models.CharField(_('Title'), max_length=200, blank=True)
-
-    def __unicode__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = _('Group tag')
-        verbose_name_plural = _('Group tags')
-        ordering = ('pk',)
-
-
 class Group(models.Model):
     """ This model represents visitor`s [virtual] wardrobe. """
     # TODO: who can own the group? Only weixin user or any kind too?
+    path_avatar = UploadPath('mirror/photo', 'title', *('owner',))
     title = models.CharField(_('Title'), max_length=200)
     description = models.TextField(_('Description'), max_length=5000,
                                    blank=True)
     is_private = models.BooleanField(_('Private'), default=False)
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
+    avatar = models.ImageField(_('Group avatar'), upload_to=path_avatar,
+                               null=True, blank=True,
+                               validators=[SizeValidator(2)])
     owner = models.ForeignKey(Visitor, verbose_name=_('Group owner'))
-    tags = models.ManyToManyField(Tag, verbose_name=_('Tags'))
 
     def __unicode__(self):
         return self.title
@@ -187,6 +177,21 @@ class Member(models.Model):
         return '{}, {}'.format(self.group, self.visitor)
 
     class Meta:
-        verbose_name = _('Member')
-        verbose_name_plural = _('Members')
+        verbose_name = _('Collaborator')
+        verbose_name_plural = _('Collaborators')
+        ordering = ('pk',)
+
+
+class Tag(models.Model):
+    """ Representation of tag for group """
+    title = models.CharField(_('Title'), max_length=200, blank=True)
+    group = models.ForeignKey(Group, verbose_name=_('Group'))
+    visitor = models.ForeignKey(Visitor, verbose_name=_('Group'))
+
+    def __unicode__(self):
+        return '{}, {}'.format(self.group_id, self.title)
+
+    class Meta:
+        verbose_name = _('Group tag')
+        verbose_name_plural = _('Group tags')
         ordering = ('pk',)

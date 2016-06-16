@@ -25,14 +25,12 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class PhotoListSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(
-        view_name='snapshot:photo-detail')
     comment_count = serializers.IntegerField(source='comment_set.count',
                                              read_only=True)
 
     class Meta:
         model = models.Photo
-        fields = ('id', 'url', 'create_date', 'comment_count',
+        fields = ('id', 'create_date', 'comment_count',
                   'owner', 'title', 'thumb',
                   )
 
@@ -59,9 +57,20 @@ class MemberSerializer(serializers.ModelSerializer):
         model = models.Member
 
 
-class GroupSerializer(serializers.ModelSerializer):
+class GroupDetailSerializer(serializers.ModelSerializer):
 
     members = MemberSerializer(many=True, read_only=True)
+    tags = TagSerializer(source='tag_set', many=True, read_only=True)
+
+    class Meta:
+        model = models.Group
+
+
+class GroupListSerializer(GroupDetailSerializer):
+
+    members = MemberSerializer(many=True, read_only=True)
+    tags = TagSerializer(source='tag_set', many=True, read_only=True)
+    photo_set = PhotoListSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Group

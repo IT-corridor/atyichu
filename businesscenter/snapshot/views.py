@@ -10,14 +10,19 @@ from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.core.mail import mail_admins
-from rest_framework import viewsets
+from django.db.models import F, Prefetch
+from rest_framework import viewsets, mixins
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from .models import Mirror, Photo, Comment, Tag, Member, Group
+
 from . import serializers
+from .permissions import IsOwnerOrMember, CanServeTags
 from .sutils import check_sign
-from utils.permissions import IsVisitor
+from utils.views import OwnerCreateMixin, OwnerUpdateMixin, VisitorCreateMixin
+from visitor.permissions import IsVisitor
 from vutils.umeng_push import push_unicast
 from vutils.wzhifuSDK import JsApi_pub
 
@@ -343,6 +348,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['patch'])
     def edit(self, request, *args, **kwargs):
+        """ Manual update photo """
         # TODO: SET object permissions
         pid = kwargs.get('pk', None)
         try:
@@ -379,12 +385,12 @@ class CommentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=201, headers=headers)
 
 
-class TagViewSet(viewsets.ModelViewSet):
+class TagViewSet(VisitorCreateMixin, viewsets.ModelViewSet):
     # TODO: create actual permissions
-    queryset = Tag.objects.prefetch_related('group_set__owner')
+    queryset = Tag.objects.select_related('group__owner', 'visitor')
     serializer_class = serializers.TagSerializer
     pagination_class = None
-    permission_classes = []
+    permission_classes = [CanServeTags]
 
 
 class MemberViewSet(viewsets.ModelViewSet):
@@ -394,12 +400,26 @@ class MemberViewSet(viewsets.ModelViewSet):
     permission_classes = []
 
 
-class GroupViewSet(viewsets.ModelViewSet):
-    # TODO: Set up permissions. Add custom methods.
-    queryset = Group.objects.select_related('visitor').prefetch_related('tags')
-    serializer_class = serializers.GroupSerializer
+class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
+    # TODO: implement cloning photo to the groups
     pagination_class = None
-    permission_classes = []
+    permission_classes = [IsOwnerOrMember]
+    # For update use only method patch
+
+    def get_queryset(self):
+        qs = Group.objects.select_related('owner').prefetch_related('tag_set')
+        if self.request.method == 'GET' and not self.kwargs.get('pk', None):
+            # TODO: Cannot filter a query once a slice has been taken.
+            # TODO: find another way
+            prefetch = Prefetch('photo_set',
+                                queryset=Photo.objects.all())
+            qs = qs.prefetch_related(prefetch)
+        return qs
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET' and not self.kwargs.get('pk', None):
+            return serializers.GroupListSerializer
+        return serializers.GroupDetailSerializer
 
     @detail_route(methods=['post'])
     def photo(self, request):
@@ -429,7 +449,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['GET'])
-@permission_classes(())
+@permission_classes((AllowAny,))
 def get_signature(request):
     """ Previously it was mirror and photos views pages. Now it is API. """
     # TODO: replace file serving with redis
