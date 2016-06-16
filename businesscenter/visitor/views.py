@@ -54,7 +54,7 @@ def is_authenticated(request):
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def logout_view(request):
-    request.session.create()
+    #request.session.create()
     logout(request)
     return Response(status=200)
 

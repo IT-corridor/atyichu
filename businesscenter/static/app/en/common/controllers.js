@@ -14,7 +14,7 @@ angular.module('common.controllers', ['auth.services', 'ngCookies'])
         });
 
         $scope.logout = function(){
-            $cookies.remove('sessionid');
+            //$cookies.remove('sessionid');
             $scope.r = Logout.query(function(r){
                 $rootScope.alerts.push({ type: 'info', msg: 'Good by.'});
                 $route.reload();
