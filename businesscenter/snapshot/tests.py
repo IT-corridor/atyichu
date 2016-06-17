@@ -29,7 +29,13 @@ visitor_data_2 = {"weixin": "oRFOiwzjygVD6hwtyMFUZCZ299b1",
                   "expires_in": 7200,
                   "token_date": "2016-06-15T07:08:04.960Z"}
 
-# Create your tests here.
+visitor_data_3 = {"weixin": "oRFOiwzjygVD6hwtyMFUZCZ299b2",
+                  "access_token": "ACCESS_TOKEN",
+                  "refresh_token": "REFRESH_TOKEN",
+                  "expires_in": 7200,
+                  "token_date": "2016-06-15T07:08:04.960Z"}
+
+
 class MirrorTests(APITestCase):
 
     @classmethod
@@ -177,12 +183,16 @@ class GroupTests(APITestCase):
         user_2 = User.objects.create(username="Jack")
         cls.member = Visitor.objects.create(user=user_2, **visitor_data_2)
 
+        user_3 = User.objects.create(username="Peter")
+        cls.member_2 = Visitor.objects.create(user=user_3, **visitor_data_3)
+
         cls.group = Group.objects.create(owner=cls.owner, title='group 0')
         cls.group_private = Group.objects.create(owner=cls.owner, title='G 0',
                                                  is_private=True)
         Member.objects.create(visitor=cls.member, group=cls.group_private)
         Tag.objects.create(title='Primal', visitor=cls.owner, group=cls.group)
-        Tag.objects.create(title='Second', visitor=cls.member, group=cls.group_private)
+        Tag.objects.create(title='Second', visitor=cls.member,
+                           group=cls.group_private)
 
     def test_create_group(self):
         """ Test creating public group """
@@ -299,8 +309,15 @@ class GroupTests(APITestCase):
         self.force_login(2)
         url = reverse('snapshot:tag-detail', kwargs={'pk': 2})
         response = self.client.delete(url)
-        print(response.data)
         self.assertEqual(response.status_code, 204)
+        self.client.logout()
+
+    def test_add_member_to_group(self):
+        self.force_login(1)
+        url = reverse('snapshot:group-add-member', kwargs={'pk': 2})
+        response = self.client.post(url, data={'username': 'Peter'})
+        print(response.data)
+        self.assertEqual(response.status_code, 201)
         self.client.logout()
 
     def force_login(self, pk):

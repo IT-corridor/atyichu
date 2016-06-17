@@ -11,7 +11,7 @@ from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.core.mail import mail_admins
 from django.db.models import F, Prefetch
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -23,6 +23,7 @@ from .permissions import IsOwnerOrMember, CanServeTags
 from .sutils import check_sign
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin, VisitorCreateMixin
 from visitor.permissions import IsVisitor
+from visitor.models import Visitor
 from vutils.umeng_push import push_unicast
 from vutils.wzhifuSDK import JsApi_pub
 
@@ -422,29 +423,47 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         return serializers.GroupDetailSerializer
 
     @detail_route(methods=['post'])
-    def photo(self, request):
+    def photo(self, request, *args, **kwargs):
         """ Handler to save an uploaded photo to the 'group' """
         raise NotImplementedError
 
     @detail_route(methods=['post'])
-    def snapshot(self, request):
+    def snapshot(self, request, *args, **kwargs):
         """ Handler to save a photo taken from weixin JS API """
         raise NotImplementedError
 
     @detail_route(methods=['delete'])
-    def photo_remove(self, request):
+    def photo_remove(self, request, *args, **kwargs):
         """ Handler to remove photo which in the group """
         raise NotImplementedError
 
     @detail_route(methods=['post'])
-    def tags_add(self, request):
-        """ Handler to add tags. May be useless.
-        Need to check other opportunities. """
+    def add_member(self, request, *args, **kwargs):
+        """ Add visitor to the group by username """
+        pk = kwargs['pk']
+        status = 400
+        try:
+            username = request.data['username']
+            visitor = Visitor.objects.get(user__username=username)
+        except KeyError as e:
+            data = {e.message: _('This parameter is required')}
+        except Visitor.DoesNotExist:
+            data = {'error': _('Matching user does not exists')}
+        else:
+            member_data = {'visitor': visitor, 'group': pk}
+            serializer = serializers.MemberSerializer(data=member_data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            data = serializer.data
+            status = 201
+        return Response(data, status=status)
+
+    def member_email(self, request, *args, **kwargs):
+        """ Invite visitor to the group by email """
         raise NotImplementedError
 
-    @detail_route(methods=['post'])
-    def tags_remove(self, request):
-        """ Handler to remove tags. Also may be useless. """
+    def member_invite(self, request, *args, **kwargs):
+        """ Add (handle) visitor`s invite to the group """
         raise NotImplementedError
 
 

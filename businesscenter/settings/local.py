@@ -15,8 +15,8 @@ DATABASES = {
     }
 }
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static_dev'),)
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_dev')
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOCALE_PATHS = (os.path.join(BASE_DIR, 'locale'),)
 
