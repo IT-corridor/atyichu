@@ -11,7 +11,7 @@ from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.core.mail import mail_admins
 from django.db.models import F, Prefetch
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, filters
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -406,7 +406,6 @@ class MemberViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     # TODO: implement cloning photo to the groups
-    pagination_class = None
     permission_classes = [IsOwnerOrMember]
     # For update use only method patch
 
@@ -438,6 +437,20 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data=serializer.data, status=201)
+
+    @detail_route(methods=['get'])
+    def list_photo(self, request, *args, **kwargs):
+        group = self.get_object()
+        queryset = Photo.objects.filter(group=group)
+        serializer_class = serializers.PhotoListSerializer
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = serializer_class(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = serializer_class(queryset, many=True)
+        return Response(serializer.data)
 
     @detail_route(methods=['post'])
     def snapshot(self, request, *args, **kwargs):
