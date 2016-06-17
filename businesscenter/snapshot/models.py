@@ -99,10 +99,12 @@ class Mirror(models.Model):
 
 
 class Photo(models.Model):
-    path_photo = UploadPath('mirror/photo', None, *('owner',))
-    path_thumb = UploadPath('mirror/photo/thumbs', None, 'thumb', *('owner',))
-    owner = models.ForeignKey(Visitor, verbose_name=_('Photo owner'))
-    mirror = models.ForeignKey(Mirror, verbose_name=_('Mirror'))
+    path_photo = UploadPath('mirror/photo', None, *('visitor',))
+    path_thumb = UploadPath('mirror/photo/thumbs', None, 'thumb',
+                            *('visitor',))
+    visitor = models.ForeignKey(Visitor, verbose_name=_('Photo owner'))
+    mirror = models.ForeignKey(Mirror, verbose_name=_('Mirror'), blank=True,
+                               null=True, on_delete=models.SET_NULL)
     title = models.CharField(_('Title'), max_length=200, blank=True)
     photo = models.ImageField(_('Photo'), upload_to=path_photo,
                               null=True, blank=True,
@@ -117,7 +119,7 @@ class Photo(models.Model):
                               null=True, blank=True)
 
     def __unicode__(self):
-        return '{}: {}'.format(self.owner, self.pk)
+        return '{}: {}'.format(self.visitor, self.pk)
 
     class Meta:
         verbose_name = _('Photo')
