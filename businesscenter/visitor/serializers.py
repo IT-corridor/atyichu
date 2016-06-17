@@ -21,6 +21,7 @@ class WeixinSerializer(serializers.ModelSerializer):
 
         user_model = get_user_model()
         nickname = smart_unicode(validated_data['nickname'])
+        # In this case we assume that one user can have only one weixin account
         user = user_model(username=nickname)
         password = user_model.objects.make_random_password()
         user.set_password(password)

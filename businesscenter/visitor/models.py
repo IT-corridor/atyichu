@@ -32,7 +32,7 @@ class Visitor(models.Model):
                self.token_date + timezone.timedelta(seconds=self.expires_in)
 
     def __unicode__(self):
-        return self.weixin
+        return self.user.username
 
     class Meta:
         verbose_name = _('Visitor')
