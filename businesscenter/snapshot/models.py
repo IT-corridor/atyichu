@@ -114,7 +114,7 @@ class Photo(models.Model):
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
     group = models.ForeignKey('snapshot.Group', on_delete=models.SET_NULL,
-                              null=True)
+                              null=True, blank=True)
 
     def __unicode__(self):
         return '{}: {}'.format(self.owner, self.pk)
