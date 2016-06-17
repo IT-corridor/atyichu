@@ -18,7 +18,7 @@ var navbar = angular.module('navbar', ['auth.services', 'selfie'])
 
             auth_promise.then(function(result){
                 if (!result.is_authenticated){
-                    //$window.location.replace("/visitor/");
+                    $window.location.replace("/visitor/");
                 }
                 else{
                     // Maybe need to optimize...
