@@ -1,10 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="text-center"><span class="text-primary">CREATE A GROUP</span>
+        </h2>
+    </div>
+    <div class="col-md-6 col-md-offset-3">
+        <form data-ng-submit="add()" name="form" id="group_form">
+            <table class="table">
+                <tr>
+                    <th>Title:</th>
+                    <td>
+                        <input name="title" type="text" class="form-control">
+                        <p class="text-danger" data-ng-repeat="e in error.title">{{ e }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Description:</th>
+                    <td>
+                        <textarea name="description" data-ng-model="description" class="form-control"></textarea>
+                        <p class="text-danger" data-ng-repeat="e in error.description">{{ e }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Private group:</th>
+                    <td>
+                        <input name="is_private" type="checkbox" data-ng-init="is_private = false"
+                               data-ng-model="is_private" value="{{ is_private }}">
+                        <p class="text-danger" data-ng-repeat="e in error.is_private">{{ e }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Group avatar:</th>
+                    <td>
+                        <input name="avatar" type="file" id="avatar" data-ng-model="avatar" accept="image/*">
+                        <p class="text-danger" data-ng-repeat="e in error.avatar">{{ e }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td><input class="btn btn-primary" type="submit" value="Create"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>

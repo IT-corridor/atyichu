@@ -4,6 +4,7 @@ angular.module('app.route', [
     'mirror.controllers',
     'photo.controllers',
     'user.controllers',
+    'group.controllers',
 ])
 .config(['$routeProvider','PATH',
     function($routeProvider, PATH) {
@@ -29,6 +30,9 @@ angular.module('app.route', [
         when('/profile', {
             templateUrl: PATH + 'user/user.html',
             controller: 'CtrlProfile'}).
+        when('/group/create', {
+            templateUrl: PATH + 'group/group_create.html',
+            controller: 'CtrlGroupAdd'}).
         when('/error/404/', {
             templateUrl: PATH + 'partials/error/404.html'}).
         otherwise({

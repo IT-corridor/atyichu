@@ -1,4 +1,4 @@
-angular.module('group.controllers', ['auth.services'])
+angular.module('group.controllers', ['auth.services', 'group.services'])
 .controller('CtrlGroupAdd', ['$scope', '$rootScope','$http',
 '$location', '$route', 'Auth', 'MultipartForm',
     function($scope, $rootScope, $http, $location, $route, Auth, MultipartForm) {
@@ -12,6 +12,19 @@ angular.module('group.controllers', ['auth.services'])
                 $window.location.replace("/visitor/");
             }
         });
+
+        $scope.add = function() {
+            var url = '/api/v1/group/';
+            MultipartForm('#group_form', url).then(function(response) {
+                $rootScope.alerts.push({ type: 'success', msg: 'Your drone was successfully added!'});
+                    $location.path('/');
+                },
+                function(response) {
+                    $scope.error = response.data;
+                }
+            );
+
+        };
 
 
     }
