@@ -19,8 +19,11 @@ angular.module('group.controllers', ['auth.services', 'group.services'])
                 $rootScope.alerts.push({ type: 'success', msg: 'Your drone was successfully added!'});
                     $location.path('/');
                 },
-                function(response) {
-                    $scope.error = response.data;
+                function(error) {
+                    for (var e in error.data){
+                        $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
+                    }
+                    $scope.error = error.data;
                 }
             );
 
