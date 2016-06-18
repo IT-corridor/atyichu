@@ -13,6 +13,8 @@ snapshot_router.register(r'comment', views.CommentViewSet, 'comment')
 snapshot_router.register(r'tag', views.TagViewSet, 'tag')
 snapshot_router.register(r'member', views.MemberViewSet, 'member')
 snapshot_router.register(r'group', views.GroupViewSet, 'group')
+snapshot_router.register(r'photo-group', views.PhotoGroupViewSet,
+                         'photo-g')
 
 urlpatterns = [
     url(r'^signature/$', views.get_signature, name='signature'),

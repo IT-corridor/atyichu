@@ -11,7 +11,7 @@ from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.core.mail import mail_admins
 from django.db.models import F, Prefetch
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins, filters
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -19,7 +19,7 @@ from rest_framework.permissions import AllowAny
 from .models import Mirror, Photo, Comment, Tag, Member, Group
 
 from . import serializers
-from .permissions import IsOwnerOrMember, CanServeTags
+from .permissions import IsOwnerOrMember, MemberCanServe
 from .sutils import check_sign
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin, VisitorCreateMixin
 from visitor.permissions import IsVisitor
@@ -281,7 +281,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         mirror.save()
 
         visitor = request.user.visitor
-        photo = Photo.objects.create(owner=visitor, mirror=mirror)
+        photo = Photo.objects.create(visitor=visitor, mirror=mirror)
 
         log.info('create photo id: {}'.format(photo.id))
         content = {'photo_id': photo.id}
@@ -299,7 +299,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         get all photo order by time desc
         """
         visitor = request.user.visitor
-        photos = Photo.objects.filter(owner=visitor).\
+        photos = Photo.objects.filter(visitor=visitor).\
             prefetch_related('comment_set__author')
 
         ser = serializers.PhotoListSerializer(instance=photos,many=True,
@@ -359,7 +359,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
         visitor = request.user.visitor
 
-        if visitor.pk != photo.owner_id:
+        if visitor.pk != photo.visitor_id:
             return Response(data={'error': _('Only the owner can edit photo')})
 
         serializer = self.serializer_class(instance=photo, data=request.data,
@@ -386,15 +386,18 @@ class CommentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=201, headers=headers)
 
 
-class TagViewSet(VisitorCreateMixin, viewsets.ModelViewSet):
+class TagViewSet(mixins.UpdateModelMixin,
+                 mixins.DestroyModelMixin,
+                 viewsets.GenericViewSet):
     # TODO: create actual permissions
     queryset = Tag.objects.select_related('group__owner', 'visitor')
     serializer_class = serializers.TagSerializer
     pagination_class = None
-    permission_classes = [CanServeTags]
+    permission_classes = [MemberCanServe]
 
 
 class MemberViewSet(viewsets.ModelViewSet):
+    """ Useless currently """
     queryset = Member.objects.select_related('group', 'visitor')
     serializer_class = serializers.MemberSerializer
     pagination_class = None
@@ -403,7 +406,6 @@ class MemberViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     # TODO: implement cloning photo to the groups
-    pagination_class = None
     permission_classes = [IsOwnerOrMember]
     # For update use only method patch
 
@@ -423,24 +425,43 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         return serializers.GroupDetailSerializer
 
     @detail_route(methods=['post'])
-    def photo(self, request, *args, **kwargs):
-        """ Handler to save an uploaded photo to the 'group' """
-        raise NotImplementedError
+    def create_photo(self, request, *args, **kwargs):
+        """ Handler to save an uploaded photo to the 'group'.
+         It is necessary to perform self.get_object to check permission. """
+
+        data = request.data
+        data['group'] = self.get_object().id
+        data['visitor'] = self.request.user.visitor
+
+        serializer = serializers.PhotoDetailSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(data=serializer.data, status=201)
+
+    @detail_route(methods=['get'])
+    def list_photo(self, request, *args, **kwargs):
+        group = self.get_object()
+        queryset = Photo.objects.filter(group=group)
+        serializer_class = serializers.PhotoListSerializer
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = serializer_class(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = serializer_class(queryset, many=True)
+        return Response(serializer.data)
 
     @detail_route(methods=['post'])
     def snapshot(self, request, *args, **kwargs):
         """ Handler to save a photo taken from weixin JS API """
         raise NotImplementedError
 
-    @detail_route(methods=['delete'])
-    def photo_remove(self, request, *args, **kwargs):
-        """ Handler to remove photo which in the group """
-        raise NotImplementedError
-
     @detail_route(methods=['post'])
     def add_member(self, request, *args, **kwargs):
-        """ Add visitor to the group by username """
-        pk = kwargs['pk']
+        """ Add visitor to the group by username.
+         It is necessary to perform self.get_object to check permission. """
+        pk = self.get_object().id
         status = 400
         try:
             username = request.data['username']
@@ -458,6 +479,23 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 201
         return Response(data, status=status)
 
+    @detail_route(methods=['post'])
+    def remove_member(self, request, *args, **kwargs):
+        """ Remove member from group."""
+        status = 400
+        try:
+            member_id = request.data['member']
+            member = Member.objects.get(id=member_id, group=self.get_object())
+        except KeyError as e:
+            data = {e.message: _('This parameter is required')}
+        except Member.DoesNotExist:
+            data = {'error': _('Matching collaborator does not exists')}
+        else:
+            member.delete()
+            data = None
+            status = 204
+        return Response(data, status=status)
+
     def member_email(self, request, *args, **kwargs):
         """ Invite visitor to the group by email """
         raise NotImplementedError
@@ -465,6 +503,28 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     def member_invite(self, request, *args, **kwargs):
         """ Add (handle) visitor`s invite to the group """
         raise NotImplementedError
+
+    @detail_route(methods=['post'])
+    def create_tag(self, request, *args, **kwargs):
+        """ Add a group tag. It is here because of object permissions.
+            It is necessary to perform self.get_object to check permission. """
+        data = request.data
+        data['group'] = self.get_object().id
+        data['visitor'] = self.request.user.visitor
+
+        serializer = serializers.TagSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(data=serializer.data, status=201)
+
+
+class PhotoGroupViewSet(mixins.UpdateModelMixin,
+                        mixins.DestroyModelMixin,
+                        viewsets.GenericViewSet):
+    queryset = Photo.objects.select_related('group', 'visitor')
+    serializer_class = serializers.MemberSerializer
+    pagination_class = None
+    permission_classes = [MemberCanServe]
 
 
 @api_view(['GET'])

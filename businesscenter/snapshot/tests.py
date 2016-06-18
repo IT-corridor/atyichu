@@ -1,18 +1,18 @@
 from __future__ import unicode_literals, absolute_import
 
+import os
 import hashlib
-import md5
 import time
 import unittest
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.conf import settings
 from django.db import connection
 from rest_framework.test import APITestCase, APIClient
-
 from visitor.models import Visitor
 
-from .models import Mirror, Group, Member, Tag
+from .models import Mirror, Group, Member, Tag, Photo
 
 # TODO: CREATE TEST CASES!
 VENDOR = connection.vendor
@@ -35,6 +35,7 @@ visitor_data_3 = {"weixin": "oRFOiwzjygVD6hwtyMFUZCZ299b2",
                   "expires_in": 7200,
                   "token_date": "2016-06-15T07:08:04.960Z"}
 
+filepath = os.path.join(settings.MEDIA_ROOT, 'test.jpg')
 
 class MirrorTests(APITestCase):
 
@@ -260,17 +261,16 @@ class GroupTests(APITestCase):
     def test_create_tag_for_group(self):
         """ Add tag as group owner """
         self.force_login(1)
-        url = reverse('snapshot:tag-list')
-        response = self.client.post(url, data={'title': 'new tag', 'group': 2})
+        url = reverse('snapshot:group-create-tag', kwargs={'pk': 2})
+        response = self.client.post(url, data={'title': 'new tag'})
         self.assertEqual(response.status_code, 201)
         self.client.logout()
 
     def test_create_tag_member_for_group(self):
-        """ Add tag as group owner """
+        """ Add tag as group member """
         self.force_login(2)
-        url = reverse('snapshot:tag-list')
-        response = self.client.post(url, data={'title': 'new tag2',
-                                               'group': 2})
+        url = reverse('snapshot:group-create-tag', kwargs={'pk': 2})
+        response = self.client.post(url, data={'title': 'new tag2'})
         self.assertEqual(response.status_code, 201)
         self.client.logout()
 
@@ -316,9 +316,77 @@ class GroupTests(APITestCase):
         self.force_login(1)
         url = reverse('snapshot:group-add-member', kwargs={'pk': 2})
         response = self.client.post(url, data={'username': 'Peter'})
-        print(response.data)
         self.assertEqual(response.status_code, 201)
         self.client.logout()
+
+    def test_remove_member_from_group(self):
+        self.force_login(1)
+        url = reverse('snapshot:group-remove-member', kwargs={'pk': 2})
+        response = self.client.post(url, data={'member': 1})
+        self.assertEqual(response.status_code, 204)
+        self.client.logout()
+
+    def test_add_photo_as_group_owner(self):
+        """ Expect success. """
+        self.photo_upload_and_delete(1)
+
+    def test_add_photo_as_group_member(self):
+        """ Expect success. """
+        self.photo_upload_and_delete(2)
+
+    def test_add_photo_as_not_group_member(self):
+        """ Attempt to create a photo in the group
+        not being a group member. """
+        self.photo_upload_and_delete(3, expect_create=403, expect_delete=404)
+
+    def test_add_photo_as_anon(self):
+        """ Expect fail. """
+        self.photo_upload_and_delete(expect_create=403, expect_delete=403)
+
+    def photo_upload_and_delete(self, visitor_id=None, expect_create=201,
+                                expect_delete=204):
+        """ Testing file upload. Request must be multipart.
+        After upload remove it. """
+        if visitor_id:
+            self.force_login(visitor_id)
+        url = reverse('snapshot:group-create-photo', kwargs={'pk': 2})
+        with open(filepath, 'r') as fp:
+            data = {'title': 'Group2', 'photo': fp, 'description': 'Test'}
+
+            response = self.client.post(url, data=data, format='multipart')
+            self.assertEqual(response.status_code, expect_create)
+
+        url = reverse('snapshot:photo-g-detail', kwargs={'pk': 1})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, expect_delete)
+        if visitor_id:
+            self.client.logout()
+
+    def test_photo_list_group_owner(self):
+        self.list_photo(1)
+
+    def test_photo_list_group_member(self):
+        self.list_photo(2)
+
+    def test_photo_list_not_group_member(self):
+        self.list_photo(3, expected_code=403)
+
+    def test_photo_list_anon(self):
+        self.list_photo(expected_code=403)
+
+    def list_photo(self, visitor_id=None, expected_code=200):
+        """ Test pagination """
+        if visitor_id:
+            self.force_login(visitor_id)
+        for i in range(15):
+            Photo.objects.create(title='test #{}'.format(i),
+                                 group_id=2, visitor_id=2)
+
+        url = reverse('snapshot:group-list-photo', kwargs={'pk': 2})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, expected_code)
+        if visitor_id:
+            self.client.logout()
 
     def force_login(self, pk):
         user = User.objects.get(id=pk)
