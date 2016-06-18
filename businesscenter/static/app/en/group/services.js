@@ -1,0 +1,60 @@
+angular.module('group.services', ['ngResource'])
+.constant('source_path', 'api/v1/')
+.factory('Group', ['$resource', 'source_path',
+    function($resource, source_path){
+        return $resource(source_path + 'group/:pk/:action/', {}, {
+            query: {method:'GET', params:{pk: null, action: null}, responseType:'json', isArray: true},
+            update: {method: 'PATCH'},
+            save: {method: 'POST'},
+            remove: {method: 'DELETE'},
+            photo_list: {method:'GET', params:{action: 'photo_list'}, responseType:'json', isArray: true},
+            member_add: {method:'POST', params:{action: 'member_add'}, responseType:'json', isArray: true},
+            member_add: {method:'DELETE', params:{action: 'member_remove'}, responseType:'json', isArray: true},
+            tag_create: {method:'POST', params:{action: 'tag_create'}, responseType:'json', isArray: true},
+    });
+}])
+.factory('GroupPhoto', ['$resource', 'source_path',
+    function($resource, source_path){
+        return $resource(source_path + 'group-photo/:pk/', {}, {
+            update: {method: 'PATCH'},
+            remove: {method: 'DELETE'},
+    });
+}])
+.factory('Tag', ['$resource', 'source_path',
+    function($resource, source_path){
+        return $resource(source_path + 'tag/:pk/:action/', {}, {
+            update: {method: 'PATCH'},
+            remove: {method: 'DELETE'},
+    });
+}])
+.factory('MultipartForm', ['$http', function ($http){
+    return function(form_id, url){
+        if (form_id){
+            var form = document.querySelector(form_id);
+            var formData = new FormData(form);
+        }
+        else{
+            var formData = null;
+        }
+        var req = {
+            method: 'POST',
+            url: url,
+            headers: {'Content-Type': undefined, 'X-Requested-With': 'XMLHttpRequest'},
+            data: formData,
+        };
+        return $http(req);
+    }
+}]);
+
+/*Example of MultipartForm usage:
+    var url = '/api/v1/group/';
+    var url2 = '/api/v1/group/1/create_photo/'
+    MultipartForm('#group_form', url).then(function(response) {
+        $rootScope.alerts.push({ type: 'success', msg: 'Your drone was successfully added!'});
+            $location.path('/group');
+        },
+        function(response) {
+            $scope.error = response.data;
+        }
+    );
+*/

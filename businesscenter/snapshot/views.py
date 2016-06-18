@@ -425,7 +425,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         return serializers.GroupDetailSerializer
 
     @detail_route(methods=['post'])
-    def create_photo(self, request, *args, **kwargs):
+    def photo_create(self, request, *args, **kwargs):
         """ Handler to save an uploaded photo to the 'group'.
          It is necessary to perform self.get_object to check permission. """
 
@@ -439,7 +439,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         return Response(data=serializer.data, status=201)
 
     @detail_route(methods=['get'])
-    def list_photo(self, request, *args, **kwargs):
+    def photo_list(self, request, *args, **kwargs):
         group = self.get_object()
         queryset = Photo.objects.filter(group=group)
         serializer_class = serializers.PhotoListSerializer
@@ -458,7 +458,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         raise NotImplementedError
 
     @detail_route(methods=['post'])
-    def add_member(self, request, *args, **kwargs):
+    def member_add(self, request, *args, **kwargs):
         """ Add visitor to the group by username.
          It is necessary to perform self.get_object to check permission. """
         pk = self.get_object().id
@@ -479,8 +479,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 201
         return Response(data, status=status)
 
-    @detail_route(methods=['post'])
-    def remove_member(self, request, *args, **kwargs):
+    @detail_route(methods=['delete'])
+    def member_remove(self, request, *args, **kwargs):
         """ Remove member from group."""
         status = 400
         try:
@@ -505,7 +505,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         raise NotImplementedError
 
     @detail_route(methods=['post'])
-    def create_tag(self, request, *args, **kwargs):
+    def tag_create(self, request, *args, **kwargs):
         """ Add a group tag. It is here because of object permissions.
             It is necessary to perform self.get_object to check permission. """
         data = request.data
@@ -518,11 +518,11 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         return Response(data=serializer.data, status=201)
 
 
-class PhotoGroupViewSet(mixins.UpdateModelMixin,
+class GroupPhotoViewSet(mixins.UpdateModelMixin,
                         mixins.DestroyModelMixin,
                         viewsets.GenericViewSet):
     queryset = Photo.objects.select_related('group', 'visitor')
-    serializer_class = serializers.MemberSerializer
+    serializer_class = serializers.PhotoDetailSerializer
     pagination_class = None
     permission_classes = [MemberCanServe]
 

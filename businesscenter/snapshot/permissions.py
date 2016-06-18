@@ -29,7 +29,7 @@ class IsOwnerOrMember(VisitorBasic):
             return True
 
         if request.method == 'POST' and is_member and\
-                view.action in ['create_photo', 'create_tag']:
+                view.action in ['photo_create', 'tag_create']:
             return True
 
         return request.user.is_staff

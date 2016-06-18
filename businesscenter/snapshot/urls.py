@@ -13,7 +13,7 @@ snapshot_router.register(r'comment', views.CommentViewSet, 'comment')
 snapshot_router.register(r'tag', views.TagViewSet, 'tag')
 snapshot_router.register(r'member', views.MemberViewSet, 'member')
 snapshot_router.register(r'group', views.GroupViewSet, 'group')
-snapshot_router.register(r'photo-group', views.PhotoGroupViewSet,
+snapshot_router.register(r'group-photo', views.GroupPhotoViewSet,
                          'photo-g')
 
 urlpatterns = [

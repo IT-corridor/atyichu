@@ -1,10 +1,10 @@
 var navbar = angular.module('navbar', ['auth.services', 'selfie'])
-.directive('dNavbar', ['$window', 'PATH','Logout', 'Auth', 'Update', 'Me',
-                        function($window, PATH, Logout, Auth, Update, Me) {
+.directive('dNavbar', ['$window', 'PATH','Logout', 'Auth', 'Me',
+                        function($window, PATH, Logout, Auth, Me) {
     return {
         restrict: 'A',
         templateUrl: PATH + 'partials/navbar/navbar.html',
-        controller: function($scope, $rootScope, $window, PATH, Logout, Auth, Update, Me ){
+        controller: function($scope, $rootScope, $window, PATH, Logout, Auth, Me ){
 
             angular.element($window).bind('scroll', function() {
                 $scope.change_class = (this.pageYOffset >= 100) ? true : false;
@@ -34,23 +34,7 @@ var navbar = angular.module('navbar', ['auth.services', 'selfie'])
                 });
             }
 
-            $scope.sync_profile = function(){
 
-                Update.post(function(success){
-                    $rootScope.alerts.push({ type: 'info',
-                        msg: 'Profile was updated.'});
-                    $location.path('/');
-                },
-                function(error){
-                    for (var e in error.data){
-                        $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
-                    }
-                    $location.path('/');
-                }
-
-            );
-
-            }
             $scope.animationsEnabled = true;
             $scope.toggleAnimation = function () {
                 $scope.animationsEnabled = !$scope.animationsEnabled;

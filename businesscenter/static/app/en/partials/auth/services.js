@@ -7,7 +7,7 @@ auth.factory('Login', ['$resource',
         });
     }
 ]);
-auth.factory('Update', ['$resource',
+auth.factory('ProfileSync', ['$resource',
     function($resource){
         return $resource('visitor/update/', {}, {
             post: {method:'POST', responseType:'json'},

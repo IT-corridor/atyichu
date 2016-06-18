@@ -7,7 +7,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail, mail_admins
 from django.http import HttpResponseRedirect, JsonResponse
-
+from django.core.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -54,7 +54,6 @@ def is_authenticated(request):
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def logout_view(request):
-    #request.session.create()
     logout(request)
     return Response(status=200)
 
@@ -169,3 +168,14 @@ def get_me(request):
     serializer = WeixinSerializer(instance=visitor)
     return Response(data=serializer.data)
 
+
+def test_auth(request):
+    host = request.get_host()
+    if host == '127.0.0.1:8000':
+        visitor = Visitor.objects.get(weixin='weixin')
+        user = authenticate(weixin=visitor.weixin)
+        login(request, user)
+        response = HttpResponseRedirect('/#!/')
+        response.set_cookie('weixin', visitor.weixin, max_age=7200)
+        return response
+    raise PermissionDenied

@@ -12,6 +12,7 @@ urlpatterns = (
     url(r'^dummy/$', views.dummy_api, name='dummy'),
     url(r'^is_authenticated/$', views.is_authenticated, name='is_auth'),
     url(r'^me/$', views.get_me, name='me'),
+    url(r'^test_auth/$', views.test_auth, name='test_auth'),
     url(r'^update/$', views.update_visitor, name='update'),
 )
 

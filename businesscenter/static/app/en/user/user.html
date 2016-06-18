@@ -1,0 +1,26 @@
+<h1>{{ title }}</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-responsive table-condensed">
+            <tr>
+                <td>Current username:</td>
+                <td>{{ me.username }}</td>
+            </tr>
+            <tr>
+                <td>Current avatar:</td>
+                <td><img data-ng-src="{{ me.thumb }}" alt="{{ me.username }}"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><button class="btn btn-default" data-ng-click="sync-profile()">Sync with WECHAT</button></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <p class="text-center"><a class="btn btn-default" data-ng-click="logout()">logout</a></p>
+    </div>
+</div>

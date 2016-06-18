@@ -261,7 +261,7 @@ class GroupTests(APITestCase):
     def test_create_tag_for_group(self):
         """ Add tag as group owner """
         self.force_login(1)
-        url = reverse('snapshot:group-create-tag', kwargs={'pk': 2})
+        url = reverse('snapshot:group-tag-create', kwargs={'pk': 2})
         response = self.client.post(url, data={'title': 'new tag'})
         self.assertEqual(response.status_code, 201)
         self.client.logout()
@@ -269,7 +269,7 @@ class GroupTests(APITestCase):
     def test_create_tag_member_for_group(self):
         """ Add tag as group member """
         self.force_login(2)
-        url = reverse('snapshot:group-create-tag', kwargs={'pk': 2})
+        url = reverse('snapshot:group-tag-create', kwargs={'pk': 2})
         response = self.client.post(url, data={'title': 'new tag2'})
         self.assertEqual(response.status_code, 201)
         self.client.logout()
@@ -314,15 +314,15 @@ class GroupTests(APITestCase):
 
     def test_add_member_to_group(self):
         self.force_login(1)
-        url = reverse('snapshot:group-add-member', kwargs={'pk': 2})
+        url = reverse('snapshot:group-member-add', kwargs={'pk': 2})
         response = self.client.post(url, data={'username': 'Peter'})
         self.assertEqual(response.status_code, 201)
         self.client.logout()
 
     def test_remove_member_from_group(self):
         self.force_login(1)
-        url = reverse('snapshot:group-remove-member', kwargs={'pk': 2})
-        response = self.client.post(url, data={'member': 1})
+        url = reverse('snapshot:group-member-remove', kwargs={'pk': 2})
+        response = self.client.delete(url, data={'member': 1})
         self.assertEqual(response.status_code, 204)
         self.client.logout()
 
@@ -349,7 +349,8 @@ class GroupTests(APITestCase):
         After upload remove it. """
         if visitor_id:
             self.force_login(visitor_id)
-        url = reverse('snapshot:group-create-photo', kwargs={'pk': 2})
+        url = reverse('snapshot:group-photo-create', kwargs={'pk': 2})
+
         with open(filepath, 'r') as fp:
             data = {'title': 'Group2', 'photo': fp, 'description': 'Test'}
 
@@ -382,7 +383,7 @@ class GroupTests(APITestCase):
             Photo.objects.create(title='test #{}'.format(i),
                                  group_id=2, visitor_id=2)
 
-        url = reverse('snapshot:group-list-photo', kwargs={'pk': 2})
+        url = reverse('snapshot:group-photo-list', kwargs={'pk': 2})
         response = self.client.get(url)
         self.assertEqual(response.status_code, expected_code)
         if visitor_id:
