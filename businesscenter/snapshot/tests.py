@@ -195,6 +195,18 @@ class GroupTests(APITestCase):
         Tag.objects.create(title='Second', visitor=cls.member,
                            group=cls.group_private)
 
+    def test_list_group_as_owner(self):
+        self.list_group(1, count=2)
+
+    def test_list_group_as_member(self):
+        self.list_group(2, count=2)
+
+    def test_list_group_as_not_member(self):
+        self.list_group(3, count=1)
+
+    def test_list_group_as_anon(self):
+        self.list_group(expected_code=403)
+
     def test_create_group(self):
         """ Test creating public group """
         data = {'title': 'test group'}
@@ -386,6 +398,22 @@ class GroupTests(APITestCase):
         url = reverse('snapshot:group-photo-list', kwargs={'pk': 2})
         response = self.client.get(url)
         self.assertEqual(response.status_code, expected_code)
+        if visitor_id:
+            self.client.logout()
+
+    def list_group(self, visitor_id=None, expected_code=200, count=2):
+        """ Test pagination """
+        if visitor_id:
+            self.force_login(visitor_id)
+        for i in range(15):
+            Photo.objects.create(title='test #{}'.format(i),
+                                 group_id=2, visitor_id=2)
+
+        url = reverse('snapshot:group-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, expected_code)
+        if response.status_code == 200:
+            self.assertEqual(response.data['count'], count)
         if visitor_id:
             self.client.logout()
 

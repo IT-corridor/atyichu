@@ -30,8 +30,14 @@ angular.module('app.route', [
         when('/profile', {
             templateUrl: PATH + 'user/user.html',
             controller: 'CtrlProfile'}).
+        when('/group', {
+            templateUrl: PATH + 'group/list.html',
+            controller: 'CtrlGroupList'}).
+        when('/group/:pk/photo', {
+            templateUrl: PATH + 'group/photo_list.html',
+            controller: 'CtrlGroupPhotoList'}).
         when('/group/create', {
-            templateUrl: PATH + 'group/group_create.html',
+            templateUrl: PATH + 'group/create.html',
             controller: 'CtrlGroupAdd'}).
         when('/error/404/', {
             templateUrl: PATH + 'partials/error/404.html'}).

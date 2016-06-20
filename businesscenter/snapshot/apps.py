@@ -16,3 +16,4 @@ class SnapshotConfig(AppConfig):
         pre_delete.connect(receivers.cleanup_files_avatar, sender=Group)
 
         post_save.connect(receivers.create_thumb_photo_320, sender=Photo)
+        post_save.connect(receivers.create_thumb_avatar_320, sender=Group)

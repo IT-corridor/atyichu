@@ -22,16 +22,16 @@
     <body id="page-top">
         <div data-d-navbar></div>
         <noscript><h4 class="text-danger">{% trans 'This site requires JavaScript to be enabled' %}</h4></noscript>
-        <div id="content" class="container">
+        <div class="container">
             <div class="row">
                 <div class="col-md-8 col-md-offset-1 fixed-alerts">
                     <div data-d-alerts></div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12 view-container">
-                    <div data-ng-view class="view-frame"></div>
-                </div>
+        </div>
+        <div id="content" class="container view-container">
+            <div class="final-expand-main">
+                <div data-ng-view class="view-frame"></div>
             </div>
         </div>
         <div data-d-footer></div>

@@ -1,0 +1,37 @@
+<pre> {{ r | json}}</pre>
+<div class="main-portfolio">
+    <div class="portfolioImages">
+        <div class="inner-port">
+            <ul>
+                <li data-ng-repeat="group in r.results">
+                    <div class="ThumbSlides">
+                        <p>{{ group.title }} <span class="small text-muted">(owned by {{ group.owner_name }})</span></p>
+                        <div class="coverSlide"> <img class="img-responsive" data-ng-src="{{ group.thumb }}" alt="{{ group.title }}">
+                            <div class="hovereffect">
+                                <div class="covers">
+                                    <h4>View all photos</h4>
+                                    <a data-ng-href="#!group/{{ group.id }}/photo"><img data-ng-src="{{ THEME }}images/arrow.png" alt="..."></a> </div>
+                            </div>
+                        </div>
+                        <h4><span><i class="fa fa-clock-o fa-lg"></i> {{ group.activity }}</span>
+                            <span class="pull-right"><i class="fa fa-picture-o fa-lg"></i> {{ group.photo_count }}</span></h4>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="load-btn">
+            <button data-ng-disabled="enough" data-ng-click="get_more()" class="btn loadBtn">Load more</button>
+        </div>
+        <div class="text-center">
+            <ul class="pagination">
+                <li><a data-ng-href="{{ page_link }}page=1">&lt;&lt;</a></li>
+                <li><a data-ng-if="r.previous_page" data-ng-href="{{ page_link }}page={{ r.previous_page }}">&lt;</a></li>
+                <li data-ng-repeat="i in prev_pages"><a data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
+                <li class="active"><a href="#">{{ r.current }}</a></li>
+                <li data-ng-repeat="i in next_pages"><a data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
+                <li><a data-ng-if="r.next_page" data-ng-href="{{ page_link }}page={{ r.next_page }}">&gt;</a></li>
+                <li><a data-ng-href="{{ page_link }}page={{ r.total }}">&gt;&gt;</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

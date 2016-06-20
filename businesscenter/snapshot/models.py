@@ -99,8 +99,8 @@ class Mirror(models.Model):
 
 
 class Photo(models.Model):
-    path_photo = UploadPath('mirror/photo', None, *('visitor',))
-    path_thumb = UploadPath('mirror/photo/thumbs', None, 'thumb',
+    path_photo = UploadPath('snapshot/photo', None, *('visitor',))
+    path_thumb = UploadPath('snapshot/photo/thumbs', None, 'thumb',
                             *('visitor',))
     visitor = models.ForeignKey(Visitor, verbose_name=_('Photo owner'))
     mirror = models.ForeignKey(Mirror, verbose_name=_('Mirror'), blank=True,
@@ -148,7 +148,9 @@ class Comment(models.Model):
 class Group(models.Model):
     """ This model represents visitor`s [virtual] wardrobe. """
     # TODO: who can own the group? Only weixin user or any kind too?
-    path_avatar = UploadPath('mirror/photo', 'title', *('owner',))
+    path_avatar = UploadPath('snapshot/group', 'title', '', *('owner',))
+    path_thumb = UploadPath('snapshot/group/thumbs', 'title',
+                            'thumb', *('owner',))
     title = models.CharField(_('Title'), max_length=200)
     description = models.TextField(_('Description'), max_length=5000,
                                    blank=True)
@@ -158,6 +160,8 @@ class Group(models.Model):
     avatar = models.ImageField(_('Group avatar'), upload_to=path_avatar,
                                null=True, blank=True,
                                validators=[SizeValidator(2)])
+    thumb = models.ImageField(_('Thumbnail'), upload_to=path_thumb,
+                              null=True, blank=True)
     owner = models.ForeignKey(Visitor, verbose_name=_('Group owner'))
 
     def __unicode__(self):
@@ -173,7 +177,7 @@ class Member(models.Model):
     """ Representation of a group member.
     It not uses directly ManyToMany Relation. It is realized explicitly """
     group = models.ForeignKey(Group, verbose_name=_('Group'))
-    visitor = models.ForeignKey(Visitor, verbose_name=_('Group'))
+    visitor = models.ForeignKey(Visitor, verbose_name=_('Visitor'))
 
     def __unicode__(self):
         return '{}, {}'.format(self.group, self.visitor)
@@ -188,7 +192,7 @@ class Tag(models.Model):
     """ Representation of tag for group """
     title = models.CharField(_('Title'), max_length=200, blank=True)
     group = models.ForeignKey(Group, verbose_name=_('Group'))
-    visitor = models.ForeignKey(Visitor, verbose_name=_('Group'))
+    visitor = models.ForeignKey(Visitor, verbose_name=_('Visitor'))
 
     def __unicode__(self):
         return '{}, {}'.format(self.group_id, self.title)

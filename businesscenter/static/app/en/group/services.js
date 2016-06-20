@@ -3,14 +3,14 @@ angular.module('group.services', ['ngResource'])
 .factory('Group', ['$resource', 'source_path',
     function($resource, source_path){
         return $resource(source_path + 'group/:pk/:action/', {}, {
-            query: {method:'GET', params:{pk: null, action: null}, responseType:'json', isArray: true},
+            query: {method:'GET', params:{pk: null, action: null}, responseType:'json'},
             update: {method: 'PATCH'},
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
-            photo_list: {method:'GET', params:{action: 'photo_list'}, responseType:'json', isArray: true},
-            member_add: {method:'POST', params:{action: 'member_add'}, responseType:'json', isArray: true},
-            member_add: {method:'DELETE', params:{action: 'member_remove'}, responseType:'json', isArray: true},
-            tag_create: {method:'POST', params:{action: 'tag_create'}, responseType:'json', isArray: true},
+            photo_list: {method:'GET', params:{action: 'photo_list'}, responseType:'json'},
+            member_add: {method:'POST', params:{action: 'member_add'}, responseType:'json'},
+            member_add: {method:'DELETE', params:{action: 'member_remove'}, responseType:'json'},
+            tag_create: {method:'POST', params:{action: 'tag_create'}, responseType:'json'},
     });
 }])
 .factory('GroupPhoto', ['$resource', 'source_path',

@@ -17,7 +17,10 @@ app.factory('httpRequestInterceptor', function () {
         }
     };
 });
-app.run(function($rootScope) { $rootScope.site = 'atyichu.cn'; });
+app.run(function($rootScope) {
+    $rootScope.site = 'atyichu.cn';
+    $rootScope.THEME = '/static/theme/';
+});
 app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('httpRequestInterceptor');
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';

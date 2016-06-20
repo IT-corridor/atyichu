@@ -38,7 +38,7 @@
     <div class="col-md-12" data-ng-repeat="comment in photo.comments">
         <div class="media panel panel-default small">
             <div class="media-left text-center">
-                <img class="media-object" style="max-width: 32px; height: auto;" src="{{ comment.author_data.thumb }}" alt="{{ comment.author_data.username }}">
+                <img class="media-object" style="max-width: 32px; height: auto;" data-ng-src="{{ comment.author_data.thumb }}" alt="{{ comment.author_data.username }}">
             </div>
             <div class="media-body">
                     <b>

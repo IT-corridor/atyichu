@@ -10,7 +10,7 @@ from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.core.mail import mail_admins
-from django.db.models import F, Prefetch
+from django.db.models import F, Prefetch, Q
 from rest_framework import viewsets, mixins, filters
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
@@ -410,13 +410,16 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     # For update use only method patch
 
     def get_queryset(self):
+        """ Pretty complex queryset for retreiving groups """
+        visitor = self.request.user.visitor
         qs = Group.objects.select_related('owner').prefetch_related('tag_set')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             # TODO: Cannot filter a query once a slice has been taken.
             # TODO: find another way
-            prefetch = Prefetch('photo_set',
-                                queryset=Photo.objects.all())
-            qs = qs.prefetch_related(prefetch)
+            # prefetch = Prefetch('photo_set', queryset=Photo.objects.all())
+            # qs = qs.prefetch_related(prefetch)
+            qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
+                           Q(member__visitor=visitor))
         return qs
 
     def get_serializer_class(self):
