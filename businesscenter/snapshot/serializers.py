@@ -72,6 +72,7 @@ class GroupListSerializer(serializers.ModelSerializer):
     photo_count = serializers.IntegerField(source='photo_set.count',
                                            read_only=True)
     activity = serializers.SerializerMethodField(read_only=True)
+    owner_name = serializers.CharField(source='owner', read_only=True)
     # photo_set = PhotoListSerializer(many=True, read_only=True)
 
     def get_activity(self, obj):
@@ -85,7 +86,6 @@ class GroupDetailSerializer(GroupListSerializer):
 
     members = MemberSerializer(source='member_set', many=True, read_only=True)
     tags = TagSerializer(source='tag_set', many=True, read_only=True)
-    owner_name = serializers.CharField(source='owner', read_only=True)
 
     class Meta:
         model = models.Group

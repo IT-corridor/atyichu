@@ -14,7 +14,7 @@
             <p>{{ group.description }}</p>
         </div>
     </div>
-    <div class="row" data-ng-if="group.tags">
+    <div class="row" data-ng-if="group.tags.length > 0">
         <div class="col-md-10 col-md-offset2">
             <hr>
             <h4>Tags:</h4>
@@ -25,7 +25,7 @@
             </ul>
         </div>
     </div>
-    <div class="row" data-ng-if="group.members">
+    <div class="row" data-ng-if="group.members.length > 0">
         <div class="col-md-10 col-md-offset2">
             <hr>
             <h4>Members:</h4>
