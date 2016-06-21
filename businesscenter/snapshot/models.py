@@ -120,7 +120,7 @@ class Photo(models.Model):
     group = models.ForeignKey('snapshot.Group', on_delete=models.SET_NULL,
                               null=True, blank=True)
     crop = models.ImageField(_('Cropped photo'), upload_to=path_crop,
-                              null=True, blank=True)
+                             null=True, blank=True)
 
     def __unicode__(self):
         return '{}: {}'.format(self.visitor, self.pk)

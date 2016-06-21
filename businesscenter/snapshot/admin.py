@@ -21,7 +21,7 @@ class MirrorAdmin(admin.ModelAdmin):
 
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'visitor', 'mirror')
+    list_display = ('pk', 'visitor', 'mirror', 'group')
     inlines = (CommentInline, )
 
 
