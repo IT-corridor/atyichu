@@ -9,6 +9,7 @@ from datetime import timedelta
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.utils import timezone
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.mail import mail_admins
 from django.db.models import F, Prefetch, Q
 from rest_framework import viewsets, mixins, filters
@@ -16,6 +17,7 @@ from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import ValidationError
 from .models import Mirror, Photo, Comment, Tag, Member, Group
 
 from . import serializers
@@ -426,6 +428,24 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             return serializers.GroupListSerializer
         return serializers.GroupDetailSerializer
+
+    @detail_route(methods=['patch'])
+    def avatar_update(self, request, *args, **kwargs):
+
+        # List of
+        files = request.data.pop('avatar', None)
+
+        if len(files) == 1 and isinstance(files[0], InMemoryUploadedFile):
+
+            instance = self.get_object()
+            instance.avatar.delete()
+            serializer = self.get_serializer(instance,
+                                             data={'avatar': files[0]},
+                                             partial=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(data=serializer.data)
+        raise ValidationError({'avatar': [_('File image required')]})
 
     @detail_route(methods=['post'])
     def photo_create(self, request, *args, **kwargs):

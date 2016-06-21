@@ -5,8 +5,6 @@ angular.module('common.controllers', ['auth.services', 'ngCookies'])
 
         $rootScope.title = 'Dummy page';
 
-        $rootScope.alerts.push({ type: 'info', msg: 'Welcome, stranger!' });
-
         var promise = WXI.get_location();
         promise.then(function(success){
             $scope.lat = success.latitude;
@@ -14,11 +12,9 @@ angular.module('common.controllers', ['auth.services', 'ngCookies'])
         });
 
         $scope.logout = function(){
-            //$cookies.remove('sessionid');
             $scope.r = Logout.query(function(r){
                 $rootScope.alerts.push({ type: 'info', msg: 'Good by.'});
                 $route.reload();
-                //$scope.auth.remove();
             });
         };
     }

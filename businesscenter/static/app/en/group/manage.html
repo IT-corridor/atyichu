@@ -1,0 +1,61 @@
+<pre>{{ r | json}}</pre>
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="text-center"><span class="text-primary">GROUP MANAGEMENT</span>
+        </h2>
+    </div>
+    <div class="col-md-10 col-md-offset-2">
+        <form data-ng-submit="update_group()" name="form" id="group_form">
+            <table class="table">
+                <tr>
+                    <th>Title:</th>
+                    <td>
+                        <input name="title" data-ng-model="data.title" type="text" class="form-control">
+                        <p class="text-danger" data-ng-repeat="e in error.title">{{ e }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Description:</th>
+                    <td>
+                        <textarea name="description" data-ng-model="data.description" class="form-control"></textarea>
+                        <p class="text-danger" data-ng-repeat="e in error.description">{{ e }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Private group:</th>
+                    <td>
+                        <input name="is_private" data-ng-model="data.is_private" type="checkbox">
+                        <p class="text-danger" data-ng-repeat="e in error.is_private">{{ e }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td><input class="btn btn-primary" type="submit" value="update"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h4>Current avatar</h4>
+        <p class="text-center"><img data-ng-src="{{ r.thumb }}?{{random }}" alt="{{ r.title }}"></p>
+    </div>
+    <div class="col-md-10 col-md-offset-2">
+        <form data-ng-submit="update_avatar()" name="form" id="avatar_form">
+            <table class="table">
+                <tr>
+                    <th>Change group avatar:</th>
+                    <td>
+                        <input name="avatar" type="file" id="avatar" data-ng-model="avatar" accept="image/*">
+                        <p class="text-danger" data-ng-repeat="e in error.avatar">{{ e }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td><input class="btn btn-primary" type="submit" value="update avatar"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>

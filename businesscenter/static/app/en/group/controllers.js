@@ -15,7 +15,7 @@ angular.module('group.controllers', ['group.services', 'common.services', 'auth.
 
         $scope.add = function() {
             var url = '/api/v1/group/';
-            MultipartForm('#group_form', url).then(function(response) {
+            MultipartForm('POST', '#group_form', url).then(function(response) {
                 $rootScope.alerts.push({ type: 'success', msg: 'Your drone was successfully added!'});
                     $location.path('/');
                 },
@@ -110,16 +110,70 @@ angular.module('group.controllers', ['group.services', 'common.services', 'auth.
                     $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
                 },
                 function(error){
-                    $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
+                    for (var e in error.data){
+                        $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
+                    }
+                    $scope.error = error.data;
                 }
             );
         }
     }
 ])
 .controller('CtrlGroupManage', ['$scope', '$rootScope','$http',
-'$location', '$route', 'Auth', 'Group',
-    function($scope, $rootScope, $http, $location, $route, Auth, Group) {
+'$location', '$routeParams', 'Auth', 'Group', 'MultipartForm',
+    function($scope, $rootScope, $http, $location, $routeParams, Auth, Group, MultipartForm) {
 
-        $rootScope.title = 'Groups';
+        $rootScope.title = 'Update';
+
+        var auth_promise = Auth.is_authenticated();
+
+        auth_promise.then(function(result){
+            if (!result.is_authenticated){
+                $window.location.replace("/visitor/");
+            }
+        });
+        $scope.r = Group.get({pk: $routeParams.pk},
+            function(success){
+                $scope.data = {title: success.title,
+                               description: success.description,
+                               is_private: success.is_private};
+            },
+            function(error) {
+                // TODO: move that func to partials/common, remove duplicates
+                for (var e in error.data){
+                    $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
+                }
+                $scope.error = error.data;
+            }
+        );
+        $scope.random = Math.floor((Math.random()*1000));
+
+        $scope.update_group = function() {
+            Group.update({pk: $routeParams.pk}, $scope.data, function(success){
+                    $location.path('/group/'+ $routeParams.pk + '/photo');
+                },
+                function(error){
+                    $rootScope.alerts.push({ type: 'danger', msg: 'Error!'});
+                }
+            );
+        };
+        $scope.update_avatar = function() {
+            var url = '/api/v1/group/'+ $routeParams.pk + '/avatar_update/';
+            MultipartForm('PATCH', '#avatar_form', url).then(function(response) {
+                $rootScope.alerts.push({ type: 'success', msg: 'Your drone was successfully added!'});
+                    //$scope.r = response.data;
+                    //$scope.random = Math.floor((Math.random()*1000));
+                    $location.path('/group/'+ $routeParams.pk + '/photo');
+                },
+                function(error) {
+                    for (var e in error.data){
+                        $rootScope.alerts.push({ type: 'danger', msg: 'Error!'});
+                    }
+                    $scope.error = error.data;
+                }
+            );
+
+        };
+
     }
 ]);

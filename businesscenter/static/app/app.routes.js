@@ -39,6 +39,9 @@ angular.module('app.route', [
         when('/group/create', {
             templateUrl: PATH + 'group/create.html',
             controller: 'CtrlGroupAdd'}).
+        when('/group/:pk/manage', {
+            templateUrl: PATH + 'group/manage.html',
+            controller: 'CtrlGroupManage'}).
         when('/error/404/', {
             templateUrl: PATH + 'partials/error/404.html'}).
         otherwise({

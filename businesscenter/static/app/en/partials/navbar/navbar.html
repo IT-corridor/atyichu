@@ -1,25 +1,31 @@
 <nav class="navbar navbar-default menu-bar" data-ng-class="{ 'navbar-shrink': change_class }">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-ng-init="isCollapsed = true"
-                    data-ng-click="isCollapsed = !isCollapsed" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#!/"><img src="static/theme/images/logo.png" alt="{{ brand_text }}" ></a>
-        </div>
-        <ul class="nav navbar-nav" data-uib-collapse="isCollapsed">
-            <li><a data-ng-href="#!/mirror/">Mirror</a></li>
-            <li><a data-ng-href="#!/photo/">Photos</a></li>
-            <li><a data-ng-href="#!/group/">Groups</a></li>
-            <li><a data-ng-href="#!/profile/">My profile</a></li>
-            <li><a data-ng-click="logout()" data-ng-href="#!/"><i class="fa fa-sign-out"></i>Logout</a></li>
+  <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-ng-init="isCollapsed = true"
+                  data-ng-click="isCollapsed = !isCollapsed" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#!/"><img src="{{ THEME }}images/logo.png" alt="{{ brand_text }}" ></a>
+      </div>
+      <ul class="nav navbar-nav" data-uib-collapse="isCollapsed">
+          <li><a data-ng-href="#!/mirror">Mirror</a></li>
+          <li><a data-ng-href="#!/photo">Photos</a></li>
+          <li><a data-ng-href="#!/group">Groups</a></li>
+          <li><a data-ng-href="#!/profile/">My profile</a></li>
+          <li><a data-ng-click="logout()" data-ng-href="#!/"><i class="fa fa-sign-out"></i>Logout</a></li>
+      </ul>
+
+        <ul class="nav navbar-nav navbar-right new-hide02">
+          <li><div class="parent">
+          <input type="text" placeholder="Search">
+          <i class="fa fa-search"></i> </div></li>
         </ul>
-    </div><!-- /.container-fluid -->
+  </div><!-- /.container-fluid -->
 </nav>
 <div data-ng-if="visitor">
-    <wx-self data-visitor="visitor"></wx-self>
+  <wx-self data-visitor="visitor"></wx-self>
 </div>

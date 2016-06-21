@@ -49,6 +49,20 @@ def cleanup_files(instance, fieldname):
         crop.delete(save=False)
 
 
+def cleanup_if_none(instance, fieldname):
+    """If main picture is None, remove others (crop, and thumb)"""
+    field = getattr(instance, fieldname)
+
+    if not field.name:
+        thumb = getattr(instance, 'thumb', None)
+        if thumb:
+            thumb.delete()
+
+        crop = getattr(instance, 'crop', None)
+        if crop:
+            crop.delete()
+
+
 def create_thumb(instance, fieldname, m=100):
     field = getattr(instance, fieldname)
     if field and not instance.thumb.name:

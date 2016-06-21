@@ -27,7 +27,7 @@ a, a:hover, a:focus, a:active {
 	border-color: #ab47bc;
 }
 .parent {
-	display: inline-block;
+/*	display: inline-block;*/
 	margin: 0 auto;
 	position: relative;
 	width: 330px;
@@ -532,14 +532,22 @@ footer {
 	margin-top: 60px;
 }
 .ThumbSlides.exp-selfie {
-	background: #fff;
-	border-radius: 4px;
-	margin: 0 auto;
-	/*max-width: 262px;
-	overflow: hidden;*/
+  background: #fff none repeat scroll 0 0;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 0;
+  width: 100%;
 	padding: 15px 0 0;
-	display:inline-block;
-	width:100%;
+}
+.main-portfolio .thumbnail a img {
+  height: auto;
+  max-width: 100%;
+  vertical-align: middle;
+}
+.main-portfolio .thumbnail {
+  margin: 0;
+	border: 0 none;
+	padding: 0;
 }
 .exp-selfie .coverSlide {
 	margin: 0 15px;
@@ -797,12 +805,13 @@ footer {
 
 #expand-contact li {
 	border-radius: 4px;
-	box-shadow: 0 0 3px 0 #999;
+  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
 	display: inline-block;
 	list-style: outside none none;
-	margin: 15px 7px;
+/*margin: 15px 7px;*/
+		margin:8px;
 	vertical-align: top;
-	width: auto;
+	width: 100%;
 }
 #expand-contact .coverSlide > img {
 	display: inline-block;
@@ -811,6 +820,9 @@ footer {
 }
 .exp-selfie .inner-text > h4 {
 	text-align: center;
+}
+.main-portfolio .thumbnail .img-responsive {
+  width: 100%;
 }
 /***********end listing css*************/
 
@@ -947,6 +959,9 @@ footer {
 .default-txt h3 {
  font-size: 18px;
 }
+.new-hide02 {
+  display: none;
+}
 /*********************/
 .ThumbSlides.exp-selfie.modal-img {
  max-width: 350px;
@@ -1057,6 +1072,10 @@ footer, .breadcrumb-main {
   padding-top: 30px;
 }
 }
+
+
+
+
 @media(max-width:700px) {
 .portfolioImages .col-sm-4 {
  float: left;

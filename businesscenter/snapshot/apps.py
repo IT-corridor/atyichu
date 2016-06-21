@@ -18,3 +18,5 @@ class SnapshotConfig(AppConfig):
         post_save.connect(receivers.create_thumb_photo_320, sender=Photo)
         post_save.connect(receivers.create_thumb_avatar_320, sender=Group)
         post_save.connect(receivers.create_crop_photo_100, sender=Photo)
+
+        post_save.connect(receivers.cleanup_if_avatar_is_none, sender=Group)

@@ -28,7 +28,7 @@ angular.module('group.services', ['ngResource'])
     });
 }])
 .factory('MultipartForm', ['$http', function ($http){
-    return function(form_id, url){
+    return function(method, form_id, url){
         if (form_id){
             var form = document.querySelector(form_id);
             var formData = new FormData(form);
@@ -37,7 +37,7 @@ angular.module('group.services', ['ngResource'])
             var formData = null;
         }
         var req = {
-            method: 'POST',
+            method: method,
             url: url,
             headers: {'Content-Type': undefined, 'X-Requested-With': 'XMLHttpRequest'},
             data: formData,

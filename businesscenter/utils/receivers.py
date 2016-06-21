@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from .utils import create_thumb, create_crop, cleanup_files
+from .utils import create_thumb, create_crop, cleanup_files, cleanup_if_none
 
 
 def create_thumb_avatar(sender, **kwargs):
@@ -45,3 +45,9 @@ def cleanup_files_photo(sender, **kwargs):
     instance = kwargs.get('instance', None)
     if instance:
         cleanup_files(instance, 'photo')
+
+
+def cleanup_if_avatar_is_none(sender, **kwargs):
+    instance = kwargs.get('instance', None)
+    if instance:
+        cleanup_if_none(instance, 'avatar')
