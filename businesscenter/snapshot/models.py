@@ -102,6 +102,8 @@ class Photo(models.Model):
     path_photo = UploadPath('snapshot/photo', None, *('visitor',))
     path_thumb = UploadPath('snapshot/photo/thumbs', None, 'thumb',
                             *('visitor',))
+    path_crop = UploadPath('snapshot/photo/crops', None, 'crop',
+                            *('visitor',))
     visitor = models.ForeignKey(Visitor, verbose_name=_('Photo owner'))
     mirror = models.ForeignKey(Mirror, verbose_name=_('Mirror'), blank=True,
                                null=True, on_delete=models.SET_NULL)
@@ -116,6 +118,8 @@ class Photo(models.Model):
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
     group = models.ForeignKey('snapshot.Group', on_delete=models.SET_NULL,
+                              null=True, blank=True)
+    crop = models.ImageField(_('Cropped photo'), upload_to=path_crop,
                               null=True, blank=True)
 
     def __unicode__(self):

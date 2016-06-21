@@ -53,8 +53,9 @@ class PhotoDetailSerializer(serializers.ModelSerializer):
 class PhotoSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Photo
-        fields = ('id', 'thumb')
+        fields = ('id', 'crop', 'thumb')
 # Group serializers started
+
 
 class TagSerializer(serializers.ModelSerializer):
 

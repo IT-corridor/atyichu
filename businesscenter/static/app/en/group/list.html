@@ -12,7 +12,7 @@
                                     <a data-ng-href="#!group/{{ group.id }}/photo"><img data-ng-src="{{ THEME }}images/arrow.png" alt="..."></a> </div>
                             </div>
                             <ul data-ng-if="group.overview.length > 0">
-                                <li><img data-ng-src="{{ item.thumb }}" alt="..." style="max-width: 100px;" data-ng-repeat="item in group.overview"></li>
+                                <li><img data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." style="max-width: 100px;" data-ng-repeat="item in group.overview"></li>
                             </ul>
                         </div>
                         <h4><span><i class="fa fa-clock-o fa-lg"></i> {{ group.activity }}</span>

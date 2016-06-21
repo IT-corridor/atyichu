@@ -41,8 +41,12 @@ def cleanup_files(instance, fieldname):
     if field and hasattr(field, 'name'):
         field.delete(save=False)
     thumb = getattr(instance, 'thumb', None)
-    if thumb and hasattr(instance, 'thumb'):
+    if thumb and hasattr(thumb, 'name'):
         thumb.delete(save=False)
+
+    crop = getattr(instance, 'crop', None)
+    if crop and hasattr(crop, 'name'):
+        crop.delete(save=False)
 
 
 def create_thumb(instance, fieldname, m=100):
@@ -69,6 +73,36 @@ def create_thumb(instance, fieldname, m=100):
         output = BytesIO()
         img.save(output, ext)
         instance.thumb.save(n_fn, File(output), save=True)
+        output.close()
+
+
+def create_crop(instance, fieldname, m=100):
+    field = getattr(instance, fieldname)
+    if field and not instance.crop.name:
+        filename = field.path
+        img = Image.open(filename)
+
+        iw, ih = img.size
+        if iw > m and ih > m:
+            # First try to crop
+            x1 = (iw / 2) - (m / 2)
+            x2 = (iw / 2) + (m / 2)
+            y1 = (ih / 2) - (m / 2)
+            y2 = (ih / 2) + (m / 2)
+
+            crop_box = (x1, y1, x2, y2)
+            img = img.crop(crop_box)
+        else:
+            # Else draft it to what we can
+            img = img.draft(img.mode, (m, m))
+        filepath, _ = field.name.split('.')
+        name = filepath.split('/')[-1]
+        ext = imghdr.what(filename)
+        n_fn = name + '_crop.' + ext
+
+        output = BytesIO()
+        img.save(output, ext)
+        instance.crop.save(n_fn, File(output), save=True)
         output.close()
 
 
