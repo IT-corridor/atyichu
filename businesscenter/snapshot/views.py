@@ -416,8 +416,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             # TODO: Cannot filter a query once a slice has been taken.
             # TODO: find another way
-            # prefetch = Prefetch('photo_set', queryset=Photo.objects.all())
-            # qs = qs.prefetch_related(prefetch)
+            prefetch = Prefetch('photo_set', queryset=Photo.objects.all())
+            qs = qs.prefetch_related(prefetch)
             qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
                            Q(member__visitor=visitor))
         return qs

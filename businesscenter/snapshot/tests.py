@@ -328,6 +328,7 @@ class GroupTests(APITestCase):
         self.force_login(1)
         url = reverse('snapshot:group-member-add', kwargs={'pk': 2})
         response = self.client.post(url, data={'username': 'Peter'})
+        print (response.data)
         self.assertEqual(response.status_code, 201)
         self.client.logout()
 

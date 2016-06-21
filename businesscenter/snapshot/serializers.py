@@ -50,6 +50,10 @@ class PhotoDetailSerializer(serializers.ModelSerializer):
         model = models.Photo
 
 
+class PhotoSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Photo
+        fields = ('id', 'thumb')
 # Group serializers started
 
 class TagSerializer(serializers.ModelSerializer):
@@ -60,20 +64,19 @@ class TagSerializer(serializers.ModelSerializer):
 
 class MemberSerializer(serializers.ModelSerializer):
 
-    member_name = serializers.CharField(source='visitor')
+    member_name = serializers.CharField(source='visitor', read_only=True)
 
     class Meta:
         model = models.Member
-        fields = ('visitor', 'member_name')
+        extra_kwargs = {'group': {'write_only': True}}
 
 
-class GroupListSerializer(serializers.ModelSerializer):
-
+class GroupSerializer(serializers.ModelSerializer):
     photo_count = serializers.IntegerField(source='photo_set.count',
                                            read_only=True)
+
     activity = serializers.SerializerMethodField(read_only=True)
     owner_name = serializers.CharField(source='owner', read_only=True)
-    # photo_set = PhotoListSerializer(many=True, read_only=True)
 
     def get_activity(self, obj):
         return timesince(obj.modify_date)
@@ -82,7 +85,20 @@ class GroupListSerializer(serializers.ModelSerializer):
         model = models.Group
 
 
-class GroupDetailSerializer(GroupListSerializer):
+class GroupListSerializer(GroupSerializer):
+
+    overview = serializers.SerializerMethodField(read_only=True)
+
+    def get_overview(self, obj):
+        qs = obj.photo_set.all()[:3]
+        serializer = PhotoSimpleSerializer(instance=qs, many=True)
+        return serializer.data
+
+    class Meta:
+        model = models.Group
+
+
+class GroupDetailSerializer(GroupSerializer):
 
     members = MemberSerializer(source='member_set', many=True, read_only=True)
     tags = TagSerializer(source='tag_set', many=True, read_only=True)

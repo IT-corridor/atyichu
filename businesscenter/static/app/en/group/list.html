@@ -11,6 +11,9 @@
                                     <h4>View all photos</h4>
                                     <a data-ng-href="#!group/{{ group.id }}/photo"><img data-ng-src="{{ THEME }}images/arrow.png" alt="..."></a> </div>
                             </div>
+                            <ul data-ng-if="group.overview.length > 0">
+                                <li><img data-ng-src="{{ item.thumb }}" alt="..." style="max-width: 100px;" data-ng-repeat="item in group.overview"></li>
+                            </ul>
                         </div>
                         <h4><span><i class="fa fa-clock-o fa-lg"></i> {{ group.activity }}</span>
                             <span class="pull-right"><i class="fa fa-picture-o fa-lg"></i> {{ group.photo_count }}</span></h4>
