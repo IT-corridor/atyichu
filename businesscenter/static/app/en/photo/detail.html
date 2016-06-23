@@ -6,23 +6,31 @@
 <div class="row">
     <div class="col-md-12">
         <ul class="list-inline text-center">
-            <li><a class="btn btn-info" data-ng-href="#!/photo"><i class="fa fa-arrow-left fa-2x"></i></a></li>
-            <li><a class="btn btn-warning" data-ng-href="#!/photo/edit/{{ photo.id }}"><i class="fa fa-edit fa-2x"></i></a></li>
-            <li><button class="btn btn-danger" data-ng-click="remove()"><i class="fa fa-trash-o fa-2x"></i></button></li>
+            <li><a class="btn btn-info" data-ng-href="#!/photo"><i
+                    class="fa fa-arrow-left fa-2x"></i></a></li>
+            <li><a class="btn btn-warning"
+                   data-ng-href="#!/photo/edit/{{ photo.id }}"><i
+                    class="fa fa-edit fa-2x"></i></a></li>
+            <li>
+                <button class="btn btn-danger" data-ng-click="remove()"><i
+                        class="fa fa-trash-o fa-2x"></i></button>
+            </li>
         </ul>
     </div>
 </div>
 <div class="row">
     <hr>
     <div class="col-md-12">
-        <img class="img-responsive img-center" data-ng-src="{{ photo.photo }}" alt="{{ photo.title }}">
+        <img class="img-responsive img-center" data-ng-src="{{ photo.photo }}"
+             alt="{{ photo.title }}">
     </div>
 </div>
 <div class="row">
     <hr>
     <div class="col-md-12">
         <h2 class="text-center">{{ (photo.title) ? photo.title : 'Untitled' }},
-            <span class="text-muted">{{ photo.create_date | date : 'longDate': '+0800'}}</span></h2>
+            <span class="text-muted">{{ photo.create_date | date : 'longDate': '+0800'}}</span>
+        </h2>
     </div>
 </div>
 <div class="row" data-ng-if="photo.description">
@@ -34,39 +42,65 @@
 </div>
 <div class="row" data-ng-href="photo.comments">
     <hr>
-    <div class="col-md-12"><h3>COMMENTS:</h3></div>
+    <div class="col-md-12"><h3> {{ photo.comments.length }} COMMENTS:</h3>
+    </div>
     <div class="col-md-12" data-ng-repeat="comment in photo.comments">
-        <div class="media panel panel-default small">
-            <div class="media-left text-center">
-                <img class="media-object" style="max-width: 32px; height: auto;" data-ng-src="{{ comment.author_data.thumb }}" alt="{{ comment.author_data.username }}">
+        <div>
+            <a class="pull-left thumb-sm">
+                <img data-ng-src="{{ comment.author_data.thumb }}"
+                     class="img-circle">
+            </a>
+            <div class="m-l-xxl m-b">
+                <div>
+                    <a href=""><strong>{{ comment.author_data.username
+                        }}</strong></a>
+      <span class="text-muted text-xs block m-t-xs">
+        {{ comment.create_date| date : 'longDate': '+0800' }}
+      </span>
+                </div>
+                <div class="m-t-sm">{{ comment.message }}</div>
             </div>
-            <div class="media-body">
-                    <b>
-                        {{ comment.author_data.username }}
-                    </b>
-                <p>
-                    {{ comment.message }}
-                </p>
-                <small class="text-right text-muted">{{ comment.create_date| date : 'longDate': '+0800' }}
-                    </small>
-            </div>
+            <hr>
         </div>
     </div>
 </div>
 <div class="row">
     <hr>
     <form data-ng-submit="comment()">
-    <div class="col-md-12">
-        <h3>Leave a comment:</h3>
-    </div>
-    <div class="col-md-12">
-        <textarea class="form-control" data-ng-model="new_message"></textarea>
-    </div>
-    <div class="col-md-12">
-        <p></p>
-        <p class="text-center">
-            <button type="submit" class="btn btn-primary btn-lg">comment</button>
-        </p>
-    </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Leave a comment:</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="pull-right">
+                    <a class="thumb-lg">
+                        <img data-ng-src="{{ visitor.thumb }}"
+                             class="img-circle">
+                    </a>
+                    <p class="text-center">{{ visitor.username }}</p>
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="form-group">
+                    <textarea class="form-control"
+                      rows="5" data-ng-model="new_message"></textarea>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row m-t">
+            <div class="col-md-12">
+            <p class="text-center">
+                <button type="submit" class="btn btn-success btn-lg">Submit comment
+                </button>
+            </p>
+        </div>
+        </div>
+
     </form>
 </div>
+
+

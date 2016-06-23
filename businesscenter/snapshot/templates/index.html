@@ -8,10 +8,11 @@
         <meta name="description" content="Atyichu">
         {% load i18n %}
         {% load static from staticfiles %}
-        <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/font-awesome.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/bootstrap.min.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/style.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/animations.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}lib/font-awesome/css/font-awesome.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}lib/assets/animate/animate.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/font.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/app.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/style.css">
         {% verbatim %}
         <title data-ng-bind="title + ' | ' + site"></title>
@@ -19,7 +20,7 @@
 
         {% endverbatim %}
     </head>
-    <body id="page-top">
+    <body id="app" class="app">
         <div data-d-navbar></div>
         <noscript><h4 class="text-danger">{% trans 'This site requires JavaScript to be enabled' %}</h4></noscript>
         <div class="container">
@@ -30,19 +31,22 @@
             </div>
         </div>
         <div id="content" class="container view-container">
-            <div class="final-expand-main">
-                <div data-ng-view class="view-frame"></div>
-            </div>
+            <div data-ng-view class="view-frame"></div>
         </div>
         <div data-d-footer></div>
         <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-        <script src="{{ STATIC_URL }}angularjs/angular.min.js"></script>
-        <script src="{{ STATIC_URL }}angularjs/angular-cookies.min.js"></script>
-        <script src="{{ STATIC_URL }}angularjs/angular-route.min.js"></script>
-        <script src="{{ STATIC_URL }}angularjs/angular-resource.min.js"></script>
-        <script src="{{ STATIC_URL }}angularjs/angular-sanitize.min.js"></script>
-        <script src="{{ STATIC_URL }}angularjs/angular-animate.min.js"></script>
-        <script src="{{ STATIC_URL }}angularjs/ui-bootstrap-tpls.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/angular.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/angular-cookies.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/angular-route.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/angular-resource.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/angular-sanitize.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/angular-animate.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/angular-animate.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/angular-aria.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/angular-touch.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/ui-bootstrap-tpls.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/other/angular-translate.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/other/ngStorage.js"></script>
         {% get_current_language as LANGUAGE %}
         {% if LANGUAGE == 'zh-hans'  or LANGUAGE == 'zh-hant' %}
             {% include 'include/scripts.html' with LANG='en' %}

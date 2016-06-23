@@ -14,6 +14,11 @@ class WeixinSerializer(serializers.ModelSerializer):
     avatar_url = serializers.URLField(required=False, write_only=True)
     nickname = serializers.CharField(required=True, write_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
+    # Added 23.06.2013
+    photo_count = serializers.IntegerField(source='photo_set.count',
+                                           read_only=True)
+    group_count = serializers.IntegerField(source='group_set.count',
+                                           read_only=True)
 
     # EXTEND LATER
     # We assume that we get a validated data from weixin open id
@@ -64,10 +69,12 @@ class WeixinSerializer(serializers.ModelSerializer):
     class Meta:
         model = Visitor
         fields = ('weixin', 'avatar_url', 'nickname', 'thumb', 'username',
-                  'access_token', 'expires_in', 'refresh_token')
+                  'access_token', 'expires_in', 'refresh_token', 'avatar',
+                  'group_count', 'photo_count')
         extra_kwargs = {'thumb': {'read_only': True},
                         'weixin': {'write_only': True},
                         'access_token': {'write_only': True},
                         'expires_in': {'write_only': True},
                         'refresh_token': {'write_only': True},
+                        'avatar': {'read_only': True}
                         }

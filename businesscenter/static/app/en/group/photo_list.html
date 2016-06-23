@@ -1,10 +1,19 @@
-<div class="row" data-ng-if="group">
+<div data-ng-if="group">
     <div class="row">
-        <div class="col-md-10 col-md-offset2">
-            <h2>{{ group.title }}</h2>
-            <h4>Group owned by {{ group.owner_name }}</h4>
-            <h4 class="text-success"><span><i class="fa fa-clock-o fa-lg"></i> {{ group.activity }}</span>,
-                <span><i class="fa fa-picture-o fa-lg"></i> {{ group.photo_count }}</span></h4>
+        <div class="col-md-12">
+            <h1 class="text-center">{{ group.title }}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-xs-6">
+            <div class="pull-right">
+                <h4>Group owned by {{ group.owner_name }}</h4>
+            <h4 class="text-success"><span><i class="fa fa-clock-o fa-lg"></i> {{ group.activity }}</span>
+                <span class="m-l"><i class="fa fa-picture-o fa-lg"></i> {{ group.photo_count }}</span></h4>
+            </div>
+        </div>
+        <div class="col-md-6 col-xs-6">
+            <p><a class="btn btn-primary pull-left m-sm" data-ng-href="#!group/{{ group.id }}/manage">Manage</a></p>
         </div>
     </div>
     <div class="row" data-ng-if="group.description">
@@ -36,47 +45,40 @@
             </ul>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-10 col-md-offset2">
-            <hr>
-            <p><a class="btn btn-primary" data-ng-href="#!group/{{ group.id }}/manage">Manage</a></p>
+</div>
+<hr class="m-t">
+<div class="row" data-ng-if="r">
+    <div class="col-xs-6 col-md-3" data-ng-repeat="photo in r.results">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                {{ ( photo.title ) ? photo.title : 'Untitled' }}
+                <span class="small text-muted">(owned by {{ photo.owner_name }})</span>
+            </div>
+            <div class="panel-body text-center h">
+                <a data-ng-href="#!/photo/{{ photo.id }}">
+                    <img class="img-responsive" data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}">
+                </a>
+                <span class="text-center">{{ photo.create_date | date : 'longDate': '+0800'}}</span>
+            </div>
+            <div class="panel-footer">
+                <ul class="list-inline text-muted text-center">
+                    <li><i class="fa fa-clock-o fa-lg"></i> {{ photo.activity }}</li>
+                    <li><i class="fa fa-comments"></i> {{ photo.comment_count }}</li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
-<div class="main-portfolio" data-ng-if="r">
-    <div class="portfolioImages">
-        <div class="inner-port">
-            <ul>
-                <li data-ng-repeat="photo in r.results">
-                    <div class="ThumbSlides">
-                        <p>{{ ( photo.title ) ? photo.title : 'Untitled' }} <span class="small text-muted">(owned by {{ photo.owner_name }})</span></p>
-                        <p>{{ photo.create_date | date : 'longDate': '+0800'}}</p>
-                        <div class="coverSlide"> <img class="img-responsive" data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}">
-                            <div class="hovereffect">
-                                <div class="covers">
-                                    <h4>View details</h4>
-                                    <a href="#!photo/{{ photo.id }}"><img data-ng-src="{{ THEME }}images/arrow.png" alt="view details"></a> </div>
-                            </div>
-                        </div>
-                        <h4><span><i class="fa fa-clock-o fa-lg"></i> {{ photo.activity }}</span>
-                            <span class="pull-right"><i class="fa fa-picture-o fa-lg"></i> {{ photo.comment_count }}</span></h4>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div class="load-btn">
-            <button data-ng-disabled="enough" data-ng-click="get_more()" class="btn loadBtn">Load more</button>
-        </div>
-        <div class="text-center">
-            <ul class="pagination">
-                <li><a data-ng-href="{{ page_link }}page=1">&lt;&lt;</a></li>
-                <li><a data-ng-if="r.previous_page" data-ng-href="{{ page_link }}page={{ r.previous_page }}">&lt;</a></li>
-                <li data-ng-repeat="i in prev_pages"><a data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
-                <li class="active"><a href="#">{{ r.current }}</a></li>
-                <li data-ng-repeat="i in next_pages"><a data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
-                <li><a data-ng-if="r.next_page" data-ng-href="{{ page_link }}page={{ r.next_page }}">&gt;</a></li>
-                <li><a data-ng-href="{{ page_link }}page={{ r.total }}">&gt;&gt;</a></li>
-            </ul>
-        </div>
-    </div>
+<div class="text-center m-t">
+    <p><button data-ng-disabled="enough" data-ng-click="get_more()" class="btn btn-lg btn-primary">Load more</button>
+    </p>
+    <ul class="pagination m-t">
+        <li><a data-ng-href="{{ page_link }}page=1">&lt;&lt;</a></li>
+        <li><a data-ng-if="r.previous_page" data-ng-href="{{ page_link }}page={{ r.previous_page }}">&lt;</a></li>
+        <li data-ng-repeat="i in prev_pages"><a data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
+        <li class="active"><a href="#">{{ r.current }}</a></li>
+        <li data-ng-repeat="i in next_pages"><a data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
+        <li><a data-ng-if="r.next_page" data-ng-href="{{ page_link }}page={{ r.next_page }}">&gt;</a></li>
+        <li><a data-ng-href="{{ page_link }}page={{ r.total }}">&gt;&gt;</a></li>
+    </ul>
 </div>

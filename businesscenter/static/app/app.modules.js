@@ -1,8 +1,10 @@
 var app = angular.module('app.main', [
+    'ngAnimate',
+    'ngAria',
+    'ngTouch',
+    'ui.bootstrap',
     'constants',
     'app.route',
-    'ui.bootstrap',
-    'ngAnimate',
     'auth.services',
     'weixinapi',
     'navbar',
