@@ -96,7 +96,7 @@ def create_crop(instance, fieldname, m=100):
         filename = field.path
         img = Image.open(filename)
 
-        iw, ih = img.size
+        """iw, ih = img.size
         if iw > m and ih > m:
             # First try to crop
             x1 = (iw / 2) - (m / 2)
@@ -107,8 +107,8 @@ def create_crop(instance, fieldname, m=100):
             crop_box = (x1, y1, x2, y2)
             img = img.crop(crop_box)
         else:
-            # Else draft it to what we can
-            img = img.draft(img.mode, (m, m))
+            # Else draft it to what we can """
+        img = img.draft(img.mode, (m, m))
         filepath, _ = field.name.split('.')
         name = filepath.split('/')[-1]
         ext = imghdr.what(filename)
