@@ -28,7 +28,7 @@
             <div class="group-crop m-b-sm" data-ng-if="group.overview.length > 0">
                     <div class="hbox bg-white lter">
                         <div class="col" data-ng-repeat="item in group.overview">
-                            <div class="m-xs img-wrap b-a b-light r">
+                            <div class="m-xs img-wrap-xs b-a b-light r">
                                 <img class="img-center" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
                             </div>
                         </div>
@@ -37,7 +37,7 @@
                 <div class="group-crop m-b-sm" data-ng-if="group.overview.length == 0">
                     <div class="hbox bg-white lter text-center">
                         <div class="col v-middle" data-ng-repeat="item in [0, 1, 2]">
-                            <div class="m-xs img-wrap b-a b-light r" style="line-height: 80px;">
+                            <div class="m-xs img-wrap b-a b-light r no-img-xs">
                                 <span class="fa-stack fa-lg" aria-hidden="true">
                                   <i class="fa fa-camera fa-stack-1x"></i>
                                   <i class="fa fa-ban fa-stack-2x text-muted"></i>

@@ -26,9 +26,9 @@ body {
 
 /* Group */
 
-.img-wrap {
-    width: 80px;
-    height: 80px;
+.img-wrap-xs {
+    width: 45px;
+    height: 45px;
     overflow: hidden;
 }
 .group-crop {
@@ -37,4 +37,7 @@ body {
 .group{
     height: 200px;
     overflow: hidden;
+}
+.no-img-xs{
+    line-height: 45px;
 }
