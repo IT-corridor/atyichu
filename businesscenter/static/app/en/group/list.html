@@ -25,19 +25,19 @@
                     </div>
                 </div>
             </div>
-            <div class="group-crop" data-ng-if="group.overview.length > 0">
+            <div class="group-crop m-b-sm" data-ng-if="group.overview.length > 0">
                     <div class="hbox bg-white lter">
-                        <div class="col v-middle" data-ng-repeat="item in group.overview">
-                            <div class="m-xs">
-                                <img class="img-responsive img-crop img-center" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
+                        <div class="col" data-ng-repeat="item in group.overview">
+                            <div class="m-xs img-wrap b-a b-light r">
+                                <img class="img-center" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="group-crop" data-ng-if="group.overview.length == 0">
+                <div class="group-crop m-b-sm" data-ng-if="group.overview.length == 0">
                     <div class="hbox bg-white lter text-center">
                         <div class="col v-middle" data-ng-repeat="item in [0, 1, 2]">
-                            <div class="m-xs">
+                            <div class="m-xs img-wrap b-a b-light r" style="line-height: 80px;">
                                 <span class="fa-stack fa-lg" aria-hidden="true">
                                   <i class="fa fa-camera fa-stack-1x"></i>
                                   <i class="fa fa-ban fa-stack-2x text-muted"></i>
@@ -47,12 +47,12 @@
                     </div>
                 </div>
             <div class="panel-footer">
-                <h5><span><i class="fa fa-clock-o"></i> {{ group.activity }}</span>
-                    <span class="pull-right"><i class="fa fa-picture-o"></i> {{ group.photo_count }}</span></h5>
-                <h5>
+                <h6><span><i class="fa fa-clock-o"></i> {{ group.activity }}</span>
+                    <span class="pull-right"><i class="fa fa-picture-o"></i> {{ group.photo_count }}</span></h6>
+                <h6>
                     <span class="text-muted"><i class="fa fa-user">&nbsp;{{ group.owner_name }}</i></span>
                 <span class="pull-right" data-ng-if="visitor.pk == group.owner"><a data-ng-href="#!/group/{{ group.id }}/manage"><i class="fa fa-edit"></i></a></span>
-                </h5>
+                </h6>
             </div>
         </div>
     </div>
