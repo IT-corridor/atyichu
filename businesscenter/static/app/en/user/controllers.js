@@ -5,10 +5,8 @@ angular.module('user.controllers', ['auth.services'])
 
         $rootScope.title = 'My profile';
 
+        $scope.me = $rootScope.visitor;
 
-        $scope.me = Me.get(function(success){
-            $rootScope.alerts.push({ type: 'info', msg: 'Welcome, '+ success.username + '!' });
-        });
 
         $scope.logout = function(){
             $scope.r = Logout.query(function(success){
@@ -22,6 +20,7 @@ angular.module('user.controllers', ['auth.services'])
         $scope.sync_profile = function(){
 
             ProfileSync.post(function(success){
+                $rootScope.visitor = success;
                 $rootScope.alerts.push({ type: 'info',
                     msg: 'Profile was updated.'});
                 $location.path('/');

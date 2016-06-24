@@ -1,13 +1,25 @@
-<div class="selfie-img">
-    <div class="container">
-        <div class="selfie-inner">
-        <div class="profile-pic-area">
-        <div class="profile-pic-inner"><span><img data-ng-src="{{ visitor.thumb }}" alt="{{ visitor.username }}"> </span></div>
+<div class="container-fluid" style="background-color: white;">
+    <div class="row">
+        <div class="col-md-5 col-xs-5">
+            <h1 class="pull-right pull-none-xs font-bold m">{{ visitor.username }}</h1>
         </div>
-        <div class="name">
-        <h2>{{ visitor.username }}</h2>
+        <div class="col-md-7 col-xs-7">
+            <span><img class="img-circle img-responsive" data-ng-src="{{ visitor.thumb }}"
+                                        alt="{{ visitor.username }}"></span>
         </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="pull-left-xs text-center">
+                <a href="" class="m-b-md inline m">
+                    <span class="h3 block font-bold">{{ visitor.group_count }}</span>
+                    <small>Groups</small>
+                </a>
+                <a href="" class="m-b-md inline m">
+                    <span class="h3 block font-bold">{{ visitor.photo_count }}</span>
+                    <small>Photos</small>
+                </a>
+            </div>
         </div>
-        <div class="border"></div>
     </div>
 </div>

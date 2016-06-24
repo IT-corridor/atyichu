@@ -3,30 +3,6 @@
         <h1 class="text-center">{{ title }}</h1>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-6 col-xs-6">
-        <h2 class="text-right">{{ me.username }}</h2>
-    </div>
-    <div class="col-md-6 col-xs-6">
-        <span class="thumb-lg"><img class="img-circle"
-                                    data-ng-src="{{ me.thumb }}"
-                                    alt="{{ me.username }}"></span>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-6 col-xs-6">
-        <div class="pull-right pull-none-xs text-center">
-            <a href="" class="m-b-md inline m">
-                <span class="h3 block font-bold">{{ me.group_count }}</span>
-                <small>Groups</small>
-            </a>
-            <a href="" class="m-b-md inline m">
-                <span class="h3 block font-bold">{{ me.photo_count }}</span>
-                <small>Photos</small>
-            </a>
-        </div>
-    </div>
-</div>
 <div class="row m-t-xxl">
     <div class="col-md-6 col-xs-6">
         <a class="btn btn-info pull-right" data-ng-href="#!/group/create">

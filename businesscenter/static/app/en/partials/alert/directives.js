@@ -7,6 +7,7 @@ angular.module('alert', [])
             if (!$rootScope.alerts){
                 $rootScope.alerts = [];
             }
+
             $scope.close_alert = function(index){
                 $rootScope.alerts.splice(index, 1);
             };
