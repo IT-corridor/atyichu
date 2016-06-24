@@ -26,11 +26,6 @@ body {
 
 /* Group */
 
-.img-wrap-xs {
-    width: 45px;
-    height: 45px;
-    overflow: hidden;
-}
 .group-crop {
     width: 100%;
 }
@@ -38,6 +33,26 @@ body {
     height: 200px;
     overflow: hidden;
 }
-.no-img-xs{
-    line-height: 45px;
+
+
+@media (max-width: 767px) {
+    .no-img-xs{
+        line-height: 45px;
+    }
+    .img-wrap-xs {
+        width: 45px;
+        height: 45px;
+        overflow: hidden;
+    }
+}
+
+@media (min-width: 992px) {
+    .no-img-md{
+        line-height: 80px;
+    }
+    .img-wrap-xs {
+        width: 80px;
+        height: 80px;
+        overflow: hidden;
+    }
 }
