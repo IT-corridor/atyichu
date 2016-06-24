@@ -30,30 +30,10 @@ body {
     height: 60px;
 }
 .group-crop {
-    bottom: 0px;
-    height: 70px;
+    height: 80px;
     width: 100%;
-    opacity: 1;
 }
-.group-text {
-    bottom: 0px;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(171, 71, 188, 0.5);
-    opacity: 0;
-    color: #fff;
-}
-
-.group:hover > .group-crop{
-    opacity: 0;
-    transition: opacity .5s ease-in-out;
-    -moz-transition: opacity .5s ease-in-out;
-    -webkit-transition: opacity .5s ease-in-out;
-}
-
-.group:hover > .group-text{
-    opacity: 1;
-    transition: opacity .5s ease-in-out;
-    -moz-transition: opacity .5s ease-in-out;
-    -webkit-transition: opacity .5s ease-in-out;
+.group{
+    height: 200px;
+    overflow: hidden;
 }

@@ -70,7 +70,7 @@ class WeixinSerializer(serializers.ModelSerializer):
         model = Visitor
         fields = ('weixin', 'avatar_url', 'nickname', 'thumb', 'username',
                   'access_token', 'expires_in', 'refresh_token', 'avatar',
-                  'group_count', 'photo_count')
+                  'group_count', 'photo_count', 'pk')
         extra_kwargs = {'thumb': {'read_only': True},
                         'weixin': {'write_only': True},
                         'access_token': {'write_only': True},

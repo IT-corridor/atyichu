@@ -4,33 +4,50 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-3 col-xs-6" data-ng-repeat="group in r.results">
+    <div class="col-md-3 col-xs-6 wrapper-sm" data-ng-repeat="group in r.results">
         <div class="panel panel-default">
             <div class="panel-heading">
-                {{ ( group.title ) ? group.title : 'Untitled' }} <span class="text-muted pull-right"><i class="fa fa-user">&nbsp;{{ group.owner_name }}</i></span>
+                {{ ( group.title ) ? group.title : 'Untitled' }}
+                <span class="text-muted pull-right" data-ng-if="visitor.pk != group.owner"><i class="fa fa-user">&nbsp;{{ group.owner_name }}</i></span>
+                <span class="pull-right" data-ng-if="visitor.pk == group.owner"><a data-ng-href="#!/group/{{ group.id }}/manage"><i class="fa fa-edit"></i></a></span>
             </div>
-            <div class="relative group">
-                <div class="hbox bg-white lter">
+            <div class="group">
+                <div class="hbox">
                     <div class="col v-middle wrapper-xs">
-                        <img class="img-responsive img-center" data-ng-src="{{ group.thumb }}" alt="{{ group.title }}">
-                    </div>
-                </div>
-                <div class="absolute group-crop" data-ng-if="group.overview.length > 0">
-                    <div class="hbox bg-white lter">
-                        <div class="col v-middle wrapper-xs" data-ng-repeat="item in group.overview">
-                            <img class="img-responsive img-crop img-center" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
-                        </div>
-                    </div>
-                </div>
-                <div class="absolute group-text text-center">
-                    <div class="hbox">
-                        <div class="col v-middle">
-                            <h4>View all photos</h4>
-                            <a data-ng-href="#!group/{{ group.id }}/photo"><i class="fa fa-arrow-right fa-2x"></i></a>
-                        </div>
+                        <a data-ng-href="#!group/{{ group.id }}/photo">
+                            <img data-ng-if="group.thumb" class="img-center" style="width: 100%;" data-ng-src="{{ group.thumb }}" alt="{{ group.title }}">
+
+                            <div data-ng-if="!group.thumb" class="text-center">
+                                <span class="fa-stack fa-5x" aria-hidden="true">
+                                  <i class="fa fa-camera fa-stack-1x"></i>
+                                  <i class="fa fa-ban fa-stack-2x text-muted"></i>
+                                </span>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
+            <div class="group-crop" data-ng-if="group.overview.length > 0">
+                    <div class="hbox bg-white lter">
+                        <div class="col v-middle" data-ng-repeat="item in group.overview">
+                            <div class="m-xs">
+                                <img class="img-responsive img-crop img-center" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="group-crop" data-ng-if="group.overview.length == 0">
+                    <div class="hbox bg-white lter text-center">
+                        <div class="col v-middle" data-ng-repeat="item in [0, 1, 2]">
+                            <div class="m-xs">
+                                <span class="fa-stack fa-lg" aria-hidden="true">
+                                  <i class="fa fa-camera fa-stack-1x"></i>
+                                  <i class="fa fa-ban fa-stack-2x text-muted"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             <div class="panel-footer">
                 <h5><span><i class="fa fa-clock-o"></i> {{ group.activity }}</span>
                     <span class="pull-right"><i class="fa fa-picture-o"></i> {{ group.photo_count }}</span></h5>
