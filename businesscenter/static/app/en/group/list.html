@@ -7,18 +7,18 @@
     <div class="col-md-3 col-xs-6" data-ng-repeat="group in r.results">
         <div class="panel panel-default">
             <div class="panel-heading">
-                {{ group.title }} <span class="text-muted pull-right"><i class="fa fa-user">&nbsp;{{ group.owner_name }}</i></span>
+                {{ ( group.title ) ? group.title : 'Untitled' }} <span class="text-muted pull-right"><i class="fa fa-user">&nbsp;{{ group.owner_name }}</i></span>
             </div>
             <div class="relative group">
                 <div class="hbox bg-white lter">
                     <div class="col v-middle wrapper-xs">
-                        <img class="img-responsive" data-ng-src="{{ group.thumb }}" alt="{{ group.title }}">
+                        <img class="img-responsive img-center" data-ng-src="{{ group.thumb }}" alt="{{ group.title }}">
                     </div>
                 </div>
                 <div class="absolute group-crop" data-ng-if="group.overview.length > 0">
                     <div class="hbox bg-white lter">
                         <div class="col v-middle wrapper-xs" data-ng-repeat="item in group.overview">
-                            <img class="img-responsive img-crop" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
+                            <img class="img-responsive img-crop img-center" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
                         </div>
                     </div>
                 </div>
