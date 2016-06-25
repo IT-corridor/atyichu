@@ -4,7 +4,7 @@ import os
 import imghdr
 import requests
 from io import BytesIO
-from PIL import Image
+from PIL import Image, ImageOps
 from django.core.files import File
 from django.utils.deconstruct import deconstructible
 from django.core.files.base import ContentFile
@@ -95,21 +95,15 @@ def create_crop(instance, fieldname, m=100):
     if field and not instance.crop.name:
         filename = field.path
         img = Image.open(filename)
-
-        # square thumbs
-        iw, ih = img.size
-        # get minimum size
-        minsize = min(iw, ih)
-        # largest square possible in the image
-        neww = (iw - minsize) / 2
-        newh = (ih - minsize) / 2
-        # crop it
-        cropped = img.crop((neww, newh, iw - neww, ih - newh))
-        # load is necessary after crop
-        cropped.load()
-        # thumbnail of the cropped image
-        cropped.thumbnail((m, m), Image.ANTIALIAS)
-
+        w, h = img.size
+        ratio_w = m / w
+        ratio_h = m / h
+        if ratio_w < ratio_h:
+            cropped = ImageOps.fit(img, (m, m), Image.ANTIALIAS,
+                                   centering=(0.0, ratio_h))
+        else:
+            cropped = ImageOps.fit(img, (m, m), Image.ANTIALIAS,
+                                   centering=(ratio_w, 0.0))
         filepath, _ = field.name.split('.')
         name = filepath.split('/')[-1]
         ext = imghdr.what(filename)
