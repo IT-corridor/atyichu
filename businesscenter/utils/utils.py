@@ -90,9 +90,10 @@ def create_thumb(instance, fieldname, m=100):
         output.close()
 
 
-def create_crop(instance, fieldname, m=100):
-    field = getattr(instance, fieldname)
-    if field and not instance.crop.name:
+def create_crop(instance, input_field, m=100, output_field='crop'):
+    crop_field = getattr(instance, output_field)
+    field = getattr(instance, input_field)
+    if field and not crop_field.name:
         filename = field.path
         img = Image.open(filename)
         w, h = img.size
@@ -109,11 +110,11 @@ def create_crop(instance, fieldname, m=100):
         filepath, _ = field.name.split('.')
         name = filepath.split('/')[-1]
         ext = imghdr.what(filename)
-        n_fn = name + '_crop.' + ext
+        n_fn = name + '_' + output_field + '.' + ext
 
         output = BytesIO()
         cropped.save(output, ext)
-        instance.crop.save(n_fn, File(output), save=True)
+        crop_field.save(n_fn, File(output), save=True)
         output.close()
 
 

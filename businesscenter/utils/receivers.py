@@ -18,7 +18,7 @@ def create_thumb_photo(sender, **kwargs):
 def create_thumb_photo_320(sender, **kwargs):
     instance = kwargs.get('instance', None)
     if instance:
-        create_thumb(instance, 'photo', 320)
+        create_crop(instance, 'photo', 320, 'thumb')
 
 
 def create_thumb_avatar_320(sender, **kwargs):

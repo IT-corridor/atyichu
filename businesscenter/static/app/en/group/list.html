@@ -25,24 +25,20 @@
                     </div>
                 </div>
             </div>
-            <div class="group-crop m-b-sm" data-ng-if="group.overview.length > 0">
-                    <div class="hbox bg-white lter">
-                        <div class="col" data-ng-repeat="item in group.overview">
-                            <div class="m-xs img-wrap-xs img-wrap-md b-a b-light r">
-                                <img class="img-center img-responsive" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
-                            </div>
+                <div class="row bg-white lter m-b-sm m-n img-wrap-xs img-wrap-md" data-ng-if="group.overview.length > 0">
+                    <div class="col-md-4 col-xs-4 wrapper-xs" data-ng-repeat="item in group.overview">
+                        <div class="b-a b-light r">
+                        <img class="img-center img-responsive" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
                         </div>
                     </div>
                 </div>
-                <div class="group-crop m-b-sm" data-ng-if="group.overview.length == 0">
-                    <div class="hbox bg-white lter text-center">
-                        <div class="col v-middle" data-ng-repeat="item in [0, 1, 2]">
-                            <div class="m-xs b-a b-light img-wrap-xs img-wrap-md r no-img-xs no-img-md">
+                <div class="row bg-white lter m-b-sm m-n img-wrap-xs img-wrap-md" data-ng-if="group.overview.length == 0">
+                    <div class="col-md-4 col-xs-4 wrapper-xs text-center" data-ng-repeat="item in [0, 1, 2]">
+                            <div class="b-a b-light r no-img-xs no-img-md">
                                 <span class="fa-stack fa-lg" aria-hidden="true">
                                   <i class="fa fa-camera fa-stack-1x"></i>
                                   <i class="fa fa-ban fa-stack-2x text-muted"></i>
                                 </span>
-                            </div>
                         </div>
                     </div>
                 </div>

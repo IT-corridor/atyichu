@@ -89,11 +89,18 @@ class GroupSerializer(serializers.ModelSerializer):
 class GroupListSerializer(GroupSerializer):
 
     overview = serializers.SerializerMethodField(read_only=True)
+    thumb = serializers.SerializerMethodField(read_only=True)
 
     def get_overview(self, obj):
-        qs = obj.photo_set.all()[:3]
+        qs = obj.photo_set.all()[1:4]
         serializer = PhotoSimpleSerializer(instance=qs, many=True)
         return serializer.data
+
+    def get_thumb(self, obj):
+        photo = obj.photo_set.first()
+        if photo:
+            return photo.thumb.url
+        return
 
     class Meta:
         model = models.Group
