@@ -103,7 +103,7 @@ def create_crop(instance, fieldname, m=100):
             centering = (0.0, 0.5)
         else:
             # Crop height
-            centering = (0.5, 0.0)
+            centering = (0.5, 0.5)
         cropped = ImageOps.fit(img, (m, m), Image.ANTIALIAS,
                                centering=centering)
         filepath, _ = field.name.split('.')
