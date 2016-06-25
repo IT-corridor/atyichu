@@ -96,14 +96,16 @@ def create_crop(instance, fieldname, m=100):
         filename = field.path
         img = Image.open(filename)
         w, h = img.size
-        ratio_w = m / w
-        ratio_h = m / h
-        if ratio_w < ratio_h:
-            cropped = ImageOps.fit(img, (m, m), Image.ANTIALIAS,
-                                   centering=(0.0, ratio_h))
+        if w > h:
+            # Ratio does not really matter because it pretty small
+            # Crop width
+            # Also it can be used ratio_w instead 0.5
+            centering = (0.0, 0.5)
         else:
-            cropped = ImageOps.fit(img, (m, m), Image.ANTIALIAS,
-                                   centering=(ratio_w, 0.0))
+            # Crop height
+            centering = (0.5, 0.0)
+        cropped = ImageOps.fit(img, (m, m), Image.ANTIALIAS,
+                               centering=centering)
         filepath, _ = field.name.split('.')
         name = filepath.split('/')[-1]
         ext = imghdr.what(filename)
