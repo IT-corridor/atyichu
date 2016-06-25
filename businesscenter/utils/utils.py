@@ -96,26 +96,27 @@ def create_crop(instance, fieldname, m=100):
         filename = field.path
         img = Image.open(filename)
 
-        """iw, ih = img.size
-        if iw > m and ih > m:
-            # First try to crop
-            x1 = (iw / 2) - (m / 2)
-            x2 = (iw / 2) + (m / 2)
-            y1 = (ih / 2) - (m / 2)
-            y2 = (ih / 2) + (m / 2)
+        # square thumbs
+        iw, ih = img.size
+        # get minimum size
+        minsize = min(iw, ih)
+        # largest square possible in the image
+        neww = (iw - minsize) / 2
+        newh = (ih - minsize) / 2
+        # crop it
+        cropped = img.crop((neww, newh, iw - neww, ih - newh))
+        # load is necessary after crop
+        cropped.load()
+        # thumbnail of the cropped image
+        cropped.thumbnail((m, m), Image.ANTIALIAS)
 
-            crop_box = (x1, y1, x2, y2)
-            img = img.crop(crop_box)
-        else:
-            # Else draft it to what we can """
-        img = img.draft(img.mode, (m, m))
         filepath, _ = field.name.split('.')
         name = filepath.split('/')[-1]
         ext = imghdr.what(filename)
         n_fn = name + '_crop.' + ext
 
         output = BytesIO()
-        img.save(output, ext)
+        cropped.save(output, ext)
         instance.crop.save(n_fn, File(output), save=True)
         output.close()
 
