@@ -76,5 +76,6 @@ class WeixinSerializer(serializers.ModelSerializer):
                         'access_token': {'write_only': True},
                         'expires_in': {'write_only': True},
                         'refresh_token': {'write_only': True},
-                        'avatar': {'read_only': True}
+                        'avatar': {'read_only': True},
+                        'pk': {'read_only': True}
                         }
