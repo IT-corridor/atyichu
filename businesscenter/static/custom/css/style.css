@@ -36,11 +36,11 @@ body {
 
 @media (max-width: 767px) {
     .no-img-xs{
-        line-height: 67px;
+        line-height: 55px;
         width: 100%;
     }
     .img-wrap-xs {
-        height: 80px;
+        height: 70px;
         overflow: hidden;
     }
 }
