@@ -99,7 +99,7 @@ class GroupListSerializer(GroupSerializer):
     def get_thumb(self, obj):
         photo = obj.photo_set.first()
         if photo:
-            return photo.thumb.url
+            return photo.cover.url
         return
 
     class Meta:

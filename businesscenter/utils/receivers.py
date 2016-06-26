@@ -18,7 +18,13 @@ def create_thumb_photo(sender, **kwargs):
 def create_thumb_photo_320(sender, **kwargs):
     instance = kwargs.get('instance', None)
     if instance:
-        create_crop(instance, 'photo', 320, 'thumb')
+        create_thumb(instance, 'photo', 320)
+
+
+def create_cover_photo_320(sender, **kwargs):
+    instance = kwargs.get('instance', None)
+    if instance:
+        create_crop(instance, 'photo', 320, 'cover')
 
 
 def create_thumb_avatar_320(sender, **kwargs):

@@ -104,23 +104,28 @@ class Photo(models.Model):
                             *('visitor',))
     path_crop = UploadPath('snapshot/photo/crops', None, 'crop',
                             *('visitor',))
+    path_cover = UploadPath('snapshot/photo/cover', None, 'cover',
+                           *('visitor',))
     visitor = models.ForeignKey(Visitor, verbose_name=_('Photo owner'))
     mirror = models.ForeignKey(Mirror, verbose_name=_('Mirror'), blank=True,
                                null=True, on_delete=models.SET_NULL)
     title = models.CharField(_('Title'), max_length=200, blank=True)
-    photo = models.ImageField(_('Photo'), upload_to=path_photo,
-                              null=True, blank=True,
-                              validators=[SizeValidator(2)])
-    thumb = models.ImageField(_('Thumbnail'), upload_to=path_thumb,
-                              null=True, blank=True)
     description = models.TextField(_('Description'), null=True,
                                    blank=True, max_length=5000)
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
     group = models.ForeignKey('snapshot.Group', on_delete=models.SET_NULL,
                               null=True, blank=True)
+    # Original photo
+    photo = models.ImageField(_('Photo'), upload_to=path_photo,
+                              null=True, blank=True,
+                              validators=[SizeValidator(2)])
+    thumb = models.ImageField(_('Thumbnail'), upload_to=path_thumb,
+                              null=True, blank=True)
     crop = models.ImageField(_('Cropped photo'), upload_to=path_crop,
                              null=True, blank=True)
+    cover = models.ImageField(_('Cover'), upload_to=path_crop,
+                              null=True, blank=True)
 
     def __unicode__(self):
         return '{}: {}'.format(self.visitor, self.pk)
