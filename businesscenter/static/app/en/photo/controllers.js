@@ -80,6 +80,27 @@ angular.module('photo.controllers', ['photo.services'])
                 handle_error
             );
         }
+        $scope.like_photo = function(){
+            Photo.like({pk: $routeParams.pk},
+                function(success){
+                    $scope.photo.like = success.like;
+                },
+                function(error){
+                    $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
+                }
+            );
+        }
+
+        $scope.like_comment = function(index, comment_id){
+            Comment.like({pk: comment_id},
+                function(success){
+                    $scope.photo.comments[index].like = success.like;
+                },
+                function(error){
+                    $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
+                }
+            );
+        }
     }
 ])
 .controller('CtrlPhotoEdit', ['$scope', '$rootScope', '$http', '$routeParams',

@@ -1,6 +1,5 @@
-
 <div class="wrapper-md">
-<div class="col-md-12">
+    <div class="col-md-12">
         <ul class="list-inline text-center">
             <li><a class="btn btn-info" data-ng-href="#!/photo"><i
                     class="fa fa-arrow-left fa-2x"></i></a></li>
@@ -13,26 +12,38 @@
             </li>
         </ul>
     </div>
-<div class="panel">
-          <div>
-            <img class="img-responsive img-center" data-ng-src="{{ photo.photo }}"
-             alt="{{ photo.title }}">
-          </div>
-          <div class="wrapper-lg">
-            <h2 class="m-t-none">{{ (photo.title) ? photo.title : 'Untitled' }} </h2>
+    <div class="panel">
+        <div>
+            <img class="img-responsive img-center"
+                 data-ng-src="{{ photo.photo }}"
+                 alt="{{ photo.title }}">
+        </div>
+        <div class="wrapper-lg">
+            <h2 class="m-t-none">{{ (photo.title) ? photo.title : 'Untitled'
+                }} </h2>
             <div data-ng-if="photo.description">
-              <p>{{ photo.description }}</p>
+                <p>{{ photo.description }}</p>
             </div>
             <div class="line line-lg b-b b-light"></div>
-            <div class="text-muted" data-ng-href="photo.comments">
-              <i class="fa fa-user text-muted"></i> by <a href="" class="m-r-sm">Admin</a>
-              <i class="fa fa-clock-o text-muted"></i> Feb 20, 2013
-              <a href="" class="m-l-sm"><i class="fa fa-comment-o text-muted"></i>{{ photo.comments.length }}</a>
-            </div>
-          </div>
+            <ul class="text-muted list-inline">
+                <li>
+                    <i class="fa fa-user text-muted"></i> by <a class="m-r-sm"> {{ photo.owner_name}}</a>
+                </li>
+                <li>
+                    <i class="fa fa-clock-o text-muted"></i> {{ photo.create_date| date : 'longDate': '+0800' }}
+                </li>
+                <li>
+                    <a href="" class="m-l-sm"><i class="fa fa-comment-o text-muted"></i>
+                    {{ photo.comments.length }}</a>
+                </li>
+                <li>
+                    <a data-ng-click="like_photo()"><i class="fa fa-heart"></i> {{ photo.like }}</a>
+                </li>
+            </ul>
         </div>
+    </div>
 </div>
-    <!-- .comment-list -->
+<!-- .comment-list -->
 <div class="row">
     <div class="m-b b-l m-l-xs streamline col-md-12 col-xs-12">
         <div class="wrapper-xs" data-ng-repeat="comment in photo.comments">
@@ -55,11 +66,11 @@
                 <div class="panel-body">
                     <div>{{ comment.message }}</div>
                     <div class="m-t-sm">
-                        <a ui-toggle-class
+                        <a ui-toggle-class data-ng-click="like_comment($index, comment.id)"
                            class="btn btn-default btn-xs active">
                             <i class="fa fa-star-o text-muted text"></i>
                             <i class="fa fa-star text-danger text-active"></i>
-                            Like
+                            Like {{ comment.like }}
                         </a>
                         <a href class="btn btn-default btn-xs">
                             <i class="fa fa-mail-reply text-muted"></i> Reply
@@ -73,8 +84,9 @@
 <div class="row">
     <div class="col-xs-12 col-md-12">
         <div class="clearfix m-b-lg">
-            <a class="pull-left thumb-sm avatar"><img data-ng-src="{{ visitor.thumb }}"
-                                                      alt class="img-circle"></a>
+            <a class="pull-left thumb-sm avatar"><img
+                    data-ng-src="{{ visitor.thumb }}"
+                    alt class="img-circle"></a>
             <div class="m-l-xxl">
                 <form class="m-b-none" data-ng-submit="comment()">
                     <div class="input-group">
@@ -82,7 +94,8 @@
                                data-ng-model="new_message"
                                placeholder="Input your comment here">
                       <span class="input-group-btn">
-                        <button class="btn btn-info btn-lg" type="submit">POST</button>
+                        <button class="btn btn-info btn-lg"
+                                type="submit">POST</button>
                       </span>
                     </div>
                 </form>

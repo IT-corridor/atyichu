@@ -42,7 +42,7 @@ class PhotoListSerializer(serializers.ModelSerializer):
                   )
 
 
-class PhotoDetailSerializer(serializers.ModelSerializer):
+class PhotoDetailSerializer(PhotoListSerializer):
     comments = CommentSerializer(source='comment_set', many=True,
                                  read_only=True)
 

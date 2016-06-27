@@ -373,6 +373,27 @@ class PhotoViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(data=serializer.data)
 
+    @detail_route(methods=['get'])
+    def like(self, request, *args, **kwargs):
+        """ Handler that increments likes """
+        obj = self.get_object()
+        status = 400
+
+        pk = kwargs['pk']
+        try:
+            isinstance(request.session['photo_ids'], list)
+        except KeyError:
+            self.request.session['photo_ids'] = []
+        if pk in self.request.session['photo_ids']:
+            data = {'error': _('You have liked that photo.')}
+        else:
+            obj.like = F('like') + 1
+            obj.save()
+            self.request.session['photo_ids'] += [pk]
+            data = {'like': self.get_object().like}
+            status = 200
+        return Response(data, status)
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.select_related('author')
@@ -388,6 +409,27 @@ class CommentViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=201, headers=headers)
+
+    @detail_route(methods=['get'])
+    def like(self, request, *args, **kwargs):
+        """ Handler that increments likes """
+        obj = self.get_object()
+        status = 400
+
+        pk = kwargs['pk']
+        try:
+            isinstance(request.session['comment_ids'], list)
+        except KeyError:
+            self.request.session['comment_ids'] = []
+        if pk in self.request.session['comment_ids']:
+            data = {'error': _('You have liked that comment before.')}
+        else:
+            obj.like = F('like') + 1
+            obj.save()
+            self.request.session['comment_ids'] += [pk]
+            data = {'like': self.get_object().like}
+            status = 200
+        return Response(data, status)
 
 
 class TagViewSet(mixins.UpdateModelMixin,
