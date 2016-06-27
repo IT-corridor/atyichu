@@ -11,6 +11,8 @@ angular.module('group.services', ['ngResource'])
             member_add: {method:'POST', params:{action: 'member_add'}, responseType:'json'},
             member_remove: {method:'POST', params:{action: 'member_remove'}, responseType:'json'},
             tag_create: {method:'POST', params:{action: 'tag_create'}, responseType:'json'},
+            visitor_list: {method:'GET', params:{pk: null, action: 'visitor_list'},
+                           responseType:'json', isArray:true},
     });
 }])
 .factory('GroupPhoto', ['$resource', 'source_path',
@@ -25,6 +27,12 @@ angular.module('group.services', ['ngResource'])
         return $resource(source_path + 'tag/:pk/:action/', {}, {
             update: {method: 'PATCH'},
             remove: {method: 'DELETE'},
+    });
+}])
+.factory('Member', ['$resource', 'source_path',
+    function($resource, source_path){
+        return $resource(source_path + 'member/short_list/', {}, {
+            query: {method:'GET', responseType:'json', isArray:true},
     });
 }])
 .factory('MultipartForm', ['$http', function ($http){

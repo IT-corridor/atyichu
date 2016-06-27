@@ -26,6 +26,7 @@ from .permissions import IsOwnerOrMember, MemberCanServe
 from .sutils import check_sign
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin, VisitorCreateMixin
 from visitor.permissions import IsVisitor
+from visitor.serializers import VisitorShortSerializer
 from visitor.models import Visitor
 from vutils.umeng_push import push_unicast
 from vutils.wzhifuSDK import JsApi_pub
@@ -492,7 +493,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             username = request.data['username']
             visitor = Visitor.objects.get(user__username=username)
         except KeyError as e:
-            data = {e.message: _('This parameter is required')}
+            data = {'error': _('{} parameter is required').format(e.message)}
         except Visitor.DoesNotExist:
             data = {'error': _('Matching user does not exists')}
         else:
@@ -541,6 +542,21 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data=serializer.data, status=201)
+
+    @list_route(methods=['get'])
+    def visitor_list(self, request, *args, **kwargs):
+        """ Representation of visitor list """
+        status = 400
+        try:
+            q = request.query_params['q']
+            qs = Visitor.objects.filter(~Q(pk=request.user.id),
+                                        user__username__startswith=q)[:5]
+            serializer = VisitorShortSerializer(qs, many=True)
+            data = serializer.data
+            status = 200
+        except KeyError as e:
+            data = {'error': _('{} parameter is required').format(e.message)}
+        return Response(data=data, status=status)
 
 
 class GroupPhotoViewSet(mixins.UpdateModelMixin,

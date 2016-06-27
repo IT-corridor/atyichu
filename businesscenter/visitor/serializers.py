@@ -79,3 +79,12 @@ class WeixinSerializer(serializers.ModelSerializer):
                         'avatar': {'read_only': True},
                         'pk': {'read_only': True}
                         }
+
+
+class VisitorShortSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = Visitor
+        fields = ('pk', 'username')
+        extra_kwargs = {'pk': {'read_only': True}}

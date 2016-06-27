@@ -1,4 +1,5 @@
-angular.module('group.controllers', ['group.services', 'common.services', 'auth.services'])
+angular.module('group.controllers', ['group.services', 'group.directives',
+'common.services', 'auth.services'])
 .controller('CtrlGroupAdd', ['$scope', '$rootScope','$http',
 '$location', '$route', 'Auth', 'MultipartForm',
     function($scope, $rootScope, $http, $location, $route, Auth, MultipartForm) {
@@ -122,8 +123,9 @@ angular.module('group.controllers', ['group.services', 'common.services', 'auth.
     }
 ])
 .controller('CtrlGroupManage', ['$scope', '$rootScope','$http',
-'$location', '$routeParams', 'Auth', 'Group', 'MultipartForm', 'Tag',
-    function($scope, $rootScope, $http, $location, $routeParams, Auth, Group, MultipartForm, Tag) {
+'$location', '$routeParams', '$window', 'Auth', 'Group', 'MultipartForm', 'Tag',
+    function($scope, $rootScope, $http, $location, $routeParams, $window,
+    Auth, Group, MultipartForm, Tag) {
 
         $rootScope.title = 'Update group';
         $scope.is_owner = false;
@@ -163,10 +165,42 @@ angular.module('group.controllers', ['group.services', 'common.services', 'auth.
         };
 
         $scope.member_remove = function(member_id){
-            Group.member_remove({pk: $routeParams.pk}, {member: member_id},
+            var confirm = $window.confirm('Are you sure you want to exclude this collaborator?');
+            if (confirm){
+                Group.member_remove({pk: $routeParams.pk}, {member: member_id},
+                    function(success){
+                        $rootScope.alerts.push({ type: 'info', msg: 'Collaborator has been excluded.'});
+                        remove_item_from_list($scope.r.members, member_id);
+                    },
+                    function(error){
+                        $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
+                    }
+                );
+            }
+        }
+
+        $scope.tag_remove = function(tag_id){
+            var confirm = $window.confirm('Are you sure you want to remove this tag?');
+            if (confirm){
+                Tag.remove({pk: tag_id},
+                    function(success){
+                        $rootScope.alerts.push({ type: 'info', msg: 'Tag has been removed'});
+                        remove_item_from_list($scope.r.tags, tag_id);
+                    },
+                    function(error){
+                        $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
+                    }
+                );
+
+            }
+        }
+        $scope.member_add = function(){
+            console.log($scope.member);
+            Group.member_add({pk: $routeParams.pk}, {username: $scope.member},
                 function(success){
-                    $rootScope.alerts.push({ type: 'info', msg: 'Member has been removed'});
-                    remove_item_from_list($scope.r.members, member_id);
+                    $rootScope.alerts.push({ type: 'info', msg: 'A new member has been added to the group'});
+                    $scope.r.members.push(success);
+                    $scope.member = '';
                 },
                 function(error){
                     $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
@@ -174,11 +208,12 @@ angular.module('group.controllers', ['group.services', 'common.services', 'auth.
             );
         }
 
-        $scope.tag_remove = function(tag_id){
-            Tag.remove({pk: tag_id},
+        $scope.create_tag = function(){
+            Group.tag_create({pk: $routeParams.pk}, {title: $scope.tag_title},
                 function(success){
-                    $rootScope.alerts.push({ type: 'info', msg: 'Tag has been removed'});
-                    remove_item_from_list($scope.r.tags, tag_id);
+                    $rootScope.alerts.push({ type: 'info', msg: 'A new tag has been created'});
+                    $scope.tag_title = '';
+                    $scope.r.tags.push(success);
                 },
                 function(error){
                     $rootScope.alerts.push({ type: 'danger', msg: error.data.error });

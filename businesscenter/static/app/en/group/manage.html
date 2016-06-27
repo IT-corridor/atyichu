@@ -34,39 +34,65 @@
             </table>
         </form>
     </div>
-    <div class="col-md-10 col-md-offset-2">
-        <h3 class="text-center">GROUP COLLABORATORS</h3>
-        <div class="row">
-            <div class="col-md-3 col-xs-3" data-ng-repeat="member in r.members">
+    <div class="col-md-10 col-md-offset-2" data-ng-class="{ hidden: is_owner === false }">
+        <h3 class="text-center">COLLABORATORS</h3>
+        <ul class="list-inline">
+            <li data-ng-repeat="member in r.members">
                 <div class="btn-group">
                     <button type="button" class="btn btn-default btn-sm input-sm" disabled><b>{{ member.member_name }}</b></button>
                     <button type="button" class="btn btn-danger btn-sm input-sm" data-ng-click="member_remove(member.id)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
-            </div>
-        </div>
+            </li>
+        </ul>
         <div class="row" data-ng-if="r.members.length == 0">
             <div class="col-md-12 col-xs-12">
                 <h4>Group has no members.</h4>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12 col-xs-12">
+                <form data-ng-submit="member_add()" name="form" id="member_form">
+                    <div class="input-group">
+                        <member-list data-member="member" data-placeholder="'Start typing...'"></member-list>
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">ADD</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
     <div class="col-md-10 col-md-offset-2">
         <h3 class="text-center">TAGS: </h3>
-        <div class="row">
-            <div class="col-md-3 col-xs-3" data-ng-repeat="tag in r.tags">
+        <ul class="list-inline">
+            <li data-ng-repeat="tag in r.tags">
                 <div class="btn-group">
                     <button type="button" class="btn btn-default btn-sm input-sm" disabled><b>{{ tag.title }}</b></button>
                     <button type="button" class="btn btn-danger btn-sm input-sm" data-ng-click="tag_remove(tag.id)">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
-            </div>
-        </div>
+            </li>
+        </ul>
         <div class="row" data-ng-if="r.tags.length == 0">
             <div class="col-md-12 col-xs-12">
                 <h4>Group has no tags.</h4>
+            </div>
+        </div>
+        <div class="row m-t">
+            <div class="col-md-12 col-xs-12">
+                <form data-ng-submit="create_tag()" name="form" id="tag_form">
+                    <div class="input-group">
+                        <input type="text" class="form-control"
+                               data-ng-model="tag_title"
+                               placeholder="Enter new tag">
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">ADD</button>
+                        </span>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
