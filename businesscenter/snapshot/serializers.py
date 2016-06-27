@@ -98,7 +98,7 @@ class GroupListSerializer(GroupSerializer):
 
     def get_thumb(self, obj):
         photo = obj.photo_set.first()
-        if photo:
+        if photo and photo.cover.name:
             return photo.cover.url
         return
 

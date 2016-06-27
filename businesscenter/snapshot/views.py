@@ -10,6 +10,7 @@ from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.exceptions import PermissionDenied
 from django.core.mail import mail_admins
 from django.db.models import F, Prefetch, Q
 from rest_framework import viewsets, mixins, filters
@@ -431,7 +432,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @detail_route(methods=['patch'])
     def avatar_update(self, request, *args, **kwargs):
-
+        return PermissionDenied
+        # TODO: remove that handler later
         # List of
         files = request.data.pop('avatar', None)
 
@@ -502,7 +504,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 201
         return Response(data, status=status)
 
-    @detail_route(methods=['delete'])
+    @detail_route(methods=['post'])
     def member_remove(self, request, *args, **kwargs):
         """ Remove member from group."""
         status = 400
@@ -510,7 +512,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             member_id = request.data['member']
             member = Member.objects.get(id=member_id, group=self.get_object())
         except KeyError as e:
-            data = {e.message: _('This parameter is required')}
+            data = {'error': _('{} parameter is required').format(e.message)}
         except Member.DoesNotExist:
             data = {'error': _('Matching collaborator does not exists')}
         else:

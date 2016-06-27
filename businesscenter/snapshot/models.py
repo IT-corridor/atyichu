@@ -126,6 +126,7 @@ class Photo(models.Model):
                              null=True, blank=True)
     cover = models.ImageField(_('Cover'), upload_to=path_crop,
                               null=True, blank=True)
+    like = models.PositiveIntegerField(_('Like counter'), default=0)
 
     def __unicode__(self):
         return '{}: {}'.format(self.visitor, self.pk)
@@ -143,6 +144,7 @@ class Comment(models.Model):
     message = models.CharField(_('Message'), max_length=160)
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
+    like = models.PositiveIntegerField(_('Like counter'), default=0)
 
     def __unicode__(self):
 
@@ -166,11 +168,6 @@ class Group(models.Model):
     is_private = models.BooleanField(_('Private'), default=False)
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
-    avatar = models.ImageField(_('Group avatar'), upload_to=path_avatar,
-                               null=True, blank=True,
-                               validators=[SizeValidator(2)])
-    thumb = models.ImageField(_('Thumbnail'), upload_to=path_thumb,
-                              null=True, blank=True)
     owner = models.ForeignKey(Visitor, verbose_name=_('Group owner'))
 
     def __unicode__(self):

@@ -335,7 +335,7 @@ class GroupTests(APITestCase):
     def test_remove_member_from_group(self):
         self.force_login(1)
         url = reverse('snapshot:group-member-remove', kwargs={'pk': 2})
-        response = self.client.delete(url, data={'member': 1})
+        response = self.client.post(url, data={'member': 1})
         self.assertEqual(response.status_code, 204)
         self.client.logout()
 

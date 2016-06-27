@@ -75,6 +75,7 @@ angular.module('photo.controllers', ['photo.services'])
                 Comment.save(data, function(success){
                     $scope.photo.comments.push(success);
                     $rootScope.alerts.push({ type: 'info', msg: 'Thanks for the comment!'});
+                    $scope.new_message = '';
                 },
                 handle_error
             );

@@ -22,7 +22,9 @@ var navbar = angular.module('navbar', ['auth.services', 'selfie'])
                 }
                 else{
                     // Maybe need to optimize...
-                    $rootScope.visitor = Me.get();
+                    $rootScope.visitor = Me.get(function(success){
+                        $rootScope.visitor_resolved = true;
+                    });
                 }
             });
 
