@@ -1,45 +1,52 @@
-<div class="row">
-    <div class="col-md-12">
-        <h2 class="text-center"><span class="text-primary">CREATE A GROUP</span>
-        </h2>
+<div class="wrapper-md" ng-controller="FormDemoCtrl">
+  <div class="panel panel-default">	
+    <div class="panel-heading font-bold">
+      创建衣橱
     </div>
-    <div class="col-md-6 col-md-offset-3">
+    <div class="panel-body">
         <form data-ng-submit="add()" name="form" id="group_form">
-            <table class="table">
-                <tr>
-                    <th>Title:</th>
-                    <td>
-                        <input name="title" type="text" class="form-control">
-                        <p class="text-danger" data-ng-repeat="e in error.title">{{ e }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Description:</th>
-                    <td>
+            <div class="form-group">
+            	<label class="col-sm-2 control-label">衣橱名称</label>
+            	<div class="col-sm-10">
+            		<input type="text" class="form-control rounded">
+                  <p class="text-danger" data-ng-repeat="e in error.title">{{ e }}</p>
+              </div>
+            </div>
+            <div class="line line-dashed b-b line-lg pull-in"></div>
+            <div class="form-group">
+            	<label class="col-sm-2 control-label">说明</label>
+                    <div class="col-sm-10">
                         <textarea name="description" data-ng-model="description" class="form-control"></textarea>
                         <p class="text-danger" data-ng-repeat="e in error.description">{{ e }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Private group:</th>
-                    <td>
+                    </div>
+            </div>
+            <div class="line line-dashed b-b line-lg pull-in"></div>    
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">是否私密</label>
+                    <div class="col-sm-10">
+                      <label class="i-switch bg-info m-t-xs m-r">
                         <input name="is_private" type="checkbox" data-ng-init="is_private = false"
                                data-ng-model="is_private" value="{{ is_private }}">
                         <p class="text-danger" data-ng-repeat="e in error.is_private">{{ e }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Group avatar:</th>
-                    <td>
+                      </label>
+                    </div>
+                </div>
+            <div class="line line-dashed b-b line-lg pull-in"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">更换封面</label>
+                    <div class="col-sm-10">
                         <input name="avatar" type="file" id="avatar" data-ng-model="avatar" accept="image/*">
                         <p class="text-danger" data-ng-repeat="e in error.avatar">{{ e }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th></th>
-                    <td><input class="btn btn-primary" type="submit" value="Create"></td>
-                </tr>
-            </table>
+                    </div>
+                </div>
+            <div class="line line-dashed b-b line-lg pull-in"></div>
+                <div class="form-group">
+                  <div class="col-sm-4 col-sm-offset-2">
+                  <button type="submit" class="btn btn-default">取消</button>
+                  <button type="submit" class="btn btn-primary">创建</button>
+            </div>
+        </div>
         </form>
     </div>
+  </div>
 </div>
