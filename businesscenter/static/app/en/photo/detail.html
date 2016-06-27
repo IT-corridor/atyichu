@@ -28,7 +28,7 @@
 
 
 <div class="col-lg-6">
- <hr>
+    <hr>
     <div class="col-md-12">
         <h2 class="text-center">{{ (photo.title) ? photo.title : 'Untitled' }},
             <span class="text-muted">{{ photo.create_date | date : 'longDate': '+0800'}}</span>
@@ -46,49 +46,60 @@
     <hr>
     <div class="col-md-12"><h3> {{ photo.comments.length }} COMMENTS:</h3>
     </div>
-      <!-- .comment-list -->
-      <div class="m-b b-l m-l-md streamline">
-        <div data-ng-repeat="comment in photo.comments">
-          <a class="pull-left thumb-sm avatar m-l-n-md">
-            <img data-ng-src="{{ comment.author_data.thumb }}" class="img-circle" alt="...">
-          </a>
-          <div class="m-l-lg panel b-a">
-            <div class="panel-heading pos-rlt b-b b-light">
-              <span class="arrow left"></span>
-              <a href=""><strong>{{ comment.author_data.username
+    <!-- .comment-list -->
+    <div class="m-b b-l m-l-xs streamline col-md-12 col-xs-12">
+        <div class="wrapper-xs" data-ng-repeat="comment in photo.comments">
+            <a class="pull-left thumb-sm avatar m-l-n-md">
+                <img data-ng-src="{{ comment.author_data.thumb }}"
+                     class="img-circle" alt="...">
+            </a>
+            <div class="m-l-lg panel b-a">
+                <div class="panel-heading pos-rlt b-b b-light">
+                    <span class="arrow left"></span>
+                    <a href=""><strong>{{ comment.author_data.username
                         }}</strong></a>
-              <label class="label bg-info m-l-xs">Editor</label> 
-              <span class="text-muted m-l-sm pull-right">
-                <i class="fa fa-clock-o"></i>
-                {{ comment.create_date| date : 'longDate': '+0800' }}
-              </span>
+                    <label data-ng-if="comment.author == photo.visitor"
+                           class="label bg-info m-l-xs">Owner</label>
+                    <span class="text-muted m-l-sm pull-right">
+                        <i class="fa fa-clock-o"></i>
+                        {{ comment.create_date| date : 'longDate': '+0800' }}
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div>{{ comment.message }}</div>
+                    <div class="m-t-sm">
+                        <a ui-toggle-class
+                           class="btn btn-default btn-xs active">
+                            <i class="fa fa-star-o text-muted text"></i>
+                            <i class="fa fa-star text-danger text-active"></i>
+                            Like
+                        </a>
+                        <a href class="btn btn-default btn-xs">
+                            <i class="fa fa-mail-reply text-muted"></i> Reply
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="panel-body">
-              <div>{{ comment.message }}</div>
-              <div class="m-t-sm">
-                <a href ui-toggle-class class="btn btn-default btn-xs active">
-                  <i class="fa fa-star-o text-muted text"></i>
-                  <i class="fa fa-star text-danger text-active"></i> 
-                  Like
-                </a>
-                <a href class="btn btn-default btn-xs">
-                  <i class="fa fa-mail-reply text-muted"></i> Reply
-                </a>
-              </div>
-            </div>
-          </div>
         </div>
-      <div class="clearfix m-b-lg">
-        <a class="pull-left thumb-sm avatar"><img data-ng-src="{{ visitor.thumb }}" alt class="img-circle"></a>
-        <div class="m-l-xxl">
-          <form class="m-b-none" data-ng-submit="comment()">
-            <div class="input-group">
-              <input type="text" class="form-control input-lg" data-ng-model="new_message" placeholder="Input your comment here">
-              <span class="input-group-btn">
-                <button class="btn btn-info btn-lg" type="button">POST</button>
-              </span>
-            </div>
-          </form>
-        </div>
-      </div>
     </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-md-12">
+        <div class="clearfix m-b-lg">
+            <a class="pull-left thumb-sm avatar"><img data-ng-src="{{ visitor.thumb }}"
+                                                      alt class="img-circle"></a>
+            <div class="m-l-xxl">
+                <form class="m-b-none" data-ng-submit="comment()">
+                    <div class="input-group">
+                        <input type="text" class="form-control input-lg"
+                               data-ng-model="new_message"
+                               placeholder="Input your comment here">
+                      <span class="input-group-btn">
+                        <button class="btn btn-info btn-lg" type="submit">POST</button>
+                      </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
