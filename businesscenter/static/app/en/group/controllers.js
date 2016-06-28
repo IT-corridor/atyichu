@@ -17,15 +17,12 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         $scope.add = function() {
             var url = '/api/v1/group/';
             MultipartForm('POST', '#group_form', url).then(function(response) {
-                $rootScope.alerts.push({ type: 'success', msg: 'Your drone was successfully added!'});
+                $rootScope.alerts.push({ type: 'success', msg: 'Your group was successfully added!'});
                     // for images
                     //$scope.random = Math.floor((Math.random()*1000));
-                    $location.path('/');
+                    $location.path('/group/' + response.data.id + '/manage');
                 },
                 function(error) {
-                    for (var e in error.data){
-                        $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
-                    }
                     $scope.error = error.data;
                 }
             );
