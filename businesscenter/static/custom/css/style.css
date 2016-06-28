@@ -43,6 +43,9 @@ body {
         height: 70px;
         overflow: hidden;
     }
+    .empty-xs {
+        height: 364px;
+    }
 }
 
 @media (min-width: 992px) {
@@ -55,4 +58,21 @@ body {
         height: 90px;
         overflow: hidden;
     }
+    .empty-md {
+        height: 384px;
+    }
+}
+
+.group-bottom{
+    padding-top: 0;
+}
+.dashed {
+    border: 3px dashed;
+}
+
+.empty {
+    padding: 2px;
+}
+.empty > div{
+    height: 100%;
 }

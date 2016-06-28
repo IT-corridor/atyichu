@@ -1,0 +1,75 @@
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="text-center">{{ title }}</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3 col-xs-6 wrapper-sm">
+        <div class="empty empty-md empty-xs">
+            <div class="hbox dashed r text-muted">
+                <div class="col v-middle wrapper-xs text-center">
+                    <p><a data-ng-href="#!/group/create"><i class="fa fa-plus-circle fa-5x"></i></a></p>
+                    <h3>Create A Group</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-xs-6 wrapper-sm" data-ng-repeat="group in r.results">
+        <div class="panel panel-default bg-white lter r r-3x">
+            <div class="panel-heading font-bold">
+                {{ ( group.title ) ? group.title : 'Untitled' }}
+            </div>
+            <div class="group">
+                <div class="hbox">
+                    <div class="col v-middle wrapper-xs">
+                        <a data-ng-href="#!group/{{ group.id }}/photo">
+                            <img data-ng-if="group.thumb" class="img-center" style="width: 100%;" data-ng-src="{{ group.thumb }}" alt="{{ group.title }}">
+
+                            <div data-ng-if="!group.thumb" class="text-center">
+                                <span class="fa-stack fa-5x" aria-hidden="true">
+                                  <i class="fa fa-camera fa-stack-1x"></i>
+                                  <i class="fa fa-ban fa-stack-2x text-muted"></i>
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+                <div class="row m-b-sm m-n img-wrap-xs img-wrap-md" data-ng-if="group.overview.length > 0">
+                    <div class="col-md-4 col-xs-4 wrapper-xs" data-ng-repeat="item in group.overview">
+                        <div class="b-a b-light r">
+                        <img class="img-center img-responsive" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
+                        </div>
+                    </div>
+                </div>
+                <div class="row m-b-sm m-n img-wrap-xs img-wrap-md" data-ng-if="group.overview.length == 0">
+                    <div class="col-md-4 col-xs-4 wrapper-xs text-center" data-ng-repeat="item in [0, 1, 2]">
+                            <div class="b-a b-light r no-img-xs no-img-md">
+                                <span class="fa-stack fa-lg" aria-hidden="true">
+                                  <i class="fa fa-camera fa-stack-1x"></i>
+                                  <i class="fa fa-ban fa-stack-2x text-muted"></i>
+                                </span>
+                        </div>
+                    </div>
+                </div>
+            <div class="row m-b-sm m-n">
+                <div class="col-md-12 col-xs-12 wrapper-xs text-center group-bottom">
+                    <a class="btn btn-default btn-lg input-lg form-control" data-ng-href="#!/group/{{ group.id }}/manage"><i class="fa fa-edit"></i>&nbsp; Edit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="text-center m-t">
+    <p><button data-ng-disabled="enough" data-ng-click="get_more()" class="btn btn-lg btn-primary">Load more</button>
+    </p>
+    <ul class="pagination m-t">
+        <li><a data-ng-href="{{ page_link }}page=1">&lt;&lt;</a></li>
+        <li><a data-ng-if="r.previous_page" data-ng-href="{{ page_link }}page={{ r.previous_page }}">&lt;</a></li>
+        <li data-ng-repeat="i in prev_pages"><a data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
+        <li class="active"><a href="#">{{ r.current }}</a></li>
+        <li data-ng-repeat="i in next_pages"><a data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
+        <li><a data-ng-if="r.next_page" data-ng-href="{{ page_link }}page={{ r.next_page }}">&gt;</a></li>
+        <li><a data-ng-href="{{ page_link }}page={{ r.total }}">&gt;&gt;</a></li>
+    </ul>
+</div>

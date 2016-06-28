@@ -48,7 +48,7 @@ angular.module('app.route', [
             templateUrl: PATH + 'group/manage.html',
             controller: 'CtrlGroupManage'}).
         when('/my_groups', {
-            templateUrl: PATH + 'group/list.html',
+            templateUrl: PATH + 'group/my.html',
             controller: 'CtrlGroupList',
             resolve: {
                 title: function(){return 'My Groups';},
