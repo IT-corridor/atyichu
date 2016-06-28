@@ -35,12 +35,12 @@ angular.module('group.controllers', ['group.services', 'group.directives',
     }
 ])
 .controller('CtrlGroupList', ['$scope', '$rootScope','$http',
-'$location', '$routeParams','GetPageLink' , 'Group',
-    function($scope, $rootScope, $http, $location, $routeParams, GetPageLink, Group) {
+'$location', '$routeParams','GetPageLink' , 'Group', 'title', 'my',
+    function($scope, $rootScope, $http, $location, $routeParams, GetPageLink, Group, title, my) {
 
-        $rootScope.title = 'Groups';
-
-        $scope.r = Group.query($routeParams,
+        $rootScope.title = title;
+        var query = (my) ? Group.my : Group.query;
+        $scope.r = query($routeParams,
             function(success){
 
                 $scope.enough = success.total > 1 ? false : true;
@@ -66,7 +66,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             $scope.page += 1;
             var params = $routeParams;
             params['page'] = $scope.page;
-            Group.query(params, function(success){
+            query(params, function(success){
                     $scope.r.results = $scope.r.results.concat(success.results);
                     $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
                 },

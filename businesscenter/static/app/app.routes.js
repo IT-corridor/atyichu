@@ -32,7 +32,12 @@ angular.module('app.route', [
             controller: 'CtrlProfile'}).
         when('/group', {
             templateUrl: PATH + 'group/list.html',
-            controller: 'CtrlGroupList'}).
+            controller: 'CtrlGroupList',
+            resolve: {
+                title: function(){return 'Groups';},
+                my: function(){return false},
+            }
+        }).
         when('/group/:pk/photo', {
             templateUrl: PATH + 'group/photo_list.html',
             controller: 'CtrlGroupPhotoList'}).
@@ -42,6 +47,14 @@ angular.module('app.route', [
         when('/group/:pk/manage', {
             templateUrl: PATH + 'group/manage.html',
             controller: 'CtrlGroupManage'}).
+        when('/my_groups', {
+            templateUrl: PATH + 'group/list.html',
+            controller: 'CtrlGroupList',
+            resolve: {
+                title: function(){return 'My Groups';},
+                my: function(){return true;},
+            }
+        }).
         when('/error/404/', {
             templateUrl: PATH + 'partials/error/404.html'}).
         otherwise({

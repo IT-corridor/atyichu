@@ -13,6 +13,7 @@ angular.module('group.services', ['ngResource'])
             tag_create: {method:'POST', params:{action: 'tag_create'}, responseType:'json'},
             visitor_list: {method:'GET', params:{pk: null, action: 'visitor_list'},
                            responseType:'json', isArray:true},
+            my: {method:'GET', params:{pk: null, action: 'my_groups'}, responseType:'json'},
     });
 }])
 .factory('GroupPhoto', ['$resource', 'source_path',

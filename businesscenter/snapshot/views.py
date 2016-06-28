@@ -600,6 +600,24 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             data = {'error': _('{} parameter is required').format(e.message)}
         return Response(data=data, status=status)
 
+    @list_route(methods=['get'])
+    def my_groups(self, request, *args, **kwargs):
+
+        visitor = self.request.user.visitor
+        qs = Group.objects.select_related('owner').prefetch_related('tag_set')
+        prefetch = Prefetch('photo_set', queryset=Photo.objects.all())
+        qs = qs.prefetch_related(prefetch)
+        qs = qs.filter(Q(owner=visitor) | Q(member__visitor=visitor))
+        serializer_class = self.get_serializer_class()
+        page = self.paginate_queryset(qs)
+
+        if page is not None:
+            serializer = serializer_class(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = serializer_class(qs, many=True)
+        return Response(serializer.data)
+
 
 class GroupPhotoViewSet(mixins.UpdateModelMixin,
                         mixins.DestroyModelMixin,

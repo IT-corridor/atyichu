@@ -28,6 +28,9 @@ var navbar = angular.module('navbar', ['auth.services', 'selfie'])
                 }
             });
 
+            $rootScope.$on("$routeChangeStart", function(event, next, current) {
+                $scope.isCollapsed = true;
+            });
 
             $scope.logout = function(){
                 $scope.r = Logout.query(function(r){
