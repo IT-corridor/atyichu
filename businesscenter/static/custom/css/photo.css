@@ -1,0 +1,22 @@
+.grid {
+   margin: 0 auto 14px;
+   position: relative;
+}
+
+.grid .has-footer {
+    padding-bottom: 22.5px;
+}
+
+.grid-wrapper {
+    margin: 0 auto 14px;
+    position: relative;
+}
+
+.centered-wrapper {
+    margin: 0 auto;
+}
+
+.grid-wrapper .centered-wrapper {
+    margin-bottom: 14px;
+    padding-bottom: 4px;
+}
