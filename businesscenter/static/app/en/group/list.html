@@ -1,4 +1,4 @@
-<div data-ng-if="r.$resolved">
+<div data-ng-if="r.$resolved && r.length > 0">
     <div class="row">
     <div class="col-md-12">
         <h1 class="text-center">{{ title }}</h1>
@@ -66,5 +66,10 @@
             <li><a data-ng-if="r.next_page" data-ng-href="{{ page_link }}page={{ r.next_page }}">&gt;</a></li>
             <li><a data-ng-href="{{ page_link }}page={{ r.total }}">&gt;&gt;</a></li>
         </ul>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="text-center">No groups</h1>
     </div>
 </div>
