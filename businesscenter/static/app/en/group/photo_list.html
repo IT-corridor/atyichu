@@ -11,7 +11,7 @@
                 <div class="h3 m-t-xs m-b-xs">{{ visitor.username }}</div>
             </div>
         </div>
-        <div class="col-md-5 col-xs-5" data-ng-if="group && visitor.pk === group.owner">
+        <div class="col-md-5 col-xs-5" data-ng-if="can_edit">
             <div class="pull-right clearfix">
                 <a class="btn m-t-xs w-xs btn-info btn-rounded" data-ng-href="#!group/{{ group.id }}/manage">EDIT</a>
             </div>

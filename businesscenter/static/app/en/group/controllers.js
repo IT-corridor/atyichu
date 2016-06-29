@@ -75,11 +75,22 @@ angular.module('group.controllers', ['group.services', 'group.directives',
     }
 ])
 .controller('CtrlGroupPhotoList', ['$scope', '$rootScope','$http',
-'$location', '$routeParams','GetPageLink' , 'Group',
-    function($scope, $rootScope, $http, $location, $routeParams, GetPageLink, Group) {
+'$location', '$routeParams','GetPageLink' , 'Group', 'IsMember',
+    function($scope, $rootScope, $http, $location, $routeParams, GetPageLink, Group, IsMember) {
 
-        $scope.group = Group.get({pk: $routeParams.pk});
+        $scope.can_edit = false;
+
+        $scope.group = Group.get({pk: $routeParams.pk},
+            function(success){
+                if ($rootScope.visitor.pk == success.owner ||
+                    IsMember(success.members, $rootScope.visitor.pk)){
+                    $scope.can_edit = true;
+                }
+            }
+        );
         var queryParams = {pk: $routeParams.pk, page: $routeParams.page};
+
+
         $scope.r = Group.photo_list(queryParams,
             function(success){
                 $rootScope.title = 'Groups photo';
@@ -120,13 +131,13 @@ angular.module('group.controllers', ['group.services', 'group.directives',
     }
 ])
 .controller('CtrlGroupManage', ['$scope', '$rootScope','$http',
-'$location', '$routeParams', '$window', 'Auth', 'Group', 'MultipartForm', 'Tag',
+'$location', '$routeParams', '$window', 'Auth', 'Group', 'MultipartForm', 'Tag', 'IsMember', 'RemoveItem',
     function($scope, $rootScope, $http, $location, $routeParams, $window,
-    Auth, Group, MultipartForm, Tag) {
+    Auth, Group, MultipartForm, Tag, IsMember, RemoveItem) {
 
         $rootScope.title = 'Update group';
         $scope.is_owner = false;
-
+        $scope.can_edit = false;
         $scope.r = Group.get({pk: $routeParams.pk},
             function(success){
                 $scope.data = {title: success.title,
@@ -139,6 +150,9 @@ angular.module('group.controllers', ['group.services', 'group.directives',
 
                     $rootScope.alerts.push({ type: 'warning',
                         msg: 'You have not enough privileges to manage this group'});
+                }
+                if (IsMember(success.members, $rootScope.visitor.pk)){
+                    $scope.can_edit = true;
                 }
             },
             function(error) {
@@ -167,7 +181,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                 Group.member_remove({pk: $routeParams.pk}, {member: member_id},
                     function(success){
                         $rootScope.alerts.push({ type: 'info', msg: 'Collaborator has been excluded.'});
-                        remove_item_from_list($scope.r.members, member_id);
+                        RemoveItem($scope.r.members, member_id);
                     },
                     function(error){
                         $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
@@ -182,7 +196,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                 Tag.remove({pk: tag_id},
                     function(success){
                         $rootScope.alerts.push({ type: 'info', msg: 'Tag has been removed'});
-                        remove_item_from_list($scope.r.tags, tag_id);
+                        RemoveItem($scope.r.tags, tag_id);
                     },
                     function(error){
                         $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
@@ -216,26 +230,6 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                     $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
                 }
             );
-        }
-
-        function is_member(list, id){
-            var i = 0;
-            for (i; i < list.length; i++){
-                if (list[i].id == member_id){
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        function remove_item_from_list(list, member_id){
-            var i = 0;
-            for (i; i < list.length; i++){
-                if (list[i].id == member_id){
-                    list.splice(i, 1);
-                    break;
-                }
-            }
         }
     }
 ]);
