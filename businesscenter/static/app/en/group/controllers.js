@@ -1,5 +1,5 @@
 angular.module('group.controllers', ['group.services', 'group.directives',
-'common.services', 'auth.services'])
+'common.services', 'auth.services', 'selfie'])
 .controller('CtrlGroupAdd', ['$scope', '$rootScope','$http',
 '$location', '$route', 'Auth', 'MultipartForm',
     function($scope, $rootScope, $http, $location, $route, Auth, MultipartForm) {

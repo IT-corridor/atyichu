@@ -1,4 +1,4 @@
-var navbar = angular.module('navbar', ['auth.services', 'selfie'])
+var navbar = angular.module('navbar', ['auth.services'])
 .directive('dNavbar', ['$window', 'PATH','Logout', 'Auth', 'Me',
                         function($window, PATH, Logout, Auth, Me) {
     return {
