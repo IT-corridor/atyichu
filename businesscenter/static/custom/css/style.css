@@ -30,7 +30,7 @@ body {
     width: 100%;
 }
 .group{
-    height: 200px;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -44,11 +44,7 @@ body {
         overflow: hidden;
     }
     .empty-xs {
-        height: 356px;
-    }
-    .pre-img-xs {
-        height: 162px;
-        overflow: hidden;
+        height: 330px;
     }
 }
 
@@ -63,11 +59,7 @@ body {
 
     }
     .empty-md {
-        height: 376px;
-    }
-    .pre-img-md {
-        height: 180px;
-        overflow: hidden;
+        height: 448px;
     }
 }
 
@@ -84,3 +76,8 @@ body {
 .empty > div{
     height: 100%;
 }
+
+.pre-img{
+        height: 100%;
+        overflow: hidden;
+    }
