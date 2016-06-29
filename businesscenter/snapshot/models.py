@@ -134,7 +134,7 @@ class Photo(models.Model):
     class Meta:
         verbose_name = _('Photo')
         verbose_name_plural = _('Photos')
-        ordering = ('-create_date', 'pk')
+        ordering = ('create_date', 'pk')
 
 
 class Comment(models.Model):
