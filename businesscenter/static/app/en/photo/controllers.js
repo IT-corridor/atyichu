@@ -155,7 +155,8 @@ angular.module('photo.controllers', ['photo.services'])
 
         $scope.get_more = function(){
             $scope.page += 1;
-            Photo.photo_list(params, function(success){
+            var params = {page: $scope.page};
+            Photo.newest(params, function(success){
                     $scope.r.results = $scope.r.results.concat(success.results);
                     $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
                 },
