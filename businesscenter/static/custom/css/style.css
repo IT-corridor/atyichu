@@ -44,7 +44,11 @@ body {
         overflow: hidden;
     }
     .empty-xs {
-        height: 364px;
+        height: 356px;
+    }
+    .pre-img-xs {
+        height: 162px;
+        overflow: hidden;
     }
 }
 
@@ -56,10 +60,14 @@ body {
     }
     .img-wrap-md {
         height: 90px;
-        overflow: hidden;
+
     }
     .empty-md {
-        height: 384px;
+        height: 376px;
+    }
+    .pre-img-md {
+        height: 180px;
+        overflow: hidden;
     }
 }
 
