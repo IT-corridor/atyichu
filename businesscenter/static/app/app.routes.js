@@ -44,6 +44,9 @@ angular.module('app.route', [
         when('/group/:pk/photo', {
             templateUrl: PATH + 'group/photo_list.html',
             controller: 'CtrlGroupPhotoList'}).
+        when('/group/:pk/photo/add', {
+            templateUrl: PATH + 'group/photo_add.html',
+            controller: 'CtrlGroupPhotoAdd'}).
         when('/group/create', {
             templateUrl: PATH + 'group/create.html',
             controller: 'CtrlGroupAdd'}).

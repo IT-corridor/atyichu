@@ -236,4 +236,35 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             );
         }
     }
+])
+.controller('CtrlGroupPhotoAdd', ['$scope', '$rootScope','$http',
+'$location', '$routeParams', 'Auth', 'MultipartForm', 'Group', 'IsMember', 'RemoveItem',
+    function($scope, $rootScope, $http, $location, $routeParams, Auth, MultipartForm, Group, IsMember, RemoveItem) {
+
+        $rootScope.title = 'New group';
+        $scope.can_add = false;
+
+        $scope.group = Group.get({pk: $routeParams.pk},
+            function(success){
+                if ($rootScope.visitor.pk == success.owner ||
+                    IsMember(success.members, $rootScope.visitor.pk)){
+                    $scope.can_add = true;
+                }
+            }
+        );
+
+        $scope.add = function() {
+            var url = '/api/v1/group/'+ $scope.group.id +'/photo_create/';
+            MultipartForm('POST', '#photo_form', url).then(function(response) {
+                $rootScope.alerts.push({ type: 'success', msg: 'Photo has been added to your group!'});
+                    $location.path('/group/' + $scope.group.id + '/photo');
+                },
+                function(error) {
+                    $scope.error = error.data;
+                }
+            );
+
+        };
+
+    }
 ]);
