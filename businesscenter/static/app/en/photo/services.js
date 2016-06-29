@@ -7,7 +7,8 @@ angular.module('photo.services', ['ngResource'])
             update: {method: 'PATCH'},
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
-            like: {method: 'GET', params: {action:'like'}}
+            like: {method: 'GET', params: {action:'like'}},
+            newest: {method: 'GET', params: {action: 'newest'}, responseType: 'json'}
     });
 }])
 .factory('PhotoUpdate', ['$resource', 'source_path',

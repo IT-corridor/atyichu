@@ -1,3 +1,23 @@
+<div class="panel panel default" style="background-color: white;">
+    <div class="bg-light lter b-b wrapper-md">
+        <h1 class="m-n font-normal h1" align="center">{{ title }}</h1>
+    </div>
+    <div class="row wrapper-xs">
+        <div class="col-md-7 col-xs-7">
+            <div class="pull-left thumb-sm avatar b-3x m-r"><img class="img-circle img-responsive w-2x" data-ng-src="{{ visitor.thumb }}"
+                                        alt="{{ visitor.username }}">
+            </div>
+            <div class="clearfix">
+                <div class="h3 m-t-xs m-b-xs">{{ visitor.username }}</div>
+            </div>
+        </div>
+        <div class="col-md-5 col-xs-5" data-ng-if="group && visitor.pk === group.owner">
+            <div class="pull-right clearfix">
+                <a class="btn m-t-xs w-xs btn-info btn-rounded" data-ng-href="#!group/{{ group.id }}/manage">EDIT</a>
+            </div>
+        </div>
+    </div>
+</div>
 <div data-ng-if="group">
     <div class="row">
         <div class="col-md-12">
@@ -5,17 +25,13 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 col-xs-6">
+        <div class="col-md-12 col-xs-12">
             <div class="pull-right">
                 <h4>Group owned by {{ group.owner_name }}</h4>
                 <h4 class="font-bold"><span><i class="fa fa-clock-o fa-lg"></i> {{ group.activity }}</span>
                     <span class="m-l"><i class="fa fa-picture-o fa-lg"></i> {{ group.photo_count }}</span>
                 </h4>
             </div>
-        </div>
-        <div class="col-md-6 col-xs-6">
-            <p><a class="btn btn-primary pull-left m-sm"
-                  data-ng-href="#!group/{{ group.id }}/manage">Manage</a></p>
         </div>
     </div>
     <div class="row" data-ng-if="group.description">
@@ -58,7 +74,7 @@
             </a>
             <h2>{{ ( photo.title ) ? photo.title : 'Untitled' }}</h2>
             <p>{{ photo.create_date | date : 'longDate': '+0800'}}
-                <span class="pull-right text-muted">by <i class="fa fa-user">&nbsp;{{ group.owner_name }}</i></span></p>
+                <span class="pull-right text-muted">by <i class="fa fa-user">&nbsp;{{ photo.owner_name }}</i></span></p>
             <ul class="list-inline text-muted text-center small">
                 <li><i class="fa fa-clock-o fa-lg"></i> {{ photo.activity }}
                 </li>

@@ -130,4 +130,42 @@ angular.module('photo.controllers', ['photo.services'])
             );
         }
     }
+])
+.controller('CtrlPhotoNewest', ['$scope', '$rootScope','$http',
+'$location', '$routeParams','GetPageLink' , 'Photo',
+    function($scope, $rootScope, $http, $location, $routeParams, GetPageLink, Photo) {
+        $rootScope.title = 'Newest photos';
+        $scope.r = Photo.newest(
+            function(success){
+                $scope.enough = success.total > 1 ? false : true;
+                $scope.page_link = GetPageLink();
+                $scope.page = success.current;
+                $scope.prev_pages = [];
+                $scope.next_pages = [];
+                var i = (success.current - 1 > 5) ? success.current - 5: 1;
+                var next_lim = (success.total - success.current > 5) ? 5 + success.current : success.total;
+                var j = success.current + 1;
+                for (i; i < success.current; i++){ $scope.prev_pages.push(i);}
+                for (j; j <= next_lim; j++){ $scope.next_pages.push(j);}
+            },
+            function(error){
+                console.log(error.data);
+            }
+        );
+
+        $scope.get_more = function(){
+            $scope.page += 1;
+            Photo.photo_list(params, function(success){
+                    $scope.r.results = $scope.r.results.concat(success.results);
+                    $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
+                },
+                function(error){
+                    for (var e in error.data){
+                        $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
+                    }
+                    $scope.error = error.data;
+                }
+            );
+        }
+    }
 ]);

@@ -21,10 +21,13 @@ angular.module('app.route', [
         when('/photo/', {
             templateUrl: PATH + 'photo/list.html',
             controller: 'CtrlPhotoList'}).
+        when('/photo/newest', {
+            templateUrl: PATH + 'photo/newest.html',
+            controller: 'CtrlPhotoNewest'}).
         when('/photo/:pk', {
             templateUrl: PATH + 'photo/detail.html',
             controller: 'CtrlPhotoDetail'}).
-        when('/photo/edit/:pk', {
+        when('/photo/:pk/edit', {
             templateUrl: PATH + 'photo/edit.html',
             controller: 'CtrlPhotoEdit'}).
         when('/profile', {

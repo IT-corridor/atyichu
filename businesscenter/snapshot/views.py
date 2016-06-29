@@ -306,7 +306,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         photos = Photo.objects.filter(visitor=visitor).\
             prefetch_related('comment_set__author')
 
-        ser = serializers.PhotoListSerializer(instance=photos,many=True,
+        ser = serializers.PhotoListSerializer(instance=photos, many=True,
                                               context={'request': request})
         return Response(data=ser.data)
 
@@ -393,6 +393,19 @@ class PhotoViewSet(viewsets.ModelViewSet):
             data = {'like': self.get_object().like}
             status = 200
         return Response(data, status)
+
+    @list_route(methods=['get'])
+    def newest(self, request, *args, **kwargs):
+        """ Providing a newest list of public groups photos """
+        qs = Photo.objects.filter(group__is_private=False)
+
+        page = self.paginate_queryset(qs)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
