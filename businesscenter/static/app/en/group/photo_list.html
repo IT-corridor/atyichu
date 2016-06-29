@@ -1,6 +1,6 @@
-<div class="panel panel default" style="background-color: white;">
+<div data-ng-if="group" class="panel panel default" style="background-color: white;">
     <div class="bg-light lter b-b wrapper-md">
-        <h1 class="m-n font-normal h1" align="center">{{ title }}</h1>
+        <h1 class="m-n font-normal h1" align="center">{{ group.title }}</h1>
     </div>
     <div class="row wrapper-xs">
         <div class="col-md-7 col-xs-7">
@@ -18,29 +18,7 @@
         </div>
     </div>
 </div>
-<div data-ng-if="group">
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="text-center">{{ group.title }}</h1>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12 col-xs-12">
-            <div class="pull-right">
-                <h4>Group owned by {{ group.owner_name }}</h4>
-                <h4 class="font-bold"><span><i class="fa fa-clock-o fa-lg"></i> {{ group.activity }}</span>
-                    <span class="m-l"><i class="fa fa-picture-o fa-lg"></i> {{ group.photo_count }}</span>
-                </h4>
-            </div>
-        </div>
-    </div>
-    <div class="row" data-ng-if="group.description">
-        <div class="col-md-10 col-md-offset2">
-            <hr>
-            <h4>Description:</h4>
-            <p>{{ group.description }}</p>
-        </div>
-    </div>
+<div class="container" data-ng-if="group">
     <div class="row" data-ng-if="group.tags.length > 0">
         <div class="col-md-10 col-md-offset2">
             <hr>

@@ -10,6 +10,7 @@ var app = angular.module('app.main', [
     'navbar',
     'footer',
     'alert',
+    'selfie',
 ]);
 app.factory('httpRequestInterceptor', function () {
     return {

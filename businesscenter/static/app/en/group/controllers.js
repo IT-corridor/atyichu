@@ -37,6 +37,10 @@ angular.module('group.controllers', ['group.services', 'group.directives',
 
         $rootScope.title = title;
         var query = (my) ? Group.my : Group.query;
+
+        if (my){
+            $rootScope.bar = 'verbose';
+        }
         $scope.r = query($routeParams,
             function(success){
 

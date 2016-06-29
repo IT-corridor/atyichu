@@ -6,6 +6,5 @@ angular.module('selfie', ['auth.services'])
         transclude: true,
         templateUrl: PATH + 'partials/selfie/block.html',
         scope: {visitor:'='}
-
     }
 }]);
