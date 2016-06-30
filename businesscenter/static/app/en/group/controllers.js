@@ -243,7 +243,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
 
         $rootScope.title = 'New group';
         $scope.can_add = false;
-
+        $scope.wait = false;
         $scope.group = Group.get({pk: $routeParams.pk},
             function(success){
                 if ($rootScope.visitor.pk == success.owner ||
@@ -254,13 +254,16 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         );
 
         $scope.add = function() {
+            $scope.wait = true;
             var url = '/api/v1/group/'+ $scope.group.id +'/photo_create/';
             MultipartForm('POST', '#photo_form', url).then(function(response) {
                 $rootScope.alerts.push({ type: 'success', msg: 'Photo has been added to your group!'});
                     $location.path('/group/' + $scope.group.id + '/photo');
+                    $scope.wait = false;
                 },
                 function(error) {
                     $scope.error = error.data;
+                    $scope.wait = false;
                 }
             );
 

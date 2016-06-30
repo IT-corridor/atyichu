@@ -119,7 +119,7 @@ class Photo(models.Model):
     # Original photo
     photo = models.ImageField(_('Photo'), upload_to=path_photo,
                               null=True, blank=True,
-                              validators=[SizeValidator(2)])
+                              validators=[SizeValidator(8)])
     thumb = models.ImageField(_('Thumbnail'), upload_to=path_thumb,
                               null=True, blank=True)
     crop = models.ImageField(_('Cropped photo'), upload_to=path_crop,

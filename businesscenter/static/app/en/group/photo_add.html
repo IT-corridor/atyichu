@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" style="position: relative;">
     <div class="wrapper-md" data-ng-if="can_add">
         <div class="panel panel-default">
             <div class="panel-heading font-bold">
@@ -51,6 +51,16 @@
     <div class="row" data-ng-if="!can_add">
         <div class="col-md-12 col-xs-12">
             You have not enough privileges to add photo in this group.
+        </div>
+    </div>
+    <div class="row screensaver" data-ng-class="{'visible': wait}">
+        <div class="col-md-12 col-xs-12 wrapper-lg">
+            <div class="hbox">
+                <div class="col v-middle text-center text-primary">
+                    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+                    <p class="h4 wrapper-xs">Please wait...</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

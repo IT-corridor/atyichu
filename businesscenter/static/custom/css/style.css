@@ -85,3 +85,16 @@ body {
 .empty > div{
     height: 100%;
 }
+
+.screensaver {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+    visibility: hidden;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+.visible {
+    visibility: visible;
+}
