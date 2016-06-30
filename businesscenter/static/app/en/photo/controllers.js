@@ -58,7 +58,7 @@ angular.module('photo.controllers', ['photo.services'])
         );
 
         $scope.remove = function(){
-            var confirm = $window.confirm('Are you sure you want to clear your cart?');
+            var confirm = $window.confirm('Are you sure you want to remove that photo?');
             if (confirm){
                 Photo.remove({pk: $routeParams.pk}, {},
                     function(success){

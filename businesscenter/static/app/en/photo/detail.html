@@ -8,7 +8,8 @@
                        data-ng-href="#!/photo/{{ photo.id }}/edit/"><i
                         class="fa fa-edit fa-2x"></i></a></li>
                 <li>
-                    <button class="btn btn-danger" data-ng-class="{'disabled': !is_owner}"
+                    <button class="btn btn-danger"
+                            data-ng-disabled="!is_owner"
                             data-ng-click="remove()"><i class="fa fa-trash-o fa-2x"></i></button>
                 </li>
             </ul>
