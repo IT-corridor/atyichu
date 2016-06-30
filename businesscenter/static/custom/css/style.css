@@ -98,3 +98,11 @@ body {
 .visible {
     visibility: visible;
 }
+
+.photo-detail {
+    position: absolute;
+    z-index: 11;
+    top: 0;
+    left: 0;
+    padding-bottom: 50px;
+}

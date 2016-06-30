@@ -1,4 +1,4 @@
-angular.module('photo.controllers', ['photo.services'])
+angular.module('photo.controllers', ['photo.services', 'photo.directives'])
 .controller('CtrlPhotoList', ['$scope', '$rootScope', '$http',
 '$location', 'Auth', 'Photo',
     function($scope, $rootScope, $http, $location, Auth, Photo) {
@@ -80,10 +80,6 @@ angular.module('photo.controllers', ['photo.services'])
                 );
             }
         }
-
-        $scope.update = function(){
-            // TODO: implement
-        }
         $scope.comment = function(){
             data = {photo: $routeParams.pk, message: $scope.new_message};
                 Comment.save(data, function(success){
@@ -148,6 +144,8 @@ angular.module('photo.controllers', ['photo.services'])
 '$location', '$routeParams','GetPageLink' , 'Photo',
     function($scope, $rootScope, $http, $window, $location, $routeParams, GetPageLink, Photo) {
         $scope.enough = false;
+        $scope.is_owner = false;
+        $scope.new_message = '';
         angular.element($window).bind('scroll', function() {
 
             if (!$scope.enough){
@@ -155,8 +153,6 @@ angular.module('photo.controllers', ['photo.services'])
                 if (bodyHeight == (this.pageYOffset + this.innerHeight)){
                     $scope.get_more();
                 }
-                /*console.log(effectiveHeight);
-                console.log(this.pageYOffset);*/
             }
         });
         $rootScope.title = 'Newest photos';
@@ -172,6 +168,11 @@ angular.module('photo.controllers', ['photo.services'])
             }
         );
 
+        $scope.show_current = function(index){
+            $scope.current = index;
+            $scope.show_detail = true;
+            console.log($scope.current);
+        }
         $scope.get_more = function(){
             $scope.page += 1;
             var params = {page: $scope.page};
