@@ -152,7 +152,7 @@ angular.module('photo.controllers', ['photo.services'])
 
             if (!$scope.enough){
                 var bodyHeight = this.document.body.scrollHeight;
-                if (bodyHeight < (this.pageYOffset + this.innerHeight)){
+                if (bodyHeight == (this.pageYOffset + this.innerHeight)){
                     $scope.get_more();
                 }
                 /*console.log(effectiveHeight);
