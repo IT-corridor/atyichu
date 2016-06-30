@@ -144,9 +144,21 @@ angular.module('photo.controllers', ['photo.services'])
         }
     }
 ])
-.controller('CtrlPhotoNewest', ['$scope', '$rootScope','$http',
+.controller('CtrlPhotoNewest', ['$scope', '$rootScope','$http', '$window',
 '$location', '$routeParams','GetPageLink' , 'Photo',
-    function($scope, $rootScope, $http, $location, $routeParams, GetPageLink, Photo) {
+    function($scope, $rootScope, $http, $window, $location, $routeParams, GetPageLink, Photo) {
+        $scope.enough = false;
+        angular.element($window).bind('scroll', function() {
+
+            if (!$scope.enough){
+                var bodyHeight = this.document.body.scrollHeight;
+                if (bodyHeight < (this.pageYOffset + this.innerHeight)){
+                    $scope.get_more();
+                }
+                /*console.log(effectiveHeight);
+                console.log(this.pageYOffset);*/
+            }
+        });
         $rootScope.title = 'Newest photos';
         $rootScope.photo_refer = $location.url();
         $scope.r = Photo.newest(
@@ -154,13 +166,6 @@ angular.module('photo.controllers', ['photo.services'])
                 $scope.enough = success.total > 1 ? false : true;
                 $scope.page_link = GetPageLink();
                 $scope.page = success.current;
-                $scope.prev_pages = [];
-                $scope.next_pages = [];
-                var i = (success.current - 1 > 5) ? success.current - 5: 1;
-                var next_lim = (success.total - success.current > 5) ? 5 + success.current : success.total;
-                var j = success.current + 1;
-                for (i; i < success.current; i++){ $scope.prev_pages.push(i);}
-                for (j; j <= next_lim; j++){ $scope.next_pages.push(j);}
             },
             function(error){
                 console.log(error.data);

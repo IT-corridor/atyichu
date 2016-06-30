@@ -6,10 +6,6 @@ var navbar = angular.module('navbar', ['auth.services'])
         templateUrl: PATH + 'partials/navbar/navbar.html',
         controller: function($scope, $rootScope, $window, PATH, Logout, Auth, Me ){
 
-            angular.element($window).bind('scroll', function() {
-                $scope.change_class = (this.pageYOffset >= 100) ? true : false;
-                $scope.$apply();
-            });
             $scope.brand_text = 'ATYICHU';
 
             $scope.auth = Auth;

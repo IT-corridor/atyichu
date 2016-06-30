@@ -18,27 +18,4 @@
             </div>
         </div>
     </div>
-    <div class="text-center m-t">
-        <p>
-            <button data-ng-disabled="enough" data-ng-click="get_more()"
-                    class="btn btn-lg btn-primary">Load more
-            </button>
-        </p>
-        <ul class="pagination m-t">
-            <li><a data-ng-href="{{ page_link }}page=1">&lt;&lt;</a></li>
-            <li><a data-ng-if="r.previous_page"
-                   data-ng-href="{{ page_link }}page={{ r.previous_page }}">
-                &lt;</a></li>
-            <li data-ng-repeat="i in prev_pages"><a
-                    data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
-            <li class="active"><a href="#">{{ r.current }}</a></li>
-            <li data-ng-repeat="i in next_pages"><a
-                    data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
-            <li><a data-ng-if="r.next_page"
-                   data-ng-href="{{ page_link }}page={{ r.next_page }}">&gt;</a>
-            </li>
-            <li><a data-ng-href="{{ page_link }}page={{ r.total }}">&gt;&gt;</a>
-            </li>
-        </ul>
-    </div>
 </div>
