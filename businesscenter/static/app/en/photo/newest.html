@@ -2,7 +2,7 @@
     <div class="m-t-md"></div>
     <div class="pinGridWrapper" data-ng-if="r">
         <div class="pinGrid">
-            <div class="pin" data-ng-repeat="photo in r.results">
+            <div class="pin animation" data-ng-repeat="photo in r.results">
                 <a data-ng-href="#!/photo/{{ photo.id }}">
                     <img data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}">
                 </a>
