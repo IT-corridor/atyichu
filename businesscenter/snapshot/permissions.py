@@ -48,3 +48,23 @@ class MemberCanServe(VisitorBasic):
             return True
         return request.user.is_staff
 
+
+class IsPhotoOwnerOrReadOnly(VisitorBasic):
+    """ Only for PhotoViewSet! """
+
+    def has_permission(self, request, view):
+        if view.action == 'partial_update':
+            return True
+        return super(IsPhotoOwnerOrReadOnly, self).has_permission(request, view)
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if view.action == 'partial_update' and 'checksum' in request.data:
+            return True
+        user = request.user
+        if user.id == obj.visitor_id:
+            return True
+
+        return request.user.is_staff

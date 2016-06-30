@@ -40,7 +40,7 @@ angular.module('photo.controllers', ['photo.services'])
                                 '$window', '$location', 'Photo', 'Comment',
     function($scope, $rootScope, $http, $routeParams, $window, $location,
     Photo, Comment) {
-
+        $scope.is_owner = false;
         function handle_error(error){
             $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
             $location.path('/photo');
@@ -50,6 +50,9 @@ angular.module('photo.controllers', ['photo.services'])
             function(success){
                 var title = (success.title) ? success.title : 'Untitled'
                 $rootScope.title = 'Photo -' + success.title;
+                if ($rootScope.visitor.pk == success.visitor){
+                    $scope.is_owner = true;
+                }
             },
             handle_error
         );
@@ -104,9 +107,8 @@ angular.module('photo.controllers', ['photo.services'])
     }
 ])
 .controller('CtrlPhotoEdit', ['$scope', '$rootScope', '$http', '$routeParams',
-                                '$window', '$location', 'Photo', 'PhotoUpdate',
-    function($scope, $rootScope, $http, $routeParams, $window, $location,
-    Photo, PhotoUpdate) {
+                                '$window', '$location', 'Photo',
+    function($scope, $rootScope, $http, $routeParams, $window, $location, Photo) {
         $rootScope.title = 'Edit Photo Data';
         function handle_error(error){
             $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
@@ -121,7 +123,7 @@ angular.module('photo.controllers', ['photo.services'])
 
         $scope.update = function(){
             data = {title: $scope.photo.title, description: $scope.photo.description};
-            PhotoUpdate.update({pk: $routeParams.pk}, data,
+            Photo.edit({pk: $routeParams.pk}, data,
                 function(success){
                     $rootScope.alerts.push({ type: 'info', msg: 'Data has been updated.'});
                     $location.path('/photo/' + $routeParams.pk);

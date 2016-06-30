@@ -22,7 +22,8 @@ from rest_framework.exceptions import ValidationError
 from .models import Mirror, Photo, Comment, Tag, Member, Group
 
 from . import serializers
-from .permissions import IsOwnerOrMember, MemberCanServe
+from .permissions import IsOwnerOrMember, MemberCanServe, \
+    IsPhotoOwnerOrReadOnly
 from .sutils import check_sign
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin, VisitorCreateMixin
 from visitor.permissions import IsVisitor
@@ -246,7 +247,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
 class PhotoViewSet(viewsets.ModelViewSet):
     queryset = Photo.objects.all()
     serializer_class = serializers.PhotoDetailSerializer
-    permission_classes = [IsVisitor]
+    permission_classes = [IsPhotoOwnerOrReadOnly]
 
     # TODO: test delete
     # TODO: TEST retrieve somehow

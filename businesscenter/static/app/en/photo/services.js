@@ -8,13 +8,8 @@ angular.module('photo.services', ['ngResource'])
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
             like: {method: 'GET', params: {action:'like'}},
-            newest: {method: 'GET', params: {action: 'newest'}, responseType: 'json'}
-    });
-}])
-.factory('PhotoUpdate', ['$resource', 'source_path',
-    function($resource, source_path){
-        return $resource(source_path + 'photo/:pk/edit/', {}, {
-            update: {method: 'PATCH'},
+            newest: {method: 'GET', params: {action: 'newest'}, responseType: 'json'},
+            edit: {method: 'PATCH', params: {action: 'edit'}, responseType: 'json'},
     });
 }])
 .factory('Comment', ['$resource', 'source_path',

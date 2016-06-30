@@ -420,3 +420,13 @@ class GroupTests(APITestCase):
     def force_login(self, pk):
         user = User.objects.get(id=pk)
         self.client.force_login(user=user)
+
+    def test_photo_edit(self):
+        Photo.objects.create(visitor=self.member)
+        now = time.time()
+        key = "sdlfkj9234kjlnzxcv90123098123asldjk"
+        checksum = hashlib.md5('{}{}'.format(key, now)).hexdigest()
+        data = {'timestamp': now, 'checksum': checksum, 'title': 'Hello'}
+        url = reverse('snapshot:photo-edit', kwargs={'pk': 1})
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, 200)

@@ -1,15 +1,15 @@
 <div class="container">
     <div class="wrapper-md">
-        <div class="col-md-12">
+        <div class="col-md-12 col-xs-12 m-t-sm">
             <ul class="list-inline text-center">
                 <li><a class="btn btn-info" data-ng-href="#!/photo"><i
                         class="fa fa-arrow-left fa-2x"></i></a></li>
-                <li><a class="btn btn-warning"
+                <li><a class="btn btn-warning" data-ng-class="{'disabled': !is_owner}"
                        data-ng-href="#!/photo/{{ photo.id }}/edit/"><i
                         class="fa fa-edit fa-2x"></i></a></li>
                 <li>
-                    <button class="btn btn-danger" data-ng-click="remove()"><i
-                            class="fa fa-trash-o fa-2x"></i></button>
+                    <button class="btn btn-danger" data-ng-class="{'disabled': !is_owner}"
+                            data-ng-click="remove()"><i class="fa fa-trash-o fa-2x"></i></button>
                 </li>
             </ul>
         </div>
