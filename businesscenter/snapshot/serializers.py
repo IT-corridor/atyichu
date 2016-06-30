@@ -30,6 +30,8 @@ class PhotoListSerializer(serializers.ModelSerializer):
                                              read_only=True)
     owner_name = serializers.CharField(source='visitor', read_only=True)
     activity = serializers.SerializerMethodField(read_only=True)
+    owner_thumb = serializers.ImageField(source='visitor.thumb',
+                                         read_only=True)
 
     def get_activity(self, obj):
         return timesince(obj.modify_date)

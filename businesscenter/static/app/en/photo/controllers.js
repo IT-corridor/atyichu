@@ -57,6 +57,17 @@ angular.module('photo.controllers', ['photo.services'])
             handle_error
         );
 
+        $scope.back = function(){
+            if ($rootScope.photo_refer){
+                $location.url($rootScope.photo_refer);
+            }
+            else{
+                $location.url('/photo/newest');
+            }
+            console.log($rootScope.photo_refer);
+            $rootScope.refer = undefined;
+            console.log($rootScope.refer);
+        }
         $scope.remove = function(){
             var confirm = $window.confirm('Are you sure you want to remove that photo?');
             if (confirm){
@@ -137,6 +148,7 @@ angular.module('photo.controllers', ['photo.services'])
 '$location', '$routeParams','GetPageLink' , 'Photo',
     function($scope, $rootScope, $http, $location, $routeParams, GetPageLink, Photo) {
         $rootScope.title = 'Newest photos';
+        $rootScope.photo_refer = $location.url();
         $scope.r = Photo.newest(
             function(success){
                 $scope.enough = success.total > 1 ? false : true;

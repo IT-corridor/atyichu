@@ -83,7 +83,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
     function($scope, $rootScope, $http, $location, $routeParams, GetPageLink, Group, IsMember) {
 
         $scope.can_edit = false;
-
+        $rootScope.photo_refer = $location.url();
         $scope.group = Group.get({pk: $routeParams.pk},
             function(success){
                 if ($rootScope.visitor.pk == success.owner ||
