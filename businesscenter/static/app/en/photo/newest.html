@@ -2,8 +2,8 @@
     <div class="m-t-md"></div>
     <div class="pinGridWrapper" data-ng-if="r">
         <div class="pinGrid">
-            <div class="pin animation" data-ng-repeat="photo in r.results">
-                <a data-ng-click="show_current($index)">
+            <div class="pin animate" data-ng-repeat="photo in r.results">
+                <a data-ng-href="#!/photo/{{ photo.id }}">
                     <img data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}">
                 </a>
                 <h2>{{ ( photo.title ) ? photo.title : 'Untitled' }}</h2>
@@ -23,7 +23,4 @@
             <h2 class="text-center text-muted">No More Photos</h2>
         </div>
     </div>
-    <photo-block data-photos="r.results"
-              data-current="current"
-              data-show_detail="show_detail" data-ng-if="r.results"></photo-block>
 </div>
