@@ -400,7 +400,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         """ Providing a newest list of public groups photos """
         qs = Photo.objects.filter(Q(group__is_private=False),
                                   ~Q(visitor_id=request.user.id))\
-            .order_by('-create_date', 'pk')
+            .order_by('-create_date', 'pk').distinct()
 
         page = self.paginate_queryset(qs)
         if page is not None:
@@ -481,7 +481,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             prefetch = Prefetch('photo_set', queryset=Photo.objects.all())
             qs = qs.prefetch_related(prefetch)
             qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
-                           Q(member__visitor=visitor))
+                           Q(member__visitor=visitor)).distinct()
         return qs
 
     def get_serializer_class(self):
@@ -623,7 +623,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         qs = Group.objects.select_related('owner').prefetch_related('tag_set')
         prefetch = Prefetch('photo_set', queryset=Photo.objects.all())
         qs = qs.prefetch_related(prefetch)
-        qs = qs.filter(Q(owner=visitor) | Q(member__visitor=visitor))
+        qs = qs.filter(Q(owner=visitor) | Q(member__visitor=visitor))\
+            .distinct()
         serializer_class = self.get_serializer_class()
         page = self.paginate_queryset(qs)
 
