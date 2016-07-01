@@ -1,10 +1,5 @@
 <wx-self data-visitor="visitor" data-ng-if="bar == 'verbose'"></wx-self>
 <div class="container">
-        <div class="row">
-        <div class="col-md-12">
-            <h1 class="text-center">{{ title }}</h1>
-        </div>
-    </div>
     <div class="row">
         <div class="col-md-3 col-xs-6 wrapper-sm">
             <div class="empty empty-md empty-xs">
@@ -28,31 +23,24 @@
                             <a data-ng-href="#!group/{{ group.id }}/photo">
                                 <img data-ng-if="group.thumb" class="img-center r r-3x b b-light" style="width: 100%;" data-ng-src="{{ group.thumb }}" alt="{{ group.title }}">
 
-                                <div data-ng-if="!group.thumb" class="text-center">
-                                    <span class="fa-stack fa-5x" aria-hidden="true">
-                                      <i class="fa fa-camera fa-stack-1x"></i>
-                                      <i class="fa fa-ban fa-stack-2x text-muted"></i>
-                                    </span>
+                                <div data-ng-if="!group.thumb" class="text-center purple-50 r r-3x b b-light"
+                                     style="height:195px;">
+
                                 </div>
                             </a>
                                 </div>
                         </div>
                     </div>
                 </div>
-                    <div class="row m-b-sm m-n img-wrap-xs img-wrap-md" data-ng-if="group.overview.length > 0">
+                    <div class="row m-b-sm m-n img-wrap-xs img-wrap-md">
                         <div class="col-md-4 col-xs-4 wrapper-xs" data-ng-repeat="item in group.overview">
                             <div class="b-a b-light r r-3x">
                             <img class="img-center img-responsive" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
                             </div>
                         </div>
-                    </div>
-                    <div class="row m-b-sm m-n img-wrap-xs img-wrap-md" data-ng-if="group.overview.length == 0">
-                        <div class="col-md-4 col-xs-4 wrapper-xs text-center" data-ng-repeat="item in [0, 1, 2]">
-                                <div class="b-a b-light r no-img-xs no-img-md">
-                                    <span class="fa-stack fa-lg" aria-hidden="true">
-                                      <i class="fa fa-camera fa-stack-1x"></i>
-                                      <i class="fa fa-ban fa-stack-2x text-muted"></i>
-                                    </span>
+                        <div class="col-md-4 col-xs-4 wrapper-xs text-center" data-ng-repeat="item in group.empty_array">
+                            <div class="b-a b-light r" style="overflow: hidden;">
+                                <div class="no-img-xs no-img-md purple-50"></div>
                             </div>
                         </div>
                     </div>

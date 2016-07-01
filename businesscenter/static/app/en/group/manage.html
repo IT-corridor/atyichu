@@ -1,9 +1,5 @@
 <div class="container">
     <div class="row">
-    <div class="col-md-12">
-        <h2 class="text-center"><span class="text-primary">GROUP MANAGEMENT</span>
-        </h2>
-    </div>
     <div class="col-md-10 col-md-offset-2" data-ng-class="{ hidden: is_owner === false }">
         <form data-ng-submit="update_group()" name="form" id="group_form">
             <table class="table">
@@ -29,7 +25,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th></th>
+                    <th><a data-ng-href="#!/my_groups" class="btn btn-default">To My Group List</a></th>
                     <td><input class="btn btn-primary" type="submit" value="update"></td>
                 </tr>
             </table>

@@ -54,6 +54,17 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                 var j = success.current + 1;
                 for (i; i < success.current; i++){ $scope.prev_pages.push(i);}
                 for (j; j <= next_lim; j++){ $scope.next_pages.push(j);}
+
+                /* Create an empty array for each group*/
+                var k = 0;
+                var group_len = success.results.length;
+                for (k; k < group_len; k++){
+                    var l = 0;
+                    var len = success.results[k].overview.length;
+                    var empty = 3 - len;
+                    success.results[k].empty_array = [];
+                    for (l; l < empty; l++){ success.results[k].empty_array.push(l);}
+                }
             },
             function(error){
                 for (var e in error.data){
