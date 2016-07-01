@@ -4,7 +4,7 @@ import os
 import imghdr
 import requests
 from io import BytesIO
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ExifTags
 from django.core.files import File
 from django.utils.deconstruct import deconstructible
 from django.core.files.base import ContentFile
@@ -68,6 +68,7 @@ def create_thumb(instance, fieldname, m=100):
     if field and not instance.thumb.name:
         filename = field.path
         img = Image.open(filename)
+        img = rotate_image(img)
         w, h = img.size
         if w > m:
             ratio = m / w
@@ -96,6 +97,7 @@ def create_crop(instance, input_field, m=100, output_field='crop'):
     if field and not crop_field.name:
         filename = field.path
         img = Image.open(filename)
+        img = rotate_image(img)
         w, h = img.size
         if w > h:
             # Ratio does not really matter because it pretty small
@@ -122,3 +124,24 @@ def get_content_file(url):
     r = requests.get(url)
     ext = r.headers['Content-Type'].split('/')[-1]
     return ext, ContentFile(r.content)
+
+
+def rotate_image(image):
+    if hasattr(image, '_getexif'):
+        exif = image._getexif()
+        if exif is not None:
+            # PYTHON 2!
+            # tag = filter(lambda x: x[1] == 'Orientation', ExifTags.TAGS.items())[0]
+            # key, value = tag
+            # Exif orientation tag
+            key = 0x0112
+            exif_data = dict(image._getexif().items())
+            orientation_tag = exif_data.get(key)
+            if orientation_tag:
+                if orientation_tag == 3:
+                    image = image.rotate(180, expand=True)
+                elif orientation_tag == 6:
+                    image = image.rotate(270, expand=True)
+                elif orientation_tag == 8:
+                    image = image.rotate(90, expand=True)
+    return image

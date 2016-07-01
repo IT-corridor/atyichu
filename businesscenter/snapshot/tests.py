@@ -35,7 +35,7 @@ visitor_data_3 = {"weixin": "oRFOiwzjygVD6hwtyMFUZCZ299b2",
                   "expires_in": 7200,
                   "token_date": "2016-06-15T07:08:04.960Z"}
 
-filepath = os.path.join(settings.MEDIA_ROOT, 'test.jpg')
+filepath = os.path.join(settings.MEDIA_ROOT, 'image.jpeg')
 
 class MirrorTests(APITestCase):
 
