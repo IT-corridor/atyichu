@@ -56,15 +56,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                 for (j; j <= next_lim; j++){ $scope.next_pages.push(j);}
 
                 /* Create an empty array for each group*/
-                var k = 0;
-                var group_len = success.results.length;
-                for (k; k < group_len; k++){
-                    var l = 0;
-                    var len = success.results[k].overview.length;
-                    var empty = 3 - len;
-                    success.results[k].empty_array = [];
-                    for (l; l < empty; l++){ success.results[k].empty_array.push(l);}
-                }
+                create_empty_arrays(success);
             },
             function(error){
                 for (var e in error.data){
@@ -81,11 +73,24 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             query(params, function(success){
                     $scope.r.results = $scope.r.results.concat(success.results);
                     $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
+                    create_empty_arrays(success);
                 },
                 function(error){
                     $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
                 }
             );
+        }
+
+        function create_empty_arrays(obj){
+            var k = 0;
+            var group_len = obj.results.length;
+            for (k; k < group_len; k++){
+                var l = 0;
+                var len = obj.results[k].overview.length;
+                var empty = 3 - len;
+                obj.results[k].empty_array = [];
+                for (l; l < empty; l++){ obj.results[k].empty_array.push(l);}
+            }
         }
     }
 ])
