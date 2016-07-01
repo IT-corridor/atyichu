@@ -172,7 +172,7 @@ def get_me(request):
 def test_auth(request):
     host = request.get_host()
     if host == '127.0.0.1:8000':
-        visitor = Visitor.objects.get(weixin='weixin')
+        visitor = Visitor.objects.get(weixin='weixin2')
         user = authenticate(weixin=visitor.weixin)
         login(request, user)
         response = HttpResponseRedirect('/#!/')

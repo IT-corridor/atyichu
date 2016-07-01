@@ -24,11 +24,17 @@ angular.module('common.services', ['ngResource'])
 ])
 .factory('IsMember',
     function(){
-         return function(list, id){
+         return function(list, id, fieldname){
+            if (fieldname === undefined){
+                field = 'visitor';
+            }
+            else{
+                field = fieldname;
+            }
             console.log(list, id);
             var i = 0;
             for (i; i < list.length; i++){
-                if (list[i].id == id){
+                if (list[i][field] == id){
                     return true;
                 }
             }
