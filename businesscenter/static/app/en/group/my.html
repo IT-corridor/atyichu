@@ -16,34 +16,28 @@
                 <div class="font-bold wrapper-xs" style="padding-top: 10px;">
                     {{ ( group.title ) ? group.title : 'Untitled' }}
                 </div>
-                <div class="group">
+                <div class="group-xs group-md">
                     <div class="hbox">
                         <div class="col v-middle wrapper-xs">
                             <div class="pre-img">
-                            <a data-ng-href="#!group/{{ group.id }}/photo">
-                                <img data-ng-if="group.thumb" class="img-center r r-3x b b-light" style="width: 100%;" data-ng-src="{{ group.thumb }}" alt="{{ group.title }}">
+                                <a data-ng-href="#!group/{{ group.id }}/photo">
+                                    <img data-ng-if="group.thumb" class="img-center r r-3x b b-light" style="width: 100%;" data-ng-src="{{ group.thumb }}" alt="{{ group.title }}">
 
-                                <div data-ng-if="!group.thumb" class="text-center purple-50 r r-3x b b-light"
-                                     style="height:195px;">
-
-                                </div>
-                            </a>
-                                </div>
+                                    <div data-ng-if="!group.thumb" class="text-center purple-50 r r-3x b b-light empty-cover-xs empty-cover-md">
+                                    </div>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                    <div class="row m-b-sm m-n img-wrap-xs img-wrap-md">
-                        <div class="col-md-4 col-xs-4 wrapper-xs" data-ng-repeat="item in group.overview">
-                            <div class="b-a b-light r r-3x">
-                            <img class="img-center img-responsive" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-xs-4 wrapper-xs text-center" data-ng-repeat="item in group.empty_array">
-                            <div class="b-a b-light r" style="overflow: hidden;">
-                                <div class="no-img-xs no-img-md purple-50"></div>
-                            </div>
-                        </div>
+                <div class="row m-b-sm m-n img-wrap-xs img-wrap-md">
+                    <div class="col-md-4 col-xs-4 wrapper-xs" data-ng-repeat="item in group.overview">
+                        <img class="img-center img-responsive r r-3x" data-ng-src="{{ item.crop ? item.crop : item.thumb }}" alt="..." >
                     </div>
+                    <div class="col-md-4 col-xs-4 wrapper-xs" style="height: 100%;" data-ng-repeat="item in group.empty_array">
+                            <div class="purple-50 r r-3x" style="max-width: 100%; height: 100%; position: relative;"></div>
+                    </div>
+                </div>
                 <div class="row m-b-sm m-n">
                     <div class="col-md-12 col-xs-12 wrapper-xs text-center group-bottom">
                         <a class="btn btn-default btn-lg input-lg form-control" data-ng-href="#!/group/{{ group.id }}/manage"><i class="fa fa-edit"></i>&nbsp; Edit</a>

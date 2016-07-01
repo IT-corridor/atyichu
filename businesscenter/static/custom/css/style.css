@@ -29,40 +29,47 @@ body {
 .group-crop {
     width: 100%;
 }
-.group{
-    height: 200px;
-    overflow: hidden;
-}
 
+.p-r-none {
+    padding-right: 0;
+}
 @media (max-width: 767px) {
     .no-img-xs{
-        line-height: 46px;
-        width: 41px;
-        height: 41px;
+        line-height: 45px;
+        width: 45px;
+        height: 45px;
         overflow: hidden;
     }
     .img-wrap-xs {
-        height: 70px;
+        height: 52px;
         overflow: hidden;
     }
     .empty-xs {
-        height: 356px;
+        height: 308px;
     }
     .pre-img-xs {
         height: 162px;
         overflow: hidden;
     }
+    .group-xs{
+        height: 150px;
+        overflow: hidden;
+    }
+    .empty-cover-xs {
+        height: 141px;
+    }
+
 }
 
 @media (min-width: 992px) {
     .no-img-md{
-        line-height: 78px;
+        line-height: 79px;
         width: 79px;
         height: 79px;
-        overflow: hidden;
     }
     .img-wrap-md {
         height: 90px;
+        overflow: hidden;
 
     }
     .empty-md {
@@ -71,6 +78,13 @@ body {
     .pre-img-md {
         height: 180px;
         overflow: hidden;
+    }
+    .group-md{
+        height: 200px;
+        overflow: hidden;
+    }
+    .empty-cover-md {
+        height: 195px;
     }
 }
 
