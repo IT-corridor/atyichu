@@ -41,11 +41,11 @@ body {
         overflow: hidden;
     }
     .img-wrap-xs {
-        height: 52px;
+        height: 60px;
         overflow: hidden;
     }
     .empty-xs {
-        height: 308px;
+        height: 296px;
     }
     .pre-img-xs {
         height: 162px;
@@ -56,7 +56,7 @@ body {
         overflow: hidden;
     }
     .empty-cover-xs {
-        height: 141px;
+        height: 146px;
     }
 
 }

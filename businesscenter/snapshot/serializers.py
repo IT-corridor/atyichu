@@ -67,7 +67,8 @@ class TagSerializer(serializers.ModelSerializer):
 
 class MemberSerializer(serializers.ModelSerializer):
 
-    member_name = serializers.CharField(source='visitor', read_only=True)
+    username = serializers.CharField(source='visitor', read_only=True)
+    thumb = serializers.ImageField(source='visitor.thumb', read_only=True)
 
     class Meta:
         model = models.Member

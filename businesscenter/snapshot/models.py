@@ -114,7 +114,7 @@ class Photo(models.Model):
                                    blank=True, max_length=5000)
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
-    group = models.ForeignKey('snapshot.Group', on_delete=models.SET_NULL,
+    group = models.ForeignKey('snapshot.Group', on_delete=models.CASCADE,
                               null=True, blank=True)
     # Original photo
     photo = models.ImageField(_('Photo'), upload_to=path_photo,
@@ -182,8 +182,10 @@ class Group(models.Model):
 class Member(models.Model):
     """ Representation of a group member.
     It not uses directly ManyToMany Relation. It is realized explicitly """
-    group = models.ForeignKey(Group, verbose_name=_('Group'))
-    visitor = models.ForeignKey(Visitor, verbose_name=_('Visitor'))
+    group = models.ForeignKey(Group, verbose_name=_('Group'),
+                              on_delete=models.CASCADE)
+    visitor = models.ForeignKey(Visitor, verbose_name=_('Visitor'),
+                                on_delete=models.CASCADE)
 
     def __unicode__(self):
         return '{}, {}'.format(self.group, self.visitor)

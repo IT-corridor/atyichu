@@ -489,6 +489,13 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             return serializers.GroupListSerializer
         return serializers.GroupDetailSerializer
 
+    def perform_create(self, serializer):
+        group = serializer.save()
+        members = self.request.data.get('members')
+        if members:
+            member_batch = (Member(group=group, visitor_id=i) for i in members)
+            Member.objects.bulk_create(member_batch)
+
     @detail_route(methods=['patch'])
     def avatar_update(self, request, *args, **kwargs):
         return PermissionDenied

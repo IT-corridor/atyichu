@@ -1,11 +1,11 @@
 angular.module('group.controllers', ['group.services', 'group.directives',
 'common.services', 'auth.services', 'selfie'])
 .controller('CtrlGroupAdd', ['$scope', '$rootScope','$http',
-'$location', '$route', 'Auth', 'MultipartForm',
-    function($scope, $rootScope, $http, $location, $route, Auth, MultipartForm) {
+'$location', '$route', 'Auth', 'Group',
+    function($scope, $rootScope, $http, $location, $route, Auth, Group) {
 
         $rootScope.title = 'New group';
-
+        $scope.members = [];
         var auth_promise = Auth.is_authenticated();
 
         auth_promise.then(function(result){
@@ -15,19 +15,24 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         });
 
         $scope.add = function() {
-            var url = '/api/v1/group/';
-            MultipartForm('POST', '#group_form', url).then(function(response) {
-                $rootScope.alerts.push({ type: 'success', msg: 'Your group was successfully added!'});
-                    // for images
-                    //$scope.random = Math.floor((Math.random()*1000));
-                    $location.path('/group/' + response.data.id + '/manage');
+            $scope.data.members = [];
+            var i = 0;
+            var member_length = $scope.members.length;
+            for (i; i < member_length; i++){
+                $scope.data.members.push($scope.members[i].pk);
+            }
+            Group.save($scope.data, function(success){
+                    console.log(success);
+                    $location.path('/group/' + success.id + '/manage');
                 },
-                function(error) {
+                function(error){
                     $scope.error = error.data;
                 }
             );
-
         };
+        $scope.remove_member = function(index){
+            $scope.members.splice(index, 1);
+        }
 
     }
 ])
@@ -226,7 +231,6 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             }
         }
         $scope.member_add = function(){
-            console.log($scope.member);
             Group.member_add({pk: $routeParams.pk}, {username: $scope.member},
                 function(success){
                     $rootScope.alerts.push({ type: 'info', msg: 'A new member has been added to the group'});
@@ -240,17 +244,35 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         }
 
         $scope.create_tag = function(){
-            Group.tag_create({pk: $routeParams.pk}, {title: $scope.tag_title},
-                function(success){
-                    $rootScope.alerts.push({ type: 'info', msg: 'A new tag has been created'});
-                    $scope.tag_title = '';
-                    $scope.r.tags.push(success);
-                },
-                function(error){
-                    $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
-                }
-            );
-        }
+            var confirm = $window.confirm('Are you sure you want to remove this group?');
+            if (confirm){
+                Group.tag_create({pk: $routeParams.pk}, {title: $scope.tag_title},
+                    function(success){
+                        $rootScope.alerts.push({ type: 'info', msg: 'A new tag has been created'});
+                        $scope.tag_title = '';
+                        $scope.r.tags.push(success);
+                    },
+                    function(error){
+                        $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
+                    }
+                );
+            }
+        };
+
+        $scope.remove_group = function(){
+            var confirm = $window.confirm('Are you sure you want to remove this group?');
+            if (confirm){
+                Group.remove({pk: $scope.r.id},
+                    function(success){
+                        $rootScope.alerts.push({ type: 'info', msg: 'Group "'+ $scope.r.title +'" has been removed'});
+                        $location.path('/my_groups');
+                    },
+                    function(error){
+                        $rootScope.alerts.push({ type: 'danger', msg: 'Fail'});
+                    }
+                );
+            }
+        };
     }
 ])
 .controller('CtrlGroupPhotoAdd', ['$scope', '$rootScope','$http',

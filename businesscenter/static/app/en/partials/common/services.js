@@ -31,7 +31,6 @@ angular.module('common.services', ['ngResource'])
             else{
                 field = fieldname;
             }
-            console.log(list, id);
             var i = 0;
             for (i; i < list.length; i++){
                 if (list[i][field] == id){

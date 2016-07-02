@@ -86,5 +86,5 @@ class VisitorShortSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Visitor
-        fields = ('pk', 'username')
+        fields = ('pk', 'username', 'thumb')
         extra_kwargs = {'pk': {'read_only': True}}

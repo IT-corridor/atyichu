@@ -427,6 +427,15 @@ class GroupTests(APITestCase):
         key = "sdlfkj9234kjlnzxcv90123098123asldjk"
         checksum = hashlib.md5('{}{}'.format(key, now)).hexdigest()
         data = {'timestamp': now, 'checksum': checksum, 'title': 'Hello'}
-        url = reverse('snapshot:photo-edit', kwargs={'pk': 1})
+        url = reverse('snapshot:photo-detail', kwargs={'pk': 1})
         response = self.client.patch(url, data)
         self.assertEqual(response.status_code, 200)
+
+    def test_create_group_with_member(self):
+        data = {'title': 'test group', 'members': [2, 3]}
+        self.force_login(1)
+        url = reverse('snapshot:group-list')
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 201)
+        self.client.logout()
+
