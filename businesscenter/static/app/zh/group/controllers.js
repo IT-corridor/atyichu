@@ -36,9 +36,9 @@ angular.module('group.controllers', ['group.services', 'group.directives',
 
     }
 ])
-.controller('CtrlGroupList', ['$scope', '$rootScope','$http',
+.controller('CtrlGroupList', ['$scope', '$rootScope','$http', '$window',
 '$location', '$routeParams','GetPageLink' , 'Group', 'title', 'my',
-    function($scope, $rootScope, $http, $location, $routeParams, GetPageLink, Group, title, my) {
+    function($scope, $rootScope, $http, $window, $location, $routeParams, GetPageLink, Group, title, my) {
 
         $rootScope.title = title;
         var query = (my) ? Group.my : Group.query;
@@ -46,6 +46,17 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         if (my){
             $rootScope.bar = 'verbose';
         }
+
+        $scope.enough = false;
+        angular.element($window).bind('scroll', function() {
+            if (!$scope.enough){
+                var bodyHeight = this.document.body.scrollHeight;
+                if (bodyHeight == (this.pageYOffset + this.innerHeight)){
+                    $scope.get_more();
+                }
+            }
+        });
+
         $scope.r = query($routeParams,
             function(success){
 
