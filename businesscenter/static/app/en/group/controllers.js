@@ -48,14 +48,21 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         }
 
         $scope.enough = false;
-        angular.element($window).bind('scroll', function() {
-            /* TODO: This func repeats for 3-4 times, make it beautiful*/
+        // TODO: replace it with directive, its repeats for 3 times
+        var window = angular.element($window);
+
+        function scroll_more(){
             if (!$scope.enough){
                 var bodyHeight = this.document.body.scrollHeight;
                 if (bodyHeight == (this.pageYOffset + this.innerHeight)){
                     $scope.get_more();
                 }
             }
+        }
+        window.bind('scroll', scroll_more);
+
+        $scope.$on('$destroy', function(e){
+            window.unbind('scroll', scroll_more);
         });
 
         $scope.r = query($routeParams,
@@ -119,13 +126,21 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         $scope.can_edit = false;
         $rootScope.photo_refer = $location.url();
         $scope.enough = false;
-        angular.element($window).bind('scroll', function() {
+
+        var window = angular.element($window);
+
+        function scroll_more(){
             if (!$scope.enough){
                 var bodyHeight = this.document.body.scrollHeight;
                 if (bodyHeight == (this.pageYOffset + this.innerHeight)){
                     $scope.get_more();
                 }
             }
+        }
+        window.bind('scroll', scroll_more);
+
+        $scope.$on('$destroy', function(e){
+            window.unbind('scroll', scroll_more);
         });
 
         $scope.group = Group.get({pk: $routeParams.pk},
