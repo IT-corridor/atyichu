@@ -18,7 +18,7 @@
         <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/animations.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/grid.css">
         {% verbatim %}
-        <title data-ng-bind="title + ' | ' + site"></title>
+        <title data-ng-bind="title + ' ' + site"></title>
         <!--<base href="/app/">-->
 
         {% endverbatim %}
@@ -52,7 +52,7 @@
         <script src="{{ STATIC_URL }}lib/angularjs/other/ngStorage.js"></script>
         {% get_current_language as LANGUAGE %}
         {% if LANGUAGE == 'zh-hans'  or LANGUAGE == 'zh-hant' %}
-            {% include 'include/scripts.html' with LANG='en' %}
+            {% include 'include/scripts.html' with LANG='zh' %}
         {% else %}
             {% include 'include/scripts.html' with LANG='en' %}
         {% endif %}

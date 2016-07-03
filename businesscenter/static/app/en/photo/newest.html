@@ -1,15 +1,15 @@
 <div class="container">
     <div class="m-t-md"></div>
     <div class="pinGridWrapper" data-ng-if="r">
-        <div class="pinGrid">
+        <div class="pinGrid small">
             <div class="pin animate" data-ng-repeat="photo in r.results">
                 <a data-ng-href="#!/photo/{{ photo.id }}">
                     <img data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
                 </a>
-                <h2 class="b-b b-light" data-ng-if="photo.title">{{ photo.title }}</h2>
+                <h4 class="b-b b-light" data-ng-if="photo.title">{{ photo.title }}</h4>
                 <p class="b-b b-light" data-ng-if="photo.descr"> {{ photo.descr }}</p>
                 <div class="b-b b-light m-b-xs wrapper-xs" style="padding-bottom: 20px;">
-                    <a href="" class="pull-left thumb avatar m-r">
+                    <a href="" class="pull-left thumb-xs avatar m-r">
                       <img data-ng-src="{{ photo.owner_thumb }}" alt="{{ photo.owner_name }}" class="img-circle">
                     </a>
                     <div class="clear">
