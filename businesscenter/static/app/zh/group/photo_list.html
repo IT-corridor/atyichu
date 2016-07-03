@@ -53,7 +53,7 @@
     <div class="pinGrid">
         <div class="pin" data-ng-repeat="photo in r.results">
             <a data-ng-href="#!/photo/{{ photo.id }}">
-                <img data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}">
+                <img data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
             </a>
             <h2>{{ ( photo.title ) ? photo.title : 'Untitled' }}</h2>
             <p>{{ photo.create_date | date : 'longDate': '+0800'}}
