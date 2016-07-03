@@ -48,45 +48,35 @@
     </div>
 </div>
 <hr class="m-t">
-
-<div class="pinGridWrapper" data-ng-if="r">
-    <div class="pinGrid">
-        <div class="pin" data-ng-repeat="photo in r.results">
-            <a data-ng-href="#!/photo/{{ photo.id }}">
-                <img data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
-            </a>
-            <h2>{{ ( photo.title ) ? photo.title : 'Untitled' }}</h2>
-            <p>{{ photo.create_date | date : 'longDate': '+0800'}}
-                <span class="pull-right text-muted">by <i class="fa fa-user">&nbsp;{{ photo.owner_name }}</i></span></p>
-            <ul class="list-inline text-muted text-center small">
-                <li><i class="fa fa-clock-o fa-lg"></i> {{ photo.activity }}
-                </li>
-                <li><i class="fa fa-comments"></i> {{ photo.comment_count }}
-                </li>
-            </ul>
+<div class="container">
+    <div class="m-t-md"></div>
+    <div class="pinGridWrapper" data-ng-if="r">
+        <div class="pinGrid">
+            <div class="pin animate" data-ng-repeat="photo in r.results">
+                <a data-ng-href="#!/photo/{{ photo.id }}">
+                    <img data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
+                </a>
+                <p class="b-b b-light font-bold" data-ng-if="photo.title">{{ photo.title }}</p>
+                <p class="b-b b-light" data-ng-if="photo.descr"> {{ photo.descr }}</p>
+                <div class="b-b b-light m-b-xs wrapper-xs" style="padding-bottom: 20px;">
+                    <a href="" class="pull-left thumb-xs avatar m-r">
+                      <img data-ng-src="{{ photo.owner_thumb }}" alt="{{ photo.owner_name }}" class="img-circle">
+                    </a>
+                    <div class="clear">
+                      <div><a href="">{{ photo.owner_name }}</a></div>
+                    </div>
+                </div>
+                <ul class="list-inline text-muted text-center small">
+                    <li><i class="fa fa-clock-o fa-lg"></i> {{ photo.activity }}</li>
+                    <li><i class="fa fa-comments"></i> {{ photo.comment_count }}</li>
+                    <li><a data-ng-click="like($index, photo.id)"><i class="fa fa-heart"></i> {{ photo.like }}</a></li>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
-<div class="text-center m-t">
-    <p>
-        <button data-ng-disabled="enough" data-ng-click="get_more()"
-                class="btn btn-lg btn-primary">Load more
-        </button>
-    </p>
-    <ul class="pagination m-t">
-        <li><a data-ng-href="{{ page_link }}page=1">&lt;&lt;</a></li>
-        <li><a data-ng-if="r.previous_page"
-               data-ng-href="{{ page_link }}page={{ r.previous_page }}">
-            &lt;</a></li>
-        <li data-ng-repeat="i in prev_pages"><a
-                data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
-        <li class="active"><a href="#">{{ r.current }}</a></li>
-        <li data-ng-repeat="i in next_pages"><a
-                data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
-        <li><a data-ng-if="r.next_page"
-               data-ng-href="{{ page_link }}page={{ r.next_page }}">&gt;</a>
-        </li>
-        <li><a data-ng-href="{{ page_link }}page={{ r.total }}">&gt;&gt;</a>
-        </li>
-    </ul>
+    <div class="row" data-ng-if="enough">
+        <div class="col-md-12 col-xs-12">
+            <p class="text-center"><img class="inverted-logo" data-ng-src="{{ THEME }}images/logo_circle_48.png"></p>
+        </div>
+    </div>
 </div>

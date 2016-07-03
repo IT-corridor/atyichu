@@ -1,5 +1,5 @@
 angular.module('group.controllers', ['group.services', 'group.directives',
-'common.services', 'auth.services', 'selfie'])
+'common.services', 'auth.services', 'selfie', 'photo.services'])
 .controller('CtrlGroupAdd', ['$scope', '$rootScope','$http',
 '$location', '$route', 'Auth', 'Group',
     function($scope, $rootScope, $http, $location, $route, Auth, Group) {
@@ -99,12 +99,23 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         }
     }
 ])
-.controller('CtrlGroupPhotoList', ['$scope', '$rootScope','$http',
-'$location', '$routeParams','GetPageLink' , 'Group', 'IsMember',
-    function($scope, $rootScope, $http, $location, $routeParams, GetPageLink, Group, IsMember) {
+.controller('CtrlGroupPhotoList', ['$scope', '$rootScope','$http', '$window',
+'$location', '$routeParams','GetPageLink' , 'Group', 'IsMember', 'Photo',
+    function($scope, $rootScope, $http, $window, $location, $routeParams,
+    GetPageLink, Group, IsMember, Photo) {
 
         $scope.can_edit = false;
         $rootScope.photo_refer = $location.url();
+        $scope.enough = false;
+        angular.element($window).bind('scroll', function() {
+            if (!$scope.enough){
+                var bodyHeight = this.document.body.scrollHeight;
+                if (bodyHeight == (this.pageYOffset + this.innerHeight)){
+                    $scope.get_more();
+                }
+            }
+        });
+
         $scope.group = Group.get({pk: $routeParams.pk},
             function(success){
                 if ($rootScope.visitor.pk == success.owner ||
@@ -150,6 +161,18 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                         $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
                     }
                     $scope.error = error.data;
+                }
+            );
+        }
+
+        $scope.like = function(index, photo_id){
+            /*TODO: this is repeats for two times (or even tree) fix!*/
+            Photo.like({pk: photo_id},
+                function(success){
+                    $scope.r.results[index].like = success.like;
+                },
+                function(error){
+                    $rootScope.alerts.push({ type: 'danger', msg: 'You have like it already!'});
                 }
             );
         }

@@ -44,7 +44,7 @@ class PhotoListSerializer(serializers.ModelSerializer):
         model = models.Photo
         fields = ('id', 'create_date', 'comment_count', 'visitor', 'title',
                   'thumb', 'owner_name', 'activity', 'group',
-                  'owner_thumb', 'descr')
+                  'owner_thumb', 'descr', 'like')
 
 
 class PhotoDetailSerializer(PhotoListSerializer):

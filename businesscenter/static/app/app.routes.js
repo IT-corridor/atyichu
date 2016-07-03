@@ -19,7 +19,7 @@ angular.module('app.route', [
             templateUrl: PATH + 'mirror/detail.html',
             controller: 'CtrlMirrorDetail'}).
         when('/photo/newest', {
-            templateUrl: PATH + 'photo/newest.html',
+            templateUrl: PATH + 'group/photo_list.html',
             controller: 'CtrlPhotoNewest'}).
         when('/photo/:pk', {
             templateUrl: PATH + 'photo/detail.html',
