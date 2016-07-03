@@ -204,7 +204,7 @@ angular.module('photo.controllers', ['photo.services'])
                     $scope.r.results[index].like = success.like;
                 },
                 function(error){
-                    $rootScope.alerts.push({ type: 'danger', msg: 'You have like it already!'});
+                    $rootScope.alerts.push({ type: 'danger', msg: 'You have liked it already!'});
                 }
             );
         }

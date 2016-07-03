@@ -10,10 +10,7 @@ angular.module('photo.controllers', ['photo.services'])
         }
 
         $scope.photos = Photo.query(
-            function(success){
-                $rootScope.alerts.push({ type: 'info',
-                    msg: 'Photo list successfully fetched.'});
-            },
+            function(success){},
             handle_error
         );
 
@@ -23,7 +20,7 @@ angular.module('photo.controllers', ['photo.services'])
             Photo.save({},
                 function(success){
                     // we can wait for 3 seconds here,
-                    $rootScope.alerts.push({ type: 'info', msg: 'Photo was created.'});
+                    $rootScope.alerts.push({ type: 'info', msg: '图片创建完成'});
                         // hide "waiting" block and reload the path.
                         $location.path('/photo/'+ success.id);
                 },
@@ -48,8 +45,8 @@ angular.module('photo.controllers', ['photo.services'])
 
         $scope.photo = Photo.get({pk: $routeParams.pk},
             function(success){
-                var title = (success.title) ? success.title : 'Untitled'
-                $rootScope.title = 'Photo -' + success.title;
+                //var title = (success.title) ? success.title : 'Untitled'
+                //$rootScope.title = 'Photo -' + success.title;
                 if ($rootScope.visitor.pk == success.visitor){
                     $scope.is_owner = true;
                 }
@@ -69,11 +66,11 @@ angular.module('photo.controllers', ['photo.services'])
             console.log($rootScope.refer);
         }
         $scope.remove = function(){
-            var confirm = $window.confirm('Are you sure you want to remove that photo?');
+            var confirm = $window.confirm('确定删除？');
             if (confirm){
                 Photo.remove({pk: $routeParams.pk}, {},
                     function(success){
-                        $rootScope.alerts.push({ type: 'info', msg: 'Photo has been deleted!'});
+                        $rootScope.alerts.push({ type: 'info', msg: '照片已删除！'});
                         $location.path('/photo');
                     },
                     handle_error
@@ -84,7 +81,7 @@ angular.module('photo.controllers', ['photo.services'])
             data = {photo: $routeParams.pk, message: $scope.new_message};
                 Comment.save(data, function(success){
                     $scope.photo.comments.push(success);
-                    $rootScope.alerts.push({ type: 'info', msg: 'Thanks for the comment!'});
+                    $rootScope.alerts.push({ type: 'info', msg: '谢谢评价！'});
                     $scope.new_message = '';
                 },
                 handle_error
@@ -132,7 +129,7 @@ angular.module('photo.controllers', ['photo.services'])
             data = {title: $scope.photo.title, description: $scope.photo.description};
             Photo.edit({pk: $routeParams.pk}, data,
                 function(success){
-                    $rootScope.alerts.push({ type: 'info', msg: 'Data has been updated.'});
+                    $rootScope.alerts.push({ type: 'info', msg: '数据已更新'});
                     $location.path('/photo/' + $routeParams.pk);
                 },
                 handle_error
@@ -204,7 +201,7 @@ angular.module('photo.controllers', ['photo.services'])
                     $scope.r.results[index].like = success.like;
                 },
                 function(error){
-                    $rootScope.alerts.push({ type: 'danger', msg: 'You have like it already!'});
+                    $rootScope.alerts.push({ type: 'danger', msg: '请不要重复评价'});
                 }
             );
         }

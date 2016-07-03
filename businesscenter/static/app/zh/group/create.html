@@ -44,7 +44,7 @@
                     </div>
                     <div class="line line-dashed b-b line-lg pull-in"></div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Collaborators</label>
+                        <label class="col-sm-2 control-label">邀请好友加入这个衣橱</label>
                         <div class="col-sm-10">
                             <member-choice data-member="member"
                                            data-members="members"
@@ -52,8 +52,7 @@
                             <div class="row">
                                 <div class="col-sm-10"
                                      data-ng-if="members.length == 0">
-                                    <h6>You did not choose any
-                                        collaborator.</h6>
+                                    <h6>没有好友加入</h6>
                                 </div>
                                 <div class="col-sm-10 col-xs-12">
                                     <div class="row"
@@ -88,9 +87,9 @@
                     <div class="row">
                         <div class="col-md-12 col-xs-12">
                             <div class="pull-right">
+                                <button type="submit" class="btn btn-primary">创建
+                                </button>
                                 <a data-ng-href="#!/my_groups" class="btn btn-default">取消</a>
-                            <button type="submit" class="btn btn-primary">创建
-                            </button>
                             </div>
                         </div>
                     </div>

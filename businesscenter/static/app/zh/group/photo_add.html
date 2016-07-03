@@ -2,12 +2,12 @@
     <div class="wrapper-md" data-ng-if="can_add">
         <div class="panel panel-default">
             <div class="panel-heading font-bold">
-                UPLOAD A PHOTO (TO {{ group.title }})
+                添加衣服图片 (到 {{ group.title }})
             </div>
             <div class="panel-body">
                 <form data-ng-submit="add()" name="form" id="photo_form">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">TITLE</label>
+                        <label class="col-sm-2 control-label">标题</label>
                         <div class="col-sm-10">
                             <input type="text" name="title"
                                    class="form-control rounded">
@@ -17,7 +17,7 @@
                     </div>
                     <div class="line line-dashed b-b line-lg pull-in"></div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">DESCRIPTION</label>
+                        <label class="col-sm-2 control-label">详情</label>
                         <div class="col-sm-10">
                             <textarea name="description"
                                       data-ng-model="description"
@@ -28,7 +28,7 @@
                     </div>
                     <div class="line line-dashed b-b line-lg pull-in"></div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">FILE</label>
+                        <label class="col-sm-2 control-label">选择图片</label>
                         <div class="col-sm-10">
                             <input type="file" name="photo" required aria-required="true">
                             <p class="text-danger"
@@ -38,10 +38,10 @@
                     <div class="line line-dashed b-b line-lg pull-in"></div>
                     <div class="form-group">
                         <div class="col-sm-4 col-sm-offset-2">
-                            <a data-ng-href="#!/group/{{ group.id }}/photo"
-                               class="btn btn-default">Cancel</a>
-                            <button type="submit" class="btn btn-primary">ADD
+                            <button type="submit" class="btn btn-primary">添加
                             </button>
+                            <a data-ng-href="#!/group/{{ group.id }}/photo"
+                               class="btn btn-default">取消</a>
                         </div>
                     </div>
                 </form>
@@ -50,7 +50,7 @@
     </div>
     <div class="row" data-ng-if="!can_add">
         <div class="col-md-12 col-xs-12">
-            You have not enough privileges to add photo in this group.
+            您不能向这个衣橱里添加衣服
         </div>
     </div>
     <div class="row screensaver" data-ng-class="{'visible': wait}">
@@ -58,7 +58,7 @@
             <div class="hbox">
                 <div class="col v-middle text-center text-primary">
                     <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-                    <p class="h4 wrapper-xs">Please wait...</p>
+                    <p class="h4 wrapper-xs">正在处理......</p>
                 </div>
             </div>
         </div>

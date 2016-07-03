@@ -177,6 +177,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         );
 
         $scope.get_more = function(){
+            // Load more -- 更多
             $scope.page += 1;
             var params = {pk: $routeParams.pk, page: $scope.page};
             Group.photo_list(params, function(success){

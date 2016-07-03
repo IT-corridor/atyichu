@@ -49,11 +49,11 @@ function(PATH, $window, Photo, Comment) {
         });
 
         $scope.remove = function(){
-            var confirm = $window.confirm('Are you sure you want to remove that photo?');
+            var confirm = $window.confirm('确定删除？');
             if (confirm){
                 Photo.remove({pk: $scope.photo.id}, {},
                     function(success){
-                        $rootScope.alerts.push({ type: 'info', msg: 'Photo has been deleted!'});
+                        $rootScope.alerts.push({ type: 'info', msg: '照片已删除！'});
                         delete $scope.photos[$scope.current];
                         $scope.show_detail = false;
                     },
@@ -66,7 +66,7 @@ function(PATH, $window, Photo, Comment) {
             console.log(data);
                 Comment.save(data, function(success){
                     $scope.photo.comments.push(success);
-                    $rootScope.alerts.push({ type: 'info', msg: 'Thanks for the comment!'});
+                    $rootScope.alerts.push({ type: 'info', msg: '谢谢评价！'});
                     $scope.new_message = '';
                 },
                 handle_error
