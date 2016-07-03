@@ -44,11 +44,6 @@ label {
   font-weight: normal;
 }
 
-small,
-.small {
-  font-size: 13px;
-}
-
 .badge,
 .label {
   font-weight: bold;
