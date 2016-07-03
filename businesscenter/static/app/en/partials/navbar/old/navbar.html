@@ -13,10 +13,19 @@
                                                     src="{{ THEME }}images/logo_circle_48.png"
                                                     alt="{{ brand_text }}"></a>
         </div>
-        <ul class="nav navbar-nav box-shadow" data-uib-collapse="isCollapsed">
+        <ul class="nav navbar-nav box-shadow">
             <li><a data-ng-href="#!/mirror">Mirror</a></li>
-            <li><a data-ng-href="#!/photo">Photos</a></li>
+            <li><a data-ng-href="#!/photo/newest">Newest Photos</a></li>
             <li><a data-ng-href="#!/group">Groups</a></li>
+            <li><a data-ng-href="#!/my_groups">My groups</a></li>
+            <li><a data-ng-href="#!/profile/">
+                <i class="fa fa-user"></i> My Profile</a>
+            </li>
+            <li><a data-ng-click="logout()" data-ng-href="#!/">
+                    <i class="fa fa-sign-out"></i> Logout
+                </a>
+            </li>
+
         </ul>
         <form class="navbar-form navbar-form-sm navbar-left" role="search"
               data-uib-collapse="isCollapsed">
@@ -32,37 +41,5 @@
                 </div>
             </div>
         </form>
-        <ul class="nav navbar-nav navbar-right box-shadow"
-            data-uib-collapse="isCollapsed">
-            <li class="dropdown" data-uib-dropdown data-is-open="status.isopen"
-                data-ng-if="visitor">
-                <a href id="visitor_item" class="dropdown-toggle clear"
-                   role="button" data-uib-dropdown-toggle
-                   data-ng-disabled="disabled">
-
-                <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
-                    <img data-ng-src="{{ visitor.thumb }}"
-                         alt="{{ visitor.username }}">
-                    <i class="on md b-white bottom"></i>
-                </span>
-                    <span class="hidden-sm hidden-md">{{ visitor.username }}</span>
-                    <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu animated fadeInRight w"
-                    data-uib-dropdown-menu role="menu"
-                    aria-labelledby="visitor_item">
-                    <li role="menuitem"><a data-ng-href="#!/profile/">
-                        <i class="fa fa-user"></i> My Profile</a>
-                    </li>
-                    <li class="divider"></li>
-                    <li role="menuitem">
-                        <a data-ng-click="logout()" data-ng-href="#!/">
-                            <i class="fa fa-sign-out"></i> Logout
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
     </div>
 </nav>
-

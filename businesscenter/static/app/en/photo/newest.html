@@ -6,8 +6,8 @@
                 <a data-ng-href="#!/photo/{{ photo.id }}">
                     <img data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
                 </a>
-                <p class="b-b b-light font-bold small" data-ng-if="photo.title">{{ photo.title }}</p>
-                <p class="b-b b-light small" data-ng-if="photo.descr"> {{ photo.descr }}</p>
+                <p class="b-b b-light font-bold" data-ng-if="photo.title">{{ photo.title }}</p>
+                <p class="b-b b-light" data-ng-if="photo.descr"> {{ photo.descr }}</p>
                 <div class="b-b b-light m-b-xs wrapper-xs" style="padding-bottom: 20px;">
                     <a href="" class="pull-left thumb-xs avatar m-r">
                       <img data-ng-src="{{ photo.owner_thumb }}" alt="{{ photo.owner_name }}" class="img-circle">
