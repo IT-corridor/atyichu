@@ -1,2 +1,2 @@
 angular.module('constants', [])
-.constant('PATH', '/static/app/en/');
+.constant('PATH', '/static/app/zh/');
