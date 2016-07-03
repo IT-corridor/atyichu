@@ -114,3 +114,5 @@ crashlytics-build.properties
 
 /businesscenter/static/atheme/
 /businesscenter/static/theme_deprecated/
+
+* .json
