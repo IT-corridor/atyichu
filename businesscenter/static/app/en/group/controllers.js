@@ -49,6 +49,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
 
         $scope.enough = false;
         angular.element($window).bind('scroll', function() {
+            /* TODO: This func repeats for 3-4 times, make it beautiful*/
             if (!$scope.enough){
                 var bodyHeight = this.document.body.scrollHeight;
                 if (bodyHeight == (this.pageYOffset + this.innerHeight)){
