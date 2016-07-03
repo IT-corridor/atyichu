@@ -21,7 +21,8 @@ app.factory('httpRequestInterceptor', function () {
     };
 });
 app.run(function($rootScope) {
-    $rootScope.site = 'atyichu.cn';
+    //$rootScope.site = 'atyichu.cn';
+    $rootScope.site = '哎特衣橱';
     $rootScope.THEME = '/static/theme/';
 });
 app.config(function ($httpProvider) {
