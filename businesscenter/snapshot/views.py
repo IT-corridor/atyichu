@@ -398,10 +398,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def newest(self, request, *args, **kwargs):
         """ Providing a newest list of public groups photos """
-        qs = Photo.objects.filter(Q(group__is_private=False),
-                                  ~Q(visitor_id=request.user.id))\
+        qs = Photo.objects.filter(Q(group__is_private=False))\
             .order_by('-create_date', 'pk').distinct()
-
+        # ~Q(visitor_id=request.user.id)
         page = self.paginate_queryset(qs)
         if page is not None:
             serializer = self.get_serializer(page, many=True)

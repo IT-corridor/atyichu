@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from . import models
 from visitor.serializers import WeixinSerializer
-from django.template.defaultfilters import timesince
+from django.template.defaultfilters import timesince, truncatechars_html
 
 
 class MirrorSerializer(serializers.ModelSerializer):
@@ -30,10 +30,15 @@ class PhotoListSerializer(serializers.ModelSerializer):
                                              read_only=True)
     owner_name = serializers.CharField(source='visitor', read_only=True)
     activity = serializers.SerializerMethodField(read_only=True)
-
+    descr = serializers.SerializerMethodField(read_only=True)
+    owner_thumb = serializers.ImageField(source='visitor.thumb',
+                                         read_only=True)
 
     def get_activity(self, obj):
         return timesince(obj.modify_date)
+
+    def get_descr(self, obj):
+        return truncatechars_html(obj.description, 150)
 
     class Meta:
         model = models.Photo

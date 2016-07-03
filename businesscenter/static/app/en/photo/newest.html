@@ -4,16 +4,22 @@
         <div class="pinGrid">
             <div class="pin animate" data-ng-repeat="photo in r.results">
                 <a data-ng-href="#!/photo/{{ photo.id }}">
-                    <img data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}">
+                    <img data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
                 </a>
-                <h2>{{ ( photo.title ) ? photo.title : 'Untitled' }}</h2>
-                <p>{{ photo.create_date | date : 'longDate': '+0800'}}
-                    <span class="pull-right text-muted">by <i class="fa fa-user">&nbsp;{{ photo.owner_name }}</i></span></p>
+                <h2 class="b-b b-light" data-ng-if="photo.title">{{ photo.title }}</h2>
+                <p class="b-b b-light" data-ng-if="photo.descr"> {{ photo.descr }}</p>
+                <div class="b-b b-light m-b-xs wrapper-xs" style="padding-bottom: 20px;">
+                    <a href="" class="pull-left thumb avatar m-r">
+                      <img data-ng-src="{{ photo.owner_thumb }}" alt="{{ photo.owner_name }}" class="img-circle">
+                    </a>
+                    <div class="clear">
+                      <div><a href="">{{ photo.owner_name }}</a></div>
+                    </div>
+                </div>
                 <ul class="list-inline text-muted text-center small">
-                    <li><i class="fa fa-clock-o fa-lg"></i> {{ photo.activity }}
-                    </li>
-                    <li><i class="fa fa-comments"></i> {{ photo.comment_count }}
-                    </li>
+                    <li><i class="fa fa-clock-o fa-lg"></i> {{ photo.activity }}</li>
+                    <li><i class="fa fa-comments"></i> {{ photo.comment_count }}</li>
+                    <li><a data-ng-click="like($index, photo.id)"><i class="fa fa-heart"></i> {{ photo.like }}</a></li>
                 </ul>
             </div>
         </div>

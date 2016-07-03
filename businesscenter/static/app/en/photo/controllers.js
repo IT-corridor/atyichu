@@ -188,5 +188,16 @@ angular.module('photo.controllers', ['photo.services'])
                 }
             );
         }
+
+        $scope.like = function(index, photo_id){
+            Photo.like({pk: photo_id},
+                function(success){
+                    $scope.r.results[index].like = success.like;
+                },
+                function(error){
+                    $rootScope.alerts.push({ type: 'danger', msg: 'You have like it already!'});
+                }
+            );
+        }
     }
 ]);
