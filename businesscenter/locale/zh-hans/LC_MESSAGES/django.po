@@ -1,0 +1,536 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-07-03 15:16+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: account/apps.py:9
+msgid "Account"
+msgstr ""
+
+#: account/models.py:17 visitor/models.py:19
+msgid "Avatar"
+msgstr ""
+
+#: account/models.py:20 catalog/models.py:106 snapshot/models.py:123
+#: visitor/models.py:22
+msgid "Thumbnail"
+msgstr ""
+
+#: account/models.py:27
+msgid "Vendor"
+msgstr ""
+
+#: account/models.py:28
+msgid "Vendors"
+msgstr ""
+
+#: account/models.py:32 catalog/models.py:11 catalog/models.py:73
+#: catalog/models.py:116 snapshot/models.py:49 snapshot/models.py:112
+#: snapshot/models.py:165 snapshot/models.py:201
+msgid "Title"
+msgstr ""
+
+#: account/models.py:41 account/models.py:50
+msgid "State"
+msgstr ""
+
+#: account/models.py:42
+msgid "States"
+msgstr ""
+
+#: account/models.py:53 account/models.py:62
+msgid "City"
+msgstr ""
+
+#: account/models.py:54
+msgid "Cities"
+msgstr ""
+
+#: account/models.py:65 account/models.py:66
+msgid "Districts"
+msgstr ""
+
+#: account/models.py:74
+msgid "Logo"
+msgstr ""
+
+#: account/models.py:76
+msgid "District"
+msgstr ""
+
+#: account/models.py:77
+msgid "Street"
+msgstr ""
+
+#: account/models.py:78
+msgid "Building name"
+msgstr ""
+
+#: account/models.py:79
+msgid "Building number"
+msgstr ""
+
+#: account/models.py:80
+msgid "Apartments"
+msgstr ""
+
+#: account/models.py:81
+msgid "Brand name"
+msgstr ""
+
+#: account/models.py:83
+msgid "Owner"
+msgstr ""
+
+#: account/serializers.py:86 account/serializers.py:97
+msgid "This field is required."
+msgstr ""
+
+#: account/serializers.py:118 account/serializers.py:173
+msgid "Passwords do not match"
+msgstr ""
+
+#: account/views.py:48
+msgid "FORBIDDEN"
+msgstr ""
+
+#: account/views.py:113
+msgid "Missed parameter {}"
+msgstr ""
+
+#: account/views.py:117
+msgid "Invalid combination of username and password"
+msgstr ""
+
+#: catalog/apps.py:9
+msgid "Catalog"
+msgstr ""
+
+#: catalog/models.py:12
+msgid "Priority"
+msgstr ""
+
+#: catalog/models.py:13 catalog/models.py:82
+msgid "Store"
+msgstr ""
+
+#: catalog/models.py:25 catalog/models.py:32
+msgid "Category"
+msgstr ""
+
+#: catalog/models.py:26
+msgid "Categories"
+msgstr ""
+
+#: catalog/models.py:35 catalog/models.py:78
+msgid "Kind"
+msgstr ""
+
+#: catalog/models.py:36
+msgid "Kinds"
+msgstr ""
+
+#: catalog/models.py:43 catalog/models.py:79
+msgid "Brand"
+msgstr ""
+
+#: catalog/models.py:44
+msgid "Brands"
+msgstr ""
+
+#: catalog/models.py:49
+msgid "Html code"
+msgstr ""
+
+#: catalog/models.py:52 catalog/models.py:80
+msgid "Color"
+msgstr ""
+
+#: catalog/models.py:53
+msgid "Colors"
+msgstr ""
+
+#: catalog/models.py:60 catalog/models.py:81
+msgid "Size"
+msgstr ""
+
+#: catalog/models.py:61
+msgid "Sizes"
+msgstr ""
+
+#: catalog/models.py:68
+msgid "Winter"
+msgstr ""
+
+#: catalog/models.py:69
+msgid "Spring"
+msgstr ""
+
+#: catalog/models.py:70
+msgid "Summer"
+msgstr ""
+
+#: catalog/models.py:71
+msgid "Autumn"
+msgstr ""
+
+#: catalog/models.py:74
+msgid "Year"
+msgstr ""
+
+#: catalog/models.py:75
+msgid "Season"
+msgstr ""
+
+#: catalog/models.py:76
+msgid "Date added"
+msgstr ""
+
+#: catalog/models.py:77 snapshot/models.py:61 snapshot/models.py:116
+#: snapshot/models.py:146 snapshot/models.py:170
+msgid "Date modified"
+msgstr ""
+
+#: catalog/models.py:91 catalog/models.py:103 catalog/models.py:117
+msgid "Commodity"
+msgstr ""
+
+#: catalog/models.py:92
+msgid "Commodities"
+msgstr ""
+
+#: catalog/models.py:104 snapshot/models.py:120 snapshot/models.py:135
+#: snapshot/models.py:141
+msgid "Photo"
+msgstr ""
+
+#: catalog/models.py:110 catalog/models.py:111
+msgid "Gallery"
+msgstr ""
+
+#: catalog/models.py:120
+msgid "Tag"
+msgstr ""
+
+#: catalog/models.py:121
+msgid "Tags"
+msgstr ""
+
+#: catalog/validators.py:12 utils/validators.py:12
+#, python-format
+msgid "Max file size is %(limit_value)s MB."
+msgstr ""
+
+#: settings/base.py:114
+msgid "English"
+msgstr ""
+
+#: settings/base.py:115
+msgid "Simplified Chinese"
+msgstr ""
+
+#: settings/base.py:116
+msgid "Traditional Chinese"
+msgstr ""
+
+#: settings/base.py:117
+msgid "Russian"
+msgstr ""
+
+#: snapshot/models.py:51
+msgid "Mirror`s owner"
+msgstr ""
+
+#: snapshot/models.py:52
+msgid "Mirror`s last user"
+msgstr ""
+
+#: snapshot/models.py:53
+msgid "Location"
+msgstr ""
+
+#: snapshot/models.py:54
+msgid "Latitude"
+msgstr ""
+
+#: snapshot/models.py:56
+msgid "Longitude"
+msgstr ""
+
+#: snapshot/models.py:59
+msgid "Device tokens"
+msgstr ""
+
+#: snapshot/models.py:60 snapshot/models.py:115 snapshot/models.py:145
+#: snapshot/models.py:169
+msgid "Date created"
+msgstr ""
+
+#: snapshot/models.py:62
+msgid "Date locked"
+msgstr ""
+
+#: snapshot/models.py:63
+msgid "Locked"
+msgstr ""
+
+#: snapshot/models.py:65
+msgid "Last login"
+msgstr ""
+
+#: snapshot/models.py:96 snapshot/models.py:110
+msgid "Mirror"
+msgstr ""
+
+#: snapshot/models.py:97
+msgid "Mirrors"
+msgstr ""
+
+#: snapshot/models.py:109
+msgid "Photo owner"
+msgstr ""
+
+#: snapshot/models.py:113 snapshot/models.py:166
+msgid "Description"
+msgstr ""
+
+#: snapshot/models.py:125
+msgid "Cropped photo"
+msgstr ""
+
+#: snapshot/models.py:127
+msgid "Cover"
+msgstr ""
+
+#: snapshot/models.py:129 snapshot/models.py:147
+msgid "Like counter"
+msgstr ""
+
+#: snapshot/models.py:136
+msgid "Photos"
+msgstr ""
+
+#: snapshot/models.py:143
+msgid "Author"
+msgstr ""
+
+#: snapshot/models.py:144
+msgid "Message"
+msgstr ""
+
+#: snapshot/models.py:154
+msgid "Comment"
+msgstr ""
+
+#: snapshot/models.py:155
+msgid "Comments"
+msgstr ""
+
+#: snapshot/models.py:168
+msgid "Private"
+msgstr ""
+
+#: snapshot/models.py:171
+msgid "Group owner"
+msgstr ""
+
+#: snapshot/models.py:177 snapshot/models.py:185 snapshot/models.py:202
+msgid "Group"
+msgstr ""
+
+#: snapshot/models.py:178
+msgid "Groups"
+msgstr ""
+
+#: snapshot/models.py:187 snapshot/models.py:203 visitor/apps.py:11
+#: visitor/models.py:38
+msgid "Visitor"
+msgstr ""
+
+#: snapshot/models.py:194
+msgid "Collaborator"
+msgstr ""
+
+#: snapshot/models.py:195
+msgid "Collaborators"
+msgstr ""
+
+#: snapshot/models.py:209
+msgid "Group tag"
+msgstr ""
+
+#: snapshot/models.py:210
+msgid "Group tags"
+msgstr ""
+
+#: snapshot/templates/index.html:28
+msgid "This site requires JavaScript to be enabled"
+msgstr ""
+
+#: snapshot/views.py:121
+msgid "Mirror id required"
+msgstr ""
+
+#: snapshot/views.py:130
+msgid "Mirror does not exists"
+msgstr ""
+
+#: snapshot/views.py:135
+msgid "Mirror is already locked"
+msgstr ""
+
+#: snapshot/views.py:158 snapshot/views.py:277
+msgid "Mirror is offline"
+msgstr ""
+
+#: snapshot/views.py:160
+msgid "Mirror is unavailable"
+msgstr ""
+
+#: snapshot/views.py:166
+msgid "Mirror not available"
+msgstr ""
+
+#: snapshot/views.py:194 snapshot/views.py:239 snapshot/views.py:336
+msgid "Checksum error"
+msgstr ""
+
+#: snapshot/views.py:198
+msgid "Token is required"
+msgstr ""
+
+#: snapshot/views.py:202
+msgid "Mirror token does not exist"
+msgstr ""
+
+#: snapshot/views.py:270
+msgid "The mirror is unlocked"
+msgstr ""
+
+#: snapshot/views.py:274
+msgid "The mirror is overtime"
+msgstr ""
+
+#: snapshot/views.py:282
+msgid "You have to wait for 2 seconds"
+msgstr ""
+
+#: snapshot/views.py:340
+msgid "Missed argument  - pk"
+msgstr ""
+
+#: snapshot/views.py:346 snapshot/views.py:363
+msgid "Photo does not exist"
+msgstr ""
+
+#: snapshot/views.py:368
+msgid "Only the owner can edit photo"
+msgstr ""
+
+#: snapshot/views.py:389
+msgid "You have liked that photo."
+msgstr ""
+
+#: snapshot/views.py:441
+msgid "You have liked that comment before."
+msgstr ""
+
+#: snapshot/views.py:516
+msgid "File image required"
+msgstr ""
+
+#: snapshot/views.py:561 snapshot/views.py:581 snapshot/views.py:623
+msgid "{} parameter is required"
+msgstr ""
+
+#: snapshot/views.py:563
+msgid "Matching user does not exists"
+msgstr ""
+
+#: snapshot/views.py:583
+msgid "Matching collaborator does not exists"
+msgstr ""
+
+#: vendor_admin/admin.py:9
+msgid "Welcome to the business center"
+msgstr ""
+
+#: vendor_admin/admin.py:10
+msgid "Business Center"
+msgstr ""
+
+#: vendor_admin/admin.py:11
+msgid "Vendor`s Dashboard"
+msgstr ""
+
+#: visitor/models.py:12
+msgid "Weixin open id"
+msgstr ""
+
+#: visitor/models.py:14
+msgid "4-30 characters, Chinese and English letters, numbers, -, _"
+msgstr ""
+
+#: visitor/models.py:25
+msgid "Weixin Access Token"
+msgstr ""
+
+#: visitor/models.py:26
+msgid "Weixin Refresh Token"
+msgstr ""
+
+#: visitor/models.py:27
+msgid "Token expires in"
+msgstr ""
+
+#: visitor/models.py:28
+msgid "Token date"
+msgstr ""
+
+#: visitor/models.py:39
+msgid "Visitors"
+msgstr ""
+
+#: visitor/validators.py:9
+msgid ""
+"Enter a valid weixin id. This value may contain only English and Chinese "
+"letters, numbers and -, _ characters."
+msgstr ""
+
+#: visitor/views.py:33
+msgid "Missed param"
+msgstr ""
+
+#: visitor/views.py:35
+msgid "User does not exists"
+msgstr ""
+
+#: visitor/views.py:69
+msgid "Verification code required"
+msgstr ""
+
+#: visitor/views.py:73
+msgid "Code is incorrect or has expired"
+msgstr ""
+
+#: visitor/views.py:114
+msgid "You don`t have weixin code."
+msgstr ""
+
+#: visitor/views.py:120
+msgid "You got error trying to get openid"
+msgstr ""
