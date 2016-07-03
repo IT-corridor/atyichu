@@ -1,0 +1,92 @@
+<div data-ng-if="group" class="panel panel default" style="background-color: white;">
+    <div class="bg-light lter b-b wrapper-md">
+        <h1 class="m-n font-normal h1" align="center">{{ group.title }}</h1>
+    </div>
+    <div class="row wrapper-xs">
+        <div class="col-md-7 col-xs-7">
+            <div class="pull-left thumb-sm avatar b-3x m-r"><img class="img-circle img-responsive w-2x" data-ng-src="{{ visitor.thumb }}"
+                                        alt="{{ visitor.username }}">
+            </div>
+            <div class="clearfix">
+                <div class="h3 m-t-xs m-b-xs">{{ visitor.username }}</div>
+            </div>
+        </div>
+        <div class="col-md-5 col-xs-5" data-ng-if="can_edit">
+            <div class="pull-right clearfix">
+                <a class="btn m-t-xs w-xs btn-info btn-rounded" data-ng-href="#!group/{{ group.id }}/manage">EDIT</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container" data-ng-if="group">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <p class="text-center"><a class="btn btn-success" data-ng-href="#!group/{{ group.id }}/photo/add">UPLOAD A PHOTO</a></p>
+        </div>
+    </div>
+    <div class="row" data-ng-if="group.tags.length > 0">
+        <div class="col-md-10 col-md-offset2">
+            <hr>
+            <h4>Tags:</h4>
+            <ul class="list-inline">
+                <li data-ng-repeat="tag in group.tags">
+                    <span class="label label-default">{{ tag.title }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" data-ng-if="group.members.length > 0">
+        <div class="col-md-10 col-md-offset2">
+            <hr>
+            <h4>Members:</h4>
+            <ul class="list-inline">
+                <li data-ng-repeat="member in group.members">
+                    <span class="label label-default">{{ member.username }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<hr class="m-t">
+
+<div class="pinGridWrapper" data-ng-if="r">
+    <div class="pinGrid">
+        <div class="pin" data-ng-repeat="photo in r.results">
+            <a data-ng-href="#!/photo/{{ photo.id }}">
+                <img data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}">
+            </a>
+            <h2>{{ ( photo.title ) ? photo.title : 'Untitled' }}</h2>
+            <p>{{ photo.create_date | date : 'longDate': '+0800'}}
+                <span class="pull-right text-muted">by <i class="fa fa-user">&nbsp;{{ photo.owner_name }}</i></span></p>
+            <ul class="list-inline text-muted text-center small">
+                <li><i class="fa fa-clock-o fa-lg"></i> {{ photo.activity }}
+                </li>
+                <li><i class="fa fa-comments"></i> {{ photo.comment_count }}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="text-center m-t">
+    <p>
+        <button data-ng-disabled="enough" data-ng-click="get_more()"
+                class="btn btn-lg btn-primary">Load more
+        </button>
+    </p>
+    <ul class="pagination m-t">
+        <li><a data-ng-href="{{ page_link }}page=1">&lt;&lt;</a></li>
+        <li><a data-ng-if="r.previous_page"
+               data-ng-href="{{ page_link }}page={{ r.previous_page }}">
+            &lt;</a></li>
+        <li data-ng-repeat="i in prev_pages"><a
+                data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
+        <li class="active"><a href="#">{{ r.current }}</a></li>
+        <li data-ng-repeat="i in next_pages"><a
+                data-ng-href="{{ page_link }}page={{ i }}">{{ i }}</a></li>
+        <li><a data-ng-if="r.next_page"
+               data-ng-href="{{ page_link }}page={{ r.next_page }}">&gt;</a>
+        </li>
+        <li><a data-ng-href="{{ page_link }}page={{ r.total }}">&gt;&gt;</a>
+        </li>
+    </ul>
+</div>
