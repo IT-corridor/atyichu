@@ -46,6 +46,7 @@ function($rootScope, $window, $q, Signature){
         return inner.promise;
     };
     WXI.set_on_share = function(description, image_url){
+        console.log(description, image_url);
         defer.promise.then(function success(){
             var page_title = '@衣橱：女神岂能随意——非常有趣的掌上衣橱！';
 

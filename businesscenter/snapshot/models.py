@@ -124,7 +124,7 @@ class Photo(models.Model):
                               null=True, blank=True)
     crop = models.ImageField(_('Cropped photo'), upload_to=path_crop,
                              null=True, blank=True)
-    cover = models.ImageField(_('Cover'), upload_to=path_crop,
+    cover = models.ImageField(_('Cover'), upload_to=path_cover,
                               null=True, blank=True)
     like = models.PositiveIntegerField(_('Like counter'), default=0)
 

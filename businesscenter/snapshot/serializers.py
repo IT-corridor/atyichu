@@ -87,10 +87,23 @@ class GroupSerializer(serializers.ModelSerializer):
 
     activity = serializers.SerializerMethodField(read_only=True)
     owner_name = serializers.CharField(source='owner', read_only=True)
-    thumb = serializers.SerializerMethodField(read_only=True)
 
     def get_activity(self, obj):
         return timesince(obj.modify_date)
+
+    class Meta:
+        model = models.Group
+
+
+class GroupListSerializer(GroupSerializer):
+
+    overview = serializers.SerializerMethodField(read_only=True)
+    thumb = serializers.SerializerMethodField(read_only=True)
+
+    def get_overview(self, obj):
+        qs = obj.photo_set.all()[1:4]
+        serializer = PhotoSimpleSerializer(instance=qs, many=True)
+        return serializer.data
 
     def get_thumb(self, obj):
         photo = obj.photo_set.first()
@@ -102,23 +115,17 @@ class GroupSerializer(serializers.ModelSerializer):
         model = models.Group
 
 
-class GroupListSerializer(GroupSerializer):
-
-    overview = serializers.SerializerMethodField(read_only=True)
-
-    def get_overview(self, obj):
-        qs = obj.photo_set.all()[1:4]
-        serializer = PhotoSimpleSerializer(instance=qs, many=True)
-        return serializer.data
-
-    class Meta:
-        model = models.Group
-
-
 class GroupDetailSerializer(GroupSerializer):
 
     members = MemberSerializer(source='member_set', many=True, read_only=True)
     tags = TagSerializer(source='tag_set', many=True, read_only=True)
+    thumb = serializers.SerializerMethodField(read_only=True)
+
+    def get_thumb(self, obj):
+        photo = obj.photo_set.first()
+        if photo and photo.thumb.name:
+            return photo.thumb.url
+        return
 
     class Meta:
         model = models.Group
