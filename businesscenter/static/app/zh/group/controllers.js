@@ -119,9 +119,9 @@ angular.module('group.controllers', ['group.services', 'group.directives',
     }
 ])
 .controller('CtrlGroupPhotoList', ['$scope', '$rootScope','$http', '$window',
-'$location', '$routeParams','GetPageLink' , 'Group', 'IsMember', 'Photo',
+'$location', '$routeParams','GetPageLink' , 'Group', 'IsMember', 'Photo', 'WXI',
     function($scope, $rootScope, $http, $window, $location, $routeParams,
-    GetPageLink, Group, IsMember, Photo) {
+    GetPageLink, Group, IsMember, Photo, WXI) {
 
         $scope.can_edit = false;
         $rootScope.photo_refer = $location.url();
