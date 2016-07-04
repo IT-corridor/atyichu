@@ -57,7 +57,7 @@
                 </a>
                 <p class="b-b b-light font-bold" data-ng-if="photo.title">{{ photo.title }}</p>
                 <p class="b-b b-light" data-ng-if="photo.descr"> {{ photo.descr }}</p>
-                <div class="b-b b-light m-b-xs wrapper-xs" style="padding-bottom: 20px;">
+                <div class="b-b b-light m-b-xs wrapper-xs" style="padding-bottom: 20px;" aria-hidden="true" role="presentation">
                     <a href="" class="pull-left thumb-xs avatar m-r">
                       <img data-ng-src="{{ photo.owner_thumb }}" alt="{{ photo.owner_name }}" class="img-circle">
                     </a>
@@ -73,7 +73,7 @@
         </div>
     </div>
     <div class="row" data-ng-if="enough">
-        <div class="col-md-12 col-xs-12">
+        <div class="col-md-12 col-xs-12" aria-hidden="true" role="presentation">
             <p class="text-center"><img class="inverted-logo" data-ng-src="{{ THEME }}images/logo_circle_48.png"></p>
         </div>
     </div>
