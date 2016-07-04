@@ -46,36 +46,37 @@ function($rootScope, $window, $q, Signature){
         return inner.promise;
     };
     WXI.set_on_share = function(description, image_url){
-        var page_title = '@衣橱：女神岂能随意——非常有趣的掌上衣橱！';
+        defer.promise.then(function success(){
+            var page_title = '@衣橱：女神岂能随意——非常有趣的掌上衣橱！';
 
-        wx.onMenuShareTimeline({
-            title: page_title, // Sharing title
-            //link: '', // Sharing link
-            imgUrl: image_url, // Sharing image URL
-            success: function () {
-                // Callback function executed after a user confirms sharing
-                $rootScope.alerts.push({ type: 'info', msg: '成功'});
-            },
-            cancel: function () {
-                // Callback function executed after a user cancels sharing
-                $rootScope.alerts.push({ type: 'danger', msg: '失败'});
-            }
+            wx.onMenuShareTimeline({
+                title: page_title, // Sharing title
+                //link: '', // Sharing link
+                imgUrl: image_url, // Sharing image URL
+                success: function () {
+                    // Callback function executed after a user confirms sharing
+                    $rootScope.alerts.push({ type: 'info', msg: '成功'});
+                },
+                cancel: function () {
+                    // Callback function executed after a user cancels sharing
+                    $rootScope.alerts.push({ type: 'danger', msg: '失败'});
+                }
+            });
+
+            wx.onMenuShareAppMessage({
+                title: page_title, // Sharing title
+                desc: description, // Sharing description
+                imgUrl: image_url, // Sharing image URL
+                success: function () {
+                    $rootScope.alerts.push({ type: 'info', msg: '成功'});
+                },
+                cancel: function () {
+                    $rootScope.alerts.push({ type: 'danger', msg: '失败'});
+                }
+            });
+
         });
-
-        wx.onMenuShareAppMessage({
-            title: page_title, // Sharing title
-            desc: description, // Sharing description
-            imgUrl: image_url, // Sharing image URL
-            success: function () {
-                $rootScope.alerts.push({ type: 'info', msg: '成功'});
-            },
-            cancel: function () {
-                $rootScope.alerts.push({ type: 'danger', msg: '失败'});
-            }
-        });
-
     }
-
 
     return WXI;
 }]);
