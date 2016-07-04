@@ -153,7 +153,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                 var photo_desc = (success.description) ? success.description : '大家快来看，秀出你的品味和格调!';
                 var descr = title + ' ' + photo_desc;
 
-                WXI.set_on_share(descr, success.thumb+'?'+ Math.floor((Math.random()*1000)));
+                WXI.set_on_share(descr, success.thumb);
             }
         );
         var queryParams = {pk: $routeParams.pk, page: $routeParams.page};

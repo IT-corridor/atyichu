@@ -46,7 +46,6 @@ function($rootScope, $window, $q, Signature){
         return inner.promise;
     };
     WXI.set_on_share = function(description, image_url){
-        console.log(description, image_url);
         defer.promise.then(function success(){
             var page_title = '@衣橱：女神岂能随意——非常有趣的掌上衣橱！';
 
@@ -58,12 +57,8 @@ function($rootScope, $window, $q, Signature){
                     // Callback function executed after a user confirms sharing
                     $rootScope.alerts.push({ type: 'info', msg: '成功'});
                     $rootScope.$apply();
-                },
-                cancel: function () {
-                    // Callback function executed after a user cancels sharing
-                    $rootScope.alerts.push({ type: 'danger', msg: '失败'});
-                    $rootScope.$apply();
                 }
+
             });
 
             wx.onMenuShareAppMessage({
@@ -72,10 +67,6 @@ function($rootScope, $window, $q, Signature){
                 imgUrl: image_url, // Sharing image URL
                 success: function () {
                     $rootScope.alerts.push({ type: 'info', msg: '成功'});
-                    $rootScope.$apply();
-                },
-                cancel: function () {
-                    $rootScope.alerts.push({ type: 'danger', msg: '失败'});
                     $rootScope.$apply();
                 }
             });
