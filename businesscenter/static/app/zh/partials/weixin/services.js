@@ -51,7 +51,7 @@ function($rootScope, $window, $q, Signature){
         wx.onMenuShareTimeline({
             title: page_title, // Sharing title
             //link: '', // Sharing link
-            imgUrl: imgUrl, // Sharing image URL
+            imgUrl: image_url, // Sharing image URL
             success: function () {
                 // Callback function executed after a user confirms sharing
                 $rootScope.alerts.push({ type: 'info', msg: '成功'});
