@@ -113,7 +113,6 @@ angular.module('photo.controllers', ['photo.services'])
 .controller('CtrlPhotoEdit', ['$scope', '$rootScope', '$http', '$routeParams',
                                 '$window', '$location', 'Photo',
     function($scope, $rootScope, $http, $routeParams, $window, $location, Photo) {
-        $rootScope.title = 'Edit Photo Data';
         function handle_error(error){
             $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
             $location.path('/photo');

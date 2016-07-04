@@ -10,8 +10,8 @@ angular.module('app.route', [
     function($routeProvider, PATH) {
         $routeProvider.
         when('/', {
-            templateUrl: PATH + 'common/common.html',
-            controller: 'CtrlDummy'}).
+            templateUrl: PATH + 'group/photo_list.html',
+            controller: 'CtrlPhotoNewest'}).
         when('/mirror/', {
             templateUrl: PATH + 'mirror/list.html',
             controller: 'CtrlMirrorList'}).
