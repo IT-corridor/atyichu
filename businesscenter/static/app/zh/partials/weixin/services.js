@@ -56,10 +56,12 @@ function($rootScope, $window, $q, Signature){
                 success: function () {
                     // Callback function executed after a user confirms sharing
                     $rootScope.alerts.push({ type: 'info', msg: '成功'});
+                    $rootScope.$apply();
                 },
                 cancel: function () {
                     // Callback function executed after a user cancels sharing
                     $rootScope.alerts.push({ type: 'danger', msg: '失败'});
+                    $rootScope.$apply();
                 }
             });
 
@@ -69,9 +71,11 @@ function($rootScope, $window, $q, Signature){
                 imgUrl: image_url, // Sharing image URL
                 success: function () {
                     $rootScope.alerts.push({ type: 'info', msg: '成功'});
+                    $rootScope.$apply();
                 },
                 cancel: function () {
                     $rootScope.alerts.push({ type: 'danger', msg: '失败'});
+                    $rootScope.$apply();
                 }
             });
 
