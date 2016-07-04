@@ -34,9 +34,9 @@ angular.module('photo.controllers', ['photo.services'])
     }
 ])
 .controller('CtrlPhotoDetail', ['$scope', '$rootScope', '$http', '$routeParams',
-                                '$window', '$location', 'Photo', 'Comment',
+                                '$window', '$location', 'Photo', 'Comment', 'WXI',
     function($scope, $rootScope, $http, $routeParams, $window, $location,
-    Photo, Comment) {
+    Photo, Comment, WXI) {
         $scope.is_owner = false;
         function handle_error(error){
             $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
@@ -50,6 +50,10 @@ angular.module('photo.controllers', ['photo.services'])
                 if ($rootScope.visitor.pk == success.visitor){
                     $scope.is_owner = true;
                 }
+                var title = (success.title) ? success.title : '品味和格调兼具';
+                var photo_desc = (success.description) ? success.description : '大家快来看，秀出你的品味和格调!';
+                var descr = title + ' ' + photo_desc;
+                WXI.set_on_share(descr, success.photo);
             },
             handle_error
         );
