@@ -96,14 +96,11 @@ def index(request):
 
 
 def openid(request):
-    url = request.GET.get("url")
+    # url = request.GET.get("url")
 
     redirect = reverse('index')
 
-    if url == '2':
-        response = HttpResponseRedirect(redirect + '#!/photo/')
-    else:
-        response = HttpResponseRedirect(redirect + '#!/mirror/')
+    response = HttpResponseRedirect(redirect + '#!/')
 
     if request.user.is_authenticated():
         return response
