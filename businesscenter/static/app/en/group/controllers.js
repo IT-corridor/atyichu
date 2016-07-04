@@ -52,7 +52,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         var window = angular.element($window);
 
         function scroll_more(){
-            if (!$scope.enough){
+            if (!$scope.enough && $scope.page != undefined){
                 var bodyHeight = this.document.body.scrollHeight;
                 if (bodyHeight == (this.pageYOffset + this.innerHeight)){
                     $scope.get_more();
@@ -130,7 +130,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         var window = angular.element($window);
 
         function scroll_more(){
-            if (!$scope.enough){
+            if (!$scope.enough && $scope.page != undefined){
                 var bodyHeight = this.document.body.scrollHeight;
                 if (bodyHeight == (this.pageYOffset + this.innerHeight)){
                     $scope.get_more();
