@@ -52,7 +52,7 @@ angular.module('photo.controllers', ['photo.services'])
                 }
                 var title = (success.title) ? success.title : '品味和格调兼具';
                 var photo_desc = (success.description) ? success.description : '大家快来看，秀出你的品味和格调!';
-                var descr = title + ' ' + photo_desc;
+                var descr = title + ': ' + photo_desc;
                 WXI.set_on_share(descr, success.photo);
             },
             handle_error
