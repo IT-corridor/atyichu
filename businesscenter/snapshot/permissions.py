@@ -63,6 +63,8 @@ class IsPhotoOwnerOrReadOnly(VisitorBasic):
 
         if view.action == 'partial_update' and 'checksum' in request.data:
             return True
+        if view.action == 'clone':
+            return True
         user = request.user
         if user.id == obj.visitor_id:
             return True

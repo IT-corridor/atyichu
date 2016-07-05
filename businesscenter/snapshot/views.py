@@ -10,6 +10,7 @@ from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.base import ContentFile
 from django.core.exceptions import PermissionDenied
 from django.core.mail import mail_admins
 from django.db.models import F, Prefetch, Q
@@ -390,6 +391,13 @@ class PhotoViewSet(viewsets.ModelViewSet):
         else:
             obj.like = F('like') + 1
             obj.save()
+
+            original = obj.original
+            if original:
+                original.like = F('like') + 1
+                original.save()
+                self.request.session['photo_ids'] += [original.pk]
+
             self.request.session['photo_ids'] += [pk]
             data = {'like': self.get_object().like}
             status = 200
@@ -409,6 +417,25 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
+
+    @detail_route(methods=['post'])
+    def clone(self, request, *args, **kwargs):
+        """ Make a duplicate from existing photo record. GroupID required."""
+        if 'group' not in request.data:
+            raise ValidationError({'group': _('This parameter is required.')})
+        obj = self.get_object()
+        creator_id = obj.creator_id if obj.creator_id else obj.visitor_id
+        data = {'original_id': kwargs['pk'],
+                'creator_id': creator_id,
+                'photo': obj.photo,
+                'visitor': self.request.user.pk}
+        data.update(request.data)
+
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        # implement without photo storing (just link)
+        return Response(serializer.data, status=201)
 
 
 class CommentViewSet(viewsets.ModelViewSet):

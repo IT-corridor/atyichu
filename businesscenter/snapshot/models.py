@@ -128,8 +128,29 @@ class Photo(models.Model):
                               null=True, blank=True)
     like = models.PositiveIntegerField(_('Like counter'), default=0)
 
+    creator = models.ForeignKey(Visitor, verbose_name=_('Photo creator'),
+                                null=True, blank=True,
+                                related_name='+')
+
+    original = models.ForeignKey('self', null=True, blank=True,
+                                 verbose_name=_('Original'),
+                                 related_name='clones',
+                                 related_query_name='clone',
+                                 on_delete=models.SET_NULL)
+
     def __unicode__(self):
         return '{}: {}'.format(self.visitor, self.pk)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+
+        if not self.creator:
+            self.creator = self.visitor
+
+        super(Photo, self).save(force_insert, force_update,
+                                using, update_fields)
+
+
 
     class Meta:
         verbose_name = _('Photo')

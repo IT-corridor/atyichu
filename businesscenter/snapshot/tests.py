@@ -5,6 +5,7 @@ import hashlib
 import time
 import unittest
 from django.core.urlresolvers import reverse
+from django.core.files.base import File
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
@@ -190,19 +191,20 @@ class GroupTests(APITestCase):
         cls.group = Group.objects.create(owner=cls.owner, title='group 0')
         cls.group_private = Group.objects.create(owner=cls.owner, title='G 0',
                                                  is_private=True)
+        cls.group_cln = Group.objects.create(owner=cls.member, title='Clones')
         Member.objects.create(visitor=cls.member, group=cls.group_private)
         Tag.objects.create(title='Primal', visitor=cls.owner, group=cls.group)
         Tag.objects.create(title='Second', visitor=cls.member,
                            group=cls.group_private)
 
     def test_list_group_as_owner(self):
-        self.list_group(1, count=2)
+        self.list_group(1, count=3)
 
     def test_list_group_as_member(self):
-        self.list_group(2, count=2)
+        self.list_group(2, count=3)
 
     def test_list_group_as_not_member(self):
-        self.list_group(3, count=1)
+        self.list_group(3, count=2)
 
     def test_list_group_as_anon(self):
         self.list_group(expected_code=403)
@@ -439,3 +441,16 @@ class GroupTests(APITestCase):
         self.assertEqual(response.status_code, 201)
         self.client.logout()
 
+    def test_clone_photo(self):
+        with open(filepath, 'r') as fp:
+
+            photo = Photo.objects.create(photo=File(fp), group_id=2,
+                                         title='Original', visitor_id=1)
+            photo.save()
+        self.force_login(2)
+        url = reverse('snapshot:photo-clone', kwargs={'pk': 1})
+        data = {'group': self.group_cln.id}
+        response = self.client.post(url, data=data)
+
+        self.assertEqual(response.status_code, 201)
+        self.client.logout()
