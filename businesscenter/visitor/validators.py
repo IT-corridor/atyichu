@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
-validators = []
 
 
 def validate_weixin(value):

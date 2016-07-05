@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from .validators import validate_weixin
+from utils.validators import validate_weixin
 from utils.validators import SizeValidator
 
 
