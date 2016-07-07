@@ -16,18 +16,31 @@
                             data-ng-click="remove()"><i
                             class="fa fa-trash-o fa-2x"></i></button>
                 </li>
+                <li>
+                    <!-- !photo.original means that photo has not its original. And it is original by itself. -->
+                    <a class="btn btn-success" data-ng-if="!photo.original" data-ng-href="#!/photo/{{ photo.id }}/share/">
+                        <i class="fa fa-share-alt fa-2x"></i>
+                    </a>
+                    <a class="btn btn-success" data-ng-if="photo.original" data-ng-href="#!/photo/{{ photo.origin.id }}/share/">
+                        <i class="fa fa-share-alt fa-2x"></i>
+                    </a>
+                </li>
             </ul>
         </div>
         <div class="panel">
             <div>
-                <img class="img-responsive img-center"
-                     data-ng-src="{{ photo.photo }}"
-                     alt="{{ photo.title }}">
+                <img class="img-responsive img-center" data-ng-if="!photo.original"
+                     data-ng-src="{{ photo.photo }}" alt="{{ photo.title }}">
+                <img class="img-responsive img-center" data-ng-if="photo.original"
+                     data-ng-src="{{ photo.origin.photo }}" alt="{{ photo.origin.title }}">
             </div>
             <div class="wrapper-lg">
                 <h4 class="m-t-none">{{ (photo.title) ? photo.title : '' }}</h4>
                 <div data-ng-if="photo.description">
                     <p>{{ photo.description }}</p>
+                </div>
+                <div class="wrapper-xs" data-ng-if="photo.original">
+                    <a data-ng-href="#!/photo/{{ photo.origin.id }}/">Original is here</a>
                 </div>
                 <div class="line line-lg b-b b-light"></div>
                 <ul class="text-muted list-inline">
@@ -39,14 +52,15 @@
                         <a class="m-r-sm"> {{ photo.owner.username }}</a>
                     </li>
                     <li>
-                        <a href="" class="m-l-sm"><i
-                                class="fa fa-comment-o text-muted"></i>
+                        <a href="" class="m-l-sm">
+                            <i class="fa fa-comment-o text-muted"></i>
                             {{ photo.comments.length }}</a>
                     </li>
                     <li>
-                        <a data-ng-click="like_photo()"><i
-                                class="fa fa-heart"></i> {{ photo.like }}</a>
+                        <a data-ng-click="like_photo()">
+                            <i class="fa fa-heart"></i> {{ photo.like }}</a>
                     </li>
+                    <li><i class="fa fa-share-alt"></i> {{ photo.clone_count }}</li>
                 </ul>
             </div>
         </div>

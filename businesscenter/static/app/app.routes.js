@@ -27,6 +27,9 @@ angular.module('app.route', [
         when('/photo/:pk/edit', {
             templateUrl: PATH + 'photo/edit.html',
             controller: 'CtrlPhotoEdit'}).
+        when('/photo/:pk/share', {
+            templateUrl: PATH + 'photo/clone.html',
+            controller: 'CtrlPhotoClone'}).
         when('/profile', {
             templateUrl: PATH + 'user/user.html',
             controller: 'CtrlProfile'}).

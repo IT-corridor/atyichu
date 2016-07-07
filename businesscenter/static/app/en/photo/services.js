@@ -10,6 +10,7 @@ angular.module('photo.services', ['ngResource'])
             like: {method: 'GET', params: {action:'like'}},
             newest: {method: 'GET', params: {action: 'newest'}, responseType: 'json'},
             edit: {method: 'PATCH', params: {action: 'edit'}, responseType: 'json'},
+            clone: {method: 'POST', params: {action: 'clone'}, responseType: 'json'},
     });
 }])
 .factory('Comment', ['$resource', 'source_path',

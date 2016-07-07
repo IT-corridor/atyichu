@@ -14,6 +14,8 @@ angular.module('group.services', ['ngResource'])
             visitor_list: {method:'GET', params:{pk: null, action: 'visitor_list'},
                            responseType:'json', isArray:true},
             my: {method:'GET', params:{pk: null, action: 'my_groups'}, responseType:'json'},
+            my_short_list: {method:'GET', params:{pk: null, action: 'my_groups_short'},
+                responseType:'json', isArray: true},
     });
 }])
 .factory('GroupPhoto', ['$resource', 'source_path',

@@ -1,4 +1,4 @@
-angular.module('photo.controllers', ['photo.services'])
+angular.module('photo.controllers', ['photo.services', 'group.services'])
 .controller('CtrlPhotoList', ['$scope', '$rootScope', '$http',
 '$location', 'Auth', 'Photo',
     function($scope, $rootScope, $http, $location, Auth, Photo) {
@@ -38,8 +38,8 @@ angular.module('photo.controllers', ['photo.services'])
 ])
 .controller('CtrlPhotoDetail', ['$scope', '$rootScope', '$http', '$routeParams',
                                 '$window', '$location', 'Photo', 'Comment', 'WXI',
-    function($scope, $rootScope, $http, $routeParams, $window, $location, WXI,
-    Photo, Comment) {
+    function($scope, $rootScope, $http, $routeParams, $window, $location,
+    Photo, Comment,  WXI) {
         $scope.is_owner = false;
         function handle_error(error){
             $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
@@ -209,6 +209,29 @@ angular.module('photo.controllers', ['photo.services'])
                 },
                 function(error){
                     $rootScope.alerts.push({ type: 'danger', msg: 'You have liked it already!'});
+                }
+            );
+        }
+    }
+])
+.controller('CtrlPhotoClone', ['$scope', '$rootScope', '$http', '$routeParams',
+                                '$window', '$location', 'Photo', 'Group',
+    function($scope, $rootScope, $http, $routeParams, $window, $location, Photo, Group) {
+        $rootScope.title = 'Clone Photo';
+
+        $scope.photo = Photo.get({pk: $routeParams.pk});
+        $scope.r = {};
+
+        $scope.groups = Group.my_short_list();
+        $scope.clone = function(){
+
+            Photo.clone({pk: $routeParams.pk}, $scope.r,
+                function(success){
+                    $rootScope.alerts.push({ type: 'info', msg: 'Photo has been cloned.'});
+                    $location.path('/photo/' + success.id);
+                },
+                function(error){
+                    $rootScope.alerts.push({type: 'danger', msg: 'Fail!'});
                 }
             );
         }

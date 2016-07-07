@@ -29,7 +29,7 @@ class PhotoOriginalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Photo
-        fields = ('id', 'photo', 'thumb', 'crop', 'visitor', 'like')
+        fields = ('id', 'title', 'photo', 'thumb', 'crop', 'visitor', 'like')
 
 
 class PhotoListSerializer(serializers.ModelSerializer):
@@ -38,16 +38,23 @@ class PhotoListSerializer(serializers.ModelSerializer):
     owner = VisitorShortSerializer(source='visitor', read_only=True)
     descr = serializers.SerializerMethodField(read_only=True)
     origin = PhotoOriginalSerializer(source='original', read_only=True)
+    clone_count = serializers.SerializerMethodField(read_only=True)
 
     def get_descr(self, obj):
         return truncatechars_html(obj.description, 150)
+
+    def get_clone_count(self, obj):
+        if obj.original:
+            return obj.original.clones.count()
+        else:
+            return obj.clones.count()
 
     class Meta:
         model = models.Photo
         fields = ('id', 'create_date', 'comment_count', 'visitor', 'title',
                   'thumb', 'group',
                   'owner', 'descr', 'like', 'creator',
-                  'origin', 'original')
+                  'origin', 'original', 'clone_count')
 
 
 class PhotoDetailSerializer(PhotoListSerializer):
@@ -62,9 +69,26 @@ class PhotoDetailSerializer(PhotoListSerializer):
 
 
 class PhotoSimpleSerializer(serializers.ModelSerializer):
+
+    crop = serializers.SerializerMethodField(read_only=True)
+
+    # TODO: optimize code
+
+    def get_crop(self, obj):
+        photo = obj
+        if photo and photo.original:
+            photo = photo.original
+        if photo and photo.crop.name:
+            request = self.context.get('request', None)
+            url = photo.crop.url
+            if request is not None:
+                return request.build_absolute_uri(url)
+            return url
+        return
+
     class Meta:
         model = models.Photo
-        fields = ('id', 'crop', 'thumb')
+        fields = ('id', 'crop')
 # Group serializers started
 
 
@@ -87,16 +111,13 @@ class MemberSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     photo_count = serializers.IntegerField(source='photo_set.count',
                                            read_only=True)
-
-    activity = serializers.SerializerMethodField(read_only=True)
     owner_name = serializers.CharField(source='owner', read_only=True)
     thumb = serializers.SerializerMethodField(read_only=True)
 
-    def get_activity(self, obj):
-        return timesince(obj.modify_date)
-
     def get_thumb(self, obj):
         photo = obj.photo_set.first()
+        if photo and photo.original:
+            photo = photo.original
         if photo and photo.cover.name:
             request = self.context.get('request', None)
             url = photo.cover.url
@@ -114,7 +135,7 @@ class GroupListSerializer(GroupSerializer):
     overview = serializers.SerializerMethodField(read_only=True)
 
     def get_overview(self, obj):
-        qs = obj.photo_set.all()[1:4]
+        qs = obj.photo_set.select_related('original')[1:4]
         serializer = PhotoSimpleSerializer(instance=qs, many=True)
         return serializer.data
 

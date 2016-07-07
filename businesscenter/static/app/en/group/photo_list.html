@@ -53,7 +53,8 @@
         <div class="pinGrid">
             <div class="pin animate" data-ng-repeat="photo in r.results">
                 <a data-ng-href="#!/photo/{{ photo.id }}">
-                    <img data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
+                    <img data-ng-if="!photo.original" data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
+                    <img data-ng-if="photo.original" data-ng-src="{{ photo.origin.thumb }}" alt="{{ photo.title }}" class="img-pin">
                 </a>
                 <p class="b-b b-light font-bold" data-ng-if="photo.title">{{ photo.title }}</p>
                 <p class="b-b b-light" data-ng-if="photo.descr"> {{ photo.descr }}</p>
@@ -68,6 +69,8 @@
                 <ul class="list-inline text-muted text-center small">
                     <li><i class="fa fa-comments"></i> {{ photo.comment_count }}</li>
                     <li><a data-ng-click="like($index, photo.id)"><i class="fa fa-heart"></i> {{ photo.like }}</a></li>
+                    <li><i class="fa fa-share-alt"></i> {{ photo.clone_count }}</li>
+                    <li data-ng-if="photo.original" class="text-primary"><a data-ng-href="#!/photo/{{ photo.origin.id }}"><i class="fa fa-share"></i></a></li>
                 </ul>
             </div>
         </div>
