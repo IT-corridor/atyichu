@@ -31,7 +31,7 @@
                         <td>
                             <select class="form-control"
                                 data-ng-model="r.group"
-                                data-ng-options="item as item.title for item in groups">
+                                data-ng-options="item.id as item.title for item in groups">
                                 <option data-ng-if="!r.group" selected value="">Choose a group</option>
                             </select>
                         </td>
