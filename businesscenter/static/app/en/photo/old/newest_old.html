@@ -8,7 +8,7 @@
                 </a>
                 <h2>{{ ( photo.title ) ? photo.title : 'Untitled' }}</h2>
                 <p>{{ photo.create_date | date : 'longDate': '+0800'}}
-                    <span class="pull-right text-muted">by <i class="fa fa-user">&nbsp;{{ photo.owner_name }}</i></span></p>
+                    <span class="pull-right text-muted">by <i class="fa fa-user">&nbsp;{{ photo.owner.username }}</i></span></p>
                 <ul class="list-inline text-muted text-center small">
                     <li><i class="fa fa-comments"></i> {{ photo.comment_count }}
                     </li>

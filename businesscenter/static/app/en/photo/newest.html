@@ -10,10 +10,10 @@
                 <p class="b-b b-light" data-ng-if="photo.descr"> {{ photo.descr }}</p>
                 <div class="b-b b-light m-b-xs wrapper-xs" style="padding-bottom: 20px;">
                     <a href="" class="pull-left thumb-xs avatar m-r">
-                      <img data-ng-src="{{ photo.owner_thumb }}" alt="{{ photo.owner_name }}" class="img-circle">
+                      <img data-ng-src="{{ photo.owner.thumb }}" alt="{{ photo.owner.username }}" class="img-circle">
                     </a>
                     <div class="clear">
-                      <div><a href="">{{ photo.owner_name }}</a></div>
+                      <div><a href="">{{ photo.owner.username }}</a></div>
                     </div>
                 </div>
                 <ul class="list-inline text-muted text-center small">

@@ -33,10 +33,10 @@
                 <ul class="text-muted list-inline">
                     <li>
                         <i class="pull-left thumb-xxs avatar">
-                            <img data-ng-src="{{ photo.owner_thumb }}"
-                                 class="img-circle" alt="...">
+                            <img data-ng-src="{{ photo.owner.thumb }}"
+                                 class="img-circle" alt="{{ photo.owner.username }}">
                         </i>
-                        <a class="m-r-sm"> {{ photo.owner_name }}</a>
+                        <a class="m-r-sm"> {{ photo.owner.username }}</a>
                     </li>
                     <li>
                         <a href="" class="m-l-sm"><i

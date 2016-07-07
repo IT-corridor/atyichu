@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 
 from . import models
-from visitor.serializers import WeixinSerializer
+from visitor.serializers import WeixinSerializer, VisitorShortSerializer
 from django.template.defaultfilters import timesince, truncatechars_html
 
 
@@ -25,17 +25,19 @@ class CommentSerializer(serializers.ModelSerializer):
         model = models.Comment
 
 
+class PhotoOriginalSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Photo
+        fields = ('id', 'photo', 'thumb', 'crop', 'visitor', 'like')
+
+
 class PhotoListSerializer(serializers.ModelSerializer):
     comment_count = serializers.IntegerField(source='comment_set.count',
                                              read_only=True)
-    owner_name = serializers.CharField(source='visitor', read_only=True)
-    activity = serializers.SerializerMethodField(read_only=True)
+    owner = VisitorShortSerializer(source='visitor', read_only=True)
     descr = serializers.SerializerMethodField(read_only=True)
-    owner_thumb = serializers.ImageField(source='visitor.thumb',
-                                         read_only=True)
-
-    def get_activity(self, obj):
-        return timesince(obj.modify_date)
+    origin = PhotoOriginalSerializer(source='original', read_only=True)
 
     def get_descr(self, obj):
         return truncatechars_html(obj.description, 150)
@@ -43,8 +45,9 @@ class PhotoListSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Photo
         fields = ('id', 'create_date', 'comment_count', 'visitor', 'title',
-                  'thumb', 'owner_name', 'activity', 'group',
-                  'owner_thumb', 'descr', 'like')
+                  'thumb', 'group',
+                  'owner', 'descr', 'like', 'creator',
+                  'origin', 'original')
 
 
 class PhotoDetailSerializer(PhotoListSerializer):
@@ -126,3 +129,10 @@ class GroupDetailSerializer(GroupSerializer):
 
     class Meta:
         model = models.Group
+
+
+class GroupShortSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Group
+        fields = ('id', 'title')

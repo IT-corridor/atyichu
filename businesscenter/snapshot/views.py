@@ -246,7 +246,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
 
 
 class PhotoViewSet(viewsets.ModelViewSet):
-    queryset = Photo.objects.all()
+    queryset = Photo.objects.select_related('original')
     serializer_class = serializers.PhotoDetailSerializer
     permission_classes = [IsPhotoOwnerOrReadOnly]
 
@@ -305,8 +305,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
         get all photo order by time desc
         """
         visitor = request.user.visitor
-        photos = Photo.objects.filter(visitor=visitor).\
-            prefetch_related('comment_set__author')
+        photos = Photo.objects.filter(visitor=visitor)\
+            .select_related('original')\
+            .prefetch_related('comment_set__author')
 
         ser = serializers.PhotoListSerializer(instance=photos, many=True,
                                               context={'request': request})
@@ -406,8 +407,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def newest(self, request, *args, **kwargs):
         """ Providing a newest list of public groups photos """
-        qs = Photo.objects.filter(Q(group__is_private=False),
-                                  ~Q(visitor_id=request.user.id))\
+        qs = self.get_queryset()
+        qs = qs.filter(Q(group__is_private=False),
+                       ~Q(visitor_id=request.user.id))\
             .order_by('-create_date', 'pk').distinct()
 
         page = self.paginate_queryset(qs)
@@ -423,18 +425,24 @@ class PhotoViewSet(viewsets.ModelViewSet):
         """ Make a duplicate from existing photo record. GroupID required."""
         if 'group' not in request.data:
             raise ValidationError({'group': _('This parameter is required.')})
+
         obj = self.get_object()
-        creator_id = obj.creator_id if obj.creator_id else obj.visitor_id
-        data = {'original_id': kwargs['pk'],
-                'creator_id': creator_id,
-                'photo': obj.photo,
+
+        if obj.creator and obj.original:
+            creator = obj.creator_id
+            original = obj.original_id
+        else:
+            creator = obj.visitor_id
+            original = obj.id
+
+        data = {'original': original,
+                'creator': creator,
                 'visitor': self.request.user.pk}
         data.update(request.data)
 
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        # implement without photo storing (just link)
         return Response(serializer.data, status=201)
 
 
@@ -503,9 +511,10 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         visitor = self.request.user.visitor
         qs = Group.objects.select_related('owner').prefetch_related('tag_set')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
-            # TODO: Cannot filter a query once a slice has been taken.
-            # TODO: find another way
-            prefetch = Prefetch('photo_set', queryset=Photo.objects.all())
+            prefetch = Prefetch('photo_set',
+                                queryset=Photo.objects.
+                                select_related('original'))
+
             qs = qs.prefetch_related(prefetch)
             qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
                            Q(member__visitor=visitor)).distinct()
@@ -667,6 +676,15 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
 
         serializer = serializer_class(qs, many=True)
+        return Response(serializer.data)
+
+    @list_route(methods=['get'])
+    def my_groups_short(self, request, *args, **kwargs):
+        visitor = self.request.user.visitor
+        qs = Group.objects.all()
+        qs = qs.filter(Q(owner=visitor) | Q(member__visitor=visitor)) \
+            .distinct()
+        serializer = serializers.GroupShortSerializer(qs, many=True)
         return Response(serializer.data)
 
 

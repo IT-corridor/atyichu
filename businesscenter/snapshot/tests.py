@@ -451,6 +451,12 @@ class GroupTests(APITestCase):
         url = reverse('snapshot:photo-clone', kwargs={'pk': 1})
         data = {'group': self.group_cln.id}
         response = self.client.post(url, data=data)
-
         self.assertEqual(response.status_code, 201)
+        self.client.logout()
+
+    def test_group_short_list(self):
+        self.force_login(2)
+        url = reverse('snapshot:group-my-groups-short')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
         self.client.logout()

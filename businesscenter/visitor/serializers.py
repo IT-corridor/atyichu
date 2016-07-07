@@ -82,7 +82,7 @@ class WeixinSerializer(serializers.ModelSerializer):
 
 
 class VisitorShortSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username', read_only=True)
+    username = serializers.CharField(source='__unicode__', read_only=True)
 
     class Meta:
         model = Visitor
