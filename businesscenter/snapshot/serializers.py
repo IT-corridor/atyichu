@@ -25,35 +25,48 @@ class CommentSerializer(serializers.ModelSerializer):
         model = models.Comment
 
 
+class PhotoSerializer(serializers.ModelSerializer):
+    """ A simple photo serializer for creating and editing """
+    class Meta:
+        model = models.Photo
+
 class PhotoOriginalSerializer(serializers.ModelSerializer):
+
+    descr = serializers.SerializerMethodField(read_only=True)
+
+    def get_descr(self, obj):
+        if obj.description:
+            return truncatechars_html(obj.description, 150)
 
     class Meta:
         model = models.Photo
-        fields = ('id', 'title', 'photo', 'thumb', 'crop', 'visitor', 'like')
+        fields = ('id', 'title', 'photo', 'thumb', 'crop', 'visitor', 'like',
+                  'description', 'descr')
 
 
 class PhotoListSerializer(serializers.ModelSerializer):
-    comment_count = serializers.IntegerField(source='comment_set.count',
-                                             read_only=True)
+    comment_count = serializers.IntegerField(read_only=True)
     owner = VisitorShortSerializer(source='visitor', read_only=True)
     descr = serializers.SerializerMethodField(read_only=True)
     origin = PhotoOriginalSerializer(source='original', read_only=True)
     clone_count = serializers.SerializerMethodField(read_only=True)
 
     def get_descr(self, obj):
-        return truncatechars_html(obj.description, 150)
+        if obj.description:
+            return truncatechars_html(obj.description, 150)
 
     def get_clone_count(self, obj):
-        if obj.original:
+        if obj.original_id is not None:
+            # Optimize!
             return obj.original.clones.count()
         else:
-            return obj.clones.count()
+            return obj.clone_count
 
     class Meta:
         model = models.Photo
         fields = ('id', 'create_date', 'comment_count', 'visitor', 'title',
                   'thumb', 'group',
-                  'owner', 'descr', 'like', 'creator',
+                   'owner', 'descr', 'like', 'creator',
                   'origin', 'original', 'clone_count')
 
 
@@ -68,7 +81,8 @@ class PhotoDetailSerializer(PhotoListSerializer):
         read_only_fields = ('thumb', 'crop', 'cover')
 
 
-class PhotoSimpleSerializer(serializers.ModelSerializer):
+
+class PhotoCropSerializer(serializers.ModelSerializer):
 
     crop = serializers.SerializerMethodField(read_only=True)
 
@@ -109,14 +123,13 @@ class MemberSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
-    photo_count = serializers.IntegerField(source='photo_set.count',
-                                           read_only=True)
+    photo_count = serializers.IntegerField(read_only=True)
     owner_name = serializers.CharField(source='owner', read_only=True)
     thumb = serializers.SerializerMethodField(read_only=True)
 
     def get_thumb(self, obj):
         photo = obj.photo_set.first()
-        if photo and photo.original:
+        if photo and photo.original_id:
             photo = photo.original
         if photo and photo.cover.name:
             request = self.context.get('request', None)
@@ -135,8 +148,8 @@ class GroupListSerializer(GroupSerializer):
     overview = serializers.SerializerMethodField(read_only=True)
 
     def get_overview(self, obj):
-        qs = obj.photo_set.select_related('original')[1:4]
-        serializer = PhotoSimpleSerializer(instance=qs, many=True)
+        qs = obj.photo_set.all()[1:4]
+        serializer = PhotoCropSerializer(instance=qs, many=True)
         return serializer.data
 
     class Meta:

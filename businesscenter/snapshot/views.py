@@ -246,13 +246,17 @@ class MirrorViewSet(viewsets.GenericViewSet):
 
 
 class PhotoViewSet(viewsets.ModelViewSet):
-    queryset = Photo.objects.select_related('original')
+    model = Photo
     serializer_class = serializers.PhotoDetailSerializer
     permission_classes = [IsPhotoOwnerOrReadOnly]
 
     # TODO: test delete
     # TODO: TEST retrieve somehow
     # TODO: maybe it is necessary to turn off pagination
+
+    def get_queryset(self):
+        qs = Photo.p_objects.select_related('original', 'visitor__user')
+        return qs
 
     def create(self, request, *args, **kwargs):
         """
@@ -305,10 +309,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
         get all photo order by time desc
         """
         visitor = request.user.visitor
-        photos = Photo.objects.filter(visitor=visitor)\
-            .select_related('original')\
-            .prefetch_related('comment_set__author')
-
+        qs = self.get_queryset()
+        qs = qs.prefetch_related('comment_set__author').filter(visitor=visitor)
+        photos = qs
         ser = serializers.PhotoListSerializer(instance=photos, many=True,
                                               context={'request': request})
         return Response(data=ser.data)
@@ -347,12 +350,22 @@ class PhotoViewSet(viewsets.ModelViewSet):
         except Photo.DoesNotExist:
             return Response(data={'error': _('Photo does not exist')})
 
-        serializer = self.serializer_class(instance=photo, data=request.data,
-                                           partial=True)
+        serializer = serializers.PhotoSerializer(instance=photo,
+                                                 data=request.data,
+                                                 partial=True)
 
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data=serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.photo and instance.photo.name:
+            instance.group = None
+            instance.save()
+        else:
+            instance.delete()
+        return Response(status=204)
 
     @detail_route(methods=['patch'])
     def edit(self, request, *args, **kwargs):
@@ -369,8 +382,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
         if visitor.pk != photo.visitor_id:
             return Response(data={'error': _('Only the owner can edit photo')})
 
-        serializer = self.serializer_class(instance=photo, data=request.data,
-                                           partial=True)
+        serializer = serializers.PhotoSerializer(instance=photo,
+                                                 data=request.data,
+                                                 partial=True)
 
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -407,14 +421,14 @@ class PhotoViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def newest(self, request, *args, **kwargs):
         """ Providing a newest list of public groups photos """
-        qs = self.get_queryset()
-        qs = qs.filter(Q(group__is_private=False),
+        qs = qs = Photo.a_objects.select_related('original', 'visitor__user')
+        qs = qs.filter(Q(group__is_private=False) &
                        ~Q(visitor_id=request.user.id))\
-            .order_by('-create_date', 'pk').distinct()
+            .order_by('-create_date', 'pk')
 
         page = self.paginate_queryset(qs)
         if page is not None:
-            serializer = self.get_serializer(page, many=True)
+            serializer = serializers.PhotoListSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(qs, many=True)
@@ -435,10 +449,18 @@ class PhotoViewSet(viewsets.ModelViewSet):
             creator = obj.visitor_id
             original = obj.id
 
+        title = obj.title if not request.data.get('title')\
+            else request.data['title']
+
+        description = obj.description if not request.data.get('description') \
+            else request.data['description']
+
         data = {'original': original,
                 'creator': creator,
-                'visitor': self.request.user.pk}
-        data.update(request.data)
+                'visitor': request.user.pk,
+                'group': request.data['group'],
+                'title': title,
+                'description': description}
 
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
@@ -502,14 +524,14 @@ class MemberViewSet(viewsets.ModelViewSet):
 
 
 class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
-    # TODO: implement cloning photo to the groups
     permission_classes = [IsOwnerOrMember]
     # For update use only method patch
 
     def get_queryset(self):
         """ Pretty complex queryset for retreiving groups """
         visitor = self.request.user.visitor
-        qs = Group.objects.select_related('owner').prefetch_related('tag_set')
+        qs = Group.objects.select_related('owner__user').\
+            prefetch_related('tag_set')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             prefetch = Prefetch('photo_set',
                                 queryset=Photo.objects.
@@ -518,6 +540,9 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             qs = qs.prefetch_related(prefetch)
             qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
                            Q(member__visitor=visitor)).distinct()
+        else:
+            # TODO: optimize for detail view
+            qs = qs.prefetch_related('member_set__visitor')
         return qs
 
     def get_serializer_class(self):
@@ -560,7 +585,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         data['group'] = self.get_object().id
         data['visitor'] = self.request.user.visitor
 
-        serializer = serializers.PhotoDetailSerializer(data=data)
+        serializer = serializers.PhotoSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data=serializer.data, status=201)
@@ -568,15 +593,16 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def photo_list(self, request, *args, **kwargs):
         group = self.get_object()
-        queryset = Photo.objects.filter(group=group)
+        qs = Photo.p_objects.select_related('visitor__user')
+        qs = qs.filter(group=group)
         serializer_class = serializers.PhotoListSerializer
-        page = self.paginate_queryset(queryset)
+        page = self.paginate_queryset(qs)
 
         if page is not None:
             serializer = serializer_class(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        serializer = serializer_class(queryset, many=True)
+        serializer = serializer_class(qs, many=True)
         return Response(serializer.data)
 
     @detail_route(methods=['post'])
@@ -663,8 +689,10 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     def my_groups(self, request, *args, **kwargs):
 
         visitor = self.request.user.visitor
-        qs = Group.objects.select_related('owner').prefetch_related('tag_set')
-        prefetch = Prefetch('photo_set', queryset=Photo.objects.all())
+        qs = Group.objects.select_related('owner__user')
+        qs = qs.prefetch_related('tag_set')
+        prefetch = Prefetch('photo_set',
+                            queryset=Photo.p_objects.select_related('original'))
         qs = qs.prefetch_related(prefetch)
         qs = qs.filter(Q(owner=visitor) | Q(member__visitor=visitor))\
             .distinct()

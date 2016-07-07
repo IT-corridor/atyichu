@@ -44,6 +44,28 @@ class MirrorManager(models.Manager):
         return self.raw(sql, [lat, lat, lon])
 
 
+class PhotoManager(models.Manager):
+    def get_queryset(self):
+        qs = super(PhotoManager, self).get_queryset()
+        qs = qs.annotate(comment_count=models.Count('comment', distinct=True))
+        qs = qs.annotate(clone_count=models.Count('clone', distinct=True))
+        return qs
+
+
+class ActivePhotoManager(PhotoManager):
+    def get_queryset(self):
+        qs = super(ActivePhotoManager, self).get_queryset()
+        qs = qs.filter(group__isnull=False)
+        return qs
+
+
+class GroupManager(models.Manager):
+    def get_queryset(self):
+        qs = super(GroupManager, self).get_queryset()
+        qs = qs.annotate(photo_count=models.Count('photo', distinct=True))
+        return qs
+
+
 class Mirror(models.Model):
     """ OLD Model is sucks. """
     title = models.CharField(_('Title'), max_length=200, blank=True)
@@ -114,7 +136,7 @@ class Photo(models.Model):
                                    blank=True, max_length=5000)
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
-    group = models.ForeignKey('snapshot.Group', on_delete=models.CASCADE,
+    group = models.ForeignKey('snapshot.Group', on_delete=models.SET_NULL,
                               null=True, blank=True)
     # Original photo
     photo = models.ImageField(_('Photo'), upload_to=path_photo,
@@ -137,6 +159,13 @@ class Photo(models.Model):
                                  related_name='clones',
                                  related_query_name='clone',
                                  on_delete=models.SET_NULL)
+
+    objects = models.Manager()
+    p_objects = PhotoManager()
+    a_objects = ActivePhotoManager()
+
+    def get_comment_count(self):
+        return self.comment_count
 
     def __unicode__(self):
         return '{}: {}'.format(self.visitor, self.pk)
@@ -190,6 +219,8 @@ class Group(models.Model):
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
     owner = models.ForeignKey(Visitor, verbose_name=_('Group owner'))
+
+    objects = GroupManager()
 
     def __unicode__(self):
         return self.title

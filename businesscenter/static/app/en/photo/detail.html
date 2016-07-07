@@ -17,11 +17,7 @@
                             class="fa fa-trash-o fa-2x"></i></button>
                 </li>
                 <li>
-                    <!-- !photo.original means that photo has not its original. And it is original by itself. -->
-                    <a class="btn btn-success" data-ng-if="!photo.original" data-ng-href="#!/photo/{{ photo.id }}/share/">
-                        <i class="fa fa-share-alt fa-2x"></i>
-                    </a>
-                    <a class="btn btn-success" data-ng-if="photo.original" data-ng-href="#!/photo/{{ photo.origin.id }}/share/">
+                    <a class="btn btn-success" data-ng-href="#!/photo/{{ photo.id }}/share/">
                         <i class="fa fa-share-alt fa-2x"></i>
                     </a>
                 </li>
@@ -36,8 +32,13 @@
             </div>
             <div class="wrapper-lg">
                 <h4 class="m-t-none">{{ (photo.title) ? photo.title : '' }}</h4>
+                <h4 data-ng-if="photo.title" class="m-t-none">{{ photo.title }}</h4>
+                <h4 data-ng-if="!photo.title && photo.origin.title" class="m-t-none">{{ photo.origin.title }}</h4>
                 <div data-ng-if="photo.description">
                     <p>{{ photo.description }}</p>
+                </div>
+                <div data-ng-if="!photo.description && photo.origin.description">
+                    <p>{{ photo.origin.description }}</p>
                 </div>
                 <div class="wrapper-xs" data-ng-if="photo.original">
                     <a data-ng-href="#!/photo/{{ photo.origin.id }}/">Original is here</a>

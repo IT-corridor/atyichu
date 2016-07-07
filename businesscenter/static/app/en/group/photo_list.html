@@ -57,7 +57,9 @@
                     <img data-ng-if="photo.original" data-ng-src="{{ photo.origin.thumb }}" alt="{{ photo.title }}" class="img-pin">
                 </a>
                 <p class="b-b b-light font-bold" data-ng-if="photo.title">{{ photo.title }}</p>
+                <p class="b-b b-light font-bold" data-ng-if="!photo.title && photo.origin.title">{{ photo.origin.title }}</p>
                 <p class="b-b b-light" data-ng-if="photo.descr"> {{ photo.descr }}</p>
+                <p class="b-b b-light" data-ng-if="!photo.descr && photo.origin.descr"> {{ photo.descr.descr }}</p>
                 <div class="b-b b-light m-b-xs wrapper-xs" style="padding-bottom: 20px;">
                     <a href="" class="pull-left thumb-xs avatar m-r">
                       <img data-ng-src="{{ photo.owner.thumb }}" alt="{{ photo.owner.username }}" class="img-circle">

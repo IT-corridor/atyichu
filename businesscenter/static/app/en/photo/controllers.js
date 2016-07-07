@@ -78,7 +78,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services'])
                 Photo.remove({pk: $routeParams.pk}, {},
                     function(success){
                         $rootScope.alerts.push({ type: 'info', msg: 'Photo has been deleted!'});
-                        $location.path('/photo');
+                        $location.path('/group/'+ $scope.photo.group + '/photo');
                     },
                     handle_error
                 );
