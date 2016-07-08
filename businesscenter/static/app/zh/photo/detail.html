@@ -31,7 +31,6 @@
                      data-ng-src="{{ photo.origin.photo }}" alt="{{ photo.origin.title }}">
             </div>
             <div class="wrapper-lg">
-                <h4 class="m-t-none">{{ (photo.title) ? photo.title : '' }}</h4>
                 <h4 data-ng-if="photo.title" class="m-t-none">{{ photo.title }}</h4>
                 <h4 data-ng-if="!photo.title && photo.origin.title" class="m-t-none">{{ photo.origin.title }}</h4>
                 <div data-ng-if="photo.description">
