@@ -547,25 +547,6 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             member_batch = (Member(group=group, visitor_id=i) for i in members)
             Member.objects.bulk_create(member_batch)
 
-    @detail_route(methods=['patch'])
-    def avatar_update(self, request, *args, **kwargs):
-        return PermissionDenied
-        # TODO: remove that handler later
-        # List of
-        files = request.data.pop('avatar', None)
-
-        if len(files) == 1 and isinstance(files[0], InMemoryUploadedFile):
-
-            instance = self.get_object()
-            instance.avatar.delete()
-            serializer = self.get_serializer(instance,
-                                             data={'avatar': files[0]},
-                                             partial=True)
-            serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
-            return Response(data=serializer.data)
-        raise ValidationError({'avatar': [_('File image required')]})
-
     @detail_route(methods=['post'])
     def photo_create(self, request, *args, **kwargs):
         """ Handler to save an uploaded photo to the 'group'.
@@ -582,6 +563,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @detail_route(methods=['get'])
     def photo_list(self, request, *args, **kwargs):
+        """ Photo list for specified group """
         group = self.get_object()
         qs = Photo.p_objects.select_related('visitor__user')
         qs = qs.filter(group=group)
