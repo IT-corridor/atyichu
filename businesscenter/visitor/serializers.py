@@ -11,7 +11,8 @@ from utils.utils import get_content_file
 
 # PART 1 FEATURES #
 class WeixinSerializer(serializers.ModelSerializer):
-    avatar_url = serializers.URLField(required=False, write_only=True)
+    avatar_url = serializers.URLField(required=False, write_only=True,
+                                      allow_blank=True, allow_null=True)
     nickname = serializers.CharField(required=True, write_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
     # Added 23.06.2013

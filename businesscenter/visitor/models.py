@@ -8,7 +8,8 @@ from utils.validators import SizeValidator
 
 
 class Visitor(models.Model):
-    """ Only for Weixin Oauth2 """
+    """ This model extends basic authentication model (of Django).
+    It used to authenticate user ONLY via WECHAT (WEXIN) API. """
     weixin = models.CharField(_('Weixin open id'), max_length=30,
                               validators=[validate_weixin], unique=True,
                               help_text=_('4-30 characters, '

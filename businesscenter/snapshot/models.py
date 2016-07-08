@@ -206,6 +206,24 @@ class Comment(models.Model):
         ordering = ('create_date', 'pk')
 
 
+'''class Like(models.Model):
+    """ A table that stores relation between photo and visitor.
+    If such connection exists then we can say, that user likes the photo.
+    It is some kind of Many-to-Many relation.
+    But i make an independent model for this case to have more control with
+    data and data migration."""
+    photo = models.ForeignKey(Photo, verbose_name=_('Photo Likes'))
+    visitor = models.ForeignKey(Visitor, verbose_name=_('Visitor'))
+
+    def __unicode__(self):
+        return '{}:{}'.format(self.photo, self.visitor.id)
+
+    class Meta:
+        verbose_name = _('Like')
+        verbose_name_plural = _('Likes')
+        ordering = ('pk',)
+'''
+
 class Group(models.Model):
     """ This model represents visitor`s [virtual] wardrobe. """
     # TODO: who can own the group? Only weixin user or any kind too?
