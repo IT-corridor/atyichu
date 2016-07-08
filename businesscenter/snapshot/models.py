@@ -177,12 +177,10 @@ class Photo(models.Model):
         super(Photo, self).save(force_insert, force_update,
                                 using, update_fields)
 
-
-
     class Meta:
         verbose_name = _('Photo')
         verbose_name_plural = _('Photos')
-        ordering = ('create_date', 'pk')
+        ordering = ('pk',)
 
 
 class Comment(models.Model):

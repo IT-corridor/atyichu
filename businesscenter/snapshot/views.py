@@ -27,6 +27,7 @@ from .permissions import IsOwnerOrMember, MemberCanServe, \
     IsPhotoOwnerOrReadOnly
 from .sutils import check_sign
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin, VisitorCreateMixin
+from utils.paginators import CustomPagination
 from visitor.permissions import IsVisitor
 from visitor.serializers import VisitorShortSerializer
 from visitor.models import Visitor
@@ -414,7 +415,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         qs = Photo.a_objects.select_related('original', 'visitor__user')
         qs = qs.filter(Q(group__is_private=False) &
                        ~Q(visitor_id=request.user.id))\
-            .order_by('-create_date', 'pk').distinct()
+            .order_by('-pk').distinct()
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
 
@@ -455,16 +456,16 @@ class PhotoViewSet(viewsets.ModelViewSet):
     def liked_list(self, request, *args, **kwargs):
         """ Providing a photo list of liked photos """
         qs = Photo.p_objects.select_related('original', 'visitor__user')
-        qs = qs.filter(like__visitor_id=request.user.id)\
-            .order_by('-create_date', 'pk')
+        qs = qs.filter(like__visitor_id=request.user.id)
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
 
     def get_list_response(self, queryset, serializer_class):
         """ Shortcut for the paginated views / handlers """
+        queryset = self.filter_queryset(queryset)
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = serializer_class(queryset, many=True)
+            serializer = serializer_class(page, many=True)
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
@@ -581,6 +582,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         qs = Photo.p_objects.select_related('visitor__user')
         qs = qs.filter(group=group)
         serializer_class = serializers.PhotoListSerializer
+        qs = self.filter_queryset(qs)
         page = self.paginate_queryset(qs)
 
         if page is not None:

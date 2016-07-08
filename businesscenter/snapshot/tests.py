@@ -482,6 +482,8 @@ class GroupTests(APITestCase):
         url = reverse('snapshot:photo-liked-list')
         response = self.client.get(url)
         data = response.data
-        self.assertEqual(data['total'], 2)
+        print (len(data['results']))
+        self.assertEqual(data['total'], 8)
+        self.assertEqual(len(data['results']), 4)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
