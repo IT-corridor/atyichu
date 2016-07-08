@@ -414,7 +414,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         qs = Photo.a_objects.select_related('original', 'visitor__user')
         qs = qs.filter(Q(group__is_private=False) &
                        ~Q(visitor_id=request.user.id))\
-            .order_by('-create_date', 'pk')
+            .order_by('-create_date', 'pk').distinct()
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
 
