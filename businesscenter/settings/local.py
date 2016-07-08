@@ -4,7 +4,7 @@ SECRET_KEY = 'g%vsow(2i!3k_*+o=$1rp5hm=9+ivwpqbk0grvs8=pgo=4c$vh'
 DEBUG = True
 ALLOWED_HOSTS = []
 
-LANGUAGE_CODE = 'en-US'
+#LANGUAGE_CODE = 'en-US'
 
 DATABASES = {
     'default': {

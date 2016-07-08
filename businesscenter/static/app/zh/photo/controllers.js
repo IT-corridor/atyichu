@@ -171,7 +171,7 @@ angular.module('photo.controllers', ['photo.services'])
 
         $rootScope.title = 'Newest photos';
         $rootScope.photo_refer = $location.url();
-        $scope.r = query.newest(
+        $scope.r = query(
             function(success){
                 $scope.enough = success.total > 1 ? false : true;
                 $scope.page_link = GetPageLink();
