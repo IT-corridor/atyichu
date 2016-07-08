@@ -200,7 +200,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             /*TODO: this is repeats for two times (or even tree) fix!*/
             Photo.like({pk: photo_id},
                 function(success){
-                    $scope.r.results[index].like = success.like;
+                    $scope.r.results[index].like_count = success.like_count;
                 },
                 function(error){
                     $rootScope.alerts.push({ type: 'danger', msg: 'You have like it already!'});

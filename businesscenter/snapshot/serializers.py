@@ -30,6 +30,7 @@ class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Photo
 
+
 class PhotoOriginalSerializer(serializers.ModelSerializer):
 
     descr = serializers.SerializerMethodField(read_only=True)
@@ -40,16 +41,18 @@ class PhotoOriginalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Photo
-        fields = ('id', 'title', 'photo', 'thumb', 'crop', 'visitor', 'like',
+        fields = ('id', 'title', 'photo', 'thumb', 'crop', 'visitor',
                   'description', 'descr')
 
 
 class PhotoListSerializer(serializers.ModelSerializer):
-    comment_count = serializers.IntegerField(read_only=True)
+    """ Works only with PhotoManager or ActivePhotoManager """
     owner = VisitorShortSerializer(source='visitor', read_only=True)
     descr = serializers.SerializerMethodField(read_only=True)
     origin = PhotoOriginalSerializer(source='original', read_only=True)
+    comment_count = serializers.IntegerField(read_only=True)
     clone_count = serializers.SerializerMethodField(read_only=True)
+    like_count = serializers.IntegerField(read_only=True)
 
     def get_descr(self, obj):
         if obj.description:
@@ -57,17 +60,16 @@ class PhotoListSerializer(serializers.ModelSerializer):
 
     def get_clone_count(self, obj):
         if obj.original_id is not None:
-            # Optimize!
+            # Optimize! Really need to optimize.
             return obj.original.clones.count()
         else:
             return obj.clone_count
 
     class Meta:
         model = models.Photo
-        fields = ('id', 'create_date', 'comment_count', 'visitor', 'title',
-                  'thumb', 'group',
-                   'owner', 'descr', 'like', 'creator',
-                  'origin', 'original', 'clone_count')
+        fields = ('id', 'create_date', 'visitor', 'title',
+                  'thumb', 'group', 'owner', 'descr', 'creator', 'original',
+                  'origin', 'comment_count', 'clone_count', 'like_count')
 
 
 class PhotoDetailSerializer(PhotoListSerializer):
@@ -81,9 +83,9 @@ class PhotoDetailSerializer(PhotoListSerializer):
         read_only_fields = ('thumb', 'crop', 'cover')
 
 
-
 class PhotoCropSerializer(serializers.ModelSerializer):
-
+    """ Works only for GroupListSerializer.
+    Needed to get cropped photos from the group."""
     crop = serializers.SerializerMethodField(read_only=True)
 
     # TODO: optimize code

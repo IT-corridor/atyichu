@@ -6,21 +6,21 @@ import pickle
 import os
 from urlparse import urldefrag
 from datetime import timedelta
+from django.db import IntegrityError
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.core.files.base import ContentFile
 from django.core.exceptions import PermissionDenied
 from django.core.mail import mail_admins
-from django.db.models import F, Prefetch, Q
+from django.db.models import F, Prefetch, Q, Count
 from rest_framework import viewsets, mixins, filters
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import ValidationError
-from .models import Mirror, Photo, Comment, Tag, Member, Group
+from .models import Mirror, Photo, Comment, Tag, Member, Group, Like
 
 from . import serializers
 from .permissions import IsOwnerOrMember, MemberCanServe, \
@@ -394,28 +394,18 @@ class PhotoViewSet(viewsets.ModelViewSet):
     def like(self, request, *args, **kwargs):
         """ Handler that increments likes """
         obj = self.get_object()
-        status = 400
 
-        pk = kwargs['pk']
         try:
-            isinstance(request.session['photo_ids'], list)
-        except KeyError:
-            self.request.session['photo_ids'] = []
-        if pk in self.request.session['photo_ids']:
-            data = {'error': _('You have liked that photo.')}
-        else:
-            obj.like = F('like') + 1
-            obj.save()
+            Like.objects.create(visitor_id=request.user.id, photo_id=obj.id)
 
-            original = obj.original
-            if original:
-                original.like = F('like') + 1
-                original.save()
-                self.request.session['photo_ids'] += [original.pk]
-
-            self.request.session['photo_ids'] += [pk]
-            data = {'like': self.get_object().like}
+            # Not using default object or queryset, to reduce the queryset
+            like_count = Photo.objects.get(id=obj.id).like_set.count()
+            data = {'like_count': like_count}
             status = 200
+        except IntegrityError:
+            data = {'error': _('You have like it already!')}
+            status = 400
+
         return Response(data, status)
 
     @list_route(methods=['get'])

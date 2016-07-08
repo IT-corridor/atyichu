@@ -49,6 +49,7 @@ class PhotoManager(models.Manager):
         qs = super(PhotoManager, self).get_queryset()
         qs = qs.annotate(comment_count=models.Count('comment', distinct=True))
         qs = qs.annotate(clone_count=models.Count('clone', distinct=True))
+        qs = qs.annotate(like_count=models.Count('like', distinct=True))
         return qs
 
 
@@ -148,12 +149,9 @@ class Photo(models.Model):
                              null=True, blank=True)
     cover = models.ImageField(_('Cover'), upload_to=path_cover,
                               null=True, blank=True)
-    like = models.PositiveIntegerField(_('Like counter'), default=0)
-
     creator = models.ForeignKey(Visitor, verbose_name=_('Photo creator'),
                                 null=True, blank=True,
                                 related_name='+')
-
     original = models.ForeignKey('self', null=True, blank=True,
                                  verbose_name=_('Original'),
                                  related_name='clones',
@@ -206,7 +204,7 @@ class Comment(models.Model):
         ordering = ('create_date', 'pk')
 
 
-'''class Like(models.Model):
+class Like(models.Model):
     """ A table that stores relation between photo and visitor.
     If such connection exists then we can say, that user likes the photo.
     It is some kind of Many-to-Many relation.
@@ -222,7 +220,8 @@ class Comment(models.Model):
         verbose_name = _('Like')
         verbose_name_plural = _('Likes')
         ordering = ('pk',)
-'''
+        unique_together = ('photo', 'visitor')
+
 
 class Group(models.Model):
     """ This model represents visitor`s [virtual] wardrobe. """

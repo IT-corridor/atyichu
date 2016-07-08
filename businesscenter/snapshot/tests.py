@@ -460,3 +460,13 @@ class GroupTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
+
+    def test_like_photo(self):
+        photo = Photo.objects.create(group_id=2, title='Original',
+                                     visitor_id=1)
+        photo.save()
+        self.force_login(2)
+        url = reverse('snapshot:photo-like', kwargs={'pk': 1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()

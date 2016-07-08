@@ -94,7 +94,7 @@ angular.module('photo.controllers', ['photo.services'])
         $scope.like_photo = function(){
             Photo.like({pk: $routeParams.pk},
                 function(success){
-                    $scope.photo.like = success.like;
+                    $scope.photo.like_count = success.like_count;
                 },
                 function(error){
                     $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
@@ -201,7 +201,7 @@ angular.module('photo.controllers', ['photo.services'])
         $scope.like = function(index, photo_id){
             Photo.like({pk: photo_id},
                 function(success){
-                    $scope.r.results[index].like = success.like;
+                    $scope.r.results[index].like_count = success.like_count;
                 },
                 function(error){
                     $rootScope.alerts.push({ type: 'danger', msg: '请不要重复评价'});

@@ -75,7 +75,7 @@ function(PATH, $window, Photo, Comment) {
         $scope.like_photo = function(){
             Photo.like({pk: $scope.photo.id},
                 function(success){
-                    $scope.photo.like = success.like;
+                    $scope.photo.like_count = success.like_count;
                 },
                 function(error){
                     $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
