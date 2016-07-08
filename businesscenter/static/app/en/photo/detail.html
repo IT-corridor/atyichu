@@ -25,9 +25,9 @@
         </div>
         <div class="panel">
             <div>
-                <img data-ng-if="!photo.original" class="img-responsive img-center"
+                <img data-ng-if="!photo.original && photo.photo" class="img-responsive img-center"
                      data-ng-src="{{ photo.photo }}" alt="{{ photo.title }}">
-                <img data-ng-if="photo.original" class="img-responsive img-center"
+                <img data-ng-if="photo.origin.photo" class="img-responsive img-center"
                      data-ng-src="{{ photo.origin.photo }}" alt="{{ photo.origin.title }}">
             </div>
             <div class="wrapper-lg">

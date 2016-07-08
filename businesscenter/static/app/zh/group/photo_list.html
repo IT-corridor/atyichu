@@ -55,6 +55,9 @@
                 <a data-ng-href="#!/photo/{{ photo.id }}">
                     <img data-ng-if="!photo.original" data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
                     <img data-ng-if="photo.original" data-ng-src="{{ photo.origin.thumb }}" alt="{{ photo.title }}" class="img-pin">
+                    <div data-ng-if="!photo.origin.photo && !photo.photo" class="wrapper-xs">
+                        <div class="text-center purple-50 r r-3x b b-light empty-cover-xs empty-cover-md"></div>
+                    </div>
                 </a>
                 <p class="b-b b-light font-bold" data-ng-if="photo.title">{{ photo.title }}</p>
                 <p class="b-b b-light font-bold" data-ng-if="!photo.title && photo.origin.title">{{ photo.origin.title }}</p>
