@@ -20,7 +20,20 @@ angular.module('app.route', [
             controller: 'CtrlMirrorDetail'}).
         when('/photo/newest', {
             templateUrl: PATH + 'group/photo_list.html',
-            controller: 'CtrlPhotoNewest'}).
+            controller: 'CtrlPhotoNewest',
+            resolve: {
+                title: function(){return 'Newest Photos';},
+                kind: function(){return 'newest'},
+            }
+        }).
+        when('/photo/liked', {
+            templateUrl: PATH + 'group/photo_list.html',
+            controller: 'CtrlPhotoNewest',
+            resolve: {
+                title: function(){return 'Liked Photos';},
+                kind: function(){return 'liked'},
+            }
+        }).
         when('/photo/:pk', {
             templateUrl: PATH + 'photo/detail.html',
             controller: 'CtrlPhotoDetail'}).

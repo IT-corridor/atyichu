@@ -141,8 +141,13 @@ angular.module('photo.controllers', ['photo.services'])
     }
 ])
 .controller('CtrlPhotoNewest', ['$scope', '$rootScope','$http', '$window',
-'$location', '$routeParams','GetPageLink' , 'Photo',
-    function($scope, $rootScope, $http, $window, $location, $routeParams, GetPageLink, Photo) {
+'$location', '$routeParams','GetPageLink' , 'Photo', 'title', 'kind',
+    function($scope, $rootScope, $http, $window, $location, $routeParams, GetPageLink, Photo, title, kind) {
+        // Controller for newest photos and for the liked photos
+
+        $rootScope.title = title;
+        var query = (kind === 'newest') ? Photo.newest : Photo.liked_list;
+
         $scope.enough = false;
         $scope.is_owner = false;
 
@@ -166,7 +171,7 @@ angular.module('photo.controllers', ['photo.services'])
 
         $rootScope.title = 'Newest photos';
         $rootScope.photo_refer = $location.url();
-        $scope.r = Photo.newest(
+        $scope.r = query.newest(
             function(success){
                 $scope.enough = success.total > 1 ? false : true;
                 $scope.page_link = GetPageLink();
@@ -185,7 +190,7 @@ angular.module('photo.controllers', ['photo.services'])
         $scope.get_more = function(){
             $scope.page += 1;
             var params = {page: $scope.page};
-            Photo.newest(params, function(success){
+            query(params, function(success){
                     $scope.r.results = $scope.r.results.concat(success.results);
                     $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
                 },

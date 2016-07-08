@@ -306,7 +306,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         """
-        get all photo order by time desc
+        get all photo order by time desc. Currently not used.
         """
         visitor = request.user.visitor
         qs = self.get_queryset()
@@ -411,18 +411,12 @@ class PhotoViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def newest(self, request, *args, **kwargs):
         """ Providing a newest list of public groups photos """
-        qs = qs = Photo.a_objects.select_related('original', 'visitor__user')
+        qs = Photo.a_objects.select_related('original', 'visitor__user')
         qs = qs.filter(Q(group__is_private=False) &
                        ~Q(visitor_id=request.user.id))\
             .order_by('-create_date', 'pk')
 
-        page = self.paginate_queryset(qs)
-        if page is not None:
-            serializer = serializers.PhotoListSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
+        return self.get_list_response(qs, serializers.PhotoListSerializer)
 
     @detail_route(methods=['post'])
     def clone(self, request, *args, **kwargs):
@@ -456,6 +450,25 @@ class PhotoViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=201)
+
+    @list_route(methods=['get'])
+    def liked_list(self, request, *args, **kwargs):
+        """ Providing a photo list of liked photos """
+        qs = Photo.p_objects.select_related('original', 'visitor__user')
+        qs = qs.filter(like__visitor_id=request.user.id)\
+            .order_by('-create_date', 'pk')
+
+        return self.get_list_response(qs, serializers.PhotoListSerializer)
+
+    def get_list_response(self, queryset, serializer_class):
+        """ Shortcut for the paginated views / handlers """
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = serializer_class(queryset, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class CommentViewSet(viewsets.ModelViewSet):

@@ -13,7 +13,7 @@ from django.db import connection
 from rest_framework.test import APITestCase, APIClient
 from visitor.models import Visitor
 
-from .models import Mirror, Group, Member, Tag, Photo
+from .models import Mirror, Group, Member, Tag, Photo, Like
 
 # TODO: CREATE TEST CASES!
 VENDOR = connection.vendor
@@ -468,5 +468,20 @@ class GroupTests(APITestCase):
         self.force_login(2)
         url = reverse('snapshot:photo-like', kwargs={'pk': 1})
         response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+
+    def test_liked_list(self):
+
+        """ Test list with liked photos """
+        for i in range(15):
+            photo = Photo.objects.create(visitor_id=1, title=str(i))
+            Like.objects.create(visitor_id=1, photo_id=photo.id)
+
+        self.force_login(1)
+        url = reverse('snapshot:photo-liked-list')
+        response = self.client.get(url)
+        data = response.data
+        self.assertEqual(data['total'], 2)
         self.assertEqual(response.status_code, 200)
         self.client.logout()

@@ -11,6 +11,7 @@ angular.module('photo.services', ['ngResource'])
             newest: {method: 'GET', params: {action: 'newest'}, responseType: 'json'},
             edit: {method: 'PATCH', params: {action: 'edit'}, responseType: 'json'},
             clone: {method: 'POST', params: {action: 'clone'}, responseType: 'json'},
+            liked_list: {method: 'GET', params: {action: 'liked_list'}, responseType: 'json'},
     });
 }])
 .factory('Comment', ['$resource', 'source_path',
