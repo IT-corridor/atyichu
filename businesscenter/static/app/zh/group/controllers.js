@@ -356,7 +356,6 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             MultipartForm('POST', '#photo_form', url).then(function(response) {
                 $rootScope.alerts.push({ type: 'success', msg: '图片已添加到您的衣橱'});
                     $location.path('/group/' + $scope.group.id + '/photo');
-                    $scope.wait = false;
                 },
                 function(error) {
                     $scope.error = error.data;

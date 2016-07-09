@@ -351,7 +351,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             MultipartForm('POST', '#photo_form', url).then(function(response) {
                 $rootScope.alerts.push({ type: 'success', msg: 'Photo has been added to your group!'});
                     $location.path('/group/' + $scope.group.id + '/photo');
-                    $scope.wait = false;
+
                 },
                 function(error) {
                     $scope.error = error.data;

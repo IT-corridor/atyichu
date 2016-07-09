@@ -11,7 +11,12 @@ angular.module('app.route', [
         $routeProvider.
         when('/', {
             templateUrl: PATH + 'group/photo_list.html',
-            controller: 'CtrlPhotoNewest'}).
+            controller: 'CtrlPhotoNewest',
+            resolve: {
+                title: function(){return 'Newest Photos';},
+                kind: function(){return 'newest'},
+            }
+        }).
         when('/mirror/', {
             templateUrl: PATH + 'mirror/list.html',
             controller: 'CtrlMirrorList'}).
