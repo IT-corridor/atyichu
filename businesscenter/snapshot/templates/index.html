@@ -50,6 +50,8 @@
         <script src="{{ STATIC_URL }}lib/angularjs/ui-bootstrap-tpls.min.js"></script>
         <script src="{{ STATIC_URL }}lib/angularjs/other/angular-translate.js"></script>
         <script src="{{ STATIC_URL }}lib/angularjs/other/ngStorage.js"></script>
+        <script src="{{ STATIC_URL }}lib/masonry.pkgd.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/imagesloaded.pkgd.min.js"></script>
         {% get_current_language as LANGUAGE %}
         {% if LANGUAGE == 'zh-hans'  or LANGUAGE == 'zh-hant' %}
             {% include 'include/scripts.html' with LANG='zh' %}

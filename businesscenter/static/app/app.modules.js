@@ -11,6 +11,7 @@ var app = angular.module('app.main', [
     'footer',
     'alert',
     'selfie',
+    'grid',
 ]);
 app.factory('httpRequestInterceptor', function () {
     return {

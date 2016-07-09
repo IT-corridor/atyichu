@@ -176,6 +176,7 @@ angular.module('photo.controllers', ['photo.services'])
                 $scope.enough = success.total > 1 ? false : true;
                 $scope.page_link = GetPageLink();
                 $scope.page = success.current;
+
             },
             function(error){
                 console.log(error.data);
@@ -219,13 +220,13 @@ angular.module('photo.controllers', ['photo.services'])
                                 '$window', '$location', 'Photo', 'Group',
     function($scope, $rootScope, $http, $routeParams, $window, $location, Photo, Group) {
         $rootScope.title = 'Clone Photo';
-
+        $scope.wait = false;
         $scope.photo = Photo.get({pk: $routeParams.pk});
         $scope.r = {};
 
         $scope.groups = Group.my_short_list();
         $scope.clone = function(){
-
+            $scope.wait = true;
             Photo.clone({pk: $routeParams.pk}, $scope.r,
                 function(success){
                     $rootScope.alerts.push({ type: 'info', msg: 'Photo has been cloned.'});
@@ -233,6 +234,7 @@ angular.module('photo.controllers', ['photo.services'])
                 },
                 function(error){
                     $rootScope.alerts.push({type: 'danger', msg: 'Fail!'});
+                    $scope.wait = false;
                 }
             );
         }

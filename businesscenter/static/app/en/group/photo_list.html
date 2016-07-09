@@ -50,12 +50,12 @@
 <div class="container">
     <div class="m-t-md"></div>
     <div class="pinGridWrapper" data-ng-if="r">
-        <div class="pinGrid">
-            <div class="pin animate" data-ng-repeat="photo in r.results">
-                <a data-ng-href="#!/photo/{{ photo.id }}">
-                    <img data-ng-if="!photo.original" data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
-                    <img data-ng-if="photo.original" data-ng-src="{{ photo.origin.thumb }}" alt="{{ photo.title }}" class="img-pin">
-                    <div data-ng-if="!photo.original && !photo.thumb" class="wrapper-xs">
+        <div class="pinGrid"
+             data-masonry='{ "transitionDuration" : "0.4s" , "itemSelector" : ".tile", "gutter": 10, "fitWidth": "true"}'>
+            <div class="pin animate tile" data-ng-repeat="photo in r.results">
+                    <img data-ng-if="!photo.original && photo.thumb" data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
+                    <img data-ng-if="photo.original && !photo.thumb" data-ng-src="{{ photo.origin.thumb }}" alt="{{ photo.title }}" class="img-pin">
+                    <div data-ng-if="!photo.original && !photo.thumb">
                         <div class="text-center purple-50 r r-3x b b-light empty-cover-xs empty-cover-md"></div>
                     </div>
                 </a>
