@@ -71,16 +71,19 @@ class District(AbsLocation):
 
 class Store(models.Model):
 
-    photo = models.ImageField(_('Logo'), upload_to='stores',
-                             blank=True, null=True)
     district = models.ForeignKey(District, verbose_name=_('District'))
     street = models.CharField(_('Street'), max_length=100)
     build_name = models.CharField(_('Building name'), max_length=50)
     build_no = models.CharField(_('Building number'), max_length=5)
     apt = models.CharField(_('Apartments'), max_length=5)
-    brand_name = models.CharField(_('Brand name'), max_length=50)
+    brand_name = models.CharField(_('Brand name'), max_length=50, unique=True)
     owner = models.OneToOneField(Vendor, on_delete=models.CASCADE,
                                  verbose_name=_('Owner'))
+    thumb = models.ImageField(_('Thumbnail'),
+                              upload_to='stores/thumbs', null=True,
+                              blank=True)
+    photo = models.ImageField(_('Logo'), upload_to='stores',
+                              blank=True, null=True)
 
     def get_location(self):
         return '{}:{}:{}:{}:{}'.format(self.district, self.street,

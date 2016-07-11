@@ -31,6 +31,25 @@ class DistrictSerializer(serializers.ModelSerializer):
         model = models.District
 
 
+class StoreShortSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='brand_name', read_only=True)
+
+    class Meta:
+        model = models.Store
+        fields = ('pk', 'username', 'thumb')
+        extra_kwargs = {'pk': {'read_only': True}}
+
+
+class VendorStoreSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='store.brand_name', read_only=True)
+    thumb = serializers.ImageField(source='store.thumb', read_only=True)
+
+    class Meta:
+        model = models.Store
+        fields = ('pk', 'username', 'thumb')
+        extra_kwargs = {'pk': {'read_only': True}}
+
+
 class StoreSerializer(serializers.ModelSerializer):
 
     url = serializers.HyperlinkedIdentityField(view_name='account:store-detail')

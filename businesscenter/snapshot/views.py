@@ -10,11 +10,9 @@ from django.db import IntegrityError
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.utils import timezone
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.core.exceptions import PermissionDenied
 from django.core.mail import mail_admins
 from django.db.models import F, Prefetch, Q, Count
-from rest_framework import viewsets, mixins, filters
+from rest_framework import viewsets, mixins
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -31,6 +29,8 @@ from utils.paginators import CustomPagination
 from visitor.permissions import IsVisitor
 from visitor.serializers import VisitorShortSerializer
 from visitor.models import Visitor
+from account.models import Vendor, Store
+from account.serializers import VendorStoreSerializer
 from vutils.umeng_push import push_unicast
 from vutils.wzhifuSDK import JsApi_pub
 
@@ -539,7 +539,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         """ Pretty complex queryset for retreiving groups """
         visitor = self.request.user
         qs = Group.objects.select_related('owner__visitor').\
-            prefetch_related('tag_set')
+            prefetch_related('tag_set', 'member_set__visitor__visitor',
+                             'member_set__visitor__vendor__store')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             prefetch = Prefetch('photo_set',
                                 queryset=Photo.objects.
@@ -624,6 +625,34 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         return Response(data, status=status)
 
     @detail_route(methods=['post'])
+    def member_vendor_add(self, request, *args, **kwargs):
+        """ Add visitor (VENDOR!) to the group by store`s brand name.
+         It is necessary to perform self.get_object to check permission.
+          Warning: it is not programatically restricted that members of the
+          vendor(store) group can instances of the vendor. """
+        # TODO: implement restriction.
+
+        pk = self.get_object().id
+        status = 400
+        try:
+            # Argument left with name "username" to be compatible with frontend
+            # I do not want to write a completely new frontend for store part.
+            username = request.data['username']
+            vendor = Vendor.objects.get(store__brand_name=username)
+        except KeyError as e:
+            data = {'error': _('{} parameter is required').format(e.message)}
+        except Vendor.DoesNotExist:
+            data = {'error': _('Matching user does not exists')}
+        else:
+            member_data = {'visitor': vendor.pk, 'group': pk}
+            serializer = serializers.MemberSerializer(data=member_data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            data = serializer.data
+            status = 201
+        return Response(data, status=status)
+
+    @detail_route(methods=['post'])
     def member_remove(self, request, *args, **kwargs):
         """ Remove member from group."""
         status = 400
@@ -663,13 +692,29 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def visitor_list(self, request, *args, **kwargs):
-        """ Representation of visitor list """
+        """ Representation of visitor list. Only visitors """
         status = 400
         try:
             q = request.query_params['q']
             qs = Visitor.objects.filter(~Q(pk=request.user.id),
                                         user__username__startswith=q)[:5]
             serializer = VisitorShortSerializer(qs, many=True)
+            data = serializer.data
+            status = 200
+        except KeyError as e:
+            data = {'error': _('{} parameter is required').format(e.message)}
+        return Response(data=data, status=status)
+
+    @list_route(methods=['get'])
+    def vendor_list(self, request, *args, **kwargs):
+        """ Representation of vendor list """
+        status = 400
+        try:
+            q = request.query_params['q']
+            qs = Vendor.objects.filter(~Q(pk=request.user.id),
+                                       store__brand_name__startswith=q)[:5]
+
+            serializer = VendorStoreSerializer(qs, many=True)
             data = serializer.data
             status = 200
         except KeyError as e:

@@ -122,6 +122,11 @@ class Mirror(models.Model):
 
 
 class Photo(models.Model):
+    """Model representing a photo record with extra data.
+        Visitor means not instance of Visitor but instance of django auth User.
+        Name "Visitor" was left to not change all the code.
+        Previously only visitors can access to the photos.
+    """
     path_photo = UploadPath('snapshot/photo', None, *('visitor',))
     path_thumb = UploadPath('snapshot/photo/thumbs', None, 'thumb',
                             *('visitor',))

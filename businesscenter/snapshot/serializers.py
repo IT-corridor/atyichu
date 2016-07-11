@@ -1,10 +1,11 @@
 from __future__ import unicode_literals
 
+from django.template.defaultfilters import timesince, truncatechars_html
 from rest_framework import serializers
 
 from . import models
 from visitor.serializers import WeixinSerializer, VisitorShortSerializer
-from django.template.defaultfilters import timesince, truncatechars_html
+from account.serializers import StoreShortSerializer
 
 
 class MirrorSerializer(serializers.ModelSerializer):
@@ -27,7 +28,9 @@ class CommentSerializer(serializers.ModelSerializer):
                                           read_only=True)
             return serializer.data
         elif hasattr(obj.author, 'vendor'):
-            return
+            serializer = StoreShortSerializer(instance=obj.author.vendor.store,
+                                              read_only=True)
+            return serializer.data
         else:
             return
 
@@ -74,6 +77,11 @@ class PhotoListSerializer(serializers.ModelSerializer):
             serializer = VisitorShortSerializer(instance=obj.visitor.visitor,
                                                 read_only=True)
             return serializer.data
+        elif hasattr(obj.visitor, 'vendor'):
+            serializer = StoreShortSerializer(instance=obj.visitor.vendor.store,
+                                                read_only=True)
+            return serializer.data
+        return
 
     def get_clone_count(self, obj):
         if obj.original_id is not None:
@@ -86,19 +94,23 @@ class PhotoListSerializer(serializers.ModelSerializer):
         model = models.Photo
         fields = ('id', 'create_date', 'visitor', 'title',
                   'thumb', 'group', 'owner', 'descr', 'creator', 'original',
-                  'origin', 'comment_count', 'clone_count', 'like_count')
+                  'origin', 'comment_count', 'clone_count', 'like_count',
+                  'commodity')
 
 
 class PhotoDetailSerializer(PhotoListSerializer):
     comments = CommentSerializer(source='comment_set', many=True,
                                  read_only=True)
-    owner_thumb = serializers.ImageField(source='visitor.thumb',
-                                         read_only=True)
+    owner_thumb = serializers.SerializerMethodField(read_only=True)
 
     def get_owner_thumb(self, obj):
         if hasattr(obj.visitor, 'visitor'):
             return serializers.ImageField(source='visitor.visitor.thumb',
-                                          read_only=True)
+                                          read_only=True).initial
+        elif hasattr(obj.visitor, 'vendor'):
+            return serializers.ImageField(source='visitor.vendor.store.thumb',
+                                          read_only=True).initial
+        return
 
     class Meta:
         model = models.Photo
@@ -140,7 +152,16 @@ class TagSerializer(serializers.ModelSerializer):
 class MemberSerializer(serializers.ModelSerializer):
 
     username = serializers.CharField(source='visitor', read_only=True)
-    thumb = serializers.ImageField(source='visitor.thumb', read_only=True)
+    thumb = serializers.SerializerMethodField(read_only=True)
+
+    def get_thumb(self, obj):
+        if hasattr(obj.visitor, 'visitor'):
+            return serializers.ImageField(source='visitor.visitor.thumb',
+                                          read_only=True).initial
+        elif hasattr(obj.visitor, 'vendor'):
+            return serializers.ImageField(source='visitor.vendor.store.thumb',
+                                          read_only=True).initial
+        return
 
     class Meta:
         model = models.Member

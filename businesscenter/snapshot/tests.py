@@ -12,11 +12,11 @@ from django.conf import settings
 from django.db import connection
 from rest_framework.test import APITestCase, APIClient
 from visitor.models import Visitor
-
+from account.models import Vendor, Store, District, City, State
 from .models import Mirror, Group, Member, Tag, Photo, Like
 
 # TODO: CREATE TEST CASES!
-VENDOR = connection.vendor
+DB_VENDOR = connection.vendor
 
 visitor_data_1 = {"weixin": "oRFOiwzjygVD6hwtyMFUZCZ299bo",
                   "access_token": "ACCESS_TOKEN",
@@ -106,7 +106,7 @@ class MirrorTests(APITestCase):
         for mirror in unlocked:
             self.assertFalse(mirror.is_locked)
 
-    @unittest.skipIf(VENDOR == 'sqlite', 'SQRT not supported')
+    @unittest.skipIf(DB_VENDOR == 'sqlite', 'SQRT not supported')
     def test_nearest_mirrors(self):
         mirrors = Mirror.objects.get_by_distance(39.929344, 116.48178)
 
@@ -119,7 +119,7 @@ class MirrorTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.client.logout()
 
-    @unittest.skipIf(VENDOR == 'sqlite', 'SQRT not supported')
+    @unittest.skipIf(DB_VENDOR == 'sqlite', 'SQRT not supported')
     def test_mirror_view_list(self):
         self.force_login()
         response = self.client.get(reverse('snapshot:mirror-list'))
@@ -486,3 +486,69 @@ class GroupTests(APITestCase):
         self.assertEqual(len(data['results']), 12)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
+
+
+class GroupVendorTests(APITestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+
+        cls.user_1 = User.objects.create(username='Magnus')
+        vendor_1 = Vendor.objects.create(user=cls.user_1)
+        cls.user_2 = User.objects.create(username='Felix')
+        vendor_2 = Vendor.objects.create(user=cls.user_2)
+        cls.user_3 = User.objects.create(username='Sen')
+        vendor_3 = Vendor.objects.create(user=cls.user_3)
+
+        state = State.objects.create(title='Beijing')
+        city = City.objects.create(title='Beijing', state=state)
+        district = District.objects.create(title='Good one', city=city)
+
+        data = dict(street='of flowers',
+                 build_name='Roof of the world',
+                 build_no='67',
+                 apt='24',
+                 )
+
+        store_1 = Store.objects.create(district=district, owner=vendor_1,
+                                       brand_name='FFF', **data)
+
+        store_2 = Store.objects.create(district=district, owner=vendor_2,
+                                       brand_name='Magnificent', **data)
+
+        store_3 = Store.objects.create(district=district, owner=vendor_3,
+                                       brand_name='Magnifico', **data)
+
+        Group.objects.create(title='store`s group', owner=cls.user_1)
+
+    def test_create_group(self):
+        """ Test creating public group """
+        data = {'title': 'test group'}
+        self.force_login(1)
+
+        url = reverse('snapshot:group-list')
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 201)
+        self.client.logout()
+
+    def test_add_member_vendor_to_group(self):
+        self.force_login(1)
+        url = reverse('snapshot:group-member-vendor-add', kwargs={'pk': 1})
+        response = self.client.post(url, data={'username': 'Magnificent'})
+        self.assertEqual(response.status_code, 201)
+        self.client.logout()
+
+
+    def test_vendor_store_list(self):
+        self.force_login(1)
+        url = reverse('snapshot:group-vendor-list')
+        response = self.client.get(url, data={'q': 'Magni'})
+        data = response.data
+        print (data)
+        self.assertEqual(len(data), 2)
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+
+    def force_login(self, pk):
+        user = User.objects.get(id=pk)
+        self.client.force_login(user=user)
