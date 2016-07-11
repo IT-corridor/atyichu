@@ -19,7 +19,17 @@ class MirrorSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
 
-    author_data = WeixinSerializer(source='author', read_only=True)
+    author_data = serializers.SerializerMethodField(read_only=True)
+
+    def get_author_data(self, obj):
+        if hasattr(obj.author, 'visitor'):
+            serializer = WeixinSerializer(instance=obj.author.visitor,
+                                          read_only=True)
+            return serializer.data
+        elif hasattr(obj.author, 'vendor'):
+            return
+        else:
+            return
 
     class Meta:
         model = models.Comment
@@ -47,7 +57,7 @@ class PhotoOriginalSerializer(serializers.ModelSerializer):
 
 class PhotoListSerializer(serializers.ModelSerializer):
     """ Works only with PhotoManager or ActivePhotoManager """
-    owner = VisitorShortSerializer(source='visitor', read_only=True)
+    owner = serializers.SerializerMethodField(read_only=True)
     descr = serializers.SerializerMethodField(read_only=True)
     origin = PhotoOriginalSerializer(source='original', read_only=True)
     comment_count = serializers.IntegerField(read_only=True)
@@ -57,6 +67,13 @@ class PhotoListSerializer(serializers.ModelSerializer):
     def get_descr(self, obj):
         if obj.description:
             return truncatechars_html(obj.description, 150)
+
+    def get_owner(self, obj):
+        # TODO: implement for the store (vendor)
+        if hasattr(obj.visitor, 'visitor'):
+            serializer = VisitorShortSerializer(instance=obj.visitor.visitor,
+                                                read_only=True)
+            return serializer.data
 
     def get_clone_count(self, obj):
         if obj.original_id is not None:
@@ -77,6 +94,11 @@ class PhotoDetailSerializer(PhotoListSerializer):
                                  read_only=True)
     owner_thumb = serializers.ImageField(source='visitor.thumb',
                                          read_only=True)
+
+    def get_owner_thumb(self, obj):
+        if hasattr(obj.visitor, 'visitor'):
+            return serializers.ImageField(source='visitor.visitor.thumb',
+                                          read_only=True)
 
     class Meta:
         model = models.Photo
@@ -105,6 +127,7 @@ class PhotoCropSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Photo
         fields = ('id', 'crop')
+
 # Group serializers started
 
 

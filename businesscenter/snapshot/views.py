@@ -93,7 +93,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
 
         # Mirror available if it is not locked or owner is current_user
         # Also mirror should be online.
-        visitor = self.request.user.visitor
+        visitor = self.request.user
         a_mirrors = [i for i in mirrors if not i.is_locked or
                      i.owner_id == visitor.pk]
         # TODO remove next line
@@ -256,7 +256,11 @@ class PhotoViewSet(viewsets.ModelViewSet):
     # TODO: maybe it is necessary to turn off pagination
 
     def get_queryset(self):
-        qs = Photo.p_objects.select_related('original', 'visitor__user')
+        qs = Photo.p_objects.select_related('original',
+                                            'visitor__visitor')
+        p = Prefetch('comment_set',
+                     Comment.objects.select_related('author__visitor'))
+        qs = qs.prefetch_related(p)
         return qs
 
     def create(self, request, *args, **kwargs):
@@ -291,7 +295,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         mirror.user = request.user
         mirror.save()
 
-        visitor = request.user.visitor
+        visitor = request.user
         photo = Photo.objects.create(visitor=visitor, mirror=mirror)
 
         log.info('create photo id: {}'.format(photo.id))
@@ -309,7 +313,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         """
         get all photo order by time desc. Currently not used.
         """
-        visitor = request.user.visitor
+        visitor = request.user
         qs = self.get_queryset()
         qs = qs.prefetch_related('comment_set__author').filter(visitor=visitor)
         photos = qs
@@ -378,7 +382,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         except Photo.DoesNotExist:
             return Response(data={'error': _('Photo does not exist')})
 
-        visitor = request.user.visitor
+        visitor = request.user
 
         if visitor.pk != photo.visitor_id:
             return Response(data={'error': _('Only the owner can edit photo')})
@@ -412,7 +416,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def newest(self, request, *args, **kwargs):
         """ Providing a newest list of public groups photos """
-        qs = Photo.a_objects.select_related('original', 'visitor__user')
+        qs = Photo.a_objects.select_related('original', 'visitor__visitor')
         qs = qs.filter(Q(group__is_private=False) &
                        ~Q(visitor_id=request.user.id))\
             .order_by('-pk').distinct()
@@ -455,7 +459,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def liked_list(self, request, *args, **kwargs):
         """ Providing a photo list of liked photos """
-        qs = Photo.p_objects.select_related('original', 'visitor__user')
+        qs = Photo.p_objects.select_related('original', 'visitor__visitor')
         qs = qs.filter(like__visitor_id=request.user.id)
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
@@ -473,7 +477,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.select_related('author')
+    queryset = Comment.objects.select_related('author__visitor')
     serializer_class = serializers.CommentSerializer
     permission_classes = [IsVisitor]
     pagination_class = None
@@ -513,7 +517,7 @@ class TagViewSet(mixins.UpdateModelMixin,
                  mixins.DestroyModelMixin,
                  viewsets.GenericViewSet):
     # TODO: create actual permissions
-    queryset = Tag.objects.select_related('group__owner', 'visitor')
+    queryset = Tag.objects.select_related('group__owner', 'visitor__visitor')
     serializer_class = serializers.TagSerializer
     pagination_class = None
     permission_classes = [MemberCanServe]
@@ -521,7 +525,7 @@ class TagViewSet(mixins.UpdateModelMixin,
 
 class MemberViewSet(viewsets.ModelViewSet):
     """ Useless currently """
-    queryset = Member.objects.select_related('group', 'visitor')
+    queryset = Member.objects.select_related('group', 'visitor__visitor')
     serializer_class = serializers.MemberSerializer
     pagination_class = None
     permission_classes = []
@@ -533,8 +537,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         """ Pretty complex queryset for retreiving groups """
-        visitor = self.request.user.visitor
-        qs = Group.objects.select_related('owner__user').\
+        visitor = self.request.user
+        qs = Group.objects.select_related('owner__visitor').\
             prefetch_related('tag_set')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             prefetch = Prefetch('photo_set',
@@ -568,7 +572,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
         data = request.data
         data['group'] = self.get_object().id
-        data['visitor'] = self.request.user.visitor
+        data['visitor'] = self.request.user.id
 
         serializer = serializers.PhotoSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -579,7 +583,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     def photo_list(self, request, *args, **kwargs):
         """ Photo list for specified group """
         group = self.get_object()
-        qs = Photo.p_objects.select_related('visitor__user')
+        qs = Photo.p_objects.select_related('visitor__visitor')
         qs = qs.filter(group=group)
         serializer_class = serializers.PhotoListSerializer
         qs = self.filter_queryset(qs)
@@ -611,7 +615,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         except Visitor.DoesNotExist:
             data = {'error': _('Matching user does not exists')}
         else:
-            member_data = {'visitor': visitor, 'group': pk}
+            member_data = {'visitor': visitor.pk, 'group': pk}
             serializer = serializers.MemberSerializer(data=member_data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
@@ -650,7 +654,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             It is necessary to perform self.get_object to check permission. """
         data = request.data
         data['group'] = self.get_object().id
-        data['visitor'] = self.request.user.visitor
+        data['visitor'] = self.request.user.id
 
         serializer = serializers.TagSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -675,8 +679,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def my_groups(self, request, *args, **kwargs):
 
-        visitor = self.request.user.visitor
-        qs = Group.objects.select_related('owner__user')
+        visitor = self.request.user
+        qs = Group.objects.select_related('owner__visitor')
         qs = qs.prefetch_related('tag_set')
         prefetch = Prefetch('photo_set',
                             queryset=Photo.p_objects.select_related('original'))
@@ -695,7 +699,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def my_groups_short(self, request, *args, **kwargs):
-        visitor = self.request.user.visitor
+        visitor = self.request.user
         qs = Group.objects.all()
         qs = qs.filter(Q(owner=visitor) | Q(member__visitor=visitor)) \
             .distinct()
@@ -706,7 +710,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 class GroupPhotoViewSet(mixins.UpdateModelMixin,
                         mixins.DestroyModelMixin,
                         viewsets.GenericViewSet):
-    queryset = Photo.objects.select_related('group', 'visitor')
+    queryset = Photo.objects.select_related('group', 'visitor__visitor')
     serializer_class = serializers.PhotoDetailSerializer
     pagination_class = None
     permission_classes = [MemberCanServe]

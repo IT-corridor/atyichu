@@ -4,11 +4,14 @@ from rest_framework import permissions
 
 
 class VisitorBasic(permissions.IsAuthenticated):
-
+    """ Visitor (wechat)  and Vendor (store) are nested models
+    from default django auth User model. Only their instances
+    can take this permission."""
     def has_permission(self, request, view):
         base_perm = super(VisitorBasic, self).has_permission(request, view)
         if base_perm:
-            if hasattr(request.user, 'visitor'):
+            if hasattr(request.user, 'visitor') or \
+                    hasattr(request.user, 'vendor'):
                 return True
         return request.user.is_staff
 
@@ -36,6 +39,7 @@ class IsOwnerOrMember(VisitorBasic):
 
 
 class MemberCanServe(VisitorBasic):
+    """ Permission for Member instances. And for group owners in some cases."""
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True

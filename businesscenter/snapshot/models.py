@@ -129,7 +129,7 @@ class Photo(models.Model):
                             *('visitor',))
     path_cover = UploadPath('snapshot/photo/cover', None, 'cover',
                            *('visitor',))
-    visitor = models.ForeignKey(Visitor, verbose_name=_('Photo owner'))
+    visitor = models.ForeignKey('auth.User', verbose_name=_('Photo owner'))
     mirror = models.ForeignKey(Mirror, verbose_name=_('Mirror'), blank=True,
                                null=True, on_delete=models.SET_NULL)
     title = models.CharField(_('Title'), max_length=200, blank=True)
@@ -149,7 +149,7 @@ class Photo(models.Model):
                              null=True, blank=True)
     cover = models.ImageField(_('Cover'), upload_to=path_cover,
                               null=True, blank=True)
-    creator = models.ForeignKey(Visitor, verbose_name=_('Photo creator'),
+    creator = models.ForeignKey('auth.User', verbose_name=_('Photo creator'),
                                 null=True, blank=True,
                                 related_name='+')
     original = models.ForeignKey('self', null=True, blank=True,
@@ -157,6 +157,9 @@ class Photo(models.Model):
                                  related_name='clones',
                                  related_query_name='clone',
                                  on_delete=models.SET_NULL)
+
+    commodity = models.ForeignKey('catalog.Commodity', blank=True, null=True,
+                                  on_delete=models.SET_NULL)
 
     objects = models.Manager()
     p_objects = PhotoManager()
@@ -166,7 +169,7 @@ class Photo(models.Model):
         return self.comment_count
 
     def __unicode__(self):
-        return '{}: {}'.format(self.visitor, self.pk)
+        return '{}: {}'.format(self.visitor_id, self.pk)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -186,7 +189,7 @@ class Photo(models.Model):
 class Comment(models.Model):
     photo = models.ForeignKey(Photo, verbose_name=_('Photo'),
                               on_delete=models.CASCADE)
-    author = models.ForeignKey(Visitor, verbose_name=_('Author'))
+    author = models.ForeignKey('auth.User', verbose_name=_('Author'))
     message = models.CharField(_('Message'), max_length=160)
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
@@ -209,7 +212,7 @@ class Like(models.Model):
     But i make an independent model for this case to have more control with
     data and data migration."""
     photo = models.ForeignKey(Photo, verbose_name=_('Photo Likes'))
-    visitor = models.ForeignKey(Visitor, verbose_name=_('Visitor'))
+    visitor = models.ForeignKey('auth.User', verbose_name=_('Visitor'))
 
     def __unicode__(self):
         return '{}:{}'.format(self.photo, self.visitor.id)
@@ -233,7 +236,7 @@ class Group(models.Model):
     is_private = models.BooleanField(_('Private'), default=False)
     create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
-    owner = models.ForeignKey(Visitor, verbose_name=_('Group owner'))
+    owner = models.ForeignKey('auth.User', verbose_name=_('Group owner'))
 
     objects = GroupManager()
 
@@ -249,9 +252,12 @@ class Group(models.Model):
 class Member(models.Model):
     """ Representation of a group member.
     It not uses directly ManyToMany Relation. It is realized explicitly """
+    # TODO: implement feature:
+    # only store`s can be members of the store`s group
+    # only visitors (wechat) can be members of the visitor`s group
     group = models.ForeignKey(Group, verbose_name=_('Group'),
                               on_delete=models.CASCADE)
-    visitor = models.ForeignKey(Visitor, verbose_name=_('Visitor'),
+    visitor = models.ForeignKey('auth.User', verbose_name=_('Visitor'),
                                 on_delete=models.CASCADE)
 
     def __unicode__(self):
@@ -264,10 +270,10 @@ class Member(models.Model):
 
 
 class Tag(models.Model):
-    """ Representation of tag for group """
+    """ Representation of tag for group. Can be used for search. """
     title = models.CharField(_('Title'), max_length=200, blank=True)
     group = models.ForeignKey(Group, verbose_name=_('Group'))
-    visitor = models.ForeignKey(Visitor, verbose_name=_('Visitor'))
+    visitor = models.ForeignKey('auth.User', verbose_name=_('Visitor'))
 
     def __unicode__(self):
         return '{}, {}'.format(self.group_id, self.title)

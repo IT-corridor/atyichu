@@ -38,6 +38,7 @@ visitor_data_3 = {"weixin": "oRFOiwzjygVD6hwtyMFUZCZ299b2",
 
 filepath = os.path.join(settings.MEDIA_ROOT, 'image.jpeg')
 
+
 class MirrorTests(APITestCase):
 
     @classmethod
@@ -174,19 +175,18 @@ class MirrorTests(APITestCase):
         user = User.objects.get(id=2)
         self.client.force_login(user=user)
 
-
 class GroupTests(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        user_1 = User.objects.create(username="Nikolay")
-        cls.owner = Visitor.objects.create(user=user_1, **visitor_data_1)
+        cls.owner = User.objects.create(username="Nikolay")
+        user_1 = Visitor.objects.create(user=cls.owner, **visitor_data_1)
 
-        user_2 = User.objects.create(username="Jack")
-        cls.member = Visitor.objects.create(user=user_2, **visitor_data_2)
+        cls.member = User.objects.create(username="Jack")
+        user_2 = Visitor.objects.create(user=cls.member, **visitor_data_2)
 
-        user_3 = User.objects.create(username="Peter")
-        cls.member_2 = Visitor.objects.create(user=user_3, **visitor_data_3)
+        cls.member_2 = User.objects.create(username="Peter")
+        user_3 = Visitor.objects.create(user=cls.member_2, **visitor_data_3)
 
         cls.group = Group.objects.create(owner=cls.owner, title='group 0')
         cls.group_private = Group.objects.create(owner=cls.owner, title='G 0',
@@ -482,8 +482,7 @@ class GroupTests(APITestCase):
         url = reverse('snapshot:photo-liked-list')
         response = self.client.get(url)
         data = response.data
-        print (len(data['results']))
-        self.assertEqual(data['total'], 8)
-        self.assertEqual(len(data['results']), 4)
+        self.assertEqual(data['total'], 2)
+        self.assertEqual(len(data['results']), 12)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
