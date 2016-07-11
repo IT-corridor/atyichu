@@ -9,8 +9,8 @@ body {
 	width: 100%;
 }
 .pinGridWrapper {
-	width: 98%;
-	margin: auto;
+	width: 100%;
+	margin: 0 auto;
 }
 .pinGridWrapper h1 {
 	font-size: 2.0em;
@@ -34,8 +34,8 @@ body {
 	-webkit-box-shadow: 0 6px 6px -6px #ccc;
 	-moz-box-shadow: 0 6px 6px -6px #ccc;
 	box-shadow: 0 6px 6px -6px #ccc;
-	margin: 0 0 15px;
-	width: 150px;
+	margin: 0 2% 15px;
+	width: 46%;
 	max-width: 100%;
 }
 
@@ -55,4 +55,26 @@ body {
 .pin p {
 	padding: 10px;
 	color: #333;
+}
+
+
+@media (min-width: 580px) {
+.pin {
+	width: 46%;
+}
+}
+ @media (min-width: 870px) {
+.pin {
+	width: 32.66%;
+}
+}
+ @media (min-width: 1160px) {
+.pin {
+	width: 24.5%;
+}
+}
+ @media (min-width: 1450px) {
+.pin {
+	width: 19.6%;
+}
 }
