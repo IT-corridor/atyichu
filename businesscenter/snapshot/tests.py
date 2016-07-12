@@ -538,7 +538,6 @@ class GroupVendorTests(APITestCase):
         self.assertEqual(response.status_code, 201)
         self.client.logout()
 
-
     def test_vendor_store_list(self):
         self.force_login(1)
         url = reverse('snapshot:group-vendor-list')

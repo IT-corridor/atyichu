@@ -33,7 +33,9 @@ class VendorTests(APITestCase):
     def test_rest_login_success(self):
         """ Test login view for all accounts """
         user = self.vendor.user
-        data_compare = {'username': user.username, 'id': user.id}
+        data_compare = {'username': user.username, 'id': user.id,
+                        'store': None, 'brand_name': None, 'avatar': None,
+                        'thumb': None, 'pk': 2}
         url = reverse('account:login')
         response = self.client.post(url, data=self.vendor_data)
         self.assertEqual(response.status_code, 200)
@@ -90,21 +92,17 @@ class StoreTests(APITestCase):
             'build_no': '42',
             'build_name': 'High one',
             'street': 'Awesome',
-            'district': {
-                'title': 'First one',
-                'city': {
-                    'title': 'Shanghai',
-                    'state': {
-                        'title': 'Shanghai',
-                    },
-                }
-            }
+            'district_title': 'First one',
+            'city_title': 'Shanghai',
+            'state_title': 'Shanghai',
         }
 
     def test_rest_login_success(self):
         """ Test login view for all accounts """
         user = self.vendor_2.user
-        data_compare = {'username': user.username, 'id': user.id, 'store': 1}
+        data_compare = {'username': user.username, 'id': user.id, 'store': 1,
+                        'brand_name': 'EYE', 'avatar': None,
+                        'thumb': None, 'pk': 2}
         url = reverse('account:login')
         response = self.client.post(url, data=self.vendor_data_2)
         self.assertEqual(response.status_code, 200)
@@ -115,6 +113,7 @@ class StoreTests(APITestCase):
         self.client.login(username=self.vendor_data_1['username'],
                           password=self.vendor_data_1['password'])
         url = reverse('account:store-list')
+        print (url)
         response = self.client.post(url, json.dumps(self.data),
                                     content_type='application/json')
 
@@ -129,15 +128,9 @@ class StoreTests(APITestCase):
             'build_no': '42',
             'build_name': 'Good',
             'street': 'Good street',
-            'district': {
-                'title': 'Super',
-                'city': {
-                    'title': 'Beijing',
-                    'state': {
-                        'title': 'Beijing',
-                    },
-                }
-            }
+            'district_title': 'Super',
+            'city_title': 'Beijing',
+            'state_title': 'Beijing',
         }
         self.client.login(username=self.vendor_data_2['username'],
                           password=self.vendor_data_2['password'])
@@ -145,7 +138,6 @@ class StoreTests(APITestCase):
         response = self.client.put(url, json.dumps(data),
                                     content_type='application/json')
         self.client.logout()
-        print (response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_partial_update_vendor_store(self):

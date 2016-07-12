@@ -26,6 +26,8 @@ urlpatterns = (
         views.ProfilePasswordUpdatedView.as_view(), name='profile-password'),
     url(r'^login/$', views.login_view, name='login'),
     url(r'^logout/$', views.logout_view, name='logout'),
+    url(r'^my_vendor/$', views.get_my_vendor, name='my_vendor'),
+    url(r'^is_authenticated/$', views.is_authenticated, name='is_authenticated'),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -4,7 +4,6 @@
         <meta charset="utf-8">
         <meta name="fragment" content="!" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
         <meta name="description" content="Atyichu">
         {% load i18n %}
         {% load static from staticfiles %}
@@ -34,7 +33,10 @@
             </div>
         </div>
         <div id="content" class="view-container">
-            <div data-ng-if="visitor_resolved === true" data-ng-view class="view-frame"></div>
+            <div class="container" data-ng-if="!visitor_resolved">
+                <h1 class="text-center" data-translate="AUTHENTICATION.REQUIRED"></h1>
+            </div>
+            <div data-ng-if="visitor_resolved" data-ng-view class="view-frame"></div>
         </div>
         <div data-d-footer></div>
         <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
@@ -51,11 +53,19 @@
         <script src="{{ STATIC_URL }}lib/angularjs/other/ngStorage.js"></script>
         <script src="{{ STATIC_URL }}lib/masonry.pkgd.min.js"></script>
         <script src="{{ STATIC_URL }}lib/imagesloaded.pkgd.min.js"></script>
-        {% get_current_language as LANGUAGE %}
-        {% if LANGUAGE == 'zh-hans'  or LANGUAGE == 'zh-hant' %}
-            {% include 'include/scripts.html' with LANG='zh' %}
-        {% else %}
-            {% include 'include/scripts.html' with LANG='en' %}
-        {% endif %}
+
+        <script src="{{ STATIC_URL }}store/app.modules.js"></script>
+        <script src="{{ STATIC_URL }}store/app.routes.js"></script>
+        <script src="{{ STATIC_URL }}store/app.constants.js"></script>
+        <script src="{{ STATIC_URL }}store/partials/alert/directives.js"></script>
+        <script src="{{ STATIC_URL }}store/partials/auth/services.js"></script>
+        <script src="{{ STATIC_URL }}store/partials/common/services.js"></script>
+        <script src="{{ STATIC_URL }}store/partials/footer/directives.js"></script>
+        <script src="{{ STATIC_URL }}store/partials/navbar/directives.js"></script>
+        <script src="{{ STATIC_URL }}store/partials/selfie/directives.js"></script>
+        <script src="{{ STATIC_URL }}store/common/controllers.js"></script>
+        <script src="{{ STATIC_URL }}store/partials/grid/directives.js"></script>
+        <script src="{{ STATIC_URL }}store/store/controllers.js"></script>
+        <script src="{{ STATIC_URL }}store/store/services.js"></script>
     </body>
 </html>

@@ -18,7 +18,8 @@ class Vendor(models.Model):
                                null=True, blank=True,
                                validators=[SizeValidator(0.5)])
     thumb = models.ImageField(_('Thumbnail'),
-                              upload_to='vendors/thumbs', null=True, blank=True)
+                              upload_to='vendors/thumbs',
+                              null=True, blank=True)
 
     def __unicode__(self):
         return self.user.username

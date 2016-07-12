@@ -11,7 +11,7 @@ class OwnerCreateMixin(object):
 
     user_kwd = 'owner'
     def create(self, request, *args, **kwargs):
-        data = request.data
+        data = request.data.copy()
         data[self.user_kwd] = request.user.id
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -23,7 +23,7 @@ class OwnerCreateMixin(object):
 class OwnerUpdateMixin(object):
 
     def update(self, request, *args, **kwargs):
-        data = request.data
+        data = request.data.copy()
         data['owner'] = request.user.id
         partial = kwargs.pop('partial', False)
         instance = self.get_object()

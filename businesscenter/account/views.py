@@ -5,37 +5,31 @@ from django.contrib.auth import logout, authenticate, login
 from rest_framework import viewsets, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-
+from rest_framework.decorators import list_route, detail_route
+from rest_framework.generics import get_object_or_404
 from . import serializers, models
+from .permissions import IsVendorSimple
 from utils import permissions
+from utils.views import OwnerCreateMixin, OwnerUpdateMixin
 
 
-class StoreViewSet(viewsets.ModelViewSet):
+class StoreViewSet(OwnerCreateMixin,
+                   OwnerUpdateMixin,
+                   viewsets.ModelViewSet):
     serializer_class = serializers.StoreSerializer
     permission_classes = (permissions.IsStoreOwnerOrReadOnly, )
 
+    # TODO: implement retrieve from session
     def get_queryset(self):
         return models.Store.objects.select_related('district__city__state')
 
-    def create(self, request, *args, **kwargs):
-        data = request.data.copy()
-        data['owner'] = request.user
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=201, headers=headers)
-
-    def update(self, request, *args, **kwargs):
-        data = request.data.copy()
-        data['owner'] = request.user.vendor.pk
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=data,
-                                         partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(serializer.data)
+    @list_route(methods=['get'])
+    def my_store(self, request):
+        vendor = request.user.vendor
+        obj = get_object_or_404(self.get_queryset(), owner=vendor)
+        serializer = self.serializer_class(instance=obj,
+                                           context={'request': request})
+        return Response(data=serializer.data)
 
 
 class AbsListView(generics.ListAPIView):
@@ -101,13 +95,13 @@ def login_view(request):
         username = request.data['username']
         password = request.data['password']
         user = authenticate(username=username, password=password)
-        login(request, user)
 
-        data.update({'username': user.username, 'id': user.pk})
-        if hasattr(request.user, 'vendor') \
-                and hasattr(request.user.vendor, 'store'):
-            data.update({'store': request.user.vendor.store.id})
-        status = 200
+        if hasattr(user, 'vendor'):
+            vendor = user.vendor
+            serializer = serializers.VendorBriefSerializer(instance=vendor)
+            data.update(serializer.data)
+            status = 200
+            login(request, user)
     except KeyError as e:
         # missing parameter
         data.update({'error': _('Missed parameter {}').format(e)})
@@ -118,3 +112,23 @@ def login_view(request):
 
     return Response(data, status=status)
 
+
+@api_view(['GET'])
+@permission_classes((IsVendorSimple,))
+def get_my_vendor(request):
+    """ Provides personal vendor data, username and thumb """
+    # TODO: Optimize queryset
+    vendor = request.user.vendor
+    serializer = serializers.VendorBriefSerializer(instance=vendor)
+    return Response(data=serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([])
+def is_authenticated(request):
+    if request.user.is_authenticated() \
+            and hasattr(request.user, 'vendor'):
+        r = True
+    else:
+        r = False
+    return Response({'is_authenticated': r})
