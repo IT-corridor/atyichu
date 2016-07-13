@@ -33,7 +33,7 @@ angular.module('app.route', [
             }
         }).
         when('/photo/liked', {
-            templateUrl: PATH + 'group/photo_list.html',
+            templateUrl: PATH + 'group/templates/photo_list.html',
             controller: 'CtrlPhotoNewest',
             resolve: {
                 title: function(){return 'Liked Photos';},
