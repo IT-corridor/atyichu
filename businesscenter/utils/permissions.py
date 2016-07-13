@@ -27,7 +27,7 @@ class IsStoreOwnerOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        if hasattr(request.user, 'vendor'):
+        if hasattr(request.user, 'vendor') or hasattr(request.user, 'visitor'):
             return True
 
         return request.user.is_staff
