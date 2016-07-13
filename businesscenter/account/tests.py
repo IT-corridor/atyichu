@@ -113,9 +113,10 @@ class StoreTests(APITestCase):
         self.client.login(username=self.vendor_data_1['username'],
                           password=self.vendor_data_1['password'])
         url = reverse('account:store-list')
-        print (url)
         response = self.client.post(url, json.dumps(self.data),
                                     content_type='application/json')
+
+        print (response.data)
 
         self.client.logout()
         self.assertEqual(response.status_code, 201)

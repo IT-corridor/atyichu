@@ -8,6 +8,7 @@ angular.module('store.services', ['ngResource'])
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
             my_store: {method:'GET', params:{pk: null, action: 'my_store'}, responseType:'json'},
+            update_photo: {method:'PATCH', params:{action: 'update_photo'}, responseType:'json'},
 
     });
 }])

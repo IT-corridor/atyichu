@@ -80,9 +80,8 @@ class Store(models.Model):
     brand_name = models.CharField(_('Brand name'), max_length=50, unique=True)
     owner = models.OneToOneField(Vendor, on_delete=models.CASCADE,
                                  verbose_name=_('Owner'))
-    thumb = models.ImageField(_('Thumbnail'),
-                              upload_to='stores/thumbs', null=True,
-                              blank=True)
+    crop = models.ImageField(_('Crop'), upload_to='stores/crops',
+                             null=True, blank=True)
     photo = models.ImageField(_('Logo'), upload_to='stores',
                               blank=True, null=True)
 

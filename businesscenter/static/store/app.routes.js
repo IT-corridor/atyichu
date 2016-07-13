@@ -18,6 +18,10 @@ angular.module('app.route', [
             templateUrl: PATH + 'store/templates/detail.html',
             controller: 'CtrlStoreOwn',
         }).
+        when('/stores/my/edit', {
+            templateUrl: PATH + 'store/templates/edit.html',
+            controller: 'CtrlStoreEdit',
+        }).
         when('/error/404/', {
             templateUrl: PATH + 'partials/error/404.html'}).
         otherwise({

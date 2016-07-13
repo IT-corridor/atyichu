@@ -76,6 +76,13 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'ALREADY': 'You already have a store',
                 'SUCCESS': 'Store has been created',
             },
+            'UPDATE': {
+                'HEADER': 'Edit your store',
+                'SUCCESS': 'Your store information has been updated.',
+                'FAIL': 'Fail trying update.',
+                'UPDATE_PHOTO': 'Update photo',
+                'UPDATE_DATA': 'Update data',
+            },
             'FORM': {
                 'BRAND_NAME': 'Brand name',
                 'STATE': 'State',
@@ -86,10 +93,16 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'BUILD_NO': 'Building number',
                 'APT': 'Apartments',
                 'PHOTO': 'Photo',
-                'SUBMIT': 'Create',
+                'CROP': 'Crop',
+                'SUBMIT': 'Submit',
                 'CANCEL': 'Cancel',
                 'WAIT': 'Please wait...',
+                'LOCATION': 'Location',
+                'NO_PHOTO': 'No photo',
             },
+            'MYs': {
+                'HEADER': 'Your store overview',
+            }
         }
     });
 
@@ -129,6 +142,13 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'HEADER': 'Create a store',
                 'ALREADY': 'You already have a store',
             },
+            'UPDATE': {
+                'HEADER': 'Update your store',
+                'SUCCESS': 'Your store information has been updated.',
+                'FAIL': 'Fail trying update.',
+                'UPDATE_PHOTO': 'Update photo',
+                'UPDATE_DATA': 'Update data',
+            },
             'FORM': {
                 'BRAND_NAME': 'Brand name',
                 'STATE': 'State',
@@ -139,10 +159,16 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'BUILD_NO': 'Building number',
                 'APT': 'Apartments',
                 'PHOTO': 'Photo',
-                'SUBMIT': 'Create',
+                'CROP': 'Crop',
+                'SUBMIT': 'Submit',
                 'CANCEL': 'Cancel',
                 'WAIT': 'Please wait...',
+                'LOCATION': 'Location',
+                'NO_PHOTO': 'No Photo',
             },
+            'MY': {
+                'HEADER': 'Your store overview',
+            }
         }
     });
 

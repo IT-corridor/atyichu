@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.generics import get_object_or_404
+from rest_framework.exceptions import ValidationError
 from . import serializers, models
 from .permissions import IsVendorSimple
 from utils import permissions
@@ -29,6 +30,19 @@ class StoreViewSet(OwnerCreateMixin,
         obj = get_object_or_404(self.get_queryset(), owner=vendor)
         serializer = self.serializer_class(instance=obj,
                                            context={'request': request})
+        return Response(data=serializer.data)
+
+    @detail_route(methods=['patch'])
+    def update_photo(self, request, *args, **kwargs):
+        if 'photo' not in request.data:
+            raise ValidationError({'photo': _('This parameter is required.')})
+        obj = self.get_object()
+        print (request.data)
+        serializer = self.serializer_class(instance=obj, data=request.data,
+                                           partial=True)
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(data=serializer.data)
 
 

@@ -20,5 +20,5 @@ class AccountConfig(AppConfig):
         pre_delete.connect(receivers.cleanup_files_photo, sender=Store)
 
         post_save.connect(receivers.create_thumb_avatar, sender=Vendor)
-        post_save.connect(receivers.create_thumb_photo, sender=Store)
+        post_save.connect(receivers.create_crop_photo_100, sender=Store)
         post_save.connect(add_to_vendor_group, sender=Vendor)

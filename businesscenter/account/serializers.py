@@ -52,18 +52,17 @@ class VendorStoreSerializer(serializers.ModelSerializer):
 
 class StoreSerializer(serializers.ModelSerializer):
 
-    url = serializers.HyperlinkedIdentityField(view_name='account:store-detail')
-    district = DistrictSerializer(read_only=True)
     location = serializers.CharField(source='get_location', read_only=True)
-    district_title = serializers.CharField(write_only=True)
-    city_title = serializers.CharField(write_only=True)
-    state_title = serializers.CharField(write_only=True)
+    # It automatically serialize next data to the dict (district)
+    district_title = serializers.CharField(source='district.title')
+    city_title = serializers.CharField(source='district.city.title')
+    state_title = serializers.CharField(source='district.city.state.title')
 
     def create(self, validated_data):
         with transaction.atomic():
-            district_args = dict(title=validated_data.pop('district_title'))
-            city_args = dict(title=validated_data.pop('city_title'))
-            state_args = dict(title=validated_data.pop('state_title'))
+            district_args = validated_data.pop('district')
+            city_args = district_args.pop('city')
+            state_args = city_args.pop('state')
 
             state, _ = models.State.objects.get_or_create(**state_args)
 
@@ -82,36 +81,46 @@ class StoreSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         with transaction.atomic():
-            district_title = validated_data.pop('district_title', None)
-            city_title = validated_data.pop('city_title', None)
-            state_title = validated_data.pop('state_title', None)
+            district_args = validated_data.pop('district', None)
 
             for k, v in validated_data.items():
                 setattr(instance, k, v)
 
-            if state_title:
-                state, c = models.State.objects.get_or_create(title=state_title)
-            else:
-                state = instance.district.city.state
+            if district_args:
+                self.check_key_title('district', **district_args)
+                try:
+                    city_args = district_args.pop('city')
+                    self.check_key_title('city', **city_args)
 
-            if city_title:
-                city_args = {'title': city_title, 'state': state}
-                city, c = models.City.objects.get_or_create(**city_args)
-            else:
-                city = instance.district.city
+                    state_args = city_args.pop('state')
 
-            if district_title:
-                district_args = {'title': district_title, 'city': city}
+                    state, c = models.State.objects.get_or_create(**state_args)
+                    self.check_key_title('state', **state_args)
 
-                district, c = models.District.objects.get_or_create(**district_args)
+                    city_args['state'] = state
+
+                    city, c = models.City.objects.get_or_create(**city_args)
+
+                    district_args['city'] = city
+                except KeyError as e:
+                    raise serializers.ValidationError(
+                        {e.message: _('This field is required.')})
+                district, c = models.District.objects.get_or_create(
+                    **district_args)
 
                 instance.district = district
-
             instance.save()
-            return instance
+
+        return instance
+
+    def check_key_title(self, key, **kwargs):
+        if 'title' not in kwargs:
+            raise serializers.ValidationError(
+                {key: _('This field is required.')})
 
     class Meta:
         model = models.Store
+        extra_kwargs = {'district': {'read_only': True}}
 
 
 class VendorSerializer(serializers.ModelSerializer):

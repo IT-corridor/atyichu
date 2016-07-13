@@ -1,7 +1,58 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <pre>{{ r | json }}</pre>
+            <div class="text-center wrapper-md">
+                <a class="btn btn-info" data-ng-href="#!/stores/my/edit">{{ 'STORE.UPDATE.HEADER' | translate }}</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-offset-2 col-md-8">
+            <h2>{{ 'STORE.MY.HEADER' | translate }}</h2>
+            <table class="table table-condensed table-striped table-bordered">
+                <tr>
+                    <th>{{ 'STORE.FORM.BRAND_NAME' | translate }}</th>
+                    <td>{{ r.brand_name }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'STORE.FORM.CROP' | translate }}</th>
+                    <td><img data-ng-if="r.crop" class="img-responsive" data-ng-src="{{ r.crop }}" alt="{{ r.brand_title }}">
+                        <span data-ng-if="!r.crop">{{ 'STORE.FORM.NO_PHOTO' | translate }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>{{ 'STORE.FORM.LOCATION' | translate }}</th>
+                    <td>{{ r.location }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'STORE.FORM.STATE' | translate }}</th>
+                    <td>{{ r.state_title }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'STORE.FORM.CITY' | translate }}</th>
+                    <td>{{ r.city_title }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'STORE.FORM.DISTRICT' | translate }}</th>
+                    <td>{{ r.district_title }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'STORE.FORM.STREET' | translate }}</th>
+                    <td>{{ r.street }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'STORE.FORM.BUILD_NAME' | translate }}</th>
+                    <td>{{ r.build_name }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'STORE.FORM.BUILD_NO' | translate }}</th>
+                    <td>{{ r.build_no }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'STORE.FORM.APT' | translate }}</th>
+                    <td>{{ r.apt }}</td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>
