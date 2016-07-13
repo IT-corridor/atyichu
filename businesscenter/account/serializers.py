@@ -33,6 +33,7 @@ class DistrictSerializer(serializers.ModelSerializer):
 
 class StoreShortSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='brand_name', read_only=True)
+    thumb = serializers.ImageField(source='crop', read_only=True)
 
     class Meta:
         model = models.Store

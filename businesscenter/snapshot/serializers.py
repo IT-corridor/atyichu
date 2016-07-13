@@ -108,7 +108,7 @@ class PhotoDetailSerializer(PhotoListSerializer):
             return serializers.ImageField(source='visitor.visitor.thumb',
                                           read_only=True).initial
         elif hasattr(obj.visitor, 'vendor'):
-            return serializers.ImageField(source='visitor.vendor.store.thumb',
+            return serializers.ImageField(source='visitor.vendor.store.crop',
                                           read_only=True).initial
         return
 

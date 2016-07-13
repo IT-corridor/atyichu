@@ -4,16 +4,6 @@ angular.module('group.controllers', ['group.services', 'group.directives',
 '$location', '$route', 'Auth', 'Group',
     function($scope, $rootScope, $http, $location, $route, Auth, Group) {
 
-        $rootScope.title = 'New group';
-        $scope.members = [];
-        var auth_promise = Auth.is_authenticated();
-
-        auth_promise.then(function(result){
-            if (!result.is_authenticated){
-                $window.location.replace("/visitor/");
-            }
-        });
-
         $scope.add = function() {
             $scope.data.members = [];
             $scope.members = [];
@@ -23,7 +13,6 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                 $scope.data.members.push($scope.members[i].pk);
             }
             Group.save($scope.data, function(success){
-                    console.log(success);
                     $location.path('/group/' + success.id + '/manage');
                 },
                 function(error){
@@ -120,8 +109,8 @@ angular.module('group.controllers', ['group.services', 'group.directives',
     }
 ])
 .controller('CtrlGroupPhotoList', ['$scope', '$rootScope','$http', '$window',
-'$location', '$routeParams','GetPageLink' , 'Group', 'IsMember', 'Photo',
-    function($scope, $rootScope, $http, $window, $location, $routeParams,
+'$location', '$routeParams', '$translate', 'GetPageLink' , 'Group', 'IsMember', 'Photo',
+    function($scope, $rootScope, $http, $window, $location, $routeParams, $translate,
     GetPageLink, Group, IsMember, Photo) {
 
         $scope.can_edit = false;
@@ -204,18 +193,20 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                     $scope.r.results[index].like_count = success.like_count;
                 },
                 function(error){
-                    $rootScope.alerts.push({ type: 'danger', msg: 'You have like it already!'});
+                    $translate('GROUP.PHOTO_LIST.PHOTO_LIKED').then(function (msg) {
+                        $rootScope.alerts.push({ type: 'info', msg:  msg});
+                    });
                 }
             );
         }
     }
 ])
 .controller('CtrlGroupManage', ['$scope', '$rootScope','$http',
-'$location', '$routeParams', '$window', 'Auth', 'Group', 'MultipartForm', 'Tag', 'IsMember', 'RemoveItem',
-    function($scope, $rootScope, $http, $location, $routeParams, $window,
+'$location', '$routeParams', '$window', '$translate', 'Auth',
+'Group', 'MultipartForm', 'Tag', 'IsMember', 'RemoveItem',
+    function($scope, $rootScope, $http, $location, $routeParams, $window, $translate,
     Auth, Group, MultipartForm, Tag, IsMember, RemoveItem) {
 
-        $rootScope.title = 'Update group';
         $scope.is_owner = false;
         $scope.can_edit = false;
         $scope.r = Group.get({pk: $routeParams.pk},
@@ -228,8 +219,9 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                 }
                 if ($rootScope.visitor.pk != success.owner){
 
-                    $rootScope.alerts.push({ type: 'warning',
-                        msg: 'You have not enough privileges to manage this group'});
+                    $translate('NO_PERMISSION').then(function (msg) {
+                        $rootScope.alerts.push({ type: 'warning', msg:  msg});
+                    });
                 }
                 if (IsMember(success.members, $rootScope.visitor.pk)){
                     $scope.can_edit = true;
@@ -250,17 +242,24 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                     $location.path('/group/'+ $routeParams.pk + '/photo');
                 },
                 function(error){
-                    $rootScope.alerts.push({ type: 'danger', msg: 'Error!'});
+                    $translate('ERROR').then(function (msg) {
+                        $rootScope.alerts.push({ type: 'danger', msg:  msg});
+                    });
                 }
             );
         };
 
         $scope.member_remove = function(member_id){
-            var confirm = $window.confirm('Are you sure you want to exclude this collaborator?');
-            if (confirm){
+            $translate('CONFIRM').then(function (msg) {
+                $scope.confirm = $window.confirm(msg);
+            });
+
+            if ($scope.confirm){
                 Group.member_remove({pk: $routeParams.pk}, {member: member_id},
                     function(success){
-                        $rootScope.alerts.push({ type: 'info', msg: 'Collaborator has been excluded.'});
+                        $translate('GROUP.MANAGE.MEMBER_EXCLUDED').then(function (msg) {
+                            $rootScope.alerts.push({ type: 'info', msg:  msg});
+                        });
                         RemoveItem($scope.r.members, member_id);
                     },
                     function(error){
@@ -271,11 +270,15 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         }
 
         $scope.tag_remove = function(tag_id){
-            var confirm = $window.confirm('Are you sure you want to remove this tag?');
-            if (confirm){
+            $translate('CONFIRM').then(function (msg) {
+                    $scope.confirm = $window.confirm(msg);
+            });
+            if ($scope.confirm){
                 Tag.remove({pk: tag_id},
                     function(success){
-                        $rootScope.alerts.push({ type: 'info', msg: 'Tag has been removed'});
+                        $translate('GROUP.MANAGE.TAG_REMOVED').then(function (msg) {
+                            $rootScope.alerts.push({ type: 'info', msg:  msg});
+                        });
                         RemoveItem($scope.r.tags, tag_id);
                     },
                     function(error){
@@ -288,7 +291,6 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         $scope.member_add = function(){
             Group.member_add({pk: $routeParams.pk}, {username: $scope.member},
                 function(success){
-                    $rootScope.alerts.push({ type: 'info', msg: 'A new member has been added to the group'});
                     $scope.r.members.push(success);
                     $scope.member = '';
                 },
@@ -299,31 +301,31 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         }
 
         $scope.create_tag = function(){
-            var confirm = $window.confirm('Are you sure you want to remove this group?');
-            if (confirm){
-                Group.tag_create({pk: $routeParams.pk}, {title: $scope.tag_title},
-                    function(success){
-                        $rootScope.alerts.push({ type: 'info', msg: 'A new tag has been created'});
-                        $scope.tag_title = '';
-                        $scope.r.tags.push(success);
-                    },
-                    function(error){
-                        $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
-                    }
-                );
-            }
+            Group.tag_create({pk: $routeParams.pk}, {title: $scope.tag_title},
+                function(success){
+                    $scope.tag_title = '';
+                    $scope.r.tags.push(success);
+                },
+                function(error){
+                    $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
+                }
+            );
+
         };
 
         $scope.remove_group = function(){
-            var confirm = $window.confirm('Are you sure you want to remove this group?');
-            if (confirm){
+            $translate('CONFIRM').then(function (msg) {
+                $scope.confirm = $window.confirm(msg);
+            });
+            if ($scope.confirm){
                 Group.remove({pk: $scope.r.id},
                     function(success){
-                        $rootScope.alerts.push({ type: 'info', msg: 'Group "'+ $scope.r.title +'" has been removed'});
                         $location.path('/my_groups');
                     },
                     function(error){
-                        $rootScope.alerts.push({ type: 'danger', msg: 'Fail'});
+                        $translate('FAIL').then(function (msg) {
+                            $rootScope.alerts.push({ type: 'info', msg:  msg});
+                        });
                     }
                 );
             }
@@ -331,10 +333,9 @@ angular.module('group.controllers', ['group.services', 'group.directives',
     }
 ])
 .controller('CtrlGroupPhotoAdd', ['$scope', '$rootScope','$http',
-'$location', '$routeParams', 'Auth', 'MultipartForm', 'Group', 'IsMember', 'RemoveItem',
-    function($scope, $rootScope, $http, $location, $routeParams, Auth, MultipartForm, Group, IsMember, RemoveItem) {
+'$location', '$routeParams', '$translate', 'Auth', 'MultipartForm', 'Group', 'IsMember', 'RemoveItem',
+    function($scope, $rootScope, $http, $location, $routeParams, $translate, Auth, MultipartForm, Group, IsMember, RemoveItem) {
 
-        $rootScope.title = 'New group';
         $scope.can_add = false;
         $scope.wait = false;
         $scope.group = Group.get({pk: $routeParams.pk},
@@ -350,8 +351,10 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             $scope.wait = true;
             var url = '/api/v1/group/'+ $scope.group.id +'/photo_create/';
             MultipartForm('POST', '#photo_form', url).then(function(response) {
-                $rootScope.alerts.push({ type: 'success', msg: 'Photo has been added to your group!'});
-                    $location.path('/group/' + $scope.group.id + '/photo');
+                $translate('GROUP.PHOTO_ADD.SUCCESS').then(function (msg) {
+                            $rootScope.alerts.push({ type: 'success', msg:  msg});
+                });
+                $location.path('/group/' + $scope.group.id + '/photo');
 
                 },
                 function(error) {
