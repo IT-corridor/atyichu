@@ -510,13 +510,13 @@ class GroupVendorTests(APITestCase):
                  apt='24',
                  )
 
-        store_1 = Store.objects.create(district=district, owner=vendor_1,
+        store_1 = Store.objects.create(district=district, vendor=vendor_1,
                                        brand_name='FFF', **data)
 
-        store_2 = Store.objects.create(district=district, owner=vendor_2,
+        store_2 = Store.objects.create(district=district, vendor=vendor_2,
                                        brand_name='Magnificent', **data)
 
-        store_3 = Store.objects.create(district=district, owner=vendor_3,
+        store_3 = Store.objects.create(district=district, vendor=vendor_3,
                                        brand_name='Magnifico', **data)
 
         Group.objects.create(title='store`s group', owner=cls.user_1)
@@ -543,7 +543,6 @@ class GroupVendorTests(APITestCase):
         url = reverse('snapshot:group-vendor-list')
         response = self.client.get(url, data={'q': 'Magni'})
         data = response.data
-        print (data)
         self.assertEqual(len(data), 2)
         self.assertEqual(response.status_code, 200)
         self.client.logout()

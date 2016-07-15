@@ -45,6 +45,7 @@ app.config(['$translateProvider', function ($translateProvider) {
         'ERROR': 'Error',
         'CONFIRM': 'Are you sure you want perform this action?',
         'FAIL': 'Fail',
+        'SUCCESS': 'Success!',
         'COMMON': {
             'HOME': {
                 'TITLE': 'Welcome!',
@@ -114,6 +115,14 @@ app.config(['$translateProvider', function ($translateProvider) {
             },
             'MY': {
                 'HEADER': 'Your store overview',
+                'ADD_BRAND': 'Add a brand',
+                'ADD_COLOR': 'Add a color',
+                'ADD_SIZE': 'Add a size',
+            },
+            'MODAL': {
+                'TITLE_PLACE': 'Enter a title',
+                'PRIORITY_PLACE': 'Enter a priority',
+                'COLOR_PLACE': 'Enter a html (hex) color',
             },
          },
         'GROUP': {
@@ -181,6 +190,7 @@ app.config(['$translateProvider', function ($translateProvider) {
         'ERROR': 'Error',
         'CONFIRM': 'Are you sure you want perform this action?',
         'FAIL': 'Fail',
+        'SUCCESS': 'Success',
         'COMMON': {
             'HOME': {
                 'TITLE': 'Welcome!',
@@ -250,7 +260,15 @@ app.config(['$translateProvider', function ($translateProvider) {
             },
             'MY': {
                 'HEADER': 'Your store overview',
+                'ADD_BRAND': 'Add a brand',
+                'ADD_COLOR': 'Add a color',
+                'ADD_SIZE': 'Add a size',
             },
+            'MODAL': {
+                'TITLE_PLACE': 'Enter a title',
+                'PRIORITY_PLACE': 'Enter a priority',
+                'COLOR_PLACE': 'Enter a html (hex) color',
+            }
          },
         'GROUP': {
             'CREATE': {

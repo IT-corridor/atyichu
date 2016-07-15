@@ -78,8 +78,8 @@ class Store(models.Model):
     build_no = models.CharField(_('Building number'), max_length=5)
     apt = models.CharField(_('Apartments'), max_length=5)
     brand_name = models.CharField(_('Brand name'), max_length=50, unique=True)
-    owner = models.OneToOneField(Vendor, on_delete=models.CASCADE,
-                                 verbose_name=_('Owner'))
+    vendor = models.OneToOneField(Vendor, on_delete=models.CASCADE,
+                                 verbose_name=_('Owner'), primary_key=True)
     crop = models.ImageField(_('Crop'), upload_to='stores/crops',
                              null=True, blank=True)
     photo = models.ImageField(_('Logo'), upload_to='stores',

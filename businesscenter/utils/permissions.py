@@ -37,7 +37,7 @@ class IsStoreOwnerOrReadOnly(permissions.BasePermission):
             return True
 
         if hasattr(request.user, 'vendor'):
-            return request.user.id == obj.owner_id
+            return request.user.id == obj.vendor_id
 
         return request.user.is_staff
 
@@ -49,6 +49,6 @@ class IsOwnerOrReadOnly(IsStoreOwnerOrReadOnly):
             return True
 
         if hasattr(request.user, 'vendor'):
-            return request.user.id == obj.store.owner_id
+            return request.user.id == obj.store_id
 
         return request.user.is_staff

@@ -60,21 +60,25 @@ body {
 
 @media (min-width: 580px) {
 .pin {
-	width: 46%;
+    margin: 0 2% 15px;
+    width: 46%;
 }
 }
  @media (min-width: 870px) {
 .pin {
-	width: 32.66%;
+    margin: 0 1% 15px;
+	width: 31.33333%;
 }
 }
  @media (min-width: 1160px) {
-.pin {
-	width: 24.5%;
-}
+    .pin {
+        margin: 0 0.5% 15px;
+        width: 24%;
+    }
 }
  @media (min-width: 1450px) {
-.pin {
-	width: 19.6%;
-}
+    .pin {
+        margin: 0 0.5% 15px;
+        width: 19%;
+    }
 }

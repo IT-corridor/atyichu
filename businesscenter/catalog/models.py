@@ -10,7 +10,7 @@ class AbsCategory(models.Model):
     """ Each record of ref. model has its own title and priority for sorting"""
     title = models.CharField(_('Title'), max_length=50)
     priority = models.PositiveSmallIntegerField(_('Priority'), default=0)
-    store = models.ForeignKey('account.Store', verbose_name=_('Store'))
+
 
     class Meta:
         abstract = True
@@ -19,39 +19,48 @@ class AbsCategory(models.Model):
         return self.title
 
 
+class AbsStoreCategory(AbsCategory):
+    store = models.ForeignKey('account.Store', verbose_name=_('Store'))
+
+    class Meta:
+        abstract = True
+
+
 class Category(AbsCategory):
-    """ AKA CATALOG 1 """
+    """ AKA CATALOG 1. Can be set only by the administrator of the platform."""
+
     class Meta:
         verbose_name = _('Category')
         verbose_name_plural = _('Categories')
-        ordering = ('priority', )
+        ordering = ('priority', 'pk')
 
 
 class Kind(AbsCategory):
-    """ AKA CATALOG 2 """
+    """ AKA CATALOG 2.
+    Can be set only by the administrator of the platform. """
     category = models.ForeignKey(Category, verbose_name=_('Category'))
 
     class Meta:
         verbose_name = _('Kind')
         verbose_name_plural = _('Kinds')
-        ordering = ('priority',)
+        ordering = ('priority', 'pk')
 
 
-class Brand(AbsCategory):
+class Brand(AbsStoreCategory):
 
     class Meta:
         verbose_name = _('Brand')
         verbose_name_plural = _('Brands')
-        ordering = ('priority',)
+        ordering = ('priority', 'pk')
 
 
-class Color(AbsCategory):
+class Color(AbsStoreCategory):
     html = models.CharField(_('Html code'), max_length=7, blank=True)
 
     class Meta:
         verbose_name = _('Color')
         verbose_name_plural = _('Colors')
-        ordering = ('priority',)
+        ordering = ('priority', 'pk')
 
 
 class Size(AbsCategory):
@@ -59,11 +68,13 @@ class Size(AbsCategory):
     class Meta:
         verbose_name = _('Size')
         verbose_name_plural = _('Sizes')
-        ordering = ('priority',)
+        ordering = ('priority', 'pk')
 
 
 class Commodity(models.Model):
-    """ Basic Commodity """
+    """ Basic Commodity. Because of RFID,
+    we need to create each time a new instance of commodity,
+    even if they differ only by color or size."""
     SEASONS = (
         ('0', _('Winter')),
         ('1', _('Spring')),

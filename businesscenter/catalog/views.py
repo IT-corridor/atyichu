@@ -2,33 +2,39 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from rest_framework import viewsets
-from rest_framework.filters import DjangoFilterBackend, OrderingFilter, SearchFilter
-
+from rest_framework.filters import DjangoFilterBackend, \
+    OrderingFilter, SearchFilter
 from . import serializers, models
 from .filters import CommodityFilter
 from utils import permissions
+from utils.views import OwnerCreateMixin, OwnerUpdateMixin
 
 
-class ReferenceMixin(object):
+class ReferenceMixin(OwnerCreateMixin, OwnerUpdateMixin):
     """ Only vendor can see his commodities and references """
     permission_classes = (permissions.IsOwnerOrReadOnly,)
+    user_kwd = 'store'
 
     def get_queryset(self):
-        if hasattr(self.request.user, 'vendor'):
-            if hasattr(self.request.user.vendor, 'store'):
-                return self.model.objects.\
-                    filter(store=self.request.user.vendor.store)
-        return self.model.objects.none()
+        return self.model.objects.all()
 
 
-class CategoryViewSet(ReferenceMixin, viewsets.ModelViewSet):
+class CategoryViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAdminOrReadOnly, )
     serializer_class = serializers.CategorySerializer
     model = models.Category
 
 
-class KindViewSet(ReferenceMixin, viewsets.ModelViewSet):
+class KindViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAdminOrReadOnly,)
     serializer_class = serializers.KindSerializer
     model = models.Kind
+
+
+class SizeViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAdminOrReadOnly,)
+    serializer_class = serializers.SizeSerializer
+    model = models.Size
 
 
 class BrandViewSet(ReferenceMixin, viewsets.ModelViewSet):
@@ -39,11 +45,6 @@ class BrandViewSet(ReferenceMixin, viewsets.ModelViewSet):
 class ColorViewSet(ReferenceMixin, viewsets.ModelViewSet):
     serializer_class = serializers.ColorSerializer
     model = models.Color
-
-
-class SizeViewSet(ReferenceMixin, viewsets.ModelViewSet):
-    serializer_class = serializers.SizeSerializer
-    model = models.Size
 
 
 class GalleryViewSet(viewsets.ModelViewSet):

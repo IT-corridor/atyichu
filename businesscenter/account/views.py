@@ -10,30 +10,41 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from . import serializers, models
 from .permissions import IsVendorSimple
+from catalog import serializers as cat_serialzrs
+from catalog import models as cat_models
 from utils import permissions
-from utils.views import OwnerCreateMixin, OwnerUpdateMixin
+from utils.views import OwnerCreateMixin, OwnerUpdateMixin, PaginationMixin
 
 
 class StoreViewSet(OwnerCreateMixin,
                    OwnerUpdateMixin,
+                   PaginationMixin,
                    viewsets.ModelViewSet):
+    """ Please assume that store primary key
+        equals vendor primary key that equals user primary key.
+        Vendor instance inherits PK from django user instance and
+        Store instance inherits this PK from Vendor instance.
+        KEEP IN MIND THIS PLEASE.
+    """
     serializer_class = serializers.StoreSerializer
     permission_classes = (permissions.IsStoreOwnerOrReadOnly, )
+    user_kwd = 'vendor'
 
-    # TODO: implement retrieve from session
     def get_queryset(self):
         return models.Store.objects.select_related('district__city__state')
 
     @list_route(methods=['get'])
-    def my_store(self, request):
-        vendor = request.user.vendor
-        obj = get_object_or_404(self.get_queryset(), owner=vendor)
+    def my_store(self, request, *args, **kwargs):
+        """ Retrieve vendor`s store, without specifying a pk value."""
+        obj = self.get_object_by_owner_or_404()
         serializer = self.serializer_class(instance=obj,
                                            context={'request': request})
         return Response(data=serializer.data)
 
     @detail_route(methods=['patch'])
     def update_photo(self, request, *args, **kwargs):
+        """ Used to update only the cover of the store.
+        Nothing more guarantied."""
         if 'photo' not in request.data:
             raise ValidationError({'photo': _('This parameter is required.')})
         obj = self.get_object()
@@ -44,6 +55,62 @@ class StoreViewSet(OwnerCreateMixin,
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data=serializer.data)
+
+    @list_route(methods=['get'])
+    def my_brands(self, request, *args, **kwargs):
+        """ Presents a brand list that created by vendor fo the store.
+            Used for simple list presentation and
+            it is not requires pagination.
+        """
+        return self.get_response_by_owner(cat_models.Brand.objects.all(),
+                                          cat_serialzrs.BrandSerializer)
+
+    @list_route(methods=['get'])
+    def my_colors(self, request, *args, **kwargs):
+        """ Presents a color list that created by vendor fo the store.
+            Used for simple list presentation and
+            it is not requires pagination.
+        """
+        return self.get_response_by_owner(cat_models.Color.objects.all(),
+                                          cat_serialzrs.ColorSerializer)
+
+
+    @list_route(methods=['get'])
+    def my_commodities(self, request, *args, **kwargs):
+        """ Presents a commodity list that created by vendor for the store.
+            Uses pagination.
+        """
+        obj = self.get_object_by_owner_or_404()
+        select = cat_models.Commodity.objects.filter(store=obj)\
+            .select_related('brand', 'kind__category', 'color', 'size')
+
+        return self.get_list_response(select,
+                                      cat_serialzrs.CommodityVerboseSerializer)
+
+    @detail_route(methods=['get'])
+    def commodities(self, request, *args, **kwargs):
+        """ Presents a commodity list that belongs to the store.
+            Uses pagination.
+        """
+        obj = self.get_object()
+        select = cat_models.Commodity.objects.filter(store=obj) \
+            .select_related('brand', 'kind__category', 'color', 'size')
+
+        return self.get_list_response(select,
+                                      cat_serialzrs.CommodityVerboseSerializer)
+
+    def get_response_by_owner(self, queryset, serializer_class):
+        """ Shortcut to perform response based on owner`s queryset"""
+        obj = self.get_object_by_owner_or_404()
+        select = queryset.filter(store=obj)
+        serializer = serializer_class(instance=select, many=True)
+        return Response(serializer.data)
+
+    def get_object_by_owner_or_404(self):
+        """ Get the object store that belongs to the vendor
+        (current authenticated user). Later can be extended."""
+        user = self.request.user.id
+        return get_object_or_404(self.get_queryset(), vendor=user)
 
 
 class AbsListView(generics.ListAPIView):

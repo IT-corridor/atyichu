@@ -24,7 +24,8 @@ from . import serializers
 from .permissions import IsOwnerOrMember, MemberCanServe, \
     IsPhotoOwnerOrReadOnly
 from .sutils import check_sign
-from utils.views import OwnerCreateMixin, OwnerUpdateMixin, VisitorCreateMixin
+from utils.views import OwnerCreateMixin, OwnerUpdateMixin, \
+    VisitorCreateMixin, PaginationMixin
 from utils.paginators import CustomPagination
 from visitor.permissions import IsVisitor
 from visitor.serializers import VisitorShortSerializer
@@ -246,7 +247,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
         return Response(data=serializer.data, status=201)
 
 
-class PhotoViewSet(viewsets.ModelViewSet):
+class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
     model = Photo
     serializer_class = serializers.PhotoDetailSerializer
     permission_classes = [IsPhotoOwnerOrReadOnly]
@@ -463,18 +464,6 @@ class PhotoViewSet(viewsets.ModelViewSet):
         qs = qs.filter(like__visitor_id=request.user.id)
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
-
-    def get_list_response(self, queryset, serializer_class):
-        """ Shortcut for the paginated views / handlers """
-        queryset = self.filter_queryset(queryset)
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = serializer_class(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.select_related('author__visitor')
@@ -711,8 +700,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         status = 400
         try:
             q = request.query_params['q']
-            qs = Vendor.objects.filter(~Q(pk=request.user.id),
-                                       store__brand_name__startswith=q)[:5]
+            qs = Vendor.objects.filter(store__brand_name__startswith=q)[:5]
 
             serializer = VendorStoreSerializer(qs, many=True)
             data = serializer.data

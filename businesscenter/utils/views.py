@@ -10,6 +10,7 @@ class OwnerCreateMixin(object):
       (or its related model without own pk"""
 
     user_kwd = 'owner'
+
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
         data[self.user_kwd] = request.user.id
@@ -22,9 +23,11 @@ class OwnerCreateMixin(object):
 
 class OwnerUpdateMixin(object):
 
+    user_kwd = 'owner'
+
     def update(self, request, *args, **kwargs):
         data = request.data.copy()
-        data['owner'] = request.user.id
+        data[self.user_kwd] = request.user.id
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=data,
@@ -36,3 +39,16 @@ class OwnerUpdateMixin(object):
 
 class VisitorCreateMixin(OwnerCreateMixin):
     user_kwd = 'visitor'
+
+
+class PaginationMixin(object):
+    def get_list_response(self, queryset, serializer_class):
+        """ Shortcut for the paginated views / handlers """
+        queryset = self.filter_queryset(queryset)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = serializer_class(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

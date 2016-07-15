@@ -1,5 +1,6 @@
 from __future__ import unicode_literals, absolute_import
 
+import unittest
 import json
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
@@ -72,6 +73,7 @@ COMMODITIES = [
 
 class CatalogTests(APITestCase):
 
+    @classmethod
     def setUpTestData(cls):
         User = get_user_model()
 
@@ -91,27 +93,27 @@ class CatalogTests(APITestCase):
         cls.store = Store.objects.create(brand_name='EYE', apt='33',
                                          build_name='Checking',
                                          build_no='44', street='Good street',
-                                         district=district, owner=cls.vendor_2)
+                                         district=district, vendor=cls.vendor_2)
 
         Category.objects.bulk_create(
-            tuple((Category(store_id=1, **data) for data in CATEGORIES))
+            tuple((Category(**data) for data in CATEGORIES))
         )
         Kind.objects.bulk_create(
-            (Kind(store_id=1, **data) for data in KINDS)
+            (Kind(**data) for data in KINDS)
         )
         Brand.objects.bulk_create(
-            (Brand(store_id=1, **data) for data in BRANDS)
+            (Brand(store_id=cls.store.pk, **data) for data in BRANDS)
         )
         Color.objects.bulk_create(
-            (Color(store_id=1, **data) for data in COLORS)
+            (Color(store_id=cls.store.pk, **data) for data in COLORS)
         )
         Size.objects.bulk_create(
-            (Size(store_id=1, **data) for data in SIZES)
+            (Size(**data) for data in SIZES)
         )
 
 
         Commodity.objects.bulk_create(
-            (Commodity(store_id=1, **data) for data in COMMODITIES)
+            (Commodity(store_id=cls.store.pk, **data) for data in COMMODITIES)
         )
 
         Tag.objects.create(commodity_id=1, title='Awesome')
@@ -126,12 +128,14 @@ class CatalogTests(APITestCase):
         self.assertTrue(len(response.data['results']) == 2)
         self.client.logout()
 
+    @unittest.skip("As users can browse other stores this test useless")
     def test_empty_commodities_list(self):
         self.client.login(username=self.vendor_data_1['username'],
                           password=self.vendor_data_1['password'])
 
         url = reverse('catalog:commodity-list')
         response = self.client.get(url)
+        print (len(response.data))
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.data['results']) == 0)
         self.client.logout()
@@ -141,7 +145,7 @@ class CatalogTests(APITestCase):
                           password=self.vendor_data_2['password'])
 
         url = reverse('catalog:size-list')
-        response = self.client.post(url, data={'title': 'XXXL', 'store': 1})
+        response = self.client.post(url, data={'title': 'XXXL'})
         self.assertEqual(response.status_code, 201)
         self.client.logout()
 

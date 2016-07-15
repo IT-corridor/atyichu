@@ -28,10 +28,49 @@ angular.module('store.controllers', ['store.services','common.services', 'auth.s
     }
 ])
 .controller('CtrlStoreOwn', ['$scope', '$rootScope','$http',
-'$location', '$translate', 'Store',
-    function($scope, $rootScope, $http, $location, $translate, Store) {
+'$location', '$translate', '$uibModal', '$log', 'PATH', 'Store', 'Brand', 'Color',
+    function($scope, $rootScope, $http, $location, $translate, $uibModal, $log, PATH,
+    Store, Brand, Color) {
 
         $scope.r = Store.my_store();
+
+        $scope.resource_map = {
+            'brand': Brand,
+            'color': Color,
+        };
+
+        $scope.open_modal = function (resource) {
+
+        var modalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: PATH +'store/templates/modal_' + resource + '.html',
+            controller: 'StoreModalInstanceCtrl',
+            size: 'lg',
+            resolve: {
+                resource: function () {
+                    return $scope.resource_map[resource];
+                },
+                name: function(){
+                    return resource;
+                },
+            }
+        });
+
+    modalInstance.result.then(
+        function (success) {
+            $translate('SUCCESS').then(function (msg) {
+                $rootScope.alerts.push({ type: 'info', msg:  msg});
+            });
+        },
+        function () {
+            $log.info('Modal dismissed at: ' + new Date());
+        }
+    );
+  };
+
+    $scope.toggleAnimation = function () {
+        $scope.animationsEnabled = !$scope.animationsEnabled;
+    };
 
     }
 ])
@@ -86,5 +125,27 @@ angular.module('store.controllers', ['store.services','common.services', 'auth.s
             );
 
         };
+    }
+])
+.controller('StoreModalInstanceCtrl',
+    ['$scope','$rootScope', '$uibModalInstance' , 'resource', 'name',
+    function ($scope, $rootScope, $uibModalInstance, resource, name) {
+        $scope.dict_data = {name: name};
+        $scope.data = {};
+        $scope.create = function(){
+            resource.save($scope.data,
+                function(success){
+                    $uibModalInstance.close(success);
+                },
+                function(error){
+
+                    $scope.error = error.data;
+                    console.log($scope.error);
+                }
+            );
+        }
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        }
     }
 ]);

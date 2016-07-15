@@ -46,7 +46,7 @@ class VendorStoreSerializer(serializers.ModelSerializer):
     thumb = serializers.ImageField(source='store.thumb', read_only=True)
 
     class Meta:
-        model = models.Store
+        model = models.Vendor
         fields = ('pk', 'username', 'thumb')
         extra_kwargs = {'pk': {'read_only': True}}
 
@@ -60,6 +60,7 @@ class StoreSerializer(serializers.ModelSerializer):
     state_title = serializers.CharField(source='district.city.state.title')
 
     def create(self, validated_data):
+        print (validated_data)
         with transaction.atomic():
             district_args = validated_data.pop('district')
             city_args = district_args.pop('city')
@@ -77,12 +78,15 @@ class StoreSerializer(serializers.ModelSerializer):
                 **district_args)
 
             validated_data['district'] = district
-            store = self.Meta.model.objects.create(**validated_data)
+            vendor_id = validated_data.pop('vendor')
+            store = self.Meta.model.objects.create(vendor_id=vendor_id,
+                                                   **validated_data)
             return store
 
     def update(self, instance, validated_data):
         with transaction.atomic():
             district_args = validated_data.pop('district', None)
+            validated_data.pop('vendor')
 
             for k, v in validated_data.items():
                 setattr(instance, k, v)
@@ -214,7 +218,8 @@ class UserPasswordSerializer(serializers.ModelSerializer):
 
 
 class VendorBriefSerializer(serializers.ModelSerializer):
-    """ Used only for the 'get my vendor' view."""
+    """ Used only for the 'get my vendor' view.
+    Now store pk equals vendor pk """
     username = serializers.CharField(source='user.username', read_only=True)
     brand_name = serializers.CharField(source='store.brand_name', read_only=True,
                                        allow_null=True, allow_blank=True)
@@ -222,7 +227,7 @@ class VendorBriefSerializer(serializers.ModelSerializer):
                                            read_only=True)
     group_count = serializers.IntegerField(source='group_set.count',
                                            read_only=True)
-    store = serializers.IntegerField(source='store.pk', read_only=True)
+    store = serializers.IntegerField(source='pk', read_only=True)
 
     class Meta:
         model = models.Vendor

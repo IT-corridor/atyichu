@@ -84,7 +84,8 @@ class StoreTests(APITestCase):
         cls.store = Store.objects.create(brand_name='EYE', apt='33',
                                          build_name='Checking',
                                          build_no='44', street='Good street',
-                                         district=district, owner=cls.vendor_2)
+                                         district=district,
+                                         vendor=cls.vendor_2)
         # TEST CREATE HERE
         cls.data = {
             'brand_name': 'SMILE',
@@ -100,9 +101,9 @@ class StoreTests(APITestCase):
     def test_rest_login_success(self):
         """ Test login view for all accounts """
         user = self.vendor_2.user
-        data_compare = {'username': user.username, 'id': user.id, 'store': 1,
-                        'brand_name': 'EYE', 'avatar': None,
-                        'thumb': None, 'pk': 2}
+        data_compare = {'username': user.username, 'id': user.id,
+                        'store': self.store.pk, 'brand_name': 'EYE',
+                        'avatar': None, 'thumb': None, 'pk': 2}
         url = reverse('account:login')
         response = self.client.post(url, data=self.vendor_data_2)
         self.assertEqual(response.status_code, 200)
@@ -115,8 +116,6 @@ class StoreTests(APITestCase):
         url = reverse('account:store-list')
         response = self.client.post(url, json.dumps(self.data),
                                     content_type='application/json')
-
-        print (response.data)
 
         self.client.logout()
         self.assertEqual(response.status_code, 201)
@@ -135,7 +134,7 @@ class StoreTests(APITestCase):
         }
         self.client.login(username=self.vendor_data_2['username'],
                           password=self.vendor_data_2['password'])
-        url = reverse('account:store-detail', kwargs={'pk': 1})
+        url = reverse('account:store-detail', kwargs={'pk': self.store.pk})
         response = self.client.put(url, json.dumps(data),
                                     content_type='application/json')
         self.client.logout()
@@ -168,7 +167,7 @@ class StoreTests(APITestCase):
         self.client.login(username=self.vendor_data_2['username'],
                           password=self.vendor_data_2['password'])
 
-        url = reverse('account:store-detail', kwargs={'pk': 1})
+        url = reverse('account:store-detail', kwargs={'pk': self.store.pk})
         response = self.client.patch(url, json.dumps(data),
                                      content_type='application/json')
         self.client.logout()
@@ -183,7 +182,7 @@ class StoreTests(APITestCase):
                           password=user_data['password'])
 
         methods = ['post', 'put', 'patch', 'delete']
-        url = reverse('account:store-detail', kwargs={'pk': 1})
+        url = reverse('account:store-detail', kwargs={'pk': self.store.pk})
         for method in methods:
             f = getattr(self.client, method)
             r = f(url)
@@ -195,7 +194,7 @@ class StoreTests(APITestCase):
         self.client.login(username=self.vendor_data_2['username'],
                           password=self.vendor_data_2['password'])
 
-        url = reverse('account:store-detail', kwargs={'pk': 1})
+        url = reverse('account:store-detail', kwargs={'pk': self.store.pk})
         response = self.client.delete(url, content_type='application/json')
         self.client.logout()
         self.assertEqual(response.status_code, 204)
