@@ -51,6 +51,8 @@
         <script src="{{ STATIC_URL }}lib/angularjs/other/ngStorage.js"></script>
         <script src="{{ STATIC_URL }}lib/masonry.pkgd.min.js"></script>
         <script src="{{ STATIC_URL }}lib/imagesloaded.pkgd.min.js"></script>
+        <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>
+
         {% get_current_language as LANGUAGE %}
         {% if LANGUAGE == 'zh-hans'  or LANGUAGE == 'zh-hant' %}
             {% include 'include/scripts.html' with LANG='zh' %}
