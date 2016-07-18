@@ -128,6 +128,15 @@ class StoreSerializer(serializers.ModelSerializer):
         extra_kwargs = {'district': {'read_only': True}}
 
 
+class StorePhotoSerializer(serializers.ModelSerializer):
+    """Serializer for photo detail page. It provides a location string,
+    and probably set of photos."""
+    location = serializers.CharField(source='get_location', read_only=True)
+
+    class Meta:
+        model = models.Store
+
+
 class VendorSerializer(serializers.ModelSerializer):
 
     class Meta:

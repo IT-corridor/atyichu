@@ -74,7 +74,6 @@ class StoreViewSet(OwnerCreateMixin,
         return self.get_response_by_owner(cat_models.Color.objects.all(),
                                           cat_serialzrs.ColorSerializer)
 
-
     @list_route(methods=['get'])
     def my_commodities(self, request, *args, **kwargs):
         """ Presents a commodity list that created by vendor for the store.
@@ -98,6 +97,12 @@ class StoreViewSet(OwnerCreateMixin,
 
         return self.get_list_response(select,
                                       cat_serialzrs.CommodityVerboseSerializer)
+
+    @detail_route(methods=['get'])
+    def overview(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = serializers.StorePhotoSerializer(instance)
+        return Response(serializer.data)
 
     def get_response_by_owner(self, queryset, serializer_class):
         """ Shortcut to perform response based on owner`s queryset"""

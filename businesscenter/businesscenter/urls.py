@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^store/', TemplateView.as_view(template_name='store.html'),
         name='store'),
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^docs/', include('rest_framework_swagger.urls')),
     url(r'^business_center/', site.urls),

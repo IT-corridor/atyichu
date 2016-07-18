@@ -22,17 +22,6 @@ angular.module('tencent', [])
 
       //marker.setAnimation(qq.maps.MarkerAnimation.DOWN);
 
-      var anchor = new qq.maps.Point(16, 32),
-        size = new qq.maps.Size(32, 32),
-        origin = new qq.maps.Point(0, 0),
-        icon = new qq.maps.MarkerImage(
-          "http://i.imgur.com/vafhQrk.png",
-          size,
-          origin,
-          anchor
-        );
-
-      marker.setIcon(icon);
       //Title visible on marker hover
       marker.setTitle(scope.title);
 

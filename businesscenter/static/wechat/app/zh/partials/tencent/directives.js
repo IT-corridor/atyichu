@@ -74,15 +74,6 @@ angular.module('tencent', [])
           position: result.detail.location
         });
 
-        var anchor = new qq.maps.Point(16, 32),
-          size = new qq.maps.Size(32, 32),
-          origin = new qq.maps.Point(0, 0),
-          icon = new qq.maps.MarkerImage(
-            "http://i.imgur.com/vafhQrk.png",
-            size,
-            origin,
-            anchor
-          );
 
         marker.setIcon(icon);
         marker.setTitle(scope.address);

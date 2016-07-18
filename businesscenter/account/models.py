@@ -55,7 +55,7 @@ class City(AbsLocation):
         verbose_name_plural = _('Cities')
 
     def __unicode__(self):
-        return '{}:{}'.format(self.state, self.title)
+        return '{}{}'.format(self.state, self.title)
 
 
 class District(AbsLocation):
@@ -67,14 +67,16 @@ class District(AbsLocation):
         verbose_name_plural = _('Districts')
 
     def __unicode__(self):
-        return '{}:{}'.format(self.city, self.title)
+        return '{}{}'.format(self.city, self.title)
 
 
 class Store(models.Model):
 
     district = models.ForeignKey(District, verbose_name=_('District'))
     street = models.CharField(_('Street'), max_length=100)
-    build_name = models.CharField(_('Building name'), max_length=50)
+    street_no = models.CharField(_('Street number'), max_length=100)
+    build_name = models.CharField(_('Building name'), max_length=50,
+                                  blank=True)
     build_no = models.CharField(_('Building number'), max_length=5)
     apt = models.CharField(_('Apartments'), max_length=5)
     brand_name = models.CharField(_('Brand name'), max_length=50, unique=True)
@@ -86,9 +88,9 @@ class Store(models.Model):
                               blank=True, null=True)
 
     def get_location(self):
-        return '{}:{}:{}:{}:{}'.format(self.district, self.street,
-                                       self.build_name, self.build_no,
-                                       self.apt)
+        return '{}{}{}{}{}{}'.format(self.district, self.street,
+                                     self.street_no, self.build_name,
+                                     self.build_no, self.apt)
 
     def __unicode__(self):
         return self.brand_name

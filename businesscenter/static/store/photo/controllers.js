@@ -1,4 +1,4 @@
-angular.module('photo.controllers', ['photo.services', 'group.services'])
+angular.module('photo.controllers', ['photo.services', 'group.services', 'store.services'])
 .controller('CtrlPhotoList', ['$scope', '$rootScope', '$http',
 '$location', '$translate', 'Auth', 'Photo',
     function($scope, $rootScope, $http, $location, $translate, Auth, Photo) {
@@ -33,8 +33,9 @@ angular.module('photo.controllers', ['photo.services', 'group.services'])
 ])
 .controller('CtrlPhotoDetail', ['$scope', '$rootScope', '$http', '$routeParams',
                                 '$window', '$location', '$translate', 'Photo', 'Comment',
+                                'Store',
     function($scope, $rootScope, $http, $routeParams, $window, $location, $translate,
-    Photo, Comment) {
+    Photo, Comment, Store) {
         $scope.is_owner = false;
         function handle_error(error){
             $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
@@ -45,6 +46,9 @@ angular.module('photo.controllers', ['photo.services', 'group.services'])
             function(success){
                 if ($rootScope.visitor.pk == success.visitor){
                     $scope.is_owner = true;
+                }
+                if (success.is_store){
+                    $scope.store = Store.overview({pk: success.owner.pk});
                 }
             },
             handle_error

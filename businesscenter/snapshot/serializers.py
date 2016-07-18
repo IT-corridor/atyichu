@@ -102,6 +102,7 @@ class PhotoDetailSerializer(PhotoListSerializer):
     comments = CommentSerializer(source='comment_set', many=True,
                                  read_only=True)
     owner_thumb = serializers.SerializerMethodField(read_only=True)
+    is_store = serializers.SerializerMethodField(read_only=True)
 
     def get_owner_thumb(self, obj):
         if hasattr(obj.visitor, 'visitor'):
@@ -111,6 +112,9 @@ class PhotoDetailSerializer(PhotoListSerializer):
             return serializers.ImageField(source='visitor.vendor.store.crop',
                                           read_only=True).initial
         return
+
+    def get_is_store(self, obj):
+        return hasattr(obj.visitor, 'vendor')
 
     class Meta:
         model = models.Photo

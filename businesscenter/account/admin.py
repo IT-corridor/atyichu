@@ -68,7 +68,7 @@ class AdminVendor(UserAdmin):
 
 class AdminStore(admin.ModelAdmin):
 
-    list_display = ('brand_name', 'district')
+    list_display = ('brand_name', 'district', 'get_location')
     list_filter = ('district',)
     list_select_related = ('district__city__state',)
 

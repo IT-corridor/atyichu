@@ -1,4 +1,4 @@
-angular.module('photo.controllers', ['photo.services', 'group.services'])
+angular.module('photo.controllers', ['photo.services', 'group.services', 'store.services'])
 .controller('CtrlPhotoList', ['$scope', '$rootScope', '$http',
 '$location', 'Auth', 'Photo',
     function($scope, $rootScope, $http, $location, Auth, Photo) {
@@ -37,9 +37,9 @@ angular.module('photo.controllers', ['photo.services', 'group.services'])
     }
 ])
 .controller('CtrlPhotoDetail', ['$scope', '$rootScope', '$http', '$routeParams',
-                                '$window', '$location', 'Photo', 'Comment', 'WXI',
+                                '$window', '$location', 'Photo', 'Comment', 'WXI', 'Store',
     function($scope, $rootScope, $http, $routeParams, $window, $location,
-    Photo, Comment,  WXI) {
+    Photo, Comment,  WXI, Store) {
         $scope.is_owner = false;
         function handle_error(error){
             $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
@@ -52,6 +52,9 @@ angular.module('photo.controllers', ['photo.services', 'group.services'])
                 $rootScope.title = 'Photo -' + success.title;
                 if ($rootScope.visitor.pk == success.visitor){
                     $scope.is_owner = true;
+                }
+                if (success.is_store){
+                    $scope.store = Store.overview({pk: success.owner.pk});
                 }
                 var title = (success.title) ? success.title : '品味和格调兼具';
                 var photo_desc = (success.description) ? success.description : '大家快来看，秀出你的品味和格调!';
