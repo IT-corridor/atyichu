@@ -56,13 +56,22 @@ angular.module('tencent', [])
     },
     link: function(scope, element, attrs) {
       // Set up center coordinates
-      var geocoder = new qq.maps.Geocoder();
-      var container = element[0];
-      var map, marker = null;
+      var unwatch = scope.$watch('address', function(newValue, oldValue) {
+          if (newValue){
+            render_map();
+            unwatch();
+          }
+      });
+      function render_map(){
+        var geocoder = new qq.maps.Geocoder();
+        var container = element[0];
+        var map, marker = null;
+        console.log(scope.address);
+        geocoder.getLocation(scope.address);
 
-      geocoder.getLocation(scope.address);
-
-      geocoder.setComplete(function(result) {
+        geocoder.setComplete(function(result) {
+        console.log(scope.address);
+        console.log(result);
         map = new qq.maps.Map(container, {
           center: result.detail.location,
           zoom: 16,
@@ -83,12 +92,15 @@ angular.module('tencent', [])
         info.setPosition(marker.getPosition());
         scope.$apply();
 
-      });
+        });
 
-      geocoder.setError(function() {
+        geocoder.setError(function() {
           console.log("Error! Please type right address!");
           scope.$apply();
-      });
+        });
+
+      }
+
     },
   };
 });

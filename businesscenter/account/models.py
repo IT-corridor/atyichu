@@ -89,8 +89,8 @@ class Store(models.Model):
 
     def get_location(self):
         return '{},{}{}{}{}{}'.format(self.district, self.street,
-                                      self.street_no, self.build_name,
-                                      self.build_no, self.apt)
+                                     self.street_no, self.build_name,
+                                     self.build_no, self.apt)
 
     def __unicode__(self):
         return self.brand_name
