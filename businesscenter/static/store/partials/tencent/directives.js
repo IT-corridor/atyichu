@@ -54,6 +54,7 @@ angular.module('tencent', [])
     scope: {
       title: '=',
       address: '=',
+      img: '=',
     },
     link: function(scope, element, attrs) {
       // Set up center coordinates
@@ -86,7 +87,7 @@ angular.module('tencent', [])
           map: map
         });
         info.open();
-        info.setContent('<span style="color: darkred; padding: 10px;">' +scope.title + ', ' + scope.address + '</span>');
+        info.setContent('<span style="color: darkred; padding: 10px;"> <img style="width: 48px; height: auto; margin-right: 5px;" src="'+scope.img+ '"> ' +scope.title + '</span>');
         info.setPosition(marker.getPosition());
         scope.$apply();
 
