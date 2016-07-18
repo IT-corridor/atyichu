@@ -52,6 +52,7 @@ angular.module('tencent', [])
   return {
     restrict: 'AC',
     scope: {
+      title: '=',
       address: '=',
     },
     link: function(scope, element, attrs) {
@@ -66,12 +67,9 @@ angular.module('tencent', [])
         var geocoder = new qq.maps.Geocoder();
         var container = element[0];
         var map, marker = null;
-        console.log(scope.address);
         geocoder.getLocation(scope.address);
 
         geocoder.setComplete(function(result) {
-        console.log(scope.address);
-        console.log(result);
         map = new qq.maps.Map(container, {
           center: result.detail.location,
           zoom: 16,
@@ -88,7 +86,7 @@ angular.module('tencent', [])
           map: map
         });
         info.open();
-        info.setContent('<span style="color: darkred; padding: 10px;">' + scope.address + '</span>');
+        info.setContent('<span style="color: darkred; padding: 10px;">' +scope.title + ', ' + scope.address + '</span>');
         info.setPosition(marker.getPosition());
         scope.$apply();
 
