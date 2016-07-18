@@ -29,6 +29,8 @@ class Visitor(models.Model):
     token_date = models.DateTimeField(_('Token date'), default=timezone.now)
 
     def is_expired(self):
+        """Not a field --- it is a method. Checks if token is expired.
+        Returns True or False."""
         return timezone.now() >\
                self.token_date + timezone.timedelta(seconds=self.expires_in)
 

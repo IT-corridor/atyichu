@@ -10,6 +10,12 @@ from utils.validators import SizeValidator
 
 
 class Vendor(models.Model):
+    """This model represents a vendor instance.
+    This model do not has own primary key,
+    it uses foreign key of :model:`auth.User` as primary key.
+    Maybe it is really redundant. But it is currently useful to create a vendor
+    offline and after that vendor can login and create one store.
+    """
     # TODO: Fix auto creation with empty params
     user = models.OneToOneField(User, on_delete=models.CASCADE,
                                 primary_key=True)
@@ -37,7 +43,8 @@ class AbsLocation(models.Model):
 
 
 class State(AbsLocation):
-
+    """Representation of state. It has own model to avoid data duplication.
+    Also it can be useful for the search."""
     class Meta:
         verbose_name = _('State')
         verbose_name_plural = _('States')
@@ -48,6 +55,8 @@ class State(AbsLocation):
 
 
 class City(AbsLocation):
+    """Representation of City. Reason the same as :model:`account.State` has.
+    """
     state = models.ForeignKey(State, verbose_name=_('State'))
 
     class Meta:
@@ -59,7 +68,8 @@ class City(AbsLocation):
 
 
 class District(AbsLocation):
-
+    """Representation of district. Reason the same as
+    :model:`account.State` has."""
     city = models.ForeignKey(City, verbose_name=_('City'))
 
     class Meta:
@@ -72,6 +82,7 @@ class District(AbsLocation):
 
 class Store(models.Model):
 
+    """ Representation of the store."""
     district = models.ForeignKey(District, verbose_name=_('District'))
     street = models.CharField(_('Street'), max_length=100)
     street_no = models.CharField(_('Street number'), max_length=100)
@@ -88,9 +99,11 @@ class Store(models.Model):
                               blank=True, null=True)
 
     def get_location(self):
+        """ It is not a field --- it is a method. It returns an address string,
+         based on state, city, district and other own properties."""
         return '{},{}{}{}{}{}'.format(self.district, self.street,
-                                     self.street_no, self.build_name,
-                                     self.build_no, self.apt)
+                                      self.street_no, self.build_name,
+                                      self.build_no, self.apt)
 
     def __unicode__(self):
         return self.brand_name

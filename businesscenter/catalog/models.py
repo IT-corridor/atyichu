@@ -20,6 +20,7 @@ class AbsCategory(models.Model):
 
 
 class AbsStoreCategory(AbsCategory):
+    """Extends :model:`AbsCategory with :model:`snapshot.Store` reference."""
     store = models.ForeignKey('account.Store', verbose_name=_('Store'))
 
     class Meta:
@@ -47,7 +48,7 @@ class Kind(AbsCategory):
 
 
 class Brand(AbsStoreCategory):
-
+    """ Brand of the :model:`catalog.Commodity`"""
     class Meta:
         verbose_name = _('Brand')
         verbose_name_plural = _('Brands')
@@ -55,6 +56,7 @@ class Brand(AbsStoreCategory):
 
 
 class Color(AbsStoreCategory):
+    """ Color of the :model:`catalog.Commodity`"""
     html = models.CharField(_('Html code'), max_length=7, blank=True)
 
     class Meta:
@@ -64,7 +66,7 @@ class Color(AbsStoreCategory):
 
 
 class Size(AbsCategory):
-
+    """ Size for the :model:`catalog.Commodity`"""
     class Meta:
         verbose_name = _('Size')
         verbose_name_plural = _('Sizes')
@@ -94,9 +96,10 @@ class Commodity(models.Model):
 
     def __unicode__(self):
         # BRAND+COLOR+KIND+SIZE+YEAR
+        """String representation of the commodity instance."""
         return self.title if self.title else \
-            '{}+{}+{}'.format(self.brand, self.color, self.kind,
-                              self.size, self.year)
+            '{}+{}+{}+{}+{}'.format(self.brand, self.color, self.kind,
+                                    self.size, self.year)
 
     class Meta:
         verbose_name = _('Commodity')
@@ -105,6 +108,9 @@ class Commodity(models.Model):
 
 
 class Gallery(models.Model):
+    """Represent one additional photo for the :model:`catalog.Commodity`.
+    So it is some kind of gallery.
+    Each commodity can have many additional photo (gallery)."""
     # TODO: add a count constraint for the commodity equal 5
     # TODO: make it with viewset in the perform_create
 
@@ -124,6 +130,8 @@ class Gallery(models.Model):
 
 
 class Tag(models.Model):
+    """ Represent one tag for the :model:`catalog.Commodity`.
+    Each commodity can have many tags."""
     title = models.CharField(_('Title'), max_length=50)
     commodity = models.ForeignKey(Commodity, verbose_name=_('Commodity'))
 

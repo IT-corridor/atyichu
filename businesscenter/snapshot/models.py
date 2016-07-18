@@ -68,7 +68,9 @@ class GroupManager(models.Manager):
 
 
 class Mirror(models.Model):
-    """ OLD Model is sucks. """
+    """ OLD Model is sucks.
+    This model is based on the old one.
+    So it is not a perfect too. """
     title = models.CharField(_('Title'), max_length=200, blank=True)
     owner = models.ForeignKey(Visitor, null=True,
                               verbose_name=_('Mirror`s owner'),
@@ -90,20 +92,27 @@ class Mirror(models.Model):
     objects = MirrorManager()
 
     def update_last_login(self):
+        """ Update mirror`s last login.
+        Required for mirror status (online) and other things."""
         # Maybe better to replace the code into manager.
         # Update login, when it is necessary
         self.last_login = timezone.now()
         self.save(update_fields=['last_login'])
 
     def lock(self):
+        """ Sets :is_locked to True and refreshes lock_date (to now)."""
         self.is_locked = True
         self.lock_date = timezone.now()
         self.save(update_fields=['is_locked', 'is_locked'])
 
     def is_online(self):
+        """Checks is mirror online or not (based on last_login date.
+        Return True or False."""
         return timezone.now() < (self.last_login + timedelta(seconds=66))
 
     def is_overtime(self):
+        """ Checks mirror is overtime. To return True it must be locked
+         and current time must be less then (modify date + 1 minute"""
         # Looks like something stupid
         # It checks only locked mirrors, so maybe in this
         # condition you have to remove "mirror.is_locked"
@@ -123,9 +132,10 @@ class Mirror(models.Model):
 
 class Photo(models.Model):
     """Model representing a photo record with extra data.
-        Visitor means not instance of Visitor but instance of django auth User.
+        Visitor means not instance of :model:`visitor.Visitor`,
+        but instance of :model:`auth.User`.
         Name "Visitor" was left to not change all the code.
-        Previously only visitors can access to the photos.
+        Previously only visitors could access to the photos.
     """
     path_photo = UploadPath('snapshot/photo', None, *('visitor',))
     path_thumb = UploadPath('snapshot/photo/thumbs', None, 'thumb',
@@ -171,6 +181,7 @@ class Photo(models.Model):
     a_objects = ActivePhotoManager()
 
     def get_comment_count(self):
+        """ Returns count of comments."""
         return self.comment_count
 
     def __unicode__(self):
@@ -192,6 +203,11 @@ class Photo(models.Model):
 
 
 class Comment(models.Model):
+    """This model represents comment belonged to the instance of :model:`auth.User`
+    (user) and adressed for the instance of  :model:`snapshot.Photo` (photo).
+    So it is represents relation between user and photo,
+    with some additional fields.
+    """
     photo = models.ForeignKey(Photo, verbose_name=_('Photo'),
                               on_delete=models.CASCADE)
     author = models.ForeignKey('auth.User', verbose_name=_('Author'))
@@ -211,7 +227,8 @@ class Comment(models.Model):
 
 
 class Like(models.Model):
-    """ A table that stores relation between photo and visitor.
+    """ A table that stores relation between :model:`snapshot.Photo` (photo)
+     and :model:`auth.User` (visitor).
     If such connection exists then we can say, that user likes the photo.
     It is some kind of Many-to-Many relation.
     But i make an independent model for this case to have more control with
@@ -230,7 +247,7 @@ class Like(models.Model):
 
 
 class Group(models.Model):
-    """ This model represents visitor`s [virtual] wardrobe. """
+    """ This model represents :model:`auth.User` (owner)[virtual] wardrobe. """
     # TODO: who can own the group? Only weixin user or any kind too?
     path_avatar = UploadPath('snapshot/group', 'title', '', *('owner',))
     path_thumb = UploadPath('snapshot/group/thumbs', 'title',
@@ -256,7 +273,10 @@ class Group(models.Model):
 
 class Member(models.Model):
     """ Representation of a group member.
-    It not uses directly ManyToMany Relation. It is realized explicitly """
+    It not uses directly ManyToMany Relation. It is realized explicitly.
+    Relation between :model:`auth.User` (visitor)
+    and :model:`snapshot.Group` (group).
+    """
     # TODO: implement feature:
     # only store`s can be members of the store`s group
     # only visitors (wechat) can be members of the visitor`s group
@@ -275,7 +295,8 @@ class Member(models.Model):
 
 
 class Tag(models.Model):
-    """ Representation of tag for group. Can be used for search. """
+    """ Representation of tag for :model:`snapshot.Group`.
+     Can be used for search. """
     title = models.CharField(_('Title'), max_length=200, blank=True)
     group = models.ForeignKey(Group, verbose_name=_('Group'))
     visitor = models.ForeignKey('auth.User', verbose_name=_('Visitor'))
