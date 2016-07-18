@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from . import models
-
+from snapshot.models import Photo
 
 class StateSerializer(serializers.ModelSerializer):
 
@@ -60,7 +60,6 @@ class StoreSerializer(serializers.ModelSerializer):
     state_title = serializers.CharField(source='district.city.state.title')
 
     def create(self, validated_data):
-        print (validated_data)
         with transaction.atomic():
             district_args = validated_data.pop('district')
             city_args = district_args.pop('city')
@@ -132,6 +131,12 @@ class StorePhotoSerializer(serializers.ModelSerializer):
     """Serializer for photo detail page. It provides a location string,
     and probably set of photos."""
     location = serializers.CharField(source='get_location', read_only=True)
+    overview = serializers.SerializerMethodField(read_only=True)
+
+    def get_overview(self, obj):
+        qs = obj.vendor.user.photo_set.all()[:4]
+        serializer = PhotoCropSerializer(instance=qs, many=True)
+        return serializer.data
 
     class Meta:
         model = models.Store
@@ -242,3 +247,27 @@ class VendorBriefSerializer(serializers.ModelSerializer):
         model = models.Vendor
         fields = ('pk', 'thumb', 'avatar', 'username', 'brand_name',
                   'group_count', 'photo_count', 'store')
+
+
+class PhotoCropSerializer(serializers.ModelSerializer):
+    """ Works for GroupListSerializer.
+    Needed to get cropped photos from store (and group)."""
+    crop = serializers.SerializerMethodField(read_only=True)
+    # TODO: duplicated. Remove duplicate.
+    # TODO: optimize code
+
+    def get_crop(self, obj):
+        photo = obj
+        if photo and photo.original:
+            photo = photo.original
+        if photo and photo.crop.name:
+            request = self.context.get('request', None)
+            url = photo.crop.url
+            if request is not None:
+                return request.build_absolute_uri(url)
+            return url
+        return
+
+    class Meta:
+        model = Photo
+        fields = ('id', 'crop')

@@ -47,8 +47,12 @@ angular.module('photo.controllers', ['photo.services', 'group.services', 'store.
                 if ($rootScope.visitor.pk == success.visitor){
                     $scope.is_owner = true;
                 }
-                if (success.is_store){
-                    $scope.store = Store.overview({pk: success.owner.pk});
+                if (success.is_store === true){
+                    $scope.store = Store.overview({pk: success.owner.pk},
+                        function (success){
+                            create_empty_array(success);
+                        }
+                    );
                 }
             },
             handle_error
@@ -110,6 +114,14 @@ angular.module('photo.controllers', ['photo.services', 'group.services', 'store.
                     $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
                 }
             );
+        }
+
+        function create_empty_array(obj){
+            var len = obj.overview.length;
+            var empty = 4 - len;
+            obj.empty_array = [];
+            var l = 0;
+            for (l; l < empty; l++){ obj.empty_array.push(l);}
         }
     }
 ])

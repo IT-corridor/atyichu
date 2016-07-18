@@ -50,8 +50,12 @@ angular.module('photo.controllers', ['photo.services', 'store.services'])
                 if ($rootScope.visitor.pk == success.visitor){
                     $scope.is_owner = true;
                 }
-                if (success.is_store){
-                    $scope.store = Store.overview({pk: success.owner.pk});
+                if (success.is_store === true){
+                    $scope.store = Store.overview({pk: success.owner.pk},
+                        function (success){
+                            create_empty_array(success);
+                        }
+                    );
                 }
                 var title = (success.title) ? success.title : '品味和格调兼具';
                 var photo_desc = (success.description) ? success.description : '大家快来看，秀出你的品味和格调!';
@@ -114,6 +118,14 @@ angular.module('photo.controllers', ['photo.services', 'store.services'])
                     $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
                 }
             );
+        }
+
+        function create_empty_array(obj){
+            var len = obj.overview.length;
+            var empty = 4 - len;
+            obj.empty_array = [];
+            var l = 0;
+            for (l; l < empty; l++){ obj.empty_array.push(l);}
         }
     }
 ])

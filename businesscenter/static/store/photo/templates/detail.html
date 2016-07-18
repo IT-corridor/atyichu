@@ -65,14 +65,30 @@
             </div>
         </div>
     </div>
-    <div data-ng-if="photo.is_store && store" class="row panel wrapper-md m-t-sm">
+    <div data-ng-if="photo.is_store === true && store.$resolved === true" class="row panel wrapper-md m-t-sm">
         <div class="wrapper-sm">
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
             <div style="height: 300px;" data-map-address data-address="store.location"
                  data-title="store.brand_name" data-img="store.crop"></div>
         </div>
+        <div class="col-xs-12 col-sm-12 visible-xs visible-sm m-b-sm"></div>
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-            <p class="text-center">PHOTOS WILL BE LATER</p>
+            <div class="row m-b-sm m-n img-wrap-xs img-wrap-md">
+                <div class="col-md-3 col-xs-3" data-ng-repeat="item in store.overview">
+                    <div class="hbox">
+                        <div class="col v-middle">
+                            <img class="img-center img-responsive" data-ng-src="{{ item.crop }}" alt="..." >
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-xs-3" style="height: 100px;" data-ng-repeat="item in store.empty_array">
+                    <div class="hbox">
+                        <div class="col v-middle">
+                            <div class="purple-50" style="max-width: 100px; height: 100%; position: relative; margin: 0 auto;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- .comment-list -->
