@@ -55,7 +55,7 @@ class City(AbsLocation):
         verbose_name_plural = _('Cities')
 
     def __unicode__(self):
-        return '{}{}'.format(self.state, self.title)
+        return '{},{}'.format(self.state, self.title)
 
 
 class District(AbsLocation):
@@ -67,7 +67,7 @@ class District(AbsLocation):
         verbose_name_plural = _('Districts')
 
     def __unicode__(self):
-        return '{}{}'.format(self.city, self.title)
+        return '{},{}'.format(self.city, self.title)
 
 
 class Store(models.Model):
@@ -88,9 +88,9 @@ class Store(models.Model):
                               blank=True, null=True)
 
     def get_location(self):
-        return '{}{}{}{}{}{}'.format(self.district, self.street,
-                                     self.street_no, self.build_name,
-                                     self.build_no, self.apt)
+        return '{},{}{}{}{}{}'.format(self.district, self.street,
+                                      self.street_no, self.build_name,
+                                      self.build_no, self.apt)
 
     def __unicode__(self):
         return self.brand_name
