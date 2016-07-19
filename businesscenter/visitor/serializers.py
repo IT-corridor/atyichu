@@ -16,9 +16,9 @@ class WeixinSerializer(serializers.ModelSerializer):
     nickname = serializers.CharField(required=True, write_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
     # Added 23.06.2013
-    photo_count = serializers.IntegerField(source='photo_set.count',
+    photo_count = serializers.IntegerField(source='user.photo_set.count',
                                            read_only=True)
-    group_count = serializers.IntegerField(source='group_set.count',
+    group_count = serializers.IntegerField(source='user.group_set.count',
                                            read_only=True)
 
     # EXTEND LATER

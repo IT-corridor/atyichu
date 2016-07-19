@@ -237,9 +237,9 @@ class VendorBriefSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     brand_name = serializers.CharField(source='store.brand_name', read_only=True,
                                        allow_null=True, allow_blank=True)
-    photo_count = serializers.IntegerField(source='photo_set.count',
+    photo_count = serializers.IntegerField(source='user.photo_set.count',
                                            read_only=True)
-    group_count = serializers.IntegerField(source='group_set.count',
+    group_count = serializers.IntegerField(source='user.group_set.count',
                                            read_only=True)
     store = serializers.IntegerField(source='pk', read_only=True)
 
