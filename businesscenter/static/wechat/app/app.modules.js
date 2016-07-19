@@ -12,6 +12,7 @@ var app = angular.module('app.main', [
     'alert',
     'selfie',
     'grid',
+    'tencent',
 ]);
 app.factory('httpRequestInterceptor', function () {
     return {
