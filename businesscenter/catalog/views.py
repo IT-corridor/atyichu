@@ -67,7 +67,6 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
     search_fields = ('title', 'kind__title', 'kind__category__title',
                      'brand__title', 'color__title', 'size__title', 'tag__title')
 
-
     def get_queryset(self):
         qs = super(CommodityViewSet, self).get_queryset()
         return qs.select_related('brand', 'kind__category', 'color', 'size').\

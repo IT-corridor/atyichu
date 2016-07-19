@@ -11,7 +11,7 @@ angular.module('group.services', ['ngResource'])
             member_add: {method:'POST', params:{action: 'member_add'}, responseType:'json'},
             member_remove: {method:'POST', params:{action: 'member_remove'}, responseType:'json'},
             tag_create: {method:'POST', params:{action: 'tag_create'}, responseType:'json'},
-            vendor_list: {method:'GET', params:{pk: null, action: 'visitor_list'},
+            vendor_list: {method:'GET', params:{pk: null, action: 'vendor_list'},
                            responseType:'json', isArray:true},
             my: {method:'GET', params:{pk: null, action: 'my_groups'}, responseType:'json'},
             my_short_list: {method:'GET', params:{pk: null, action: 'my_groups_short'},

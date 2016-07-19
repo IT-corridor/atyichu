@@ -9,6 +9,7 @@ from rest_framework import serializers
 from . import models
 from snapshot.models import Photo
 
+
 class StateSerializer(serializers.ModelSerializer):
 
     class Meta:

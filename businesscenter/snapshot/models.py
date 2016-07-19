@@ -249,9 +249,6 @@ class Like(models.Model):
 class Group(models.Model):
     """ This model represents :model:`auth.User` (owner)[virtual] wardrobe. """
     # TODO: who can own the group? Only weixin user or any kind too?
-    path_avatar = UploadPath('snapshot/group', 'title', '', *('owner',))
-    path_thumb = UploadPath('snapshot/group/thumbs', 'title',
-                            'thumb', *('owner',))
     title = models.CharField(_('Title'), max_length=200)
     description = models.TextField(_('Description'), max_length=5000,
                                    blank=True)
