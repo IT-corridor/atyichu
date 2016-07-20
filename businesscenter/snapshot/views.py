@@ -465,6 +465,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
 
+
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.select_related('author__visitor')
     serializer_class = serializers.CommentSerializer

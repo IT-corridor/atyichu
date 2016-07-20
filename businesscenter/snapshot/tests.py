@@ -215,6 +215,7 @@ class GroupTests(APITestCase):
         self.force_login(1)
         url = reverse('snapshot:group-list')
         response = self.client.post(url, data=data)
+        print (response.data)
         self.assertEqual(response.status_code, 201)
         self.client.logout()
 
