@@ -34,7 +34,7 @@ class KindViewSet(viewsets.ModelViewSet):
 class SizeViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAdminOrReadOnly,)
     serializer_class = serializers.SizeSerializer
-    model = models.Size
+    queryset = models.Size.objects.all()
 
 
 class BrandViewSet(ReferenceMixin, viewsets.ModelViewSet):
@@ -42,9 +42,10 @@ class BrandViewSet(ReferenceMixin, viewsets.ModelViewSet):
     model = models.Brand
 
 
-class ColorViewSet(ReferenceMixin, viewsets.ModelViewSet):
+class ColorViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAdminOrReadOnly,)
     serializer_class = serializers.ColorSerializer
-    model = models.Color
+    queryset = models.Color.objects.all()
 
 
 class GalleryViewSet(viewsets.ModelViewSet):
@@ -73,6 +74,21 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
             prefetch_related('gallery_set', 'tag_set')
 
     def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return serializers.CommodityVerboseSerializer
-        return serializers.CommoditySerializer
+        if self.request.method == 'GET' or not self.kwargs.get('pk', None):
+            return serializers.CommodityListSerializer
+        return serializers.CommodityDetailSerializer
+
+    def perform_create(self, serializer):
+        """ First of all we creating a new commodity.
+        After this we create photos for it. After it we add to five (5) bounded
+        photos to gallery table (with help of model)"""
+        commodity = serializer.save()
+        files = self.request.FILES
+        serializer_class = serializers.GallerySerializer
+        for n, k in enumerate(files.keys()):
+            data = {'commodity': commodity.id, 'photo': files[k]}
+            serializer = serializer_class(data=data)
+            serializer.is_valid(True)
+            serializer.save()
+            if n > 4:
+                break

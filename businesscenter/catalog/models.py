@@ -125,7 +125,7 @@ class Gallery(models.Model):
 
     commodity = models.ForeignKey(Commodity, verbose_name=_('Commodity'))
     photo = models.ImageField(_('Photo'), upload_to=path_photo,
-                              validators=[SizeValidator(2)])
+                              validators=[SizeValidator(15)])
     thumb = models.ImageField(_('Thumbnail'), upload_to=path_thumb,
                               null=True, blank=True)
 

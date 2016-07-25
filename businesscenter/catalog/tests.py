@@ -2,11 +2,11 @@ from __future__ import unicode_literals, absolute_import
 
 import unittest
 import json
+import os
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission
-from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
+from django.conf import settings
+from rest_framework.test import APITestCase
 
 from account.models import Vendor, Store, District, City, State
 
@@ -105,12 +105,11 @@ class CatalogTests(APITestCase):
             (Brand(store_id=cls.store.pk, **data) for data in BRANDS)
         )
         Color.objects.bulk_create(
-            (Color(store_id=cls.store.pk, **data) for data in COLORS)
+            (Color(**data) for data in COLORS)
         )
         Size.objects.bulk_create(
             (Size(**data) for data in SIZES)
         )
-
 
         Commodity.objects.bulk_create(
             (Commodity(store_id=cls.store.pk, **data) for data in COMMODITIES)
@@ -150,21 +149,25 @@ class CatalogTests(APITestCase):
         self.client.logout()
 
     def test_patch_create(self):
+        """ Since only staff can manage size,
+            i expect 403 for patch request"""
         self.client.login(username=self.vendor_data_2['username'],
                           password=self.vendor_data_2['password'])
 
         url = reverse('catalog:size-detail', kwargs={'pk': 1})
         response = self.client.patch(url, data={'title': 'XXXL'})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 403)
         self.client.logout()
 
     def test_delete_create(self):
+        """ Since only staff can manage size,
+        i expect 403 for delete request"""
         self.client.login(username=self.vendor_data_2['username'],
                           password=self.vendor_data_2['password'])
 
         url = reverse('catalog:size-detail', kwargs={'pk': 1})
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 403)
         self.client.logout()
 
     def test_exception_other_vendor(self):
@@ -209,3 +212,27 @@ class CatalogTests(APITestCase):
         response = self.client.get(url, data={'o': '-id'})
         self.assertEqual(response.data['results'][0]['id'], 2)
         self.client.logout()
+
+    def test_create_commodity_with_photos(self):
+        self.client.login(username=self.vendor_data_2['username'],
+                          password=self.vendor_data_2['password'])
+        url = reverse('catalog:commodity-list')
+
+        data = {
+            'title': 'T-Shirt -13-Ad-23-U',
+            'year': '2016',
+            'kind': 3,
+            'brand': 3,
+            'color': 1,
+            'size': 3,
+            'season': 0,
+        }
+        fpath1 = os.path.join(settings.MEDIA_ROOT, 'image.jpeg')
+        fpath2 = os.path.join(settings.MEDIA_ROOT, 'test.jpg')
+
+        with open(fpath1) as fp1, open(fpath2) as fp2:
+            data.update({'file_1': fp1, 'file_2': fp2})
+
+            response = self.client.post(url, data, format='multipart')
+            print (response.data)
+            self.assertEqual(response.status_code, 201)
