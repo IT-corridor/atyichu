@@ -35,7 +35,8 @@ class VendorTests(APITestCase):
         user = self.vendor.user
         data_compare = {'username': user.username, 'id': user.id,
                         'store': None, 'brand_name': None, 'avatar': None,
-                        'thumb': None, 'pk': 2}
+                        'thumb': None, 'pk': 2,
+                        'photo_count': 0, 'group_count': 0}
         url = reverse('account:login')
         response = self.client.post(url, data=self.vendor_data)
         self.assertEqual(response.status_code, 200)
@@ -93,6 +94,7 @@ class StoreTests(APITestCase):
             'build_no': '42',
             'build_name': 'High one',
             'street': 'Awesome',
+            'street_no': '24',
             'district_title': 'First one',
             'city_title': 'Shanghai',
             'state_title': 'Shanghai',
@@ -103,7 +105,8 @@ class StoreTests(APITestCase):
         user = self.vendor_2.user
         data_compare = {'username': user.username, 'id': user.id,
                         'store': self.store.pk, 'brand_name': 'EYE',
-                        'avatar': None, 'thumb': None, 'pk': 2}
+                        'avatar': None, 'thumb': None, 'pk': 2,
+                        'photo_count': 0, 'group_count': 0}
         url = reverse('account:login')
         response = self.client.post(url, data=self.vendor_data_2)
         self.assertEqual(response.status_code, 200)
@@ -116,7 +119,6 @@ class StoreTests(APITestCase):
         url = reverse('account:store-list')
         response = self.client.post(url, json.dumps(self.data),
                                     content_type='application/json')
-
         self.client.logout()
         self.assertEqual(response.status_code, 201)
 
@@ -131,6 +133,7 @@ class StoreTests(APITestCase):
             'district_title': 'Super',
             'city_title': 'Beijing',
             'state_title': 'Beijing',
+            'street_no': '67',
         }
         self.client.login(username=self.vendor_data_2['username'],
                           password=self.vendor_data_2['password'])

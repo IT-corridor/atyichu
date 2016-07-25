@@ -66,15 +66,6 @@ class StoreViewSet(OwnerCreateMixin,
                                           cat_serialzrs.BrandSerializer)
 
     @list_route(methods=['get'])
-    def my_colors(self, request, *args, **kwargs):
-        """ Presents a color list that created by vendor fo the store.
-            Used for simple list presentation and
-            it is not requires pagination.
-        """
-        return self.get_response_by_owner(cat_models.Color.objects.all(),
-                                          cat_serialzrs.ColorSerializer)
-
-    @list_route(methods=['get'])
     def my_commodities(self, request, *args, **kwargs):
         """ Presents a commodity list that created by vendor for the store.
             Uses pagination.

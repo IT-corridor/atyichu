@@ -242,7 +242,7 @@ class VendorBriefSerializer(serializers.ModelSerializer):
                                            read_only=True)
     group_count = serializers.IntegerField(source='user.group_set.count',
                                            read_only=True)
-    store = serializers.IntegerField(source='pk', read_only=True)
+    store = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = models.Vendor

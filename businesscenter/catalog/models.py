@@ -55,7 +55,7 @@ class Brand(AbsStoreCategory):
         ordering = ('priority', 'pk')
 
 
-class Color(AbsStoreCategory):
+class Color(AbsCategory):
     """ Color of the :model:`catalog.Commodity`"""
     html = models.CharField(_('Html code'), max_length=7, blank=True)
 
@@ -90,9 +90,15 @@ class Commodity(models.Model):
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
     kind = models.ForeignKey(Kind, verbose_name=_('Kind'))
     brand = models.ForeignKey(Brand, verbose_name=_('Brand'))
-    color = models.ForeignKey(Color, verbose_name=_('Color'))
+    color = models.ForeignKey(Color, verbose_name=_('Color'),
+                              blank=True, null=True)
     size = models.ForeignKey(Size, verbose_name=_('Size'))
     store = models.ForeignKey('account.Store', verbose_name=_('Store'))
+    color_extra = models.CharField(_('Extra color'), max_length=50, blank=True,
+                                   help_text=_('Useful if vendor did not '
+                                               'find required color'))
+    color_pic = models.ImageField(_('Sample of color'), blank=True, null=True,
+                                  upload_to='colors')
 
     def __unicode__(self):
         # BRAND+COLOR+KIND+SIZE+YEAR
