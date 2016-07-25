@@ -12,7 +12,6 @@ var app = angular.module('app.main', [
     'alert',
     'selfie',
     'grid',
-    'tencent',
 ]);
 app.factory('httpRequestInterceptor', function () {
     return {
@@ -183,7 +182,33 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'TITLE': 'Title',
                 'DESCRIPTION': 'Description',
             }
-        }
+        },
+        'COMMODITY': {
+            'CREATE': {
+                'HEADER': 'Add a commodity',
+                'SUCCESS': 'A new commodity has been added to your store',
+                'NO_COLOR': 'Required color is missed? Then send us your extra color',
+            },
+            'FORM': {
+                'EMPTY': 'Please, choose one from the list',
+                'TITLE': 'Title',
+                'CATEGORY': 'Catalog',
+                'KIND': 'Kind',
+                'BRAND': 'Brand',
+                'COLOR': 'Color',
+                'SIZE': 'Size',
+                'SEASON': 'Season',
+                'YEAR': 'Year',
+                'EXTRA_COLOR': 'Extra color',
+                'COLOR_PIC': 'Sample of color',
+            },
+            'SEASONS': {
+                'WINTER': 'Winter',
+                'SPRING': 'Spring',
+                'SUMMER': 'Summer',
+                'AUTUMN': 'Autumn',
+            },
+        },
     });
 
     $translateProvider.translations('zh', {
@@ -327,8 +352,35 @@ app.config(['$translateProvider', function ($translateProvider) {
             'FORM': {
                 'TITLE': 'Title',
                 'DESCRIPTION': 'Description',
-            }
-        }
+            },
+
+        },
+        'COMMODITY': {
+            'CREATE': {
+                'HEADER': 'Add a commodity',
+                'SUCCESS': 'A new commodity has been added to your store',
+                'NO_COLOR': 'Required color is missed? Then send us your extra color',
+            },
+            'FORM': {
+                'EMPTY': 'Please, choose one from the list',
+                'TITLE': 'Title',
+                'CATEGORY': 'Catalog',
+                'KIND': 'Kind',
+                'BRAND': 'Brand',
+                'COLOR': 'Color',
+                'SIZE': 'Size',
+                'SEASON': 'Season',
+                'YEAR': 'Year',
+                'EXTRA_COLOR': 'Extra color',
+                'COLOR_PIC': 'Sample of color',
+            },
+            'SEASONS': {
+                'WINTER': 'Winter',
+                'SPRING': 'Spring',
+                'SUMMER': 'Summer',
+                'AUTUMN': 'Autumn',
+            },
+        },
     });
 
   $translateProvider.preferredLanguage('zh');

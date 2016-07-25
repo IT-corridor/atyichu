@@ -1,4 +1,4 @@
-angular.module('photo.controllers', ['photo.services', 'group.services', 'store.services'])
+angular.module('photo.controllers', ['photo.services', 'group.services', 'store.services', 'tencent'])
 .controller('CtrlPhotoList', ['$scope', '$rootScope', '$http',
 '$location', '$translate', 'Auth', 'Photo',
     function($scope, $rootScope, $http, $location, $translate, Auth, Photo) {

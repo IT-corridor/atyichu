@@ -22,29 +22,35 @@ class ReferenceMixin(OwnerCreateMixin, OwnerUpdateMixin):
 class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAdminOrReadOnly, )
     serializer_class = serializers.CategorySerializer
-    model = models.Category
+    pagination_class = None
+    queryset = models.Category.objects.all()
 
 
 class KindViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAdminOrReadOnly,)
     serializer_class = serializers.KindSerializer
-    model = models.Kind
+    pagination_class = None
+    filter_fields = ('category',)
+    queryset = models.Kind.objects.all()
 
 
 class SizeViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAdminOrReadOnly,)
     serializer_class = serializers.SizeSerializer
+    pagination_class = None
     queryset = models.Size.objects.all()
 
 
 class BrandViewSet(ReferenceMixin, viewsets.ModelViewSet):
     serializer_class = serializers.BrandSerializer
+    pagination_class = None
     model = models.Brand
 
 
 class ColorViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAdminOrReadOnly,)
     serializer_class = serializers.ColorSerializer
+    pagination_class = None
     queryset = models.Color.objects.all()
 
 
@@ -56,6 +62,7 @@ class GalleryViewSet(viewsets.ModelViewSet):
 
 class TagViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.TagSerializer
+    pagination_class = None
     queryset = models.Tag.objects.all()
 
 
@@ -83,7 +90,8 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
         After this we create photos for it. After it we add to five (5) bounded
         photos to gallery table (with help of model)"""
         commodity = serializer.save()
-        files = self.request.FILES
+        files = self.request.FILES.copy()
+        files.pop('color_pic', None)
         serializer_class = serializers.GallerySerializer
         for n, k in enumerate(files.keys()):
             data = {'commodity': commodity.id, 'photo': files[k]}

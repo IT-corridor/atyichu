@@ -84,6 +84,7 @@ class Commodity(models.Model):
         ('3', _('Autumn')),
     )
     title = models.CharField(_('Title'), max_length=100, blank=True)
+    # Better use regex field for year.
     year = models.CharField(_('Year'), max_length=4)
     season = models.CharField(_('Season'), choices=SEASONS, max_length=1)
     add_date = models.DateTimeField(_('Date added'), auto_now_add=True)

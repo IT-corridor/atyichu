@@ -52,3 +52,12 @@ class PaginationMixin(object):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class AjaxMixin(object):
+
+    def get(self, request, *args, **kwargs):
+        if request.is_ajax() or request.user.is_staff:
+            return super(AjaxMixin, self).get(request, *args, **kwargs)
+        else:
+            return Response(status=403)

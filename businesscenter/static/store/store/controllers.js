@@ -1,4 +1,4 @@
-angular.module('store.controllers', ['store.services','common.services', 'auth.services'])
+angular.module('store.controllers', ['store.services','common.services', 'auth.services', 'commodity.services'])
 .controller('CtrlStoreCreate', ['$scope', '$rootScope','$http',
 '$location', '$translate', 'MultipartForm',
     function($scope, $rootScope, $http, $location, $translate, MultipartForm) {
@@ -28,15 +28,14 @@ angular.module('store.controllers', ['store.services','common.services', 'auth.s
     }
 ])
 .controller('CtrlStoreOwn', ['$scope', '$rootScope','$http',
-'$location', '$translate', '$uibModal', '$log', 'PATH', 'Store', 'Brand', 'Color',
+'$location', '$translate', '$uibModal', '$log', 'PATH', 'Store', 'Brand',
     function($scope, $rootScope, $http, $location, $translate, $uibModal, $log, PATH,
-    Store, Brand, Color) {
+    Store, Brand) {
 
         $scope.r = Store.my_store();
 
         $scope.resource_map = {
             'brand': Brand,
-            'color': Color,
         };
 
         $scope.open_modal = function (resource) {
