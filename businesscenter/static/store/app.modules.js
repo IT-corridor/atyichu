@@ -201,6 +201,7 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'YEAR': 'Year',
                 'EXTRA_COLOR': 'Extra color',
                 'COLOR_PIC': 'Sample of color',
+                'FILES': 'Photos',
             },
             'SEASONS': {
                 'WINTER': 'Winter',
@@ -373,6 +374,7 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'YEAR': 'Year',
                 'EXTRA_COLOR': 'Extra color',
                 'COLOR_PIC': 'Sample of color',
+                'FILES': 'Photos',
             },
             'SEASONS': {
                 'WINTER': 'Winter',

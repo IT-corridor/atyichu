@@ -6,6 +6,21 @@
             </div>
             <div class="panel-body">
                 <form data-ng-submit="create()" name="form" id="commodity_form">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>{{ 'COMMODITY.FORM.FILES' | translate }}</label>
+                        </div>
+                        <div class="col-md-10">
+                            <ul class="list-unstyled">
+                                <li class="wrapper-xs"><input type="file" name="file_1" accept="image/*" required aria-required="true"></li>
+                                <li class="wrapper-xs"><input type="file" name="file_2" accept="image/*" aria-required="false"></li>
+                                <li class="wrapper-xs"><input type="file" name="file_3" accept="image/*" aria-required="false"></li>
+                                <li class="wrapper-xs"><input type="file" name="file_4" accept="image/*" aria-required="false"></li>
+                                <li class="wrapper-xs"><input type="file" name="file_5" accept="image/*" aria-required="false"></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="line line-dashed b-b line-lg pull-in"></div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.TITLE' | translate }}</label>
                         <div class="col-sm-10">
@@ -66,18 +81,6 @@
                     </div>
                     <div class="line line-dashed b-b line-lg pull-in"></div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.COLOR' | translate }}</label>
-                        <div class="col-sm-10">
-                            <select name="color" class="form-control rounded" data-ng-model="color"
-                                    data-ng-options="item as item.title for item in color_list track by item.id">
-                                    <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
-                            </select>
-                            <p class="text-danger"
-                               data-ng-repeat="e in error.color">{{ e }}</p>
-                        </div>
-                    </div>
-                    <div class="line line-dashed b-b line-lg pull-in"></div>
-                    <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.SEASON' | translate }}</label>
                         <div class="col-sm-10">
                             <select name="season" class="form-control rounded" data-ng-model="season"
@@ -99,6 +102,19 @@
                         </div>
                     </div>
                     <div class="line line-dashed b-b line-lg pull-in"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.COLOR' | translate }}</label>
+                        <div class="col-sm-10">
+                            <select name="color" class="form-control rounded" data-ng-model="color">
+                                    <option style="background-color: {{ item.html }}" data-ng-repeat="item in color_list" data-ng-value="{{ item.id }}">
+                                        {{ item.title }}</option>
+                                    <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
+                            </select>
+                            <p class="text-danger"
+                               data-ng-repeat="e in error.color">{{ e }}</p>
+                        </div>
+                    </div>
+                    <div class="line line-dashed b-b line-lg pull-in"></div>
                     <p>{{ 'COMMODITY.CREATE.NO_COLOR' | translate }}</p>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.EXTRA_COLOR' | translate }}</label>
@@ -113,7 +129,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.COLOR_PIC' | translate }}</label>
                         <div class="col-sm-10">
-                            <input type="file" name="color_pic" aria-required="true">
+                            <input type="file" name="color_pic" accept="image/*" aria-required="false">
                             <p class="text-danger"
                                data-ng-repeat="e in error.color_pic">{{ e }}</p>
                         </div>

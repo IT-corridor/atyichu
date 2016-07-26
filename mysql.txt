@@ -9,3 +9,13 @@ CREATE DATABASE atyichu_test CHARACTER SET UTF8;
 
 GRANT ALL PRIVILEGES ON atyichu.* TO dummy@localhost;
 GRANT ALL PRIVILEGES ON atyichu_test.* TO dummy@localhost;
+
+
+
+------------------------------------------------------------
+DO NOT USE THAT:
+DROPPING INDEXES
+select * from django_migrations;
+DELETE FROM django_migrations where id = 66;
+show indexes from catalog_category;
+ALTER TABLE catalog_category DROP FOREIGN KEY catalog_category_store_id_790164a9_fk_account_store_id;
