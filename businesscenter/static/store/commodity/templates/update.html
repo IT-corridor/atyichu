@@ -1,30 +1,15 @@
 <div class="container">
-    <div class="wrapper-md">
+    <div class="wrapper-md" data-ng-if="commodity">
         <div class="panel panel-default">
             <div class="panel-heading font-bold">
-                {{'COMMODITY.CREATE.HEADER' | translate }}
+                {{'COMMODITY.UPDATE.HEADER' | translate }}
             </div>
             <div class="panel-body">
-                <form data-ng-submit="create()" name="form" id="commodity_form">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <label>{{ 'COMMODITY.FORM.FILES' | translate }}</label>
-                        </div>
-                        <div class="col-md-10">
-                            <ul class="list-unstyled">
-                                <li class="wrapper-xs"><input type="file" name="file_1" accept="image/*" required aria-required="true"></li>
-                                <li class="wrapper-xs"><input type="file" name="file_2" accept="image/*" aria-required="false"></li>
-                                <li class="wrapper-xs"><input type="file" name="file_3" accept="image/*" aria-required="false"></li>
-                                <li class="wrapper-xs"><input type="file" name="file_4" accept="image/*" aria-required="false"></li>
-                                <li class="wrapper-xs"><input type="file" name="file_5" accept="image/*" aria-required="false"></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="line line-dashed b-b line-lg pull-in"></div>
+                <form data-ng-submit="update()" name="form" id="commodity_form">
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.TITLE' | translate }}</label>
                         <div class="col-sm-10">
-                            <input type="text" name="title"
+                            <input type="text" name="title" data-ng-model="commodity.title"
                                    class="form-control rounded">
                             <p class="text-danger"
                                data-ng-repeat="e in error.title">{{ e }}</p>
@@ -34,10 +19,10 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.CATEGORY' | translate }}</label>
                         <div class="col-sm-10">
-                            <select class="form-control rounded" required
-                                    data-ng-model="category" data-ng-change="get_kind_list()"
-                                    data-ng-options="item as item.title for item in category_list track by item.id">
-                                    <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
+                            <select class="form-control rounded" data-ng-model="commodity.category" >
+                                <option data-ng-repeat="item in category_list" data-ng-selected="item.id == commodity.category"
+                                        data-ng-value="{{ item.id }}">{{ item.title }}</option>
+                                <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
                             </select>
                             <p class="text-danger"
                                data-ng-repeat="e in error.category">{{ e }}</p>
@@ -47,9 +32,10 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.KIND' | translate }}</label>
                         <div class="col-sm-10">
-                            <select name="kind" class="form-control rounded" data-ng-model="kind" required
-                                    data-ng-options="item as item.title for item in kind_list track by item.id">
-                                    <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
+                            <select class="form-control rounded" data-ng-model="commodity.kind">
+                                <option data-ng-repeat="item in kind_list" data-ng-selected="item.id == commodity.kind"
+                                        data-ng-value="{{ item.id }}">{{ item.title }}</option>
+                                <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
                             </select>
                             <p class="text-danger"
                                data-ng-repeat="e in error.kind">{{ e }}</p>
@@ -59,9 +45,10 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.BRAND' | translate }}</label>
                         <div class="col-sm-10">
-                            <select name="brand" class="form-control rounded" data-ng-model="brand" required
-                                    data-ng-options="item as item.title for item in brand_list track by item.id">
-                                    <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
+                            <select class="form-control rounded" data-ng-model="commodity.brand" required>
+                                <option data-ng-repeat="item in brand_list" data-ng-selected="item.id == commodity.brand"
+                                        data-ng-value="{{ item.id }}">{{ item.title }}</option>
+                                <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
                             </select>
                             <p class="text-danger"
                                data-ng-repeat="e in error.brand">{{ e }}</p>
@@ -71,9 +58,9 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.SIZE' | translate }}</label>
                         <div class="col-sm-10">
-                            <select name="size" class="form-control rounded" data-ng-model="size" required
-                                    data-ng-options="item as item.title for item in size_list track by item.id">
-                                    <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
+                            <select class="form-control rounded" data-ng-model="commodity.size" required>
+                                <option data-ng-repeat="item in size_list" data-ng-value="item.id"
+                                        data-ng-selected="item.id == commodity.size">{{ item.title }}</option>
                             </select>
                             <p class="text-danger"
                                data-ng-repeat="e in error.size">{{ e }}</p>
@@ -83,9 +70,9 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.SEASON' | translate }}</label>
                         <div class="col-sm-10">
-                            <select name="season" class="form-control rounded" data-ng-model="season"
-                                    data-ng-options="item as item.title for item in season_list track by item.id">
-                                    <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
+                            <select class="form-control rounded" data-ng-model="commodity.season">
+                                <option data-ng-repeat="item in season_list" data-ng-value="item.id"
+                                        data-ng-selected="item.id == commodity.season">{{ item.title }}</option>
                             </select>
                             <p class="text-danger"
                                data-ng-repeat="e in error.season">{{ e }}</p>
@@ -95,7 +82,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.YEAR' | translate }}</label>
                         <div class="col-sm-10">
-                            <input type="number" name="year" min="2000" max="2016" data-ng-model="year"
+                            <input type="number" name="year" min="2000" max="2016" data-ng-model="commodity.year"
                                    class="form-control rounded">
                             <p class="text-danger"
                                data-ng-repeat="e in error.year">{{ e }}</p>
@@ -105,8 +92,9 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.COLOR' | translate }}</label>
                         <div class="col-sm-10">
-                            <select name="color" class="form-control rounded" data-ng-model="color">
-                                    <option style="background-color: {{ item.html }}" data-ng-repeat="item in color_list" data-ng-value="{{ item.id }}">
+                            <select name="color" class="form-control rounded" data-ng-model="commodity.color">
+                                    <option style="background-color: {{ item.html }}" data-ng-selected="item.id == commodity.color"
+                                            data-ng-repeat="item in color_list" data-ng-value="{{ item.id }}">
                                         {{ item.title }}</option>
                                     <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
                             </select>
@@ -119,18 +107,9 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.EXTRA_COLOR' | translate }}</label>
                         <div class="col-sm-10">
-                            <input type="color" name="color_extra">
+                            <input type="color" name="color_extra" data-ng-model="commodity.color_extra">
                             <p class="text-danger"
                                data-ng-repeat="e in error.color_extra">{{ e }}</p>
-                        </div>
-                    </div>
-                    <div class="line line-dashed b-b line-lg pull-in"></div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.COLOR_PIC' | translate }}</label>
-                        <div class="col-sm-10">
-                            <input type="file" name="color_pic" accept="image/*" aria-required="false">
-                            <p class="text-danger"
-                               data-ng-repeat="e in error.color_pic">{{ e }}</p>
                         </div>
                     </div>
                     <div class="line line-dashed b-b line-lg pull-in"></div>

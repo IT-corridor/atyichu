@@ -63,6 +63,8 @@ class CommodityListSerializer(serializers.ModelSerializer):
                                         read_only=True)
 
     cover = serializers.SerializerMethodField(read_only=True)
+    category = serializers.PrimaryKeyRelatedField(source='kind.category',
+                                        read_only=True)
 
     def get_cover(self, obj):
         gallery = obj.gallery_set.first()

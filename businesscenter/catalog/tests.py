@@ -134,7 +134,6 @@ class CatalogTests(APITestCase):
 
         url = reverse('catalog:commodity-list')
         response = self.client.get(url)
-        print (len(response.data))
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.data['results']) == 0)
         self.client.logout()
@@ -234,5 +233,4 @@ class CatalogTests(APITestCase):
             data.update({'file_1': fp1, 'file_2': fp2})
 
             response = self.client.post(url, data, format='multipart')
-            print (response.data)
             self.assertEqual(response.status_code, 201)

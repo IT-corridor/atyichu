@@ -49,7 +49,7 @@ angular.module('commodity.services', ['ngResource'])
     function($resource, catalog_path){
         return $resource(catalog_path + 'commodities/:pk/:action/', {}, {
             query: {method:'GET', params:{pk: null, action: null}, responseType:'json'},
-            update: {method: 'PATCH'},
+            update: {method: 'PATCH', params: {action: null}},
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
     });

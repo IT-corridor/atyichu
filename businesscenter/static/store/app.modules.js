@@ -189,6 +189,10 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'SUCCESS': 'A new commodity has been added to your store',
                 'NO_COLOR': 'Required color is missed? Then send us your extra color',
             },
+            'UPDATE': {
+                'HEADER': 'Update a commodity',
+                'SUCCESS': 'Commodity has been updated',
+            },
             'FORM': {
                 'EMPTY': 'Please, choose one from the list',
                 'TITLE': 'Title',
@@ -361,6 +365,10 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'HEADER': 'Add a commodity',
                 'SUCCESS': 'A new commodity has been added to your store',
                 'NO_COLOR': 'Required color is missed? Then send us your extra color',
+            },
+            'UPDATE': {
+                'HEADER': 'Update a commodity',
+                'SUCCESS': 'Commodity has been updated',
             },
             'FORM': {
                 'EMPTY': 'Please, choose one from the list',

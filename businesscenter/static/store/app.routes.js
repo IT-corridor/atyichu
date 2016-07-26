@@ -29,6 +29,10 @@ angular.module('app.route', [
             templateUrl: PATH + 'commodity/templates/create.html',
             controller: 'CtrlCommodityCreate',
         }).
+        when('/commodities/:pk', {
+            templateUrl: PATH + 'commodity/templates/update.html',
+            controller: 'CtrlCommodityUpdate',
+        }).
         when('/photo/newest', {
             templateUrl: PATH + 'group/templates/photo_list.html',
             controller: 'CtrlPhotoNewest',

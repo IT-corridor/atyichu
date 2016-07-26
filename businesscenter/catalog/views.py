@@ -2,8 +2,10 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from rest_framework import viewsets
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.filters import DjangoFilterBackend, \
     OrderingFilter, SearchFilter
+from rest_framework.response import Response
 from . import serializers, models
 from .filters import CommodityFilter
 from utils import permissions
@@ -77,13 +79,21 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super(CommodityViewSet, self).get_queryset()
-        return qs.select_related('brand', 'kind__category', 'color', 'size').\
-            prefetch_related('gallery_set', 'tag_set')
+        qs = qs.select_related('brand', 'kind__category', 'color', 'size')
+        if self.request.method == 'GET' and self.kwargs.get('pk', None):
+            qs = qs.prefetch_related('gallery_set', 'tag_set')
+        return qs
 
     def get_serializer_class(self):
-        if self.request.method == 'GET' or not self.kwargs.get('pk', None):
-            return serializers.CommodityListSerializer
-        return serializers.CommodityDetailSerializer
+        return serializers.CommodityListSerializer
+
+    @detail_route(methods=['get'])
+    def verbose(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = serializers.CommodityDetailSerializer(instance)
+        return Response(serializer.data)
+
+
 
     def perform_create(self, serializer):
         """ First of all we creating a new commodity.
