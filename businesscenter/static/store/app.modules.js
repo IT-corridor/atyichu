@@ -46,6 +46,7 @@ app.config(['$translateProvider', function ($translateProvider) {
         'CONFIRM': 'Are you sure you want perform this action?',
         'FAIL': 'Fail',
         'SUCCESS': 'Success!',
+        'LOAD_MORE': 'Load more',
         'COMMON': {
             'HOME': {
                 'TITLE': 'Welcome!',
@@ -191,6 +192,9 @@ app.config(['$translateProvider', function ($translateProvider) {
             },
             'UPDATE': {
                 'HEADER': 'Update a commodity',
+                'PHOTO_HEADER': 'Commodity`s photo',
+                'PHOTO_ADD': 'Add a new photo',
+                'DATA_HEADER': 'Update a commodity data',
                 'SUCCESS': 'Commodity has been updated',
             },
             'FORM': {
@@ -222,6 +226,7 @@ app.config(['$translateProvider', function ($translateProvider) {
         'CONFIRM': 'Are you sure you want perform this action?',
         'FAIL': 'Fail',
         'SUCCESS': 'Success',
+        'LOAD_MORE': 'Load more',
         'COMMON': {
             'HOME': {
                 'TITLE': 'Welcome!',
@@ -368,6 +373,9 @@ app.config(['$translateProvider', function ($translateProvider) {
             },
             'UPDATE': {
                 'HEADER': 'Update a commodity',
+                'PHOTO_HEADER': 'Commodity`s photo',
+                'PHOTO_ADD': 'Add a new photo',
+                'DATA_HEADER': 'Update a commodity data',
                 'SUCCESS': 'Commodity has been updated',
             },
             'FORM': {

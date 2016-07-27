@@ -53,4 +53,14 @@ angular.module('commodity.services', ['ngResource'])
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
     });
+}])
+.factory('Gallery', ['$resource', 'catalog_path',
+    function($resource, catalog_path){
+        return $resource(catalog_path + 'galleries/:pk/:action/', {}, {
+            query: {method:'GET', params:{pk: null, action: null}, responseType:'json', isArray: true},
+            update: {method: 'PATCH', params: {action: null}},
+            save: {method: 'POST'},
+            remove: {method: 'DELETE'},
+            save_many: {method: 'POST', params:{pk: null, action: 'save_many'}, responseType:'json', isArray: true,},
+    });
 }]);

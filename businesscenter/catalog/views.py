@@ -2,12 +2,14 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.filters import DjangoFilterBackend, \
     OrderingFilter, SearchFilter
 from rest_framework.response import Response
 from . import serializers, models
 from .filters import CommodityFilter
+from .permissions import IsCommodityPhotoOwnerOrReadOnly
 from utils import permissions
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin
 
@@ -58,8 +60,45 @@ class ColorViewSet(viewsets.ModelViewSet):
 
 class GalleryViewSet(viewsets.ModelViewSet):
     # TODO: implement permissions
+    permission_classes = (IsCommodityPhotoOwnerOrReadOnly,)
     serializer_class = serializers.GallerySerializer
-    queryset = models.Gallery.objects.all()
+    pagination_class = None
+    queryset = models.Gallery.objects.select_related('commodity')
+    filter_fields = ('commodity',)
+
+    def perform_create(self, serializer):
+        """ Here we checking count of photo bound to the commodity."""
+        # it is an ID
+        commodity = self.request.data['commodity']
+        count = models.Gallery.objects.filter(commodity_id=commodity).count()
+        if count >= 5:
+            raise ValidationError(_('You can`t add more photos.'))
+        serializer.save()
+
+    @list_route(methods=['post'])
+    def save_many(self, request, *args, **kwargs):
+        """ Saving many photo instances. Bulk creation do not trigger a
+        'post save' signal, so thumbs will not be created.
+        Also it is not a tested handler.
+        It need to be tested. Make a sabotage.
+        """
+        commodity = request.data['commodity']
+        files = request.FILES.copy()
+        photo_limit = 5
+        count = models.Gallery.objects.filter(commodity_id=commodity).count()
+        if count >= photo_limit:
+            raise ValidationError(_('You can`t add more photos.'))
+
+        response_data = []
+        for n, k in enumerate(files.keys()):
+            if n > (photo_limit - count):
+                break
+            data = {'commodity': commodity, 'photo': files[k]}
+            serializer = self.serializer_class(data=data)
+            serializer.is_valid(True)
+            serializer.save()
+            response_data.append(serializer.data)
+        return Response(response_data, 201)
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -75,7 +114,8 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
     filter_class = CommodityFilter
     ordering_fields = ('id', 'title',)
     search_fields = ('title', 'kind__title', 'kind__category__title',
-                     'brand__title', 'color__title', 'size__title', 'tag__title')
+                     'brand__title', 'color__title',
+                     'size__title', 'tag__title')
 
     def get_queryset(self):
         qs = super(CommodityViewSet, self).get_queryset()
@@ -85,6 +125,8 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
         return qs
 
     def get_serializer_class(self):
+        if self.request.method == 'GET' and not self.kwargs.get('pk', None):
+            return serializers.CommodityListVerboseSerializer
         return serializers.CommodityListSerializer
 
     @detail_route(methods=['get'])
@@ -92,8 +134,6 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = serializers.CommodityDetailSerializer(instance)
         return Response(serializer.data)
-
-
 
     def perform_create(self, serializer):
         """ First of all we creating a new commodity.
@@ -103,10 +143,11 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
         files = self.request.FILES.copy()
         files.pop('color_pic', None)
         serializer_class = serializers.GallerySerializer
+        photo_limit = 5
         for n, k in enumerate(files.keys()):
+            if n > photo_limit:
+                break
             data = {'commodity': commodity.id, 'photo': files[k]}
             serializer = serializer_class(data=data)
             serializer.is_valid(True)
             serializer.save()
-            if n > 4:
-                break

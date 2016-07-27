@@ -72,18 +72,18 @@ angular.module('photo.controllers', ['photo.services', 'group.services', 'store.
         $scope.remove = function(){
             $translate('CONFIRM').then(function (msg) {
                 $scope.confirm = $window.confirm(msg);
+                if ($scope.confirm){
+                    Photo.remove({pk: $routeParams.pk}, {},
+                        function(success){
+                            $translate('PHOTO.DETAIL.DELETED').then(function (msg) {
+                                $rootScope.alerts.push({ type: 'danger', msg: msg});
+                            });
+                            $location.path('/group/'+ $scope.photo.group + '/photo');
+                        },
+                        handle_error
+                    );
+                }
             });
-            if ($scope.confirm){
-                Photo.remove({pk: $routeParams.pk}, {},
-                    function(success){
-                        $translate('PHOTO.DETAIL.DELETED').then(function (msg) {
-                            $rootScope.alerts.push({ type: 'danger', msg: msg});
-                        });
-                        $location.path('/group/'+ $scope.photo.group + '/photo');
-                    },
-                    handle_error
-                );
-            }
         }
         $scope.comment = function(){
             data = {photo: $routeParams.pk, message: $scope.new_message};

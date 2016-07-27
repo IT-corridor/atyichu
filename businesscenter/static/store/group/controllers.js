@@ -252,41 +252,40 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         $scope.member_remove = function(member_id){
             $translate('CONFIRM').then(function (msg) {
                 $scope.confirm = $window.confirm(msg);
+                if ($scope.confirm){
+                    Group.member_remove({pk: $routeParams.pk}, {member: member_id},
+                        function(success){
+                            $translate('GROUP.MANAGE.MEMBER_EXCLUDED').then(function (msg) {
+                                $rootScope.alerts.push({ type: 'info', msg:  msg});
+                            });
+                            RemoveItem($scope.r.members, member_id);
+                        },
+                        function(error){
+                            $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
+                        }
+                    );
+                }
             });
 
-            if ($scope.confirm){
-                Group.member_remove({pk: $routeParams.pk}, {member: member_id},
-                    function(success){
-                        $translate('GROUP.MANAGE.MEMBER_EXCLUDED').then(function (msg) {
-                            $rootScope.alerts.push({ type: 'info', msg:  msg});
-                        });
-                        RemoveItem($scope.r.members, member_id);
-                    },
-                    function(error){
-                        $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
-                    }
-                );
-            }
         }
 
         $scope.tag_remove = function(tag_id){
             $translate('CONFIRM').then(function (msg) {
-                    $scope.confirm = $window.confirm(msg);
+                $scope.confirm = $window.confirm(msg);
+                if ($scope.confirm){
+                    Tag.remove({pk: tag_id},
+                        function(success){
+                            $translate('GROUP.MANAGE.TAG_REMOVED').then(function (msg) {
+                                $rootScope.alerts.push({ type: 'info', msg:  msg});
+                            });
+                            RemoveItem($scope.r.tags, tag_id);
+                        },
+                        function(error){
+                            $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
+                        }
+                    );
+                }
             });
-            if ($scope.confirm){
-                Tag.remove({pk: tag_id},
-                    function(success){
-                        $translate('GROUP.MANAGE.TAG_REMOVED').then(function (msg) {
-                            $rootScope.alerts.push({ type: 'info', msg:  msg});
-                        });
-                        RemoveItem($scope.r.tags, tag_id);
-                    },
-                    function(error){
-                        $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
-                    }
-                );
-
-            }
         }
         $scope.member_add = function(){
             Group.member_add({pk: $routeParams.pk}, {username: $scope.member},
@@ -316,19 +315,19 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         $scope.remove_group = function(){
             $translate('CONFIRM').then(function (msg) {
                 $scope.confirm = $window.confirm(msg);
+                if ($scope.confirm){
+                    Group.remove({pk: $scope.r.id},
+                        function(success){
+                            $location.path('/my_groups');
+                        },
+                        function(error){
+                            $translate('FAIL').then(function (msg) {
+                                $rootScope.alerts.push({ type: 'info', msg:  msg});
+                            });
+                        }
+                    );
+                }
             });
-            if ($scope.confirm){
-                Group.remove({pk: $scope.r.id},
-                    function(success){
-                        $location.path('/my_groups');
-                    },
-                    function(error){
-                        $translate('FAIL').then(function (msg) {
-                            $rootScope.alerts.push({ type: 'info', msg:  msg});
-                        });
-                    }
-                );
-            }
         };
     }
 ])

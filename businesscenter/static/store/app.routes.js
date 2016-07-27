@@ -25,11 +25,15 @@ angular.module('app.route', [
             templateUrl: PATH + 'store/templates/edit.html',
             controller: 'CtrlStoreEdit',
         }).
+        when('/stores/my/commodities/', {
+            templateUrl: PATH + 'commodity/templates/list.html',
+            controller: 'CtrlCommodityList',
+        }).
         when('/commodities/add', {
             templateUrl: PATH + 'commodity/templates/create.html',
             controller: 'CtrlCommodityCreate',
         }).
-        when('/commodities/:pk', {
+        when('/commodities/:pk/edit', {
             templateUrl: PATH + 'commodity/templates/update.html',
             controller: 'CtrlCommodityUpdate',
         }).

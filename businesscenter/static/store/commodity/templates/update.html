@@ -1,10 +1,42 @@
 <div class="container">
     <div class="wrapper-md" data-ng-if="commodity">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group text-center">
+                    <a class="btn btn-info" data-ng-href="#!/stores/my/commodities/"><i class="fa fa-arrow-left fa-2x"></i></a>
+                    <button class="btn btn-danger" data-ng-click="remove_commodity()"><i class="fa fa-times fa-2x"></i></button>
+                </div>
+            </div>
+        </div>
         <div class="panel panel-default">
             <div class="panel-heading font-bold">
                 {{'COMMODITY.UPDATE.HEADER' | translate }}
             </div>
             <div class="panel-body">
+                <h2>{{'COMMODITY.UPDATE.PHOTO_HEADER' | translate }}</h2>
+                <ul class="list-inline">
+                    <li class="wrapper-xs" data-ng-repeat="photo in photo_list">
+                        <img class="img-responsive img-thumbnail" data-ng-src="{{ photo.thumb }}">
+                        <div class="text-danger text-center" data-ng-click="remove_photo(photo)"><i class="fa fa-times"></i></div>
+                    </li>
+                </ul>
+                <div data-ng-if="free_photo_list.length > 0">
+                    <h3>{{'COMMODITY.UPDATE.PHOTO_ADD' | translate }}</h3>
+                    <form data-ng-submit="add_photo()" name="form" id="photo_form">
+                        <input type="hidden" name="commodity" value="{{ commodity.id }}">
+                        <ul class="list-unstyled">
+                            <li class="wrapper-xs" data-ng-repeat="item in free_photo_list">
+                                <input type="file" name="photo_{{ $index }}">
+                            </li>
+                        </ul>
+                        <p>
+                            <button data-ng-disabled="wait" type="submit" class="btn btn-primary">{{ 'FORM.SUBMIT' | translate }}
+                                </button>
+                        </p>
+                    </form>
+                </div>
+                <div class="line line-dashed b-b line-lg pull-in"></div>
+                <h2>{{'COMMODITY.UPDATE.DATA_HEADER' | translate }}</h2>
                 <form data-ng-submit="update()" name="form" id="commodity_form">
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.TITLE' | translate }}</label>

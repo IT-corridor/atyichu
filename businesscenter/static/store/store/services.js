@@ -11,7 +11,7 @@ angular.module('store.services', ['ngResource'])
             my_store: {method:'GET', params:{pk: null, action: 'my_store'}, responseType:'json'},
             overview: {method:'GET', params:{action: 'overview'}, responseType:'json'},
             my_brands: {method:'GET', params:{pk: null, action: 'my_brands'}, responseType:'json', isArray: true},
-            my_commodities: {method:'GET', params:{pk: null, action: 'my_commodities'}, responseType:'json', isArray: true},
+            my_commodities: {method:'GET', params:{pk: null, action: 'my_commodities'}, responseType:'json'},
             commodities: {method:'GET', params:{action: 'commodities'}, responseType:'json', isArray: true},
             update_photo: {method:'PATCH', params:{action: 'update_photo'}, responseType:'json'},
 

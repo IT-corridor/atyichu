@@ -80,9 +80,12 @@ class CommodityListSerializer(serializers.ModelSerializer):
         model = models.Commodity
 
 
-class CommodityDetailSerializer(CommodityListSerializer):
-    gallery_set = GallerySerializer(many=True, read_only=True)
+class CommodityListVerboseSerializer(CommodityListSerializer):
     kind = KindVerboseSerializer(read_only=True)
     brand = BrandSerializer(read_only=True)
     color = ColorSerializer(read_only=True)
     size = SizeSerializer(read_only=True)
+
+
+class CommodityDetailSerializer(CommodityListSerializer):
+    gallery_set = GallerySerializer(many=True, read_only=True)

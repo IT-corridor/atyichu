@@ -10,7 +10,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from . import serializers, models
 from .permissions import IsVendorSimple
-from catalog import serializers as cat_serialzrs
+from catalog import serializers as cat_srlzrs
 from catalog import models as cat_models
 from utils import permissions
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin, PaginationMixin
@@ -63,7 +63,7 @@ class StoreViewSet(OwnerCreateMixin,
             it is not requires pagination.
         """
         return self.get_response_by_owner(cat_models.Brand.objects.all(),
-                                          cat_serialzrs.BrandSerializer)
+                                          cat_srlzrs.BrandSerializer)
 
     @list_route(methods=['get'])
     def my_commodities(self, request, *args, **kwargs):
@@ -75,7 +75,7 @@ class StoreViewSet(OwnerCreateMixin,
             .select_related('brand', 'kind__category', 'color', 'size')
 
         return self.get_list_response(select,
-                                      cat_serialzrs.CommodityVerboseSerializer)
+                                      cat_srlzrs.CommodityListVerboseSerializer)
 
     @detail_route(methods=['get'])
     def commodities(self, request, *args, **kwargs):
@@ -87,7 +87,7 @@ class StoreViewSet(OwnerCreateMixin,
             .select_related('brand', 'kind__category', 'color', 'size')
 
         return self.get_list_response(select,
-                                      cat_serialzrs.CommodityVerboseSerializer)
+                                      cat_srlzrs.CommodityListVerboseSerializer)
 
     @detail_route(methods=['get'])
     def overview(self, request, *args, **kwargs):
