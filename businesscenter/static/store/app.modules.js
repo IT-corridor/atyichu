@@ -197,6 +197,17 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'DATA_HEADER': 'Update a commodity data',
                 'SUCCESS': 'Commodity has been updated',
             },
+            'MY_LIST': {
+                'HEADER': 'My store`s commodities',
+                'TABLE': {
+                    'COVER': 'Cover',
+                    'NAME': 'Name',
+                    'ACTIONS': 'Actions',
+                },
+            },
+            'DETAIL': {
+                'HEADER': 'Commodity',
+            },
             'FORM': {
                 'EMPTY': 'Please, choose one from the list',
                 'TITLE': 'Title',
@@ -377,6 +388,17 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'PHOTO_ADD': 'Add a new photo',
                 'DATA_HEADER': 'Update a commodity data',
                 'SUCCESS': 'Commodity has been updated',
+            },
+            'MY_LIST': {
+                'HEADER': 'My store`s commodities',
+                'TABLE': {
+                    'COVER': 'Cover',
+                    'NAME': 'Name',
+                    'ACTIONS': 'Actions',
+                },
+            },
+            'DETAIL': {
+                'HEADER': 'Commodity',
             },
             'FORM': {
                 'EMPTY': 'Please, choose one from the list',

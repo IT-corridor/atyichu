@@ -52,6 +52,7 @@ angular.module('commodity.services', ['ngResource'])
             update: {method: 'PATCH', params: {action: null}},
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
+            verbose: {method: 'GET', params: {action: 'verbose'}, responseType: 'json'}
     });
 }])
 .factory('Gallery', ['$resource', 'catalog_path',

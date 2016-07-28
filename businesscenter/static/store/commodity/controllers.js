@@ -90,6 +90,7 @@ angular.module('commodity.controllers', ['commodity.services', 'common.services'
             $scope.free_photo_list = [];
             var i = 0;
             for (i; i < extra_length; i++){ $scope.free_photo_list.push(i);}
+
         };
 
 
@@ -178,7 +179,7 @@ angular.module('commodity.controllers', ['commodity.services', 'common.services'
         }
     }
 ])
-.controller('CtrlCommodityList', ['$scope', '$rootScope','$http', '$window',
+.controller('CtrlMyCommodityList', ['$scope', '$rootScope','$http', '$window',
 '$location', '$routeParams', '$translate', 'Store',
 'Category', 'Kind', 'Size', 'Color', 'Commodity', 'Gallery', 'GetPageLink',
     function($scope, $rootScope, $http, $window, $location, $routeParams, $translate,
@@ -234,4 +235,56 @@ angular.module('commodity.controllers', ['commodity.services', 'common.services'
             });
         }
     }
-]);;
+])
+.controller('CtrlCommodityDetail', ['$scope', '$rootScope','$http',
+'$location', '$routeParams', '$translate', 'Commodity',
+    function($scope, $rootScope, $http, $location, $routeParams, $translate,
+    Commodity) {
+        $scope.commodity = Commodity.verbose({pk: $routeParams.pk},
+            function(success){
+                if (success.gallery_set.length > 0){
+                    $scope.set_current_photo(success.gallery_set[0]);
+                }
+            }
+        );
+
+        $scope.set_current_photo = function(photo){
+            $scope.current_photo = photo.photo;
+        }
+    }
+])
+.controller('CtrlCommodityList', ['$scope', '$rootScope','$http', '$window',
+'$location', '$routeParams', '$translate', 'Store',
+'Category', 'Kind', 'Size', 'Color', 'Commodity', 'Gallery', 'GetPageLink',
+    function($scope, $rootScope, $http, $window, $location, $routeParams, $translate,
+    Store, Category, Kind, Size, Color, Commodity, Gallery, GetPageLink) {
+        /* Representation of the user`s (store`s) list of commodities */
+        /* Later, need to add filter, search and navigation */
+        $scope.r = Commodity.query($routeParams, function(success){
+            $scope.enough = success.total > 1 ? false : true;
+            $scope.page_link = GetPageLink();
+            $scope.page = success.current;
+            $scope.prev_pages = [];
+            $scope.next_pages = [];
+            var i = (success.current - 1 > 5) ? success.current - 5: 1;
+            var next_lim = (success.total - success.current > 5) ? 5 + success.current : success.total;
+            var j = success.current + 1;
+            for (i; i < success.current; i++){ $scope.prev_pages.push(i);}
+            for (j; j <= next_lim; j++){ $scope.next_pages.push(j);}
+        });
+
+        $scope.get_more = function(){
+            $scope.page += 1;
+            var params = $routeParams;
+            params['page'] = $scope.page;
+            Store.my_commodities(params, function(success){
+                    $scope.r.results = $scope.r.results.concat(success.results);
+                    $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
+                },
+                function(error){
+                    $scope.e = error.data.detail;
+                }
+            );
+        }
+    }
+]);

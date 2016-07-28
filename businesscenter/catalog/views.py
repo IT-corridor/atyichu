@@ -132,7 +132,7 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def verbose(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = serializers.CommodityDetailSerializer(instance)
+        serializer = serializers.CommodityVerboseSerializer(instance)
         return Response(serializer.data)
 
     def perform_create(self, serializer):

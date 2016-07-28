@@ -233,7 +233,7 @@ class UserPasswordSerializer(serializers.ModelSerializer):
 
 
 class VendorBriefSerializer(serializers.ModelSerializer):
-    """ Used only for the 'get my vendor' view.
+    """ Used only for the 'get my vendor' view and login view.
     Now store pk equals vendor pk """
     username = serializers.CharField(source='user.username', read_only=True)
     brand_name = serializers.CharField(source='store.brand_name', read_only=True,
@@ -243,6 +243,8 @@ class VendorBriefSerializer(serializers.ModelSerializer):
     group_count = serializers.IntegerField(source='user.group_set.count',
                                            read_only=True)
     store = serializers.PrimaryKeyRelatedField(read_only=True)
+    avatar = serializers.ImageField(source='store.photo', read_only=True)
+    thumb = serializers.ImageField(source='store.crop', read_only=True)
 
     class Meta:
         model = models.Vendor

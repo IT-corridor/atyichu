@@ -8,17 +8,56 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-bordered table-condensed bg-white">
-                <tr data-ng-repeat="item in r.results">
-                    <td><pre>{{ item | json }}</pre></td>
-                    <td class="text-center">
-                        <ul class="list-inline">
-                            <li><a data-ng-href="#!/commodities/{{ item.id }}/edit" class="btn btn-sm btn-info input-sm"><i class="fa fa-edit"></i></a></li>
-                            <li><button class="btn btn-sm btn-danger input-sm"><i class="fa fa-times"></i></button></li>
-                        </ul>
-                    </td>
-                </tr>
-            </table>
+            <div class="m-t-md"></div>
+            <div class="pinGridWrapper" data-ng-if="r">
+                <div class="pinGrid"
+                     data-masonry='{ "transitionDuration" : "0.4s" , "itemSelector" : ".tile", "percentPosition": "true"}'>
+                    <div class="pin animate tile" data-masonry-tile data-ng-repeat="commodity in r.results">
+                        <a data-ng-href="#!/commodities/{{ commodity.id }}">
+                            <img data-ng-if="commodity.cover" data-ng-src="{{ commodity.cover }}" alt="{{ commodity.name }}" class="img-pin">
+                        </a>
+                        <h3 class="b-b b-light font-bold">{{ commodity.name }}</h3>
+                        <table class="table table-condensed table-responsive bg-white">
+                            <tr>
+                                <th>{{ 'COMMODITY.MY_LIST.TABLE.NAME' | translate }}</th>
+                                <td>{{ commodity.name }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'COMMODITY.FORM.CATEGORY' | translate }}</th>
+                                <td>{{ commodity.kind.category.title }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'COMMODITY.FORM.KIND' | translate }}</th>
+                                <td>{{ commodity.kind.title }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'COMMODITY.FORM.BRAND' | translate }}</th>
+                                <td>{{ commodity.brand.title }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'COMMODITY.FORM.COLOR' | translate }}</th>
+                                <td>
+                                    <span style="border-bottom: 4px solid {{ commodity.color.html }}">
+                                        {{ commodity.color.title }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'COMMODITY.FORM.SIZE' | translate }}</th>
+                                <td>{{ commodity.size.title }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'COMMODITY.FORM.SEASON' | translate }}</th>
+                                <td>{{ commodity.season_text }}</td>
+                            </tr>
+                            <tr>
+                                <th>{{ 'COMMODITY.FORM.YEAR' | translate }}</th>
+                                <td>{{ commodity.year }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="text-center m-t">

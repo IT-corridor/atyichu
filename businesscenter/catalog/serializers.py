@@ -53,10 +53,13 @@ class TagSerializer(serializers.ModelSerializer):
         model = models.Tag
 
 
+# COMMODITY Serializers
+
 class CommodityListSerializer(serializers.ModelSerializer):
 
     # TODO: set parent serializers read-only and add its ids,
     # because of issues with creating/updating)
+    # TODO: add store serializer (avatar of the store needed)
     tags = TagSerializer(many=True, read_only=True, source='tag_set')
     name = serializers.CharField(source='__unicode__', read_only=True)
     season_text = serializers.CharField(source='get_season_display',
@@ -64,7 +67,7 @@ class CommodityListSerializer(serializers.ModelSerializer):
 
     cover = serializers.SerializerMethodField(read_only=True)
     category = serializers.PrimaryKeyRelatedField(source='kind.category',
-                                        read_only=True)
+                                                  read_only=True)
 
     def get_cover(self, obj):
         gallery = obj.gallery_set.first()
@@ -88,4 +91,8 @@ class CommodityListVerboseSerializer(CommodityListSerializer):
 
 
 class CommodityDetailSerializer(CommodityListSerializer):
+    gallery_set = GallerySerializer(many=True, read_only=True)
+
+
+class CommodityVerboseSerializer(CommodityListVerboseSerializer):
     gallery_set = GallerySerializer(many=True, read_only=True)

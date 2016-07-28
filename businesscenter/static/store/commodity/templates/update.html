@@ -16,13 +16,13 @@
                 <h2>{{'COMMODITY.UPDATE.PHOTO_HEADER' | translate }}</h2>
                 <ul class="list-inline">
                     <li class="wrapper-xs" data-ng-repeat="photo in photo_list">
-                        <img class="img-responsive img-thumbnail" data-ng-src="{{ photo.thumb }}">
+                        <img class="img-responsive img-thumbnail" data-ng-src="{{ photo.crop }}">
                         <div class="text-danger text-center" data-ng-click="remove_photo(photo)"><i class="fa fa-times"></i></div>
                     </li>
                 </ul>
                 <div data-ng-if="free_photo_list.length > 0">
                     <h3>{{'COMMODITY.UPDATE.PHOTO_ADD' | translate }}</h3>
-                    <form data-ng-submit="add_photo()" name="form" id="photo_form">
+                    <form data-ng-submit="add_photo()" name="photoForm" id="photo_form">
                         <input type="hidden" name="commodity" value="{{ commodity.id }}">
                         <ul class="list-unstyled">
                             <li class="wrapper-xs" data-ng-repeat="item in free_photo_list">

@@ -123,12 +123,15 @@ class Gallery(models.Model):
 
     path_photo = utils.UploadPath('gallery', 'commodity')
     path_thumb = utils.UploadPath('gallery/thumbs', 'commodity', suff='thumb')
+    path_crop = utils.UploadPath('gallery/crops', 'commodity', suff='crop')
 
     commodity = models.ForeignKey(Commodity, verbose_name=_('Commodity'))
     photo = models.ImageField(_('Photo'), upload_to=path_photo,
                               validators=[SizeValidator(15)])
     thumb = models.ImageField(_('Thumbnail'), upload_to=path_thumb,
                               null=True, blank=True)
+    crop = models.ImageField(_('Cropped photo'), upload_to=path_crop,
+                             null=True, blank=True)
 
     class Meta:
         verbose_name = _('Gallery')

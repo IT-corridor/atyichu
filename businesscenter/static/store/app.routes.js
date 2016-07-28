@@ -26,8 +26,8 @@ angular.module('app.route', [
             controller: 'CtrlStoreEdit',
         }).
         when('/stores/my/commodities/', {
-            templateUrl: PATH + 'commodity/templates/list.html',
-            controller: 'CtrlCommodityList',
+            templateUrl: PATH + 'commodity/templates/my_list.html',
+            controller: 'CtrlMyCommodityList',
         }).
         when('/commodities/add', {
             templateUrl: PATH + 'commodity/templates/create.html',
@@ -36,6 +36,14 @@ angular.module('app.route', [
         when('/commodities/:pk/edit', {
             templateUrl: PATH + 'commodity/templates/update.html',
             controller: 'CtrlCommodityUpdate',
+        }).
+        when('/commodities/:pk', {
+            templateUrl: PATH + 'commodity/templates/detail.html',
+            controller: 'CtrlCommodityDetail',
+        }).
+        when('/commodities/', {
+            templateUrl: PATH + 'commodity/templates/list.html',
+            controller: 'CtrlCommodityList',
         }).
         when('/photo/newest', {
             templateUrl: PATH + 'group/templates/photo_list.html',

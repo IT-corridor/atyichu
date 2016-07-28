@@ -53,9 +53,9 @@
 }
 
 .animation {
-  -webkit-transition: 1s;
-  -moz-transition: 1s;
-  -o-transition: 1s;
+  -webkit-transition: 0.5s;
+  -moz-transition: 0.5s;
+  -o-transition: 0.5s;
 }
 .animation.ng-enter {
   opacity: 0;
