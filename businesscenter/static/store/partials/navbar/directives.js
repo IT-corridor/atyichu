@@ -3,7 +3,7 @@ var navbar = angular.module('navbar', ['auth.services'])
                         function($window, $location, $translate, PATH, Auth, $uibModal) {
     return {
         restrict: 'A',
-        templateUrl: PATH + 'partials/navbar/templates/navbar.html',
+        templateUrl: PATH + 'partials/navbar/templates/navbar_d.html',
         controller: function($scope, $rootScope, $window, $location,
             $translate, PATH, Auth ){
             $rootScope.visitor_resolved = false;
@@ -28,7 +28,7 @@ var navbar = angular.module('navbar', ['auth.services'])
             });
 
             $rootScope.$on("$routeChangeStart", function(event, next, current) {
-                $scope.isCollapsed = true;
+                $scope.isCollapsed = false;
             });
 
             $scope.logout = function(){

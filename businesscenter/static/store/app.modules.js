@@ -24,6 +24,18 @@ app.factory('httpRequestInterceptor', function () {
 app.run(function($rootScope) {
     $rootScope.site = 'Atyichu';
     $rootScope.THEME = '/static/theme/';
+    $rootScope.PATH = '/static/store/';
+    $rootScope.app = {
+        navbarHeaderColor: 'bg-black',
+        navbarCollapseColor: 'bg-white-only',
+        asideColor: 'bg-black',
+        headerFixed: true,
+        asideFixed: false,
+        asideFolded: false,
+        asideDock: false,
+        hideAside: false,
+        container: false
+    };
 });
 app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('httpRequestInterceptor');
@@ -84,6 +96,27 @@ app.config(['$translateProvider', function ($translateProvider) {
             'SIGN': 'Sign',
             'SIGN_IN': 'Sign in',
             'CHANGE_PASSWORD': 'Change password',
+        },
+        'ASIDE': {
+            'DASHBOARD': 'Dashboard',
+            'PHOTO': {
+                'TITLE': 'Photos',
+                'MY_GROUPS': 'My Wardrobes',
+                'ADD_GROUP': 'Add A Wardrobe',
+                'DISCOVERY': 'Discovery',
+                'LIKED': 'Favorite',
+            },
+            'COMMODITY': {
+                'TITLE': 'Commodity',
+                'MY': 'My Commodities',
+                'ADD': 'Add A Commodity',
+            },
+            'STORE': {
+                'TITLE': 'My Store',
+                'OVERVIEW': 'Overview',
+                'EDIT': 'Edit',
+                'CREATE': 'Create',
+            },
         },
         'STORE': {
             'CREATE': {
@@ -423,5 +456,5 @@ app.config(['$translateProvider', function ($translateProvider) {
         },
     });
 
-  $translateProvider.preferredLanguage('zh');
+  $translateProvider.preferredLanguage('en');
 }]);
