@@ -73,7 +73,7 @@ angular.module('app.route', [
         when('/error/404/', {
             templateUrl: PATH + 'partials/error/404.html'}).
         when('/group', {
-            templateUrl: PATH + 'group/list.html',
+            templateUrl: PATH + 'group/templates/list.html',
             controller: 'CtrlGroupList',
             resolve: {
                 title: function(){return 'Groups';},

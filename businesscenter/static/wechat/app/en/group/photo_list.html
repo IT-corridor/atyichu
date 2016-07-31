@@ -65,12 +65,16 @@
                 <p class="b-b b-light" data-ng-if="photo.descr"> {{ photo.descr }}</p>
                 <p class="b-b b-light" data-ng-if="!photo.descr && photo.origin.descr"> {{ photo.descr.descr }}</p>
                 <div class="b-b b-light m-b-xs wrapper-xs" style="padding-bottom: 20px;">
-                    <a href="" class="pull-left thumb-xs avatar m-r">
+                    <a data-ng-href="#!/group/?owner={{ photo.owner.pk }}" class="pull-left thumb-xs avatar m-r">
                       <img data-ng-src="{{ photo.owner.thumb }}" alt="{{ photo.owner.username }}" class="img-circle">
                     </a>
                     <div class="clear">
-                      <div><a href="">{{ photo.owner.username }}</a></div>
+                      <div>{{ photo.owner.username }}</div>
                     </div>
+                </div>
+                <div class="m-b-xs wrapper-xs">
+                    <span>Saved to</span>
+                    <a class="text-danger" data-ng-href="#!/group/{{ photo.owner.pk }}/photo">{{ photo.group_title }}</a>
                 </div>
                 <ul class="list-inline text-muted text-center small">
                     <li><i class="fa fa-comments"></i> {{ photo.comment_count }}</li>

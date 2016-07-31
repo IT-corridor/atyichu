@@ -523,6 +523,7 @@ class MemberViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrMember]
+    filter_fields = ('owner',)
     # For update use only method patch
 
     def get_queryset(self):

@@ -66,6 +66,7 @@ class PhotoListSerializer(serializers.ModelSerializer):
     comment_count = serializers.IntegerField(read_only=True)
     clone_count = serializers.SerializerMethodField(read_only=True)
     like_count = serializers.IntegerField(read_only=True)
+    group_title = serializers.CharField(source='group.title', read_only=True)
 
     def get_descr(self, obj):
         if obj.description:
@@ -93,9 +94,9 @@ class PhotoListSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Photo
         fields = ('id', 'create_date', 'visitor', 'title',
-                  'thumb', 'group', 'owner', 'descr', 'creator', 'original',
-                  'origin', 'comment_count', 'clone_count', 'like_count',
-                  'commodity')
+                  'thumb', 'group', 'group_title', 'owner',
+                  'descr', 'creator', 'original', 'origin',
+                  'comment_count', 'clone_count', 'like_count', 'commodity')
 
 
 class PhotoDetailSerializer(PhotoListSerializer):
