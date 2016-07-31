@@ -474,7 +474,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
-        data['author'] = request.user
+        data['author'] = request.user.id
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
