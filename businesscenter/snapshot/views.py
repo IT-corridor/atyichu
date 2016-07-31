@@ -536,8 +536,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             prefetch = Prefetch('photo_set',
                                 queryset=Photo.objects.
                                 select_related('original__group',
-                                               'original__visitor',
-                                               'original__vendor'))
+                                               'original__visitor',))
 
             qs = qs.prefetch_related(prefetch)
             qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
@@ -577,7 +576,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     def photo_list(self, request, *args, **kwargs):
         """ Photo list for specified group """
         group = self.get_object()
-        qs = Photo.p_objects.select_related('visitor__visitor')
+        qs = Photo.p_objects.select_related('visitor__visitor',
+                                            'visitor__vendor')
         qs = qs.filter(group=group)
         serializer_class = serializers.PhotoListSerializer
         qs = self.filter_queryset(qs)
