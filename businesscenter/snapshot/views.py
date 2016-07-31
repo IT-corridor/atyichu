@@ -535,7 +535,9 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             prefetch = Prefetch('photo_set',
                                 queryset=Photo.objects.
-                                select_related('original'))
+                                select_related('original__group',
+                                               'original__visitor',
+                                               'original__vendor'))
 
             qs = qs.prefetch_related(prefetch)
             qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |

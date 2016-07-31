@@ -8,6 +8,28 @@ from visitor.serializers import WeixinSerializer, VisitorShortSerializer
 from account.serializers import StoreShortSerializer
 
 
+def get_owner(obj):
+    """ Serializing data, depending of the user instance type.
+    Only for photo serializers. """
+    # Looks like serializers do not support multiple inheritance
+    if hasattr(obj.visitor, 'visitor'):
+        serializer = VisitorShortSerializer(instance=obj.visitor.visitor,
+                                            read_only=True)
+        return serializer.data
+    elif hasattr(obj.visitor, 'vendor'):
+        serializer = StoreShortSerializer(
+            instance=obj.visitor.vendor.store,
+            read_only=True)
+        return serializer.data
+    return
+
+
+class GroupShortSerializer(serializers.ModelSerializer):
+    """ Simple short serializer of Group for other serializers."""
+    class Meta:
+        model = models.Group
+        fields = ('id', 'title')
+
 class MirrorSerializer(serializers.ModelSerializer):
 
     is_online = serializers.BooleanField(read_only=True)
@@ -47,6 +69,11 @@ class PhotoSerializer(serializers.ModelSerializer):
 class PhotoOriginalSerializer(serializers.ModelSerializer):
 
     descr = serializers.SerializerMethodField(read_only=True)
+    group = GroupShortSerializer(read_only=True)
+    owner = serializers.SerializerMethodField(read_only=True)
+
+    def get_owner(self, obj):
+        return get_owner(obj)
 
     def get_descr(self, obj):
         if obj.description:
@@ -54,8 +81,8 @@ class PhotoOriginalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Photo
-        fields = ('id', 'title', 'photo', 'thumb', 'crop', 'visitor',
-                  'description', 'descr')
+        fields = ('id', 'title', 'photo', 'thumb', 'crop',
+                  'description', 'descr', 'group', 'owner')
 
 
 class PhotoListSerializer(serializers.ModelSerializer):
@@ -73,7 +100,6 @@ class PhotoListSerializer(serializers.ModelSerializer):
             return truncatechars_html(obj.description, 150)
 
     def get_owner(self, obj):
-        # TODO: implement for the store (vendor)
         if hasattr(obj.visitor, 'visitor'):
             serializer = VisitorShortSerializer(instance=obj.visitor.visitor,
                                                 read_only=True)
@@ -214,10 +240,3 @@ class GroupDetailSerializer(GroupSerializer):
 
     class Meta:
         model = models.Group
-
-
-class GroupShortSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = models.Group
-        fields = ('id', 'title')

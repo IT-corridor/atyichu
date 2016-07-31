@@ -190,6 +190,7 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'MEMBERS': 'Collaborators',
                 'PHOTO_LIKED': 'You have liked the photo already',
                 'SAVED_TO': 'Saved to',
+                'SAVED_FROM': 'Saved from',
             }
         },
         'PHOTO': {
@@ -382,6 +383,7 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'MEMBERS': 'Collaborators',
                 'PHOTO_LIKED': 'You have liked the photo already',
                 'SAVED_TO': 'Saved to',
+                'SAVED_FROM': 'Saved from',
             }
         },
         'PHOTO': {
