@@ -63,7 +63,7 @@
                 <div data-ng-if="photo.original">
                     <div class="m-b-xs wrapper-xs">
                         <span>{{ 'GROUP.PHOTO_LIST.SAVED_FROM' | translate }}</span>
-                        <a class="text-danger" data-ng-href="#!/group/{{ photo.origin.owner.pk }}/photo">{{ photo.origin.group.title }}</a>
+                        <a class="text-danger" data-ng-href="#!/group/{{ photo.origin.group.pk }}/photo">{{ photo.origin.group.title }}</a>
                     </div>
                     <div class="b-b b-light m-b-xs wrapper-xs" style="padding-bottom: 20px;">
                         <a data-ng-href="#!/group/?owner={{ photo.origin.owner.pk }}" class="pull-left thumb-xs avatar m-r">
@@ -88,7 +88,7 @@
                 </div>
                 <div class="m-b-xs wrapper-xs">
                     <span>{{ 'GROUP.PHOTO_LIST.SAVED_TO' | translate }}</span>
-                    <a class="text-danger" data-ng-href="#!/group/{{ photo.owner.pk }}/photo">{{ photo.group_title }}</a>
+                    <a class="text-danger" data-ng-href="#!/group/{{ photo.group }}/photo">{{ photo.group_title }}</a>
                 </div>
                 <ul class="list-inline text-muted text-center small">
                     <li><i class="fa fa-comments"></i> {{ photo.comment_count }}</li>

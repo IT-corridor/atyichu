@@ -580,7 +580,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
                                             'visitor__vendor')
         qs = qs.filter(group=group)
         serializer_class = serializers.PhotoListSerializer
-        qs = self.filter_queryset(qs)
+        # qs = self.filter_queryset(qs)
         page = self.paginate_queryset(qs)
 
         if page is not None:
