@@ -14,6 +14,11 @@ class CommentInline(admin.TabularInline):
     extra = 0
 
 
+class LinkInline(admin.TabularInline):
+    model = models.Link
+    extra = 0
+
+
 class MirrorAdmin(admin.ModelAdmin):
 
     list_display = ('title', 'is_locked', 'last_login')
@@ -22,7 +27,7 @@ class MirrorAdmin(admin.ModelAdmin):
 
 class PhotoAdmin(admin.ModelAdmin):
     list_display = ('pk', 'visitor', 'mirror', 'group')
-    inlines = (CommentInline, )
+    inlines = (CommentInline, LinkInline)
     readonly_fields = ('thumb', 'cover', 'crop', 'creator', 'original')
 
 

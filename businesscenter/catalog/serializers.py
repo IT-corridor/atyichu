@@ -96,3 +96,25 @@ class CommodityDetailSerializer(CommodityListSerializer):
 
 class CommodityVerboseSerializer(CommodityListVerboseSerializer):
     gallery_set = GallerySerializer(many=True, read_only=True)
+
+
+class CommodityLinkSerializer(serializers.ModelSerializer):
+    """ This serializer is used to present nested data in the
+    :model:`snapshot.Link` serializer """
+    kind = KindSerializer(read_only=True)
+    color = ColorSerializer(read_only=True)
+    crop = serializers.SerializerMethodField(read_only=True)
+
+    def get_crop(self, obj):
+        gallery = obj.gallery_set.first()
+        if gallery and gallery.crop.name:
+            request = self.context.get('request', None)
+            url = gallery.crop.url
+            if request is not None:
+                return request.build_absolute_uri(url)
+            return url
+        return
+
+    class Meta:
+        model = models.Commodity
+        fields = ('pk', 'color', 'crop', 'kind', 'title')

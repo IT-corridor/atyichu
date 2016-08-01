@@ -17,8 +17,8 @@ from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from rest_framework.exceptions import ValidationError
-from .models import Mirror, Photo, Comment, Tag, Member, Group, Like
+from rest_framework.exceptions import ValidationError, PermissionDenied
+from .models import Mirror, Photo, Comment, Tag, Member, Group, Like, Link
 
 from . import serializers
 from .permissions import IsOwnerOrMember, MemberCanServe, \
@@ -32,6 +32,7 @@ from visitor.serializers import VisitorShortSerializer
 from visitor.models import Visitor
 from account.models import Vendor, Store
 from account.serializers import VendorStoreSerializer
+from catalog.models import Commodity
 from vutils.umeng_push import push_unicast
 from vutils.wzhifuSDK import JsApi_pub
 
@@ -464,6 +465,62 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         qs = qs.filter(like__visitor_id=request.user.id)
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
+
+    @detail_route(methods=['post'])
+    def add_links(self, request, *args, **kwargs):
+        """ Create a record in the Link table, which represents relation
+        between photo and commodity.
+            Params:
+                commodities: list of commodities ids, required.
+        This logic can be also implemented in the serializer.
+        """
+        if not hasattr(request.user, 'vendor'):
+            raise PermissionDenied({'detail': _('You have not permission '
+                                                'to perform this action')})
+
+        # photo pk
+        pk = self.get_object().pk
+
+        link_limit = 3
+        count = Link.objects.filter(photo_id=pk).count()
+        if count >= link_limit:
+            raise ValidationError(_('You can`t add more links.'))
+
+        try:
+            commodities = request.data['commodities']
+
+            commodity_qs = Commodity.objects.filter(id__in=commodities)
+            if any(i.store_id != request.user.id for i in commodity_qs):
+                raise ValidationError({'detail': _('You can link only to '
+                                                   'your own commodities ')})
+
+            # not tested feature
+            lim = link_limit - count
+            sliced = commodities[:lim]
+            commodity_set = Link.objects.bulk_create(
+                (Link(photo_id=pk, commodity_id=i) for i in sliced)
+            )
+            serializer = serializers.LinkSerializer(instance=commodity_set,
+                                                    many=True)
+            return Response(serializer.data, 201)
+
+        except KeyError as e:
+            raise ValidationError({'error': _('{} parameter is required')
+                                  .format(e.message)})
+        except Exception as e:
+            raise ValidationError({'error': e.message})
+
+    @detail_route(methods=['post'])
+    def remove_link(self, request, *args, **kwargs):
+        """ This handler is here to use a photo permissions.
+        It is important."""
+        self.get_object()
+        try:
+            Link.objects.get(id=request.data['link']).delete()
+            return Response(status=204)
+        except KeyError as e:
+            raise ValidationError({'error': _('{} parameter is required')
+                                  .format(e.message)})
 
 
 class CommentViewSet(viewsets.ModelViewSet):

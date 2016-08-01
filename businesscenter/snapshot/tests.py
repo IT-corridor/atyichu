@@ -11,9 +11,11 @@ from django.utils import timezone
 from django.conf import settings
 from django.db import connection
 from rest_framework.test import APITestCase, APIClient
+from .models import Mirror, Group, Member, Tag, Photo, Like, Link
 from visitor.models import Visitor
 from account.models import Vendor, Store, District, City, State
-from .models import Mirror, Group, Member, Tag, Photo, Like
+from catalog import models as c_models
+from catalog import tests as c_tests
 
 # TODO: CREATE TEST CASES!
 DB_VENDOR = connection.vendor
@@ -175,6 +177,7 @@ class MirrorTests(APITestCase):
         user = User.objects.get(id=2)
         self.client.force_login(user=user)
 
+
 class GroupTests(APITestCase):
 
     @classmethod
@@ -215,7 +218,6 @@ class GroupTests(APITestCase):
         self.force_login(1)
         url = reverse('snapshot:group-list')
         response = self.client.post(url, data=data)
-        print (response.data)
         self.assertEqual(response.status_code, 201)
         self.client.logout()
 
@@ -489,7 +491,7 @@ class GroupTests(APITestCase):
         self.client.logout()
 
 
-class GroupVendorTests(APITestCase):
+class SnapshotVendorTests(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -501,6 +503,9 @@ class GroupVendorTests(APITestCase):
         cls.user_3 = User.objects.create(username='Sen')
         vendor_3 = Vendor.objects.create(user=cls.user_3)
 
+        cls.visitor = User.objects.create(username="Peter")
+        Visitor.objects.create(user=cls.visitor, **visitor_data_3)
+
         state = State.objects.create(title='Beijing')
         city = City.objects.create(title='Beijing', state=state)
         district = District.objects.create(title='Good one', city=city)
@@ -511,14 +516,38 @@ class GroupVendorTests(APITestCase):
                  apt='24',
                  )
 
-        store_1 = Store.objects.create(district=district, vendor=vendor_1,
-                                       brand_name='FFF', **data)
+        Store.objects.create(district=district, vendor=vendor_1,
+                             brand_name='FFF', **data)
 
-        store_2 = Store.objects.create(district=district, vendor=vendor_2,
-                                       brand_name='Magnificent', **data)
+        Store.objects.create(district=district, vendor=vendor_2,
+                             brand_name='Magnificent', **data)
 
-        store_3 = Store.objects.create(district=district, vendor=vendor_3,
-                                       brand_name='Magnifico', **data)
+        Store.objects.create(district=district, vendor=vendor_3,
+                             brand_name='Magnifico', **data)
+
+        c_models.Category.objects.bulk_create(
+            tuple((c_models.Category(**data) for data in c_tests.CATEGORIES))
+        )
+        c_models.Kind.objects.bulk_create(
+            (c_models.Kind(**data) for data in c_tests.KINDS)
+        )
+        c_models.Brand.objects.bulk_create(
+            (c_models.Brand(store_id=cls.user_1.pk, **data)
+             for data in c_tests.BRANDS)
+        )
+        c_models.Color.objects.bulk_create(
+            (c_models.Color(**data) for data in c_tests.COLORS)
+        )
+        c_models.Size.objects.bulk_create(
+            (c_models.Size(**data) for data in c_tests.SIZES)
+        )
+
+        c_models.Commodity.objects.bulk_create(
+            (c_models.Commodity(store_id=cls.user_1.pk, **data)
+             for data in c_tests.COMMODITIES)
+        )
+        cls.photo = Photo.objects.create(visitor_id=cls.user_1.pk,
+                                          title='testphoto')
 
         Group.objects.create(title='store`s group', owner=cls.user_1)
 
@@ -547,6 +576,47 @@ class GroupVendorTests(APITestCase):
         self.assertEqual(len(data), 2)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
+
+    def test_add_links_as_owner(self):
+        self.add_links_to_commodity(1, 201)
+
+    def test_add_links_as_not_owner(self):
+        self.add_links_to_commodity(2, 403)
+
+    def test_add_links_as_not_visitor(self):
+        self.add_links_to_commodity(self.visitor.pk, 403)
+
+    def test_remove_link_as_owner(self):
+        self.remove_link(1, 204)
+
+    def test_remove_link_as_not_owner(self):
+        self.remove_link(2, 403)
+
+    def test_remove_link_as_not_visitor(self):
+        self.remove_link(self.visitor.pk, 403)
+
+    def add_links_to_commodity(self, user_id, expected_code):
+        """ Create a relation between photo and commodities. """
+        self.force_login(user_id)
+
+        url = reverse('snapshot:photo-add-links', kwargs={'pk': self.photo.pk})
+        data = {'commodities': [1, 2]}
+        self.force_login(user_id)
+
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, expected_code)
+
+    def remove_link(self, user_id, expected_code):
+        """ Removing link with commodity from photo"""
+        self.force_login(user_id)
+        link = Link.objects.create(photo_id=self.photo.pk, commodity_id=1)
+        url = reverse('snapshot:photo-remove-link',
+                      kwargs={'pk': self.photo.pk})
+        data = {'link': link.pk}
+        self.force_login(user_id)
+
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, expected_code)
 
     def force_login(self, pk):
         user = User.objects.get(id=pk)

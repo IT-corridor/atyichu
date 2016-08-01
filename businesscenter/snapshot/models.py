@@ -173,9 +173,6 @@ class Photo(models.Model):
                                  related_query_name='clone',
                                  on_delete=models.SET_NULL)
 
-    commodity = models.ForeignKey('catalog.Commodity', blank=True, null=True,
-                                  on_delete=models.SET_NULL)
-
     objects = models.Manager()
     p_objects = PhotoManager()
     a_objects = ActivePhotoManager()
@@ -233,7 +230,7 @@ class Like(models.Model):
     It is some kind of Many-to-Many relation.
     But i make an independent model for this case to have more control with
     data and data migration."""
-    photo = models.ForeignKey(Photo, verbose_name=_('Photo Likes'))
+    photo = models.ForeignKey(Photo, verbose_name=_('Photo'))
     visitor = models.ForeignKey('auth.User', verbose_name=_('Visitor'))
 
     def __unicode__(self):
@@ -244,6 +241,25 @@ class Like(models.Model):
         verbose_name_plural = _('Likes')
         ordering = ('pk',)
         unique_together = ('photo', 'visitor')
+
+
+class Link(models.Model):
+    """ A table that stores relation between :model:`snapshot.Photo` (photo)
+        and :model:`catalog.Commodity` (commodity).
+        Each photo can contain three (3) references to different commodities.
+        This constraint will be resolved with help of view or serializer.
+        This relation takes sense only
+        if owner of the photo (:model:`auth.User`) is vendor (store).
+    """
+    photo = models.ForeignKey(Photo, verbose_name=_('Photo'))
+    commodity = models.ForeignKey('catalog.Commodity',
+                                  verbose_name=_('Commodity'))
+
+    class Meta:
+        verbose_name = _('Commodity Link')
+        verbose_name_plural = _('Commodity Links')
+        ordering = ('pk',)
+        unique_together = ('photo', 'commodity')
 
 
 class Group(models.Model):

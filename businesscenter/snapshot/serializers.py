@@ -6,6 +6,7 @@ from rest_framework import serializers
 from . import models
 from visitor.serializers import WeixinSerializer, VisitorShortSerializer
 from account.serializers import StoreShortSerializer
+from catalog.serializers import CommodityLinkSerializer
 
 
 def get_owner(obj):
@@ -24,11 +25,22 @@ def get_owner(obj):
     return
 
 
+class LinkSerializer(serializers.ModelSerializer):
+    """ A serializer for Link model. Hope it will be enough.
+        data is a commodity data
+    """
+    data = CommodityLinkSerializer(read_only=True)
+
+    class Meta:
+        model = models.Link
+
+
 class GroupShortSerializer(serializers.ModelSerializer):
     """ Simple short serializer of Group for other serializers."""
     class Meta:
         model = models.Group
         fields = ('id', 'title')
+
 
 class MirrorSerializer(serializers.ModelSerializer):
 
@@ -122,7 +134,7 @@ class PhotoListSerializer(serializers.ModelSerializer):
         fields = ('id', 'create_date', 'visitor', 'title',
                   'thumb', 'group', 'group_title', 'owner',
                   'descr', 'creator', 'original', 'origin',
-                  'comment_count', 'clone_count', 'like_count', 'commodity')
+                  'comment_count', 'clone_count', 'like_count',)
 
 
 class PhotoDetailSerializer(PhotoListSerializer):
