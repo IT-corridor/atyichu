@@ -29,7 +29,7 @@ class LinkSerializer(serializers.ModelSerializer):
     """ A serializer for Link model. Hope it will be enough.
         data is a commodity data
     """
-    data = CommodityLinkSerializer(read_only=True)
+    data = CommodityLinkSerializer(source='commodity', read_only=True)
 
     class Meta:
         model = models.Link
@@ -142,6 +142,8 @@ class PhotoDetailSerializer(PhotoListSerializer):
                                  read_only=True)
     owner_thumb = serializers.SerializerMethodField(read_only=True)
     is_store = serializers.SerializerMethodField(read_only=True)
+    link_set = LinkSerializer(read_only=True, many=True)
+
 
     def get_owner_thumb(self, obj):
         if hasattr(obj.visitor, 'visitor'):

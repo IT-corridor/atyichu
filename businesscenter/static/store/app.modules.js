@@ -25,6 +25,7 @@ app.run(function($rootScope) {
     $rootScope.site = 'Atyichu';
     $rootScope.THEME = '/static/theme/';
     $rootScope.PATH = '/static/store/';
+    $rootScope.alerts = [];
     $rootScope.app = {
         navbarHeaderColor: 'bg-black',
         navbarCollapseColor: 'bg-white-only',
@@ -207,6 +208,10 @@ app.config(['$translateProvider', function ($translateProvider) {
             'EDIT': {
                 'HEADER': 'Edit photo data',
                 'DATA_UPDATED': 'Data has been updated',
+                'ADD_LINK': 'You can add up to three commodity links',
+                'LINK_REMOVED': 'Link to the commodity has been removed',
+                'LINKS': 'Links to commodities',
+                'NEW_LINKS': 'Links to bind',
             },
             'LIST': {
                 'HEADER': 'Photo list',
@@ -400,6 +405,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             'EDIT': {
                 'HEADER': 'Edit photo data',
                 'DATA_UPDATED': 'Data has been updated',
+                'ADD_LINK': 'You can add up to three commodity links',
             },
             'LIST': {
                 'HEADER': 'Photo list',

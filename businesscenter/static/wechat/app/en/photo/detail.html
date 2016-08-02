@@ -62,6 +62,25 @@
                     </li>
                     <li><i class="fa fa-share-alt"></i> {{ photo.clone_count }}</li>
                 </ul>
+                <div class="row m-t-md">
+                    <h4 class="text-center" data-ng-if="photo.link_set.length > 0">Links to Related Commodities</h4>
+                    <div class="col-md-4" data-ng-repeat="link in photo.link_set">
+                        <div class="media">
+                            <div class="media-left">
+                                <img class="media-object" style="width: 50px;" data-ng-src="{{ link.data.crop }}"
+                                     alt="{{ link.data.title }}">
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">{{ link.data.title }}</h4>
+                                <p>Color:
+                        <span style="border: 3px solid {{ link.data.color.html }}">
+                            {{ link.data.color.title }}</span></p>
+                                <p>Kind:
+                                    <span class="text-info">{{ link.data.kind.title }}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

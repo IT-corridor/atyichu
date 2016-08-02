@@ -1,4 +1,6 @@
-angular.module('photo.controllers', ['photo.services', 'group.services', 'store.services', 'tencent'])
+angular.module('photo.controllers', ['photo.services', 'photo.directives',
+'group.services', 'common.services',
+'store.services', 'tencent'])
 .controller('CtrlPhotoList', ['$scope', '$rootScope', '$http',
 '$location', '$translate', 'Auth', 'Photo',
     function($scope, $rootScope, $http, $location, $translate, Auth, Photo) {
@@ -126,18 +128,20 @@ angular.module('photo.controllers', ['photo.services', 'group.services', 'store.
     }
 ])
 .controller('CtrlPhotoEdit', ['$scope', '$rootScope', '$http', '$routeParams',
-                                '$window', '$location', '$translate', 'Photo',
-    function($scope, $rootScope, $http, $routeParams, $window, $translate, $location, Photo) {
+                                '$window', '$translate', '$location', 'Photo', 'RemoveItem',
+    function($scope, $rootScope, $http, $routeParams, $window, $translate,
+    $location, Photo, RemoveItem) {
         function handle_error(error){
             $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
             $location.path('/photo');
         }
 
         $scope.photo = Photo.get({pk: $routeParams.pk},
-            function(success){},
+            function(success){ $scope.lim = 3 - success.link_set.length },
             handle_error
         );
 
+        $scope.commodities = [];
 
         $scope.update = function(){
             data = {title: $scope.photo.title, description: $scope.photo.description};
@@ -151,6 +155,50 @@ angular.module('photo.controllers', ['photo.services', 'group.services', 'store.
                 handle_error
             );
         }
+
+        $scope.remove_candidate = function(index){
+            $scope.commodities.splice(index, 1);
+        };
+
+        $scope.remove_link = function(link_id){
+            $translate('CONFIRM').then(function (msg) {
+                $scope.confirm = $window.confirm(msg);
+                if ($scope.confirm){
+                    Photo.remove_link({pk: $routeParams.pk}, {link: link_id},
+                        function(success){
+                            $translate('PHOTO.EDIT.LINK_REMOVED').then(function (msg) {
+                                $rootScope.alerts.push({ type: 'info', msg:  msg});
+                            });
+                            RemoveItem($scope.photo.link_set, link_id);
+                        },
+                        function(error){
+                            $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
+                        }
+                    );
+                }
+            });
+        }
+
+        $scope.add_links = function(){
+            var c_ids = [];
+            var i = 0;
+            console.log($scope.commodities);
+            for (i; i < $scope.commodities.length; i++){
+                c_ids.push($scope.commodities[i].pk);
+            }
+            Photo.add_links({pk: $scope.photo.id}, {commodities: c_ids},
+                function(success){
+                    $translate('PHOTO.EDIT.LINKS_ADDED').then(function (msg) {
+                        $rootScope.alerts.push({ type: 'info', msg:  msg});
+                    });
+                    $scope.photo.link_set = $scope.photo.link_set.concat(success);
+                },
+                function(error){
+                    $rootScope.alerts.push({ type: 'danger', msg: error.data.error });
+                }
+            );
+        };
+
     }
 ])
 .controller('CtrlPhotoNewest', ['$scope', '$rootScope','$http', '$window',

@@ -151,3 +151,18 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
             serializer = serializer_class(data=data)
             serializer.is_valid(True)
             serializer.save()
+
+    @list_route(methods=['get'])
+    def my(self, request, *args, **kwargs):
+        """ It is a list of commodities owned by vendor(store).
+        ID of the store received from request.user.
+        So it will not depend on authentication backend.
+        Important: this view do not provide pagination. """
+        if not request.query_params.get('q', None):
+            raise ValidationError({'error': _('{} parameter is required').
+                                  format('"q"')})
+        queryset = self.get_queryset().filter(store_id=request.user.pk)
+        queryset = self.filter_queryset(queryset)[:10]
+
+        serializer = serializers.CommodityLinkSerializer(queryset, many=True)
+        return Response(serializer.data)

@@ -263,6 +263,10 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         p = Prefetch('comment_set',
                      Comment.objects.select_related('author__visitor'))
         qs = qs.prefetch_related(p)
+        if self.request.method == 'GET' and self.kwargs.get('pk'):
+
+            qs = qs.prefetch_related('link_set__commodity__kind',
+                                     'link_set__commodity__color')
         return qs
 
     def create(self, request, *args, **kwargs):
@@ -473,6 +477,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             Params:
                 commodities: list of commodities ids, required.
         This logic can be also implemented in the serializer.
+        Bulk create not fits, because it can return ID.
         """
         if not hasattr(request.user, 'vendor'):
             raise PermissionDenied({'detail': _('You have not permission '
@@ -497,18 +502,22 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             # not tested feature
             lim = link_limit - count
             sliced = commodities[:lim]
-            commodity_set = Link.objects.bulk_create(
-                (Link(photo_id=pk, commodity_id=i) for i in sliced)
-            )
-            serializer = serializers.LinkSerializer(instance=commodity_set,
-                                                    many=True)
-            return Response(serializer.data, 201)
+            response_data = []
+            for n, i in enumerate(sliced):
+
+                data = {'commodity': i, 'photo': pk}
+                serializer = serializers.LinkSerializer(data=data)
+                serializer.is_valid(True)
+                serializer.save()
+                response_data.append(serializer.data)
 
         except KeyError as e:
             raise ValidationError({'error': _('{} parameter is required')
                                   .format(e.message)})
         except Exception as e:
             raise ValidationError({'error': e.message})
+
+        return Response(response_data, 201)
 
     @detail_route(methods=['post'])
     def remove_link(self, request, *args, **kwargs):

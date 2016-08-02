@@ -12,6 +12,8 @@ angular.module('photo.services', ['ngResource'])
             edit: {method: 'PATCH', params: {action: 'edit'}, responseType: 'json'},
             clone: {method: 'POST', params: {action: 'clone'}, responseType: 'json'},
             liked_list: {method: 'GET', params: {action: 'liked_list'}, responseType: 'json'},
+            add_links: {method: 'POST', params: {action: 'add_links'}, responseType: 'json', isArray: true},
+            remove_link: {method: 'POST', params: {action: 'remove_link'}, responseType: 'json'},
     });
 }])
 .factory('Comment', ['$resource', 'api_path',

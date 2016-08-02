@@ -4,6 +4,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'utils.paginators.CustomPagination',
     'PAGE_SIZE': 12,
     'ORDERING_PARAM': 'o',
+    'SEARCH_PARAM': 'q',
     #'DATE_INPUT_FORMATS': ['iso-8601', '%d.%m.%Y'],
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',

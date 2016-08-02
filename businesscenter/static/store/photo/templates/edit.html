@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
             <h1 class="text-center">{{ 'PHOTO.EDIT.HEADER' | translate }}</h1>
@@ -19,10 +19,67 @@
                     </tr>
                 </table>
                 <ul class="text-center list-inline">
-                    <li><button class="btn btn-primary btn-lg">{{ 'FORM.SUBMIT' | translate }}</button></li>
-                    <li><a data-ng-href="#!/photo/{{ photo.id }}" class="btn btn-default btn-lg">{{ 'FORM.CANCEL' | translate }}</a></li>
+                    <li>
+                        <button class="btn btn-primary btn-lg">{{ 'FORM.SUBMIT' | translate }}</button>
+                    </li>
+                    <li><a data-ng-href="#!/photo/{{ photo.id }}" class="btn btn-default btn-lg">{{ 'FORM.CANCEL' |
+                        translate }}</a></li>
                 </ul>
             </form>
+        </div>
+    </div>
+    <div class="row">
+        <h4 class="text-center">{{ 'PHOTO.EDIT.ADD_LINK' | translate }}</h4>
+        <div class="row m-md">
+            <h4 data-ng-if="commodities.length > 0" class="text-center">{{ 'PHOTO.EDIT.NEW_LINKS' | translate }}</h4>
+            <div class="col-md-3" data-ng-repeat="commodity in commodities">
+                <div class="media">
+                    <div class="media-left">
+                        <img class="media-object" style="width: 50px;" data-ng-src="{{ commodity.crop }}"
+                             alt="{{ commodity.title }}">
+                        <div class="text-center"><i data-ng-click="remove_candidate($index)"
+                                                    class="fa fa-times text-danger"></i></div>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">{{ commodity.title }}</h4>
+                        <p>{{ 'COMMODITY.FORM.COLOR' | translate }}:
+                    <span style="border: 3px solid {{ commodity.color.html }}">
+                        {{ commodity.color.title }}</span></p>
+                        <p>{{ 'COMMODITY.FORM.KIND' | translate }}:
+                            <span class="text-info">{{ commodity.kind.title }}</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <p data-ng-if="commodities.length > 0" class="text-center">
+                    <button data-ng-click="add_links()"
+                            class="btn btn-primary btn-lg">{{ 'FORM.SUBMIT' | translate }}
+                    </button>
+                </p>
+            </div>
+            <div class="col-md-12">
+                <commodity-choice data-commodity="commodity" data-commodities="commodities" data-lim="lim"
+                                  data-placeholder="'Start typing and choose from the list'"></commodity-choice>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <h5 data-ng-if="photo.link_set.length > 0">{{ 'PHOTO.EDIT.LINKS' | translate }}</h5>
+            <div class="media" data-ng-repeat="link in photo.link_set">
+                <div class="media-left">
+                    <img class="media-object" style="width: 50px;" data-ng-src="{{ link.data.crop }}"
+                         alt="{{ link.data.title }}">
+                    <div class="text-center"><i data-ng-click="remove_link(link.id)"
+                                                class="fa fa-times text-danger"></i></div>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">{{ link.data.title }}</h4>
+                    <p>{{ 'COMMODITY.FORM.COLOR' | translate }}:
+                    <span style="border: 3px solid {{ link.data.color.html }}">
+                        {{ link.data.color.title }}</span></p>
+                    <p>{{ 'COMMODITY.FORM.KIND' | translate }}:
+                        <span class="text-info">{{ link.data.kind.title }}</span></p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
