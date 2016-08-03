@@ -182,7 +182,6 @@ angular.module('photo.controllers', ['photo.services', 'photo.directives',
         $scope.add_links = function(){
             var c_ids = [];
             var i = 0;
-            console.log($scope.commodities);
             for (i; i < $scope.commodities.length; i++){
                 c_ids.push($scope.commodities[i].pk);
             }
@@ -192,6 +191,7 @@ angular.module('photo.controllers', ['photo.services', 'photo.directives',
                         $rootScope.alerts.push({ type: 'info', msg:  msg});
                     });
                     $scope.photo.link_set = $scope.photo.link_set.concat(success);
+                    $scope.commodities = [];
                 },
                 function(error){
                     $rootScope.alerts.push({ type: 'danger', msg: error.data.error });

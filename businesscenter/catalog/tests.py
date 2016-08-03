@@ -242,7 +242,7 @@ class CatalogTests(APITestCase):
         """ Search in own store."""
         self.force_login(pk)
         url = reverse('catalog:commodity-my')
-        response = self.client.get(url, data={'q': 'Awes'})
+        response = self.client.get(url, data={'q': 'Awes', 'photo': 2})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), expected_items)
         self.client.logout()

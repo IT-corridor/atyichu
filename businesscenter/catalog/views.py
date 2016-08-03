@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import list_route, detail_route
@@ -158,11 +159,20 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
         ID of the store received from request.user.
         So it will not depend on authentication backend.
         Important: this view do not provide pagination. """
+
         if not request.query_params.get('q', None):
             raise ValidationError({'error': _('{} parameter is required').
                                   format('"q"')})
-        queryset = self.get_queryset().filter(store_id=request.user.pk)
-        queryset = self.filter_queryset(queryset)[:10]
+        try:
+            request.query_params['q']
+            photo = request.query_params['photo']
+            queryset = self.get_queryset().filter(Q(store_id=request.user.pk),
+                                                  ~Q(link__photo_id=photo))
+            queryset = self.filter_queryset(queryset)[:10]
 
-        serializer = serializers.CommodityLinkSerializer(queryset, many=True)
+            serializer = serializers.CommodityLinkSerializer(queryset,
+                                                             many=True)
+        except KeyError as e:
+            raise ValidationError({'error': _('{} parameter is required').
+                                  format(e.message)})
         return Response(serializer.data)

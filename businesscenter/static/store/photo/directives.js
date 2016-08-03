@@ -4,7 +4,7 @@ return {
   restrict: 'E',
   replace: true,
   templateUrl: PATH + 'photo/templates/commodity_dropdown.html',
-  scope: {member:'=', placeholder:'=', commodities: '=', lim: '='},
+  scope: {member:'=', placeholder:'=', commodities: '=', lim: '=', photo: '='},
   controller: function($scope, PATH, Commodity){
 
         $scope.active = 0;
@@ -14,7 +14,7 @@ return {
 
         $scope.get_results = function (text) {
             if (text !== ''){
-                $scope.results = Commodity.my({q: text});
+                $scope.results = Commodity.my({q: text, photo: $scope.photo});
             }
         };
 
