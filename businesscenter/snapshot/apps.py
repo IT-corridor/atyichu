@@ -8,6 +8,7 @@ class SnapshotConfig(AppConfig):
 
     def ready(self):
         from django.db.models.signals import pre_delete, post_save
+        from .receivers import fetch_tags
         from utils import receivers
 
         Photo = self.get_model('Photo')
@@ -16,3 +17,4 @@ class SnapshotConfig(AppConfig):
         post_save.connect(receivers.create_thumb_photo_500, sender=Photo)
         post_save.connect(receivers.create_crop_photo_100, sender=Photo)
         post_save.connect(receivers.create_cover_photo_320, sender=Photo)
+        post_save.connect(fetch_tags, sender=Photo)

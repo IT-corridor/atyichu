@@ -53,3 +53,6 @@ SERVER_EMAIL = 'beholder@atyichu.com'
 WEIXIN_APP_ID = data['WEIXIN_APP_ID']
 WEIXIN_SECRET = data['WEIXIN_SECRET']
 
+IMAGGA_KEY = data['IMAGGA_KEY']
+IMAGGA_SECRET = data['IMAGGA_SECRET']
+IMAGGA_LANG = 'zh_chs'

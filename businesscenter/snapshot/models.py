@@ -130,6 +130,22 @@ class Mirror(models.Model):
         ordering = ('-modify_date', )
 
 
+class Stamp(models.Model):
+    """ Stamp is actually a tag, but we have already model called tag.
+        This table / model stores stamps required
+        for Photo tagging and searching.
+    """
+    title = models.CharField(_('Title'), max_length=255, db_index=True)
+
+    def __unicode__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _('Stamp')
+        verbose_name_plural = _('Stamp')
+        ordering = ('title',)
+
+
 class Photo(models.Model):
     """Model representing a photo record with extra data.
         Visitor means not instance of :model:`visitor.Visitor`,
@@ -172,6 +188,7 @@ class Photo(models.Model):
                                  related_name='clones',
                                  related_query_name='clone',
                                  on_delete=models.SET_NULL)
+    stamps = models.ManyToManyField(Stamp, through='PhotoStamp', blank=True)
 
     objects = models.Manager()
     p_objects = PhotoManager()
@@ -197,6 +214,22 @@ class Photo(models.Model):
         verbose_name = _('Photo')
         verbose_name_plural = _('Photos')
         ordering = ('pk',)
+
+
+class PhotoStamp(models.Model):
+    """ Model representing a tag related with photo, Useful for searching.
+    """
+    photo = models.ForeignKey(Photo, verbose_name=_('Photo'))
+    stamp = models.ForeignKey(Stamp, verbose_name=_('Stamp'))
+    confidence = models.DecimalField(_('Confidence'), db_index=True,
+                                     max_digits=18, decimal_places=15)
+
+    class Meta:
+        verbose_name = _('Photo stamp')
+        verbose_name_plural = _('Photo stamps')
+        ordering = ('confidence', 'pk')
+        unique_together = ('photo', 'stamp')
+
 
 
 class Comment(models.Model):
