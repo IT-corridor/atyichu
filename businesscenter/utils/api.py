@@ -5,6 +5,10 @@ import requests
 from django.conf import settings
 
 
+class ImaggaContentError(Exception):
+    pass
+
+
 class ImaggaAPI(object):
     def __init__(self, key=None, secret=None):
         _key = key if key else settings.IMAGGA_KEY
@@ -49,7 +53,10 @@ class ImaggaAPI(object):
             assert r.status_code == 200
 
             data = r.json()
-            return data['uploaded'][0]['id']
+            if data['success'] == 'success':
+                return data['uploaded'][0]['id']
+            else:
+                raise ImaggaContentError(data['message'])
 
     def content_many(self, *paths):
         """ Careful! Do not use it. It uploads many files and
