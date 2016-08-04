@@ -46,6 +46,11 @@ class GroupAdmin(admin.ModelAdmin):
     list_display = ('title', 'owner', 'is_private')
     inlines = (MemberInline, TagInline)
 
+
+class PhotoStampAdmin(admin.ModelAdmin):
+    list_display = ('__unicode__', 'photo', 'confidence')
+    search_fields = ('stamp__title',)
+
 # REGISTER models to admin
 admin.site.register(models.Mirror, MirrorAdmin)
 admin.site.register(models.Photo, PhotoAdmin)
@@ -53,4 +58,4 @@ admin.site.register(models.Comment)
 admin.site.register(models.Group, GroupAdmin)
 admin.site.register(models.Tag)
 admin.site.register(models.Stamp)
-admin.site.register(models.PhotoStamp)
+admin.site.register(models.PhotoStamp, PhotoStampAdmin)

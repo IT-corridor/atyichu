@@ -224,6 +224,9 @@ class PhotoStamp(models.Model):
     confidence = models.DecimalField(_('Confidence'), db_index=True,
                                      max_digits=18, decimal_places=15)
 
+    def __unicode__(self):
+        return '{}: {}'.format(self.photo_id, self.stamp)
+
     class Meta:
         verbose_name = _('Photo stamp')
         verbose_name_plural = _('Photo stamps')
