@@ -51,6 +51,7 @@ class Command(BaseCommand):
                     continue
 
                 path = instance.thumb.path
+                print (path)
                 if path and os.path.isfile(path):
                     api = ImaggaAPI()
                     response = api.get_tags_by_filepath(path, language=lang)
