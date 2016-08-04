@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
 """ Here stored 3d party API`s"""
 from __future__ import unicode_literals
 import os
+import random
+from string import ascii_letters, digits
 import requests
 from django.conf import settings
 
@@ -47,11 +50,16 @@ class ImaggaAPI(object):
     def content(self, image_path):
         """ Upload one image and returns its ID."""
         endpoint_url = self.base_url + 'content'
-        with open(image_path) as f:
-            files = {os.path.basename(image_path): f}
+        charset = ascii_letters + digits
+        with open(image_path, 'rb') as f:
+            # trick for files titled with chinese charset
+            filename, ext = os.path.splitext(image_path)
+
+            tmp_name = ''.join([random.choice(charset) for _ in range(32)])
+            files = {'image': (tmp_name + ext, f.read())}
+
             r = requests.post(endpoint_url, auth=self.auth, files=files)
             assert r.status_code == 200
-
             data = r.json()
             print (data)
             if data['status'] == 'success':
@@ -81,7 +89,8 @@ class ImaggaAPI(object):
 if __name__ == '__main__':
     api = ImaggaAPI(key='acc_60524b660772546',
                     secret='b8a7133f5990d04038ce468c7321d82c')
+
     tag_response = api.get_tags_by_filepath('/home/niklak/repositories/atyichu/businesscenter/'
-                                            'media/snapshot/photo/thumbs/1/cute_00027_thumb.jpeg',
+                                            'media/无需过多装饰简洁的纯白色连衣裙就能瞬间体现女人味气质_thumb.jpeg',
                                language='zh_chs')
     print (tag_response)
