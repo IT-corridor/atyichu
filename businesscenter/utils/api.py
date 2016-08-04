@@ -61,7 +61,6 @@ class ImaggaAPI(object):
             r = requests.post(endpoint_url, auth=self.auth, files=files)
             assert r.status_code == 200
             data = r.json()
-            print (data)
             if data['status'] == 'success':
                 return data['uploaded'][0]['id']
             else:
