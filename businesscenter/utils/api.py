@@ -53,7 +53,8 @@ class ImaggaAPI(object):
             assert r.status_code == 200
 
             data = r.json()
-            if data['success'] == 'success':
+            print (data)
+            if data['status'] == 'success':
                 return data['uploaded'][0]['id']
             else:
                 raise ImaggaContentError(data['message'])
