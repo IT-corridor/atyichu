@@ -46,7 +46,7 @@ class Command(BaseCommand):
                                    )
             )
             try:
-                if not instance.thumb:
+                if not instance.thumb or not instance.thumb.name:
                     self.stdout.write(str('No thumb found'))
                     continue
 
