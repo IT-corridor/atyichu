@@ -27,6 +27,7 @@ class MirrorAdmin(admin.ModelAdmin):
 
 class PhotoAdmin(admin.ModelAdmin):
     list_display = ('pk', 'visitor', 'mirror', 'group')
+    search_fields = ('title', 'stamps__title')
     inlines = (CommentInline, LinkInline)
     readonly_fields = ('thumb', 'cover', 'crop', 'creator', 'original')
 

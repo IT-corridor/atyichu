@@ -39,6 +39,10 @@ angular.module('app.route', [
                 kind: function(){return 'liked'},
             }
         }).
+        when('/photo/search', {
+            templateUrl: PATH + 'group/photo_list.html',
+            controller: 'CtrlPhotoList',
+        }).
         when('/photo/:pk', {
             templateUrl: PATH + 'photo/detail.html',
             controller: 'CtrlPhotoDetail'}).

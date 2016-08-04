@@ -3,7 +3,7 @@ angular.module('photo.services', ['ngResource'])
 .factory('Photo', ['$resource', 'api_path',
     function($resource, api_path){
         return $resource(api_path + 'photo/:pk/:action/', {}, {
-            query: {method:'GET', params:{pk: null}, responseType:'json', isArray: true},
+            query: {method:'GET', params:{pk: null}, responseType:'json'},
             update: {method: 'PATCH'},
             save: {method: 'POST'},
             remove: {method: 'DELETE'},

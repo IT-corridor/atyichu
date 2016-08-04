@@ -1,18 +1,74 @@
 angular.module('photo.controllers', ['photo.services', 'photo.directives',
 'group.services', 'common.services',
 'store.services', 'tencent'])
-.controller('CtrlPhotoList', ['$scope', '$rootScope', '$http',
-'$location', '$translate', 'Auth', 'Photo',
-    function($scope, $rootScope, $http, $location, $translate, Auth, Photo) {
-        function handle_error(error){
-            $rootScope.alerts.push({ type: 'danger',
-                    msg: error.data.error});
+.controller('CtrlPhotoList', ['$scope', '$rootScope','$http', '$window',
+'$location', '$routeParams', '$translate', 'GetPageLink' , 'Photo',
+    function($scope, $rootScope, $http, $window, $location, $routeParams,
+    $translate, GetPageLink, Photo) {
+        // Controller for searching photos
+        // TODO: Merge with newest controller
+
+        $scope.enough = false;
+        $scope.is_owner = false;
+
+        $scope.new_message = '';
+
+        var window = angular.element($window);
+
+        function scroll_more(){
+            if (!$scope.enough && $scope.page != undefined){
+                var bodyHeight = this.document.body.scrollHeight;
+                if (bodyHeight == (this.pageYOffset + this.innerHeight)){
+                    $scope.get_more();
+                }
+            }
+        }
+        window.bind('scroll', scroll_more);
+
+        $scope.$on('$destroy', function(e){
+            window.unbind('scroll', scroll_more);
+        });
+
+        $rootScope.photo_refer = $location.url();
+        $scope.r = Photo.query($routeParams,
+            function(success){
+                $scope.enough = success.total > 1 ? false : true;
+                $scope.page_link = GetPageLink();
+                $scope.page = success.current;
+            },
+            function(error){
+                console.log(error.data);
+            }
+        );
+
+        $scope.get_more = function(){
+            $scope.page += 1;
+            var params = {page: $scope.page, q: $routeParams.q};
+            Photo.query(params, function(success){
+                    $scope.r.results = $scope.r.results.concat(success.results);
+                    $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
+                },
+                function(error){
+                    for (var e in error.data){
+                        $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
+                    }
+                    $scope.error = error.data;
+                }
+            );
         }
 
-        $scope.photos = Photo.query(
-            function(success){},
-            handle_error
-        );
+        $scope.like = function(index, photo_id){
+            Photo.like({pk: photo_id},
+                function(success){
+                    $scope.r.results[index].like_count = success.like_count;
+                },
+                function(error){
+                    $translate('PHOTO.LIST.LIKED').then(function (msg) {
+                        $rootScope.alerts.push({ type: 'danger', msg: msg});
+                    });
+                }
+            );
+        };
 
         $scope.snapshot = function(){
             // TODO: implement screen animation, while waiting for shot
@@ -29,8 +85,7 @@ angular.module('photo.controllers', ['photo.services', 'photo.directives',
                     $rootScope.alerts.push({ type: 'danger',  msg: error.data.error});
                 }
             );
-        }
-
+        };
     }
 ])
 .controller('CtrlPhotoDetail', ['$scope', '$rootScope', '$http', '$routeParams',

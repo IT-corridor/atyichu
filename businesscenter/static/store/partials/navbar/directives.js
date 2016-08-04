@@ -1,14 +1,14 @@
 var navbar = angular.module('navbar', ['auth.services'])
-.directive('dNavbar', ['$window', '$location', '$translate', 'PATH', 'Auth', '$uibModal',
-                        function($window, $location, $translate, PATH, Auth, $uibModal) {
+.directive('dNavbar', ['$window', '$location', '$routeParams', '$translate', 'PATH', 'Auth', '$uibModal',
+                        function($window, $location, $routeParams, $translate, PATH, Auth, $uibModal) {
     return {
         restrict: 'A',
         templateUrl: PATH + 'partials/navbar/templates/navbar_d.html',
-        controller: function($scope, $rootScope, $window, $location,
+        controller: function($scope, $rootScope, $window, $location, $routeParams,
             $translate, PATH, Auth ){
             $rootScope.visitor_resolved = false;
             $scope.brand_text = 'ATYICHU';
-
+            $scope.p = $routeParams;
             var auth_promise = Auth.is_authenticated();
 
             auth_promise.then(function(result){
@@ -52,6 +52,19 @@ var navbar = angular.module('navbar', ['auth.services'])
             }
             $scope.toggleAnimation = function () {
                 $scope.animationsEnabled = !$scope.animationsEnabled;
+            };
+
+            $scope.search = function(keyEvent){
+                //search
+                if (keyEvent.which == 13){
+                    $scope.search_c();
+                }
+            };
+
+            $scope.search_c = function(){
+                if ($scope.p.q){
+                    $location.path('/photo/search').search({q: $scope.p.q});
+                }
             };
         }
     };

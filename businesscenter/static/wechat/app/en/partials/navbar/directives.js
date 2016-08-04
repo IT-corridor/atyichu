@@ -1,14 +1,16 @@
 var navbar = angular.module('navbar', ['auth.services'])
-.directive('dNavbar', ['$window', 'PATH','Logout', 'Auth', 'Me',
-                        function($window, PATH, Logout, Auth, Me) {
+.directive('dNavbar', ['$window', '$location', '$routeParams', 'PATH','Logout', 'Auth', 'Me',
+                        function($window, $location, $routeParams, PATH, Logout, Auth, Me) {
     return {
         restrict: 'A',
         templateUrl: PATH + 'partials/navbar/navbar.html',
-        controller: function($scope, $rootScope, $window, PATH, Logout, Auth, Me ){
+        controller: function($scope, $rootScope, $window, $location, $routeParams,
+         PATH, Logout, Auth, Me ){
 
             $scope.brand_text = 'ATYICHU';
 
             $scope.auth = Auth;
+            $scope.p = $routeParams;
 
             var auth_promise = Auth.is_authenticated();
 
@@ -39,6 +41,19 @@ var navbar = angular.module('navbar', ['auth.services'])
             $scope.animationsEnabled = true;
             $scope.toggleAnimation = function () {
                 $scope.animationsEnabled = !$scope.animationsEnabled;
+            };
+
+            $scope.search = function(keyEvent){
+                //search
+                if (keyEvent.which == 13){
+                    $scope.search_c();
+                }
+            };
+
+            $scope.search_c = function(){
+                if ($scope.p.q){
+                    $location.path('/photo/search').search({q: $scope.p.q});
+                }
             };
         }
     };

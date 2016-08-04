@@ -26,23 +26,26 @@ class Command(BaseCommand):
 
         lang = options['lang'] if options.get('lang') else settings.IMAGGA_LANG
 
-        try:
-            # here we choose only that photos that have no tags,
-            # to reduce amount of request
-            photos = Photo.objects.annotate(Count('stamps'))\
-                .filter(stamps__count=0)
-            total = len(photos)
+        # here we choose only that photos that have no tags,
+        # to reduce amount of request
+        photos = Photo.objects.annotate(Count('stamps'))\
+            .filter(stamps__count=0)
+        total = len(photos)
+        success = 0
+        skipped = 0
+        self.stdout.write(
+            self.style.WARNING('{} photos need to be processed'
+                               .format(total)
+                               )
+        )
+
+        for n, instance in enumerate(photos):
             self.stdout.write(
-                self.style.WARNING('{} photos need to be processed'
-                                   .format(total)
+                self.style.WARNING('Processing {} item of {}'
+                                   .format(n, total)
                                    )
             )
-            for n, instance in enumerate(photos):
-                self.stdout.write(
-                    self.style.WARNING('Processing {} item of {}'
-                                       .format(n, total)
-                                       )
-                )
+            try:
                 if not instance.thumb:
                     self.stdout.write(str('No thumb found'))
                     continue
@@ -59,9 +62,12 @@ class Command(BaseCommand):
                         PhotoStamp.objects.create(photo=instance, stamp=stamp,
                                                   confidence=i['confidence'])
                 time.sleep(1)
+            except Exception as e:
+                self.stdout.write(self.style.ERROR(e.message))
+                skipped += 1
+            else:
+                success += 1
 
-        except Exception as e:
-            raise CommandError('An error has been occurred: {}'.format(e))
-        else:
-            self.stdout.write(
-                self.style.SUCCESS('Tags have been fetched!'))
+        self.stdout.write(self.style.SUCCESS('Task has been finished!'))
+        self.stdout.write(self.style.SUCCESS('Total:{}, success: {}, skipp: {}'
+                                             .format(total, success, skipped)))

@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.core.mail import mail_admins
 from django.db.models import F, Prefetch, Q, Count
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, filters
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -252,6 +252,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
     model = Photo
     serializer_class = serializers.PhotoDetailSerializer
     permission_classes = [IsPhotoOwnerOrReadOnly]
+    filter_backends = (filters.SearchFilter,)
     search_fields = ('title', 'stamps__title')
 
     # TODO: test delete
@@ -328,7 +329,8 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         qs = Photo.a_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store',
                                             'group')
-        qs = qs.filter(Q(group__is_private=False)).order_by('-pk')
+        qs = qs.filter(Q(group__is_private=False))\
+            .order_by('stamps__photostamp__confidence').distinct()
         qs = self.filter_queryset(qs)
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)

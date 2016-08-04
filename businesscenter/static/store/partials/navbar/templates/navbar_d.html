@@ -32,10 +32,10 @@
     <form class="navbar-form navbar-form-sm navbar-left" role="search">
         <div class="form-group">
             <div class="input-group">
-                <input type="text"
+                <input type="text" data-ng-keypress="search($event)" data-ng-model="p.q"
                        class="form-control input-sm bg-light no-border rounded padder" >
               <span class="input-group-btn">
-                <button type="submit" class="btn btn-sm bg-light rounded">
+                <button type="submit" class="btn btn-sm bg-light rounded" data-ng-click="search_c()">
                     <i class="fa fa-search"></i>
                 </button>
               </span>
