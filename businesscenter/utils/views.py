@@ -46,11 +46,12 @@ class PaginationMixin(object):
         """ Shortcut for the paginated views / handlers """
         queryset = self.filter_queryset(queryset)
         page = self.paginate_queryset(queryset)
+        context = {'request': self.request}
         if page is not None:
-            serializer = serializer_class(page, many=True)
+            serializer = serializer_class(page, many=True, context=context)
             return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(queryset, many=True, context=context)
         return Response(serializer.data)
 
 

@@ -252,6 +252,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
     model = Photo
     serializer_class = serializers.PhotoDetailSerializer
     permission_classes = [IsPhotoOwnerOrReadOnly]
+    search_fields = ('title', 'stamps__title')
 
     # TODO: test delete
     # TODO: TEST retrieve somehow
@@ -268,6 +269,11 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             qs = qs.prefetch_related('link_set__commodity__kind',
                                      'link_set__commodity__color')
         return qs
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET' and not self.kwargs.get('pk', None):
+            return serializers.PhotoListSerializer
+        return serializers.PhotoDetailSerializer
 
     def create(self, request, *args, **kwargs):
         """
@@ -319,13 +325,13 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         """
         get all photo order by time desc. Currently not used.
         """
-        visitor = request.user
-        qs = self.get_queryset()
-        qs = qs.prefetch_related('comment_set__author').filter(visitor=visitor)
-        photos = qs
-        ser = serializers.PhotoListSerializer(instance=photos, many=True,
-                                              context={'request': request})
-        return Response(data=ser.data)
+        qs = Photo.a_objects.select_related('original', 'visitor__visitor',
+                                            'visitor__vendor__store',
+                                            'group')
+        qs = qs.filter(Q(group__is_private=False)).order_by('-pk')
+        qs = self.filter_queryset(qs)
+
+        return self.get_list_response(qs, serializers.PhotoListSerializer)
 
     def partial_update(self, request, *args, **kwargs):
         """
@@ -422,7 +428,8 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def newest(self, request, *args, **kwargs):
         """ Providing a newest list of public groups photos """
-        qs = Photo.a_objects.select_related('original', 'visitor__visitor')
+        qs = Photo.a_objects.select_related('original', 'visitor__visitor',
+                                            'visitor__vendor__store', 'group')
         qs = qs.filter(Q(group__is_private=False) &
                        ~Q(visitor_id=request.user.id))\
             .order_by('-pk').distinct()

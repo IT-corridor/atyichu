@@ -114,11 +114,13 @@ class PhotoListSerializer(serializers.ModelSerializer):
     def get_owner(self, obj):
         if hasattr(obj.visitor, 'visitor'):
             serializer = VisitorShortSerializer(instance=obj.visitor.visitor,
-                                                read_only=True)
+                                                read_only=True,
+                                                context=self.context)
             return serializer.data
         elif hasattr(obj.visitor, 'vendor'):
             serializer = StoreShortSerializer(instance=obj.visitor.vendor.store,
-                                                read_only=True)
+                                              read_only=True,
+                                              context=self.context)
             return serializer.data
         return
 

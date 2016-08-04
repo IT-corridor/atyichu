@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import os
+import time
 from django.conf import settings
 from django.db.models import Count
 from django.core.management.base import BaseCommand, CommandError
@@ -57,6 +58,7 @@ class Command(BaseCommand):
                         stamp, _ = Stamp.objects.get_or_create(title=i['tag'])
                         PhotoStamp.objects.create(photo=instance, stamp=stamp,
                                                   confidence=i['confidence'])
+                time.sleep(1)
 
         except Exception as e:
             raise CommandError('An error has been occurred: {}'.format(e))
