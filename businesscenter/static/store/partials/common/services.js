@@ -71,4 +71,25 @@ angular.module('common.services', ['ngResource'])
         };
         return $http(req);
     }
+}])
+.factory('WindowScroll', ['$window', function($window){
+    // Perform action when scroll touch the document bottom
+    return function(scope, callback){
+        var window = angular.element($window);
+
+        function scroll_more(){
+            if (!scope.enough && scope.page != undefined){
+                var bodyHeight = this.document.body.scrollHeight;
+                if (bodyHeight == (this.pageYOffset + this.innerHeight)){
+                    callback();
+                }
+            }
+        }
+        window.bind('scroll', scroll_more);
+
+        scope.$on('$destroy', function(e){
+            window.unbind('scroll', scroll_more);
+        });
+    }
+
 }]);

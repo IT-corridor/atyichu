@@ -27,7 +27,7 @@ var navbar = angular.module('navbar', ['auth.services'])
             });
 
             $rootScope.$on("$routeChangeStart", function(event, next, current) {
-                $scope.isCollapsed = true;
+                $scope.isCollapsed = false;
             });
 
             $scope.logout = function(){

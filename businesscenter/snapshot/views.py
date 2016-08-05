@@ -330,7 +330,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                                             'visitor__vendor__store',
                                             'group')
         qs = qs.filter(Q(group__is_private=False))\
-            .order_by('stamps__photostamp__confidence').distinct()
+            .order_by('-stamps__photostamp__confidence').distinct()
         qs = self.filter_queryset(qs)
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
@@ -539,6 +539,38 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         except KeyError as e:
             raise ValidationError({'error': _('{} parameter is required')
                                   .format(e.message)})
+
+    @detail_route(methods=['get'])
+    def similar(self, request, pk, *args, **kwargs):
+        """
+            Retreiving "similar" photo list.
+            Flow:
+                1. Select photo by ID.
+                2. Select its stamps (tags) IDs. With help of Django M2M
+                   we can directly call "stamps",
+                   without previous calling "photostamp_set".
+                3. Order fetched stamps by confidence of
+                   the related photostamp.
+                4. Make a list from that IDs and slice them,
+                   we need only that which have confidence over 30.
+                5. Make a query that fetches photos with chosen stamp IDS.
+            This view is not tested yet.
+        """
+        obj = self.get_object()
+        mc = 30    # minimal confidence
+        stamp_ids = obj.stamps.filter(photostamp__confidence__gte=mc)\
+                       .order_by('-pk')\
+                       .values_list('id', flat=True)
+
+        qs = Photo.a_objects.select_related('original', 'visitor__visitor',
+                                            'visitor__vendor__store',
+                                            'group')
+        qs = qs.filter(Q(group__is_private=False) &
+                       ~Q(pk=pk) & Q(stamps__id__in=stamp_ids) &
+                       Q(stamps__photostamp__confidence__gte=mc)) \
+            .order_by('-pk').distinct()
+
+        return self.get_list_response(qs, serializers.PhotoListSerializer)
 
 
 class CommentViewSet(viewsets.ModelViewSet):

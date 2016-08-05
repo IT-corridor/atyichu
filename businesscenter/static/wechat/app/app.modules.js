@@ -26,6 +26,7 @@ app.run(function($rootScope) {
     //$rootScope.site = 'atyichu.cn';
     $rootScope.site = '哎特衣橱';
     $rootScope.THEME = '/static/theme/';
+    $rootScope.PATH = '/static/wechat/app/';
 });
 app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('httpRequestInterceptor');

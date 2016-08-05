@@ -1,8 +1,8 @@
 angular.module('photo.controllers', ['photo.services', 'store.services'])
 .controller('CtrlPhotoList', ['$scope', '$rootScope','$http', '$window',
-'$location', '$routeParams', '$translate', 'GetPageLink' , 'Photo',
+'$location', '$routeParams', 'GetPageLink' , 'Photo', 'WindowScroll',
     function($scope, $rootScope, $http, $window, $location, $routeParams,
-    $translate, GetPageLink, Photo) {
+    GetPageLink, Photo, WindowScroll) {
         // Controller for searching photos
         // TODO: Merge with newest controller
 
@@ -10,22 +10,6 @@ angular.module('photo.controllers', ['photo.services', 'store.services'])
         $scope.is_owner = false;
 
         $scope.new_message = '';
-
-        var window = angular.element($window);
-
-        function scroll_more(){
-            if (!$scope.enough && $scope.page != undefined){
-                var bodyHeight = this.document.body.scrollHeight;
-                if (bodyHeight == (this.pageYOffset + this.innerHeight)){
-                    $scope.get_more();
-                }
-            }
-        }
-        window.bind('scroll', scroll_more);
-
-        $scope.$on('$destroy', function(e){
-            window.unbind('scroll', scroll_more);
-        });
 
         $rootScope.photo_refer = $location.url();
         $scope.r = Photo.query($routeParams,
@@ -53,7 +37,8 @@ angular.module('photo.controllers', ['photo.services', 'store.services'])
                     $scope.error = error.data;
                 }
             );
-        }
+        };
+        WindowScroll($scope, $scope.get_more);
 
         $scope.like = function(index, photo_id){
             Photo.like({pk: photo_id},
@@ -61,9 +46,7 @@ angular.module('photo.controllers', ['photo.services', 'store.services'])
                     $scope.r.results[index].like_count = success.like_count;
                 },
                 function(error){
-                    $translate('PHOTO.LIST.LIKED').then(function (msg) {
-                        $rootScope.alerts.push({ type: 'danger', msg: msg});
-                    });
+                        $rootScope.alerts.push({ type: 'danger', msg: 'Already liked.'});
                 }
             );
         };
@@ -74,9 +57,8 @@ angular.module('photo.controllers', ['photo.services', 'store.services'])
             Photo.save({},
                 function(success){
                     // we can wait for 3 seconds here,
-                    $translate('PHOTO.LIST.CREATED').then(function (msg) {
-                            $rootScope.alerts.push({ type: 'success', msg:  msg});
-                    });
+
+                    $rootScope.alerts.push({ type: 'success', msg:  'Photo created.'});
                     $location.path('/photo/'+ success.id);
                 },
                 function(error){
@@ -87,9 +69,10 @@ angular.module('photo.controllers', ['photo.services', 'store.services'])
     }
 ])
 .controller('CtrlPhotoDetail', ['$scope', '$rootScope', '$http', '$routeParams',
-                                '$window', '$location', 'Photo', 'Comment', 'WXI', 'Store',
+                                '$window', '$location', 'Photo', 'Comment',
+                                'WXI', 'Store', 'WindowScroll',
     function($scope, $rootScope, $http, $routeParams, $window, $location,
-    Photo, Comment, WXI, Store) {
+    Photo, Comment, WXI, Store, WindowScroll) {
         $scope.is_owner = false;
         function handle_error(error){
             $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
@@ -117,6 +100,24 @@ angular.module('photo.controllers', ['photo.services', 'store.services'])
             },
             handle_error
         );
+
+        /* "Similar photos block. Need to be cleaned */
+
+        $scope.enough = false;
+        $scope.r = Photo.similar({pk: $routeParams.pk}, function(success){
+            $scope.page = success.current;
+        });
+
+        $scope.get_more = function(){
+            $scope.page += 1;
+            Photo.similar({pk: $routeParams.pk, page: $scope.page}, function(success){
+                    $scope.r.results = $scope.r.results.concat(success.results);
+                    $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
+                }
+            );
+        }
+        WindowScroll($scope, $scope.get_more);
+        /* End of similar photos block */
 
         $scope.back = function(){
             if ($rootScope.photo_refer){
@@ -209,8 +210,9 @@ angular.module('photo.controllers', ['photo.services', 'store.services'])
     }
 ])
 .controller('CtrlPhotoNewest', ['$scope', '$rootScope','$http', '$window',
-'$location', '$routeParams','GetPageLink' , 'Photo', 'title', 'kind',
-    function($scope, $rootScope, $http, $window, $location, $routeParams, GetPageLink, Photo, title, kind) {
+'$location', '$routeParams','GetPageLink' , 'Photo', 'title', 'kind', 'WindowScroll',
+    function($scope, $rootScope, $http, $window, $location, $routeParams,
+    GetPageLink, Photo, title, kind, WindowScroll) {
         // Controller for newest photos and for the liked photos
 
         $rootScope.title = title;
@@ -220,22 +222,6 @@ angular.module('photo.controllers', ['photo.services', 'store.services'])
         $scope.is_owner = false;
 
         $scope.new_message = '';
-
-        var window = angular.element($window);
-
-        function scroll_more(){
-            if (!$scope.enough && $scope.page != undefined){
-                var bodyHeight = this.document.body.scrollHeight;
-                if (bodyHeight == (this.pageYOffset + this.innerHeight)){
-                    $scope.get_more();
-                }
-            }
-        }
-        window.bind('scroll', scroll_more);
-
-        $scope.$on('$destroy', function(e){
-            window.unbind('scroll', scroll_more);
-        });
 
         $rootScope.title = 'Newest photos';
         $rootScope.photo_refer = $location.url();
@@ -270,7 +256,8 @@ angular.module('photo.controllers', ['photo.services', 'store.services'])
                     $scope.error = error.data;
                 }
             );
-        }
+        };
+        WindowScroll($scope, $scope.get_more);
 
         $scope.like = function(index, photo_id){
             Photo.like({pk: photo_id},

@@ -52,18 +52,25 @@ angular.module('tencent', [])
   return {
     restrict: 'AC',
     scope: {
+      title: '=',
       address: '=',
+      img: '=',
     },
     link: function(scope, element, attrs) {
       // Set up center coordinates
-      var geocoder = new qq.maps.Geocoder();
-      var container = element[0];
-      var map, marker = null;
+      var unwatch = scope.$watch('address', function(newValue, oldValue) {
+          if (newValue){
+            render_map();
+            unwatch();
+          }
+      });
+      function render_map(){
+        var geocoder = new qq.maps.Geocoder();
+        var container = element[0];
+        var map, marker = null;
+        geocoder.getLocation(scope.address);
 
-      geocoder.getLocation(scope.address);
-
-      geocoder.setComplete(function(result) {
-        console.log(result);
+        geocoder.setComplete(function(result) {
         map = new qq.maps.Map(container, {
           center: result.detail.location,
           zoom: 16,
@@ -74,24 +81,25 @@ angular.module('tencent', [])
           position: result.detail.location
         });
 
-
-        marker.setIcon(icon);
         marker.setTitle(scope.address);
 
         var info = new qq.maps.InfoWindow({
           map: map
         });
         info.open();
-        info.setContent('<span style="color: darkred; padding: 10px;">' + scope.address + '</span>');
+        info.setContent('<span style="color: darkred; padding: 10px;"> <img style="width: 48px; height: auto; margin-right: 5px;" src="'+scope.img+ '"> ' +scope.title + '</span>');
         info.setPosition(marker.getPosition());
         scope.$apply();
 
-      });
+        });
 
-      geocoder.setError(function() {
+        geocoder.setError(function() {
           console.log("Error! Please type right address!");
           scope.$apply();
-      });
+        });
+
+      }
+
     },
   };
 });

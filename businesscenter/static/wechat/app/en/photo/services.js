@@ -3,7 +3,7 @@ angular.module('photo.services', ['ngResource'])
 .factory('Photo', ['$resource', 'source_path',
     function($resource, source_path){
         return $resource(source_path + 'photo/:pk/:action/', {}, {
-            query: {method:'GET', params:{pk: null}, responseType:'json', isArray: true},
+            query: {method:'GET', params:{pk: null}, responseType:'json'},
             update: {method: 'PATCH'},
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
@@ -12,6 +12,7 @@ angular.module('photo.services', ['ngResource'])
             edit: {method: 'PATCH', params: {action: 'edit'}, responseType: 'json'},
             clone: {method: 'POST', params: {action: 'clone'}, responseType: 'json'},
             liked_list: {method: 'GET', params: {action: 'liked_list'}, responseType: 'json'},
+            similar: {method: 'GET', params: {action: 'similar'}, responseType: 'json'},
     });
 }])
 .factory('Comment', ['$resource', 'source_path',

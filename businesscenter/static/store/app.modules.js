@@ -204,6 +204,7 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'LIKE': 'Like',
                 'REPLY': 'Reply',
                 'DELETED': 'Photo has been deleted.',
+                'SIMILAR': 'Similar Photos'
             },
             'EDIT': {
                 'HEADER': 'Edit photo data',
@@ -276,7 +277,7 @@ app.config(['$translateProvider', function ($translateProvider) {
         'ERROR': 'Error',
         'CONFIRM': 'Are you sure you want perform this action?',
         'FAIL': 'Fail',
-        'SUCCESS': 'Success',
+        'SUCCESS': 'Success!',
         'LOAD_MORE': 'Load more',
         'COMMON': {
             'HOME': {
@@ -315,6 +316,27 @@ app.config(['$translateProvider', function ($translateProvider) {
             'SIGN': 'Sign',
             'SIGN_IN': 'Sign in',
             'CHANGE_PASSWORD': 'Change password',
+        },
+        'ASIDE': {
+            'DASHBOARD': 'Dashboard',
+            'PHOTO': {
+                'TITLE': 'Photos',
+                'MY_GROUPS': 'My Wardrobes',
+                'ADD_GROUP': 'Add A Wardrobe',
+                'DISCOVERY': 'Discovery',
+                'LIKED': 'Favorite',
+            },
+            'COMMODITY': {
+                'TITLE': 'Commodity',
+                'MY': 'My Commodities',
+                'ADD': 'Add A Commodity',
+            },
+            'STORE': {
+                'TITLE': 'My Store',
+                'OVERVIEW': 'Overview',
+                'EDIT': 'Edit',
+                'CREATE': 'Create',
+            },
         },
         'STORE': {
             'CREATE': {
@@ -355,7 +377,7 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'TITLE_PLACE': 'Enter a title',
                 'PRIORITY_PLACE': 'Enter a priority',
                 'COLOR_PLACE': 'Enter a html (hex) color',
-            }
+            },
          },
         'GROUP': {
             'CREATE': {
@@ -401,11 +423,15 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'LIKE': 'Like',
                 'REPLY': 'Reply',
                 'DELETED': 'Photo has been deleted.',
+                'SIMILAR': 'Similar Photos'
             },
             'EDIT': {
                 'HEADER': 'Edit photo data',
                 'DATA_UPDATED': 'Data has been updated',
                 'ADD_LINK': 'You can add up to three commodity links',
+                'LINK_REMOVED': 'Link to the commodity has been removed',
+                'LINKS': 'Links to commodities',
+                'NEW_LINKS': 'Links to bind',
             },
             'LIST': {
                 'HEADER': 'Photo list',
@@ -416,8 +442,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             'FORM': {
                 'TITLE': 'Title',
                 'DESCRIPTION': 'Description',
-            },
-
+            }
         },
         'COMMODITY': {
             'CREATE': {
@@ -465,6 +490,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             },
         },
     });
+
 
   $translateProvider.preferredLanguage('en');
 }]);

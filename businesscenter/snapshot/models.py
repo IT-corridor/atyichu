@@ -157,9 +157,9 @@ class Photo(models.Model):
     path_thumb = UploadPath('snapshot/photo/thumbs', None, 'thumb',
                             *('visitor',))
     path_crop = UploadPath('snapshot/photo/crops', None, 'crop',
-                            *('visitor',))
-    path_cover = UploadPath('snapshot/photo/cover', None, 'cover',
                            *('visitor',))
+    path_cover = UploadPath('snapshot/photo/cover', None, 'cover',
+                            *('visitor',))
     visitor = models.ForeignKey('auth.User', verbose_name=_('Photo owner'))
     mirror = models.ForeignKey(Mirror, verbose_name=_('Mirror'), blank=True,
                                null=True, on_delete=models.SET_NULL)
@@ -230,9 +230,8 @@ class PhotoStamp(models.Model):
     class Meta:
         verbose_name = _('Photo stamp')
         verbose_name_plural = _('Photo stamps')
-        ordering = ('confidence', 'pk')
+        ordering = ('-confidence', 'pk')
         unique_together = ('photo', 'stamp')
-
 
 
 class Comment(models.Model):

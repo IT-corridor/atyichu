@@ -27,8 +27,9 @@ angular.module('group.controllers', ['group.services', 'group.directives',
     }
 ])
 .controller('CtrlGroupList', ['$scope', '$rootScope','$http', '$window',
-'$location', '$routeParams','GetPageLink' , 'Group', 'title', 'my',
-    function($scope, $rootScope, $http, $window, $location, $routeParams, GetPageLink, Group, title, my) {
+'$location', '$routeParams','GetPageLink' , 'Group', 'title', 'my', 'WindowScroll',
+    function($scope, $rootScope, $http, $window, $location, $routeParams,
+     GetPageLink, Group, title, my, WindowScroll) {
 
         $rootScope.title = title;
         var query = (my) ? Group.my : Group.query;
@@ -38,22 +39,6 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         }
 
         $scope.enough = false;
-        // TODO: replace it with directive, its repeats for 3 times
-        var window = angular.element($window);
-
-        function scroll_more(){
-            if (!$scope.enough && $scope.page != undefined){
-                var bodyHeight = this.document.body.scrollHeight;
-                if (bodyHeight == (this.pageYOffset + this.innerHeight)){
-                    $scope.get_more();
-                }
-            }
-        }
-        window.bind('scroll', scroll_more);
-
-        $scope.$on('$destroy', function(e){
-            window.unbind('scroll', scroll_more);
-        });
 
         $scope.r = query($routeParams,
             function(success){
@@ -94,7 +79,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                 }
             );
         }
-
+        WindowScroll($scope, $scope.get_more);
         function create_empty_arrays(obj){
             var k = 0;
             var group_len = obj.results.length;
@@ -109,29 +94,14 @@ angular.module('group.controllers', ['group.services', 'group.directives',
     }
 ])
 .controller('CtrlGroupPhotoList', ['$scope', '$rootScope','$http', '$window',
-'$location', '$routeParams', '$translate', 'GetPageLink' , 'Group', 'IsMember', 'Photo',
+'$location', '$routeParams', '$translate', 'GetPageLink' , 'Group',
+'IsMember', 'Photo', 'WindowScroll',
     function($scope, $rootScope, $http, $window, $location, $routeParams, $translate,
-    GetPageLink, Group, IsMember, Photo) {
+    GetPageLink, Group, IsMember, Photo, WindowScroll) {
 
         $scope.can_edit = false;
         $rootScope.photo_refer = $location.url();
         $scope.enough = false;
-
-        var window = angular.element($window);
-
-        function scroll_more(){
-            if (!$scope.enough && $scope.page != undefined){
-                var bodyHeight = this.document.body.scrollHeight;
-                if (bodyHeight == (this.pageYOffset + this.innerHeight)){
-                    $scope.get_more();
-                }
-            }
-        }
-        window.bind('scroll', scroll_more);
-
-        $scope.$on('$destroy', function(e){
-            window.unbind('scroll', scroll_more);
-        });
 
         $scope.group = Group.get({pk: $routeParams.pk},
             function(success){
@@ -185,6 +155,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                 }
             );
         }
+        WindowScroll($scope, $scope.get_more);
 
         $scope.like = function(index, photo_id){
             /*TODO: this is repeats for two times (or even tree) fix!*/

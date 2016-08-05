@@ -14,6 +14,7 @@ angular.module('photo.services', ['ngResource'])
             liked_list: {method: 'GET', params: {action: 'liked_list'}, responseType: 'json'},
             add_links: {method: 'POST', params: {action: 'add_links'}, responseType: 'json', isArray: true},
             remove_link: {method: 'POST', params: {action: 'remove_link'}, responseType: 'json'},
+            similar: {method: 'GET', params: {action: 'similar'}, responseType: 'json'},
     });
 }])
 .factory('Comment', ['$resource', 'api_path',
