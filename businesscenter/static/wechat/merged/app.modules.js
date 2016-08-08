@@ -190,7 +190,8 @@ app.config(['$translateProvider', function ($translateProvider) {
         },
     });
 
-    'NO_PERMISSION': 'You have not enough privileges perform this action.',
+    $translateProvider.translations('zh', {
+        'NO_PERMISSION': 'You have not enough privileges perform this action.',
         'ERROR': 'Error',
         'CONFIRM': 'Are you sure you want perform this action?',
         'FAIL': 'Fail',
