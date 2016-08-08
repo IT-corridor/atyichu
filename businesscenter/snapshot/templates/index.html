@@ -48,16 +48,35 @@
         <script src="{{ STATIC_URL }}lib/angularjs/angular-touch.min.js"></script>
         <script src="{{ STATIC_URL }}lib/angularjs/ui-bootstrap-tpls.min.js"></script>
         <script src="{{ STATIC_URL }}lib/angularjs/other/angular-translate.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/angularjs/other/angular-translate.min.js"></script>
         <script src="{{ STATIC_URL }}lib/angularjs/other/ngStorage.js"></script>
         <script src="{{ STATIC_URL }}lib/masonry.pkgd.min.js"></script>
         <script src="{{ STATIC_URL }}lib/imagesloaded.pkgd.min.js"></script>
         <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>
 
-        {% get_current_language as LANGUAGE %}
-        {% if LANGUAGE == 'zh-hans'  or LANGUAGE == 'zh-hant' %}
-            {% include 'include/scripts.html' with LANG='en' %}
-        {% else %}
-            {% include 'include/scripts.html' with LANG='en' %}
-        {% endif %}
+        <script src="{{ STATIC_URL }}wechat/merged/app.modules.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/app.constants.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/app.routes.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/app.controllers.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/partials/alert/directives.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/partials/auth/services.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/partials/common/services.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/partials/footer/directives.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/partials/navbar/directives.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/partials/weixin/services.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/partials/selfie/directives.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/common/controllers.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/mirror/controllers.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/mirror/services.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/photo/controllers.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/photo/services.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/photo/directives.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/user/controllers.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/group/services.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/group/directives.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/group/controllers.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/store/services.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/partials/grid/directives.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/partials/tencent/directives.js"></script>
     </body>
 </html>

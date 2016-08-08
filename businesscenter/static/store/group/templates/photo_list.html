@@ -27,7 +27,7 @@
     <div class="row" data-ng-if="group.tags.length > 0">
         <div class="col-md-10 col-md-offset2">
             <hr>
-            <h4>{{ 'GROUP.LIST.TAGS' | translate }}:</h4>
+            <h4>{{ 'GROUP.PHOTO_LIST.TAGS' | translate }}:</h4>
             <ul class="list-inline">
                 <li data-ng-repeat="tag in group.tags">
                     <span class="label label-default">{{ tag.title }}</span>
@@ -38,7 +38,7 @@
     <div class="row" data-ng-if="group.members.length > 0">
         <div class="col-md-10 col-md-offset2">
             <hr>
-            <h4>{{ 'GROUP.LIST.MEMBERS' | translate }}:</h4>
+            <h4>{{ 'GROUP.PHOTO_LIST.MEMBERS' | translate }}:</h4>
             <ul class="list-inline">
                 <li data-ng-repeat="member in group.members">
                     <span class="label label-default">{{ member.username }}</span>

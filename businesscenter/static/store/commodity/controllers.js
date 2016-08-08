@@ -124,6 +124,7 @@ angular.module('commodity.controllers', ['commodity.services', 'common.services'
                     $translate('COMMODITY.UPDATE.SUCCESS').then(function (msg) {
                         $rootScope.alerts.push({ type: 'info', msg:  msg});
                     });
+                    clear_inputs();
                     //$location.path('/commodities/'+$scope.commodity.id+'/edit/');
                     $scope.wait = false;
                 },
@@ -176,6 +177,17 @@ angular.module('commodity.controllers', ['commodity.services', 'common.services'
             $translate('ERROR').then(function (msg) {
                 $rootScope.alerts.push({ type: 'info', msg:  msg});
             });
+        }
+
+        function clear_inputs(){
+            var elements = document.querySelectorAll(".file");
+            console.log(elements);
+            angular.forEach(
+                elements,
+                function(input) {
+                  angular.element(input).val(null);
+                }
+            );
         }
     }
 ])

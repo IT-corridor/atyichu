@@ -17,10 +17,16 @@ return {
 
         };
 
-        $scope.input_blur = function(){
-            if($scope.city){ $scope.results.length = 0 }
+        $scope.on_focus = function(){
+            if (!$scope.is_visible){
+                $scope.is_visible = true;
+            }
+        };
+
+        $scope.on_blur = function(){
             $scope.is_visible = false;
         };
+
         $scope.select_item = function (index) {
             if ($scope.results.length > 0) {
                 $scope.member = $scope.results[index].username;
@@ -48,10 +54,16 @@ return {
 
         };
 
-        $scope.input_blur = function(){
-            if($scope.city){ $scope.results.length = 0 }
+        $scope.on_focus = function(){
+            if (!$scope.is_visible){
+                $scope.is_visible = true;
+            }
+        };
+
+        $scope.on_blur = function(){
             $scope.is_visible = false;
         };
+
         $scope.select_item = function (index) {
             if ($scope.results.length > 0) {
                 $scope.members.push($scope.results[index]);

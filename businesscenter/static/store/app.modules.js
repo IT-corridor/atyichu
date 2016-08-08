@@ -64,6 +64,9 @@ app.config(['$translateProvider', function ($translateProvider) {
             'HOME': {
                 'TITLE': 'Welcome!',
             },
+            'ERROR': {
+                '404': '404: Page Not Found',
+            }
         },
         'FORM': {
             'CANCEL': 'Cancel',
@@ -442,6 +445,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             'FORM': {
                 'TITLE': 'Title',
                 'DESCRIPTION': 'Description',
+                'GROUP': 'Group',
             }
         },
         'COMMODITY': {

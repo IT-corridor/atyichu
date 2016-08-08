@@ -554,6 +554,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                 4. Make a list from that IDs and slice them,
                    we need only that which have confidence over 30.
                 5. Make a query that fetches photos with chosen stamp IDS.
+                6. Filter queryset with photostamps over 30.
             This view is not tested yet.
         """
         obj = self.get_object()
@@ -796,8 +797,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         status = 400
         try:
             q = request.query_params['q']
-            qs = Visitor.objects.filter(~Q(pk=request.user.id),
-                                        user__username__startswith=q)[:5]
+            qs = Visitor.objects.filter(~Q(pk=request.user.id) &
+                                        Q(user__username__startswith=q))[:5]
             serializer = VisitorShortSerializer(qs, many=True)
             data = serializer.data
             status = 200
@@ -811,7 +812,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         status = 400
         try:
             q = request.query_params['q']
-            qs = Vendor.objects.filter(store__brand_name__startswith=q)[:5]
+            qs = Vendor.objects.filter(~Q(pk=request.user.id) &
+                                       Q(store__brand_name__startswith=q))[:5]
 
             serializer = VendorStoreSerializer(qs, many=True)
             data = serializer.data
