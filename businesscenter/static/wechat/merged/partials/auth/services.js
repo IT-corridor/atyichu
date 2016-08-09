@@ -85,7 +85,7 @@ function($rootScope, $cookies, $window, $location, $translate, IsAuthenticated,
                         $window.location.replace("/visitor/");
                     }
                     else{
-                        $window.location.replace("/visitor/?qr=1");
+                        //$window.location.replace("/visitor/?qr=1");
                     }
                 }
                 else{
