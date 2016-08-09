@@ -1,40 +1,25 @@
 var navbar = angular.module('navbar', ['auth.services'])
-.directive('dNavbar', ['$window', '$location', '$routeParams', 'PATH','Logout', 'Auth', 'Me',
-                        function($window, $location, $routeParams, PATH, Logout, Auth, Me) {
+.directive('dNavbar', ['$window', '$location', '$routeParams', 'PATH','Logout', 'Auth',
+                        function($window, $location, $routeParams, PATH, Logout, Auth) {
     return {
         restrict: 'A',
         templateUrl: PATH + 'partials/navbar/templates/navbar.html',
         controller: function($scope, $rootScope, $window, $location, $routeParams,
-         PATH, Logout, Auth, Me ){
+         PATH, Logout, Auth ){
 
             $scope.brand_text = 'ATYICHU';
 
-            $scope.auth = Auth;
             $scope.p = $routeParams;
 
-            var auth_promise = Auth.is_authenticated();
-
-            auth_promise.then(function(result){
-                if (!result.is_authenticated){
-                    $window.location.replace("/visitor/");
-                }
-                else{
-                    // Maybe need to optimize...
-                    $rootScope.visitor = Me.get(function(success){
-                        $rootScope.visitor_resolved = true;
-                    });
-                }
-            });
+            /* Authentication logic inside */
+            Auth.get_user();
 
             $rootScope.$on("$routeChangeStart", function(event, next, current) {
                 $scope.isCollapsed = false;
             });
 
             $scope.logout = function(){
-                $scope.r = Logout.query(function(r){
-                    $rootScope.alerts.push({ type: 'info', msg: 'Good by.'});
-                    $scope.auth.remove();
-                });
+                Auth.logout();
             }
 
 

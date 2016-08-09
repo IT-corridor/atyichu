@@ -24,6 +24,8 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'tmp', 'email')
 
 WEIXIN_APP_ID = ''
 WEIXIN_SECRET = ''
+WEIXIN_QR_APP_ID = ''
+WEIXIN_QR_SECRET = ''
 
 IMAGGA_KEY = ''
 IMAGGA_SECRET = ''

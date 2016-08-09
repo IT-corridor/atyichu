@@ -69,3 +69,15 @@ class WeixinBackend(object):
         buff = [(k, quote(param_map[k]) if encode else param_map[k])
                 for k in li]
         return '&'.join('{}={}'.format(k, v) for (k, v) in buff)
+
+
+class WeixinQRBackend(WeixinBackend):
+    authorize = {'url': 'https://open.weixin.qq.com/connect/qrconnect',
+                 'extra': {'response_type': 'code',
+                           'state': 'STATE#wechat_redirect',
+                           'scope': 'snsapi_userinfo',
+                           }
+                 }
+
+    appid = settings.WEIXIN_QR_APP_ID
+    secret = settings.WEIXIN_QR_SECRET

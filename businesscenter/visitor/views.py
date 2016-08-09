@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
 from .serializers import WeixinSerializer
-from .oauth2 import WeixinBackend
+from .oauth2 import WeixinBackend, WeixinQRBackend
 from .models import Visitor
 from .permissions import IsVisitorSimple
 
@@ -85,8 +85,15 @@ def dummy_api(request):
 
 
 def index(request):
+    """ OAuth2 auhentication with Weixin (Wechat).
+        Params:
+            qr: if it has some value that can be interpreted like True,
+                then we use qr code for authentication.
+                Required for the desktop clients.
+    """
     url = request.GET.get("url", "1")
-    weixin_oauth2 = WeixinBackend()
+    is_qr = True if request.GET.get('qr', None) else False
+    weixin_oauth2 = WeixinQRBackend() if is_qr else WeixinBackend()
     redirect_url = '{}://{}{}'.format(request.scheme,
                                       request.get_host(),
                                       reverse('visitor:openid'))
@@ -135,7 +142,8 @@ def openid(request):
     visitor = serializer.save()
     user = authenticate(weixin=visitor.weixin)
     login(request, user)
-    response.set_cookie('weixin', visitor.weixin, max_age=7200)
+    # Cookie will be set on the front-end side
+    #response.set_cookie('weixin', visitor, max_age=7200)
     return response
 
 
