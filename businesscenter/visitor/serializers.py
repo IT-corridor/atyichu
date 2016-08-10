@@ -5,7 +5,7 @@ from django.utils.encoding import smart_unicode
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import Visitor
+from .models import Visitor, VisitorExtra
 from utils.utils import get_content_file
 
 
@@ -81,6 +81,87 @@ class WeixinSerializer(serializers.ModelSerializer):
                         'access_token': {'write_only': True},
                         'expires_in': {'write_only': True},
                         'refresh_token': {'write_only': True},
+                        'avatar': {'read_only': True},
+                        'pk': {'read_only': True}
+                        }
+
+
+class VisitorExtraSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = VisitorExtra
+
+
+class VisitorSerializer(serializers.ModelSerializer):
+    avatar_url = serializers.URLField(required=False, write_only=True,
+                                      allow_blank=True, allow_null=True)
+    nickname = serializers.CharField(required=True, write_only=True)
+    username = serializers.CharField(source='user.username', read_only=True)
+
+    # Added 23.06.2016
+    photo_count = serializers.IntegerField(source='user.photo_set.count',
+                                           read_only=True)
+    group_count = serializers.IntegerField(source='user.group_set.count',
+                                           read_only=True)
+    extra = VisitorExtraSerializer(write_only=True)
+
+    def create(self, validated_data):
+
+        user_model = get_user_model()
+        nickname = smart_unicode(validated_data['nickname'])
+        user = user_model(username=nickname)
+        password = user_model.objects.make_random_password()
+        user.set_password(password)
+        user.save()
+        visitor = Visitor.objects.create(user=user)
+
+        avatar_url = validated_data.pop('avatar_url', None)
+        if avatar_url:
+            ext, content_file = get_content_file(avatar_url)
+            visitor.avatar.save('{}.{}'.format(nickname, ext), content_file)
+
+        extra = validated_data.pop('extra', None)
+        if extra:
+            VisitorExtra.objects.create(visitor=visitor, **extra)
+
+        return visitor
+
+    def update(self, instance, validated_data):
+        # Later make a different view to update profile data
+        # Later need to be switched off in the view
+        nickname = validated_data.pop('nickname', None)
+        user = self.instance.user
+        if nickname:
+            user.username = nickname
+            user.save()
+        if not instance.avatar.name:
+            avatar_url = validated_data.pop('avatar_url', None)
+            if avatar_url:
+                ext, content_file = get_content_file(avatar_url)
+                instance.avatar.save('{}.{}'.format(user.username,
+                                                    ext), content_file)
+
+        extra = validated_data.pop('extra', None)
+
+        if extra:
+            if extra.get('expires_in', None):
+                extra['token_date'] = timezone.now()
+            VisitorExtra.objects.filter(visitor_id=instance.pk,
+                                        backend=extra['backend'])\
+                .update(**extra)
+
+        for k, v in validated_data.items():
+            if hasattr(instance, k):
+                setattr(instance, k, v)
+
+        instance.save()
+        return instance
+
+    class Meta:
+        model = Visitor
+        fields = ('avatar_url', 'nickname', 'thumb', 'username',
+                  'avatar', 'group_count', 'photo_count', 'pk', 'extra')
+        extra_kwargs = {'thumb': {'read_only': True},
                         'avatar': {'read_only': True},
                         'pk': {'read_only': True}
                         }

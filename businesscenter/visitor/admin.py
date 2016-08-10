@@ -6,7 +6,7 @@ from . import models
 
 class VisitorAdmin(admin.ModelAdmin):
 
-    list_display = ('user', 'is_expired')
+    list_display = ('user',)
 
 
 class VisitorExtraAdmin(admin.ModelAdmin):

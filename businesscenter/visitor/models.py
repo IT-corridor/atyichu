@@ -23,18 +23,6 @@ class Visitor(models.Model):
     thumb = models.ImageField(_('Thumbnail'),
                               upload_to='visitors/thumbs',
                               null=True, blank=True)
-    access_token = models.CharField(_('Weixin Access Token'), max_length=255)
-    refresh_token = models.CharField(_('Weixin Refresh Token'), max_length=255)
-    expires_in = models.PositiveIntegerField(_('Token expires in'))
-    token_date = models.DateTimeField(_('Token date'), default=timezone.now)
-    backend = models.CharField(_('Auth backend'), max_length=50,
-                               default='weixin')
-
-    def is_expired(self):
-        """Not a field --- it is a method. Checks if token is expired.
-        Returns True or False."""
-        return timezone.now() >\
-               self.token_date + timezone.timedelta(seconds=self.expires_in)
 
     def __unicode__(self):
         return self.user.username

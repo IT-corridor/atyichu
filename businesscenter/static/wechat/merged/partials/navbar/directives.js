@@ -41,7 +41,7 @@ var navbar = angular.module('navbar', ['auth.services'])
                 }
             };
 
-             var url = encodeURIComponent("http://" + window.location.host + "/visitor/qr");
+             var url = encodeURIComponent("http://" + window.location.host + "/visitor/openid?qr=1");
              $scope.wxlogin = new WxLogin({
                   id:"qr",
                   appid: "wx6ad4cd8923e9ea5e",

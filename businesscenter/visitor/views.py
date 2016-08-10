@@ -12,9 +12,9 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
-from .serializers import WeixinSerializer
+from .serializers import WeixinSerializer, VisitorSerializer
 from .oauth2 import WeixinBackend, WeixinQRBackend
-from .models import Visitor
+from .models import Visitor, VisitorExtra
 from .permissions import IsVisitorSimple
 
 
@@ -23,11 +23,14 @@ from .permissions import IsVisitorSimple
 def login_view(request):
     # USE openid
     status = 400
+    backend = 'weixin'
     try:
-        visitor = Visitor.objects.get(weixin=request.data['weixin'])
-        serializer = WeixinSerializer(instance=visitor)
+        visitor = Visitor.objects.get(visitorextra__openid=request.data['weixin'],
+                                      visitorextra__backend=backend)
+        serializer = VisitorSerializer(instance=visitor)
         user_data = serializer.data
-        user = authenticate(weixin=visitor.weixin)
+        extra = visitor.visitorextra_set.get(backend=backend)
+        user = authenticate(weixin=extra.openid)
         login(request, user)
     except KeyError as e:
         user_data = {'weixin': _('Missed param')}
@@ -91,7 +94,7 @@ def index(request):
                 then we use qr code for authentication.
                 Required for the desktop clients.
     """
-    url = request.GET.get("url", "1")
+    url = request.GET.get("qr", "1")
     weixin_oauth2 = WeixinBackend()
     redirect_url = '{}://{}{}'.format(request.scheme,
                                       request.get_host(),
@@ -101,7 +104,7 @@ def index(request):
     return HttpResponseRedirect(url)
 
 
-def openid(request):
+def openid_old(request):
     redirect = reverse('index')
 
     response = HttpResponseRedirect(redirect + '#!/')
@@ -144,20 +147,28 @@ def openid(request):
     return response
 
 
-@api_view(['GET', 'POST'])
-@permission_classes((AllowAny,))
-def openid_qr(request):
-    mail_admins('test qr', 'open the qr handler')
+def openid(request):
+
+    redirect = reverse('index')
+    qr = request.GET.get("qr", None)
+
+    response = HttpResponseRedirect(redirect + '#!/')
+    mail_admins('test wechat openid handler', 'open the qr handler')
 
     if request.user.is_authenticated():
-        return Response(status=400)
+        return response
 
     code = request.GET.get("code", None)
 
     if not code:
         return JsonResponse({'error': _('You don`t have weixin code.')})
 
-    weixin_oauth = WeixinQRBackend()
+    if qr:
+        weixin_oauth = WeixinQRBackend()
+        backend = 'weixin_qr'
+    else:
+        weixin_oauth = WeixinBackend()
+        backend = 'weixin'
     try:
         token_data = weixin_oauth.get_access_token(code)
     except TypeError:
@@ -165,43 +176,58 @@ def openid_qr(request):
 
     user_info = weixin_oauth.get_user_info(token_data['access_token'],
                                            token_data['openid'])
+
     mail_admins('info data', str(user_info))
     data = {'avatar_url': user_info.get('headimgurl'),
             'nickname': user_info.get('nickname'),
-            'weixin': token_data['openid'],
-            'access_token': token_data['access_token'],
-            'expires_in': token_data['expires_in'],
-            'refresh_token': token_data['refresh_token'],
-            'backend': 'weixin_qr'}
+            'extra': {
+                'openid': token_data['openid'],
+                'access_token': token_data['access_token'],
+                'expires_in': token_data['expires_in'],
+                'refresh_token': token_data['refresh_token'],
+                'backend': backend,
+            }
+    }
     try:
-        visitor = Visitor.objects.get(weixin=token_data['openid'])
+        extra = VisitorExtra.objects.get(openid=token_data['openid'],
+                                         backend=backend)
+        visitor = extra.visitor
     except Visitor.DoesNotExist:
-        serializer = WeixinSerializer(data=data)
+        serializer = VisitorSerializer(data=data)
+        extra = None
     else:
-        serializer = WeixinSerializer(instance=visitor, data=data)
+        serializer = VisitorSerializer(instance=visitor)
 
     serializer.is_valid(raise_exception=True)
     visitor = serializer.save()
-    user = authenticate(weixin=visitor.weixin)
+    if not extra:
+        extra = visitor.visitorextra_set.get(backend=backend)
+    user = authenticate(weixin=extra.openid, backend=backend)
     login(request, user)
-    # Cookie will be set on the front-end side
-    #response.set_cookie('weixin', visitor, max_age=7200)
-    return Response(serializer.data)
+    return response
 
 
 @api_view(['POST'])
 @permission_classes((IsVisitorSimple,))
 def update_visitor(request):
     """ Updating user data from weixin """
-    wx = WeixinBackend()
+    # TODO: TEST
+    backend = request.query_params.get('b', 'weixin')
+    wx = WeixinBackend() if backend == 'weixin' else WeixinQRBackend()
     visitor = request.user.visitor
-    data = {'access_token': visitor.access_token,
-            'weixin': visitor.weixin}
-    if visitor.is_expired():
-        data.update(wx.refresh_user_credentials(visitor.refresh_token))
-    user_info = wx.get_user_info(data['access_token'], data['weixin'])
-    data.update(user_info)
-    serializer = WeixinSerializer(instance=visitor, data=data, partial=True)
+    extra = VisitorExtra.objects.get(visitor=visitor, backend=backend)
+    data = {'access_token': extra.access_token,
+            'openid': extra.weixin}
+    if extra.is_expired():
+        data.update(wx.refresh_user_credentials(extra.refresh_token))
+    user_info = wx.get_user_info(data['access_token'], data['openid'])
+    user_data = {
+        'avatar_url': user_info.get('headimgurl'),
+        'nickname': user_info.get('nickname'),
+        'extra': data,
+    }
+    serializer = VisitorSerializer(instance=visitor,
+                                   data=user_data, partial=True)
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(data=serializer.data)
@@ -212,7 +238,7 @@ def update_visitor(request):
 def get_me(request):
     """ Provides personal user data, username and thumb """
     visitor = request.user.visitor
-    serializer = WeixinSerializer(instance=visitor)
+    serializer = VisitorSerializer(instance=visitor)
     return Response(data=serializer.data)
 
 
@@ -220,9 +246,9 @@ def test_auth(request):
     host = request.get_host()
     if host == '127.0.0.1:8000':
         visitor = Visitor.objects.get(weixin='weixin2')
-        user = authenticate(weixin=visitor.weixin)
+        extra = visitor.visitorextra_set.get(backend='weixin')
+        user = authenticate(weixin=extra.openid)
         login(request, user)
         response = HttpResponseRedirect('/#!/')
-        response.set_cookie('weixin', visitor.weixin, max_age=7200)
         return response
     raise PermissionDenied
