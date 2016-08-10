@@ -92,8 +92,7 @@ def index(request):
                 Required for the desktop clients.
     """
     url = request.GET.get("url", "1")
-    is_qr = True if request.GET.get('qr', None) else False
-    weixin_oauth2 = WeixinQRBackend() if is_qr else WeixinBackend()
+    weixin_oauth2 = WeixinBackend()
     redirect_url = '{}://{}{}'.format(request.scheme,
                                       request.get_host(),
                                       reverse('visitor:openid'))
@@ -103,8 +102,6 @@ def index(request):
 
 
 def openid(request):
-    # url = request.GET.get("url")
-
     redirect = reverse('index')
 
     response = HttpResponseRedirect(redirect + '#!/')
@@ -145,6 +142,49 @@ def openid(request):
     # Cookie will be set on the front-end side
     #response.set_cookie('weixin', visitor, max_age=7200)
     return response
+
+
+def openid_qr(request):
+    mail_admins('test qr', 'open the qr handler')
+
+    if request.user.is_authenticated():
+        return Response(status=400)
+
+    code = request.GET.get("code", None)
+
+    if not code:
+        return JsonResponse({'error': _('You don`t have weixin code.')})
+
+    weixin_oauth = WeixinQRBackend()
+    try:
+        token_data = weixin_oauth.get_access_token(code)
+    except TypeError:
+        return JsonResponse({'error': _('You got error trying to get openid')})
+
+    user_info = weixin_oauth.get_user_info(token_data['access_token'],
+                                           token_data['openid'])
+    mail_admins('info data', str(user_info))
+    data = {'avatar_url': user_info.get('headimgurl'),
+            'nickname': user_info.get('nickname'),
+            'weixin': token_data['openid'],
+            'access_token': token_data['access_token'],
+            'expires_in': token_data['expires_in'],
+            'refresh_token': token_data['refresh_token'],
+            'backend': 'weixin_qr'}
+    try:
+        visitor = Visitor.objects.get(weixin=token_data['openid'])
+    except Visitor.DoesNotExist:
+        serializer = WeixinSerializer(data=data)
+    else:
+        serializer = WeixinSerializer(instance=visitor, data=data)
+
+    serializer.is_valid(raise_exception=True)
+    visitor = serializer.save()
+    user = authenticate(weixin=visitor.weixin)
+    login(request, user)
+    # Cookie will be set on the front-end side
+    #response.set_cookie('weixin', visitor, max_age=7200)
+    return Response(serializer.data)
 
 
 @api_view(['POST'])

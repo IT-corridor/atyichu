@@ -27,6 +27,8 @@ class Visitor(models.Model):
     refresh_token = models.CharField(_('Weixin Refresh Token'), max_length=255)
     expires_in = models.PositiveIntegerField(_('Token expires in'))
     token_date = models.DateTimeField(_('Token date'), default=timezone.now)
+    backend = models.CharField(_('Auth backend'), max_length=50,
+                               default='weixin')
 
     def is_expired(self):
         """Not a field --- it is a method. Checks if token is expired.

@@ -15,6 +15,8 @@ class WeixinSerializer(serializers.ModelSerializer):
                                       allow_blank=True, allow_null=True)
     nickname = serializers.CharField(required=True, write_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
+    backend = serializers.CharField(required=False, write_only=True,
+                                    allow_blank=True, allow_null=True)
     # Added 23.06.2013
     photo_count = serializers.IntegerField(source='user.photo_set.count',
                                            read_only=True)
@@ -27,6 +29,7 @@ class WeixinSerializer(serializers.ModelSerializer):
 
         user_model = get_user_model()
         nickname = smart_unicode(validated_data['nickname'])
+        backend = validated_data.get('backend', 'weixin')
         # In this case we assume that one user can have only one weixin account
         user = user_model(username=nickname)
         password = user_model.objects.make_random_password()
@@ -35,7 +38,8 @@ class WeixinSerializer(serializers.ModelSerializer):
         visitor = Visitor.objects.create(weixin=validated_data['weixin'],
                                          user=user,
                                          access_token=validated_data['access_token'],
-                                         expires_in=validated_data['expires_in'])
+                                         expires_in=validated_data['expires_in'],
+                                         backend=backend)
         avatar_url = validated_data.pop('avatar_url', None)
         if avatar_url:
             ext, content_file = get_content_file(avatar_url)
