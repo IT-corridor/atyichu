@@ -144,6 +144,7 @@ def openid(request):
     return response
 
 
+@api_view(['GET', 'POST'])
 def openid_qr(request):
     mail_admins('test qr', 'open the qr handler')
 
