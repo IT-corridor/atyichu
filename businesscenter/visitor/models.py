@@ -42,3 +42,30 @@ class Visitor(models.Model):
     class Meta:
         verbose_name = _('Visitor')
         verbose_name_plural = _('Visitors')
+
+
+class VisitorExtra(models.Model):
+    """ This model contains extra data from oauth2 wechat """
+    openid = models.CharField(_('Weixin open id'), max_length=30,
+                              validators=[validate_weixin], unique=True,
+                              help_text=_('4-30 characters, '
+                                          'Chinese and English letters,'
+                                          ' numbers, -, _'))
+    access_token = models.CharField(_('Weixin Access Token'), max_length=255)
+    refresh_token = models.CharField(_('Weixin Refresh Token'), max_length=255)
+    expires_in = models.PositiveIntegerField(_('Token expires in'))
+    token_date = models.DateTimeField(_('Token date'), default=timezone.now)
+    backend = models.CharField(_('Auth backend'), max_length=50,
+                               default='weixin')
+    visitor = models.ForeignKey(Visitor, verbose_name=_('Visitor'))
+
+
+    def is_expired(self):
+        """Not a field --- it is a method. Checks if token is expired.
+        Returns True or False."""
+        return timezone.now() > \
+               self.token_date + timezone.timedelta(seconds=self.expires_in)
+
+    class Meta:
+        verbose_name = _('Extra Data')
+        unique_together = ('visitor', 'backend')
