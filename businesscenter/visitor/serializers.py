@@ -90,8 +90,7 @@ class VisitorExtraSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VisitorExtra
-        extra_kwargs = {'visitor': {'required': False,
-                                    'read_only': True}}
+        exclude = ('visitor',)
 
 
 class VisitorSerializer(serializers.ModelSerializer):
