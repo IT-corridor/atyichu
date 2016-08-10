@@ -108,20 +108,28 @@ class VisitorSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
 
+        extra = validated_data.pop('extra', None)
+
         user_model = get_user_model()
         nickname = smart_unicode(validated_data['nickname'])
-        user = user_model(username=nickname)
-        password = user_model.objects.make_random_password()
-        user.set_password(password)
-        user.save()
-        visitor = Visitor.objects.create(user=user)
+        user, created = user_model.objects.get_or_create(username=nickname)
+        if created:
+            password = user_model.objects.make_random_password()
+            user.set_password(password)
+            user.save()
+        exists = user.visitor.visitorextra_set.\
+            filter(backend=extra['backend']).exists()
+        if exists:
+            error = {'detail': _('Such kind of relation already exists.')}
+            raise serializers.ValidationError(error)
+        visitor, c = Visitor.objects.get_or_create(user=user)
 
         avatar_url = validated_data.pop('avatar_url', None)
+
         if avatar_url:
             ext, content_file = get_content_file(avatar_url)
             visitor.avatar.save('{}.{}'.format(nickname, ext), content_file)
 
-        extra = validated_data.pop('extra', None)
         if extra:
             VisitorExtra.objects.create(visitor=visitor, **extra)
 
