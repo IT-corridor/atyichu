@@ -40,6 +40,16 @@ var navbar = angular.module('navbar', ['auth.services'])
                     $location.path('/photo/search').search({q: $scope.p.q});
                 }
             };
+
+             var url = encodeURIComponent("http://" + window.location.host + "/visitor/openid");
+             $scope.wxlogin = new WxLogin({
+                  id:"qr",
+                  appid: "wx6ad4cd8923e9ea5e",
+                  scope: "snsapi_login",
+                  redirect_uri: url,
+                  state: Math.ceil(Math.random()*1000),
+                });
+             console.log(url);
         }
     };
 }]);

@@ -22,10 +22,10 @@ LOCALE_PATHS = (os.path.join(BASE_DIR, 'locale'),)
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'tmp', 'email')
 
-WEIXIN_APP_ID = ''
-WEIXIN_SECRET = ''
-WEIXIN_QR_APP_ID = ''
-WEIXIN_QR_SECRET = ''
+WEIXIN_APP_ID = 'wx923ca88a0f604e90'
+WEIXIN_SECRET = '392aad4be93c5bf2a535d5b932186b7b'
+WEIXIN_QR_APP_ID = 'wx6ad4cd8923e9ea5e'
+WEIXIN_QR_SECRET = 'a385ba5adf67452659c3ff7615e86198'
 
 IMAGGA_KEY = ''
 IMAGGA_SECRET = ''

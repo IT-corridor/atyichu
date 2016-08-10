@@ -79,5 +79,5 @@ class WeixinQRBackend(WeixinBackend):
                            }
                  }
 
-    #appid = settings.WEIXIN_QR_APP_ID
-    #secret = settings.WEIXIN_QR_SECRET
+    appid = settings.WEIXIN_QR_APP_ID
+    secret = settings.WEIXIN_QR_SECRET
