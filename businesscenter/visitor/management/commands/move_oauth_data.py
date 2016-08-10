@@ -9,14 +9,20 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         visitors = Visitor.objects.all()
+        errors = []
         for data in visitors:
-            VisitorExtra.objects.create(
-                openid=data.weixin,
-                access_token=data.access_token,
-                refresh_token=data.refresh_token,
-                expires_in=data.expires_in,
-                token_date=data.token_date,
-                visitor_id=data.pk
-            )
+            try:
+                VisitorExtra.objects.create(
+                    openid=data.weixin,
+                    access_token=data.access_token,
+                    refresh_token=data.refresh_token,
+                    expires_in=data.expires_in,
+                    token_date=data.token_date,
+                    visitor_id=data.pk
+                )
+            except Exception as e:
+                errors.append((e.message, data))
+                self.stdout.write(
+                    self.style.WARNING(e.message))
         self.stdout.write(
             self.style.SUCCESS('OAuth2 data has been moved!'))
