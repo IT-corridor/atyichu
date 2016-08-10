@@ -196,13 +196,10 @@ def openid(request):
     except VisitorExtra.DoesNotExist:
         mail_admins('Attempt to create new visitor', 'Uhuh')
         serializer = VisitorSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        visitor = serializer.save()
         extra = None
 
-    else:
-        serializer = VisitorSerializer(instance=visitor)
-
-    serializer.is_valid(raise_exception=True)
-    visitor = serializer.save()
     if not extra:
         extra = visitor.visitorextra_set.get(backend=backend)
     user = authenticate(weixin=extra.openid, backend=backend)
