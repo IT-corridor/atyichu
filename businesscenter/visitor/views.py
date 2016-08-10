@@ -104,56 +104,12 @@ def index(request):
     return HttpResponseRedirect(url)
 
 
-def openid_old(request):
-    redirect = reverse('index')
-
-    response = HttpResponseRedirect(redirect + '#!/')
-
-    if request.user.is_authenticated():
-        return response
-
-    code = request.GET.get("code", None)
-
-    if not code:
-        return JsonResponse({'error': _('You don`t have weixin code.')})
-
-    weixin_oauth = WeixinBackend()
-    try:
-        token_data = weixin_oauth.get_access_token(code)
-    except TypeError:
-        return JsonResponse({'error': _('You got error trying to get openid')})
-
-    user_info = weixin_oauth.get_user_info(token_data['access_token'],
-                                           token_data['openid'])
-    data = {'avatar_url': user_info.get('headimgurl'),
-            'nickname': user_info.get('nickname'),
-            'weixin': token_data['openid'],
-            'access_token': token_data['access_token'],
-            'expires_in': token_data['expires_in'],
-            'refresh_token': token_data['refresh_token']}
-    try:
-        visitor = Visitor.objects.get(weixin=token_data['openid'])
-    except Visitor.DoesNotExist:
-        serializer = WeixinSerializer(data=data)
-    else:
-        serializer = WeixinSerializer(instance=visitor, data=data)
-
-    serializer.is_valid(raise_exception=True)
-    visitor = serializer.save()
-    user = authenticate(weixin=visitor.weixin)
-    login(request, user)
-    # Cookie will be set on the front-end side
-    #response.set_cookie('weixin', visitor, max_age=7200)
-    return response
-
-
 def openid(request):
 
     redirect = reverse('index')
     qr = request.GET.get("qr", None)
 
     response = HttpResponseRedirect(redirect + '#!/')
-    mail_admins('test wechat openid handler', 'open the qr handler')
 
     if request.user.is_authenticated():
         return response
@@ -177,7 +133,6 @@ def openid(request):
     user_info = weixin_oauth.get_user_info(token_data['access_token'],
                                            token_data['openid'])
 
-    mail_admins('info data', str(user_info))
     data = {'avatar_url': user_info.get('headimgurl'),
             'nickname': user_info.get('nickname'),
             'extra': {
@@ -188,7 +143,6 @@ def openid(request):
                 'backend': backend,
             }
     }
-    mail_admins('data to handle', str(data))
     try:
         extra = VisitorExtra.objects.get(openid=token_data['openid'],
                                          backend=backend)
@@ -204,7 +158,6 @@ def openid(request):
         extra = visitor.visitorextra_set.get(backend=backend)
     user = authenticate(weixin=extra.openid, backend=backend)
     login(request, user)
-    mail_admins('Finish handling', 'the End')
     return response
 
 
