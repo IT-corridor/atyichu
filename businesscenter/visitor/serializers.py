@@ -91,8 +91,6 @@ class VisitorExtraSerializer(serializers.ModelSerializer):
     class Meta:
         model = VisitorExtra
         extra_kwargs = {'visitor': {'required': False,
-                                    'allow_blank': True,
-                                    'allow_null': True,
                                     'read_only': True}}
 
 
