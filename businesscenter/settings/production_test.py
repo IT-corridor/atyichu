@@ -43,7 +43,7 @@ DATABASES = {
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-#EMAIL_BACKEND = 'django_mailgun_mime.backends.MailgunMIMEBackend'
+EMAIL_BACKEND = 'django_mailgun_mime.backends.MailgunMIMEBackend'
 MAILGUN_API_KEY = data['MAILGUN_API_KEY']
 MAILGUN_DOMAIN_NAME = data['MAILGUN_DOMAIN_NAME']
 
