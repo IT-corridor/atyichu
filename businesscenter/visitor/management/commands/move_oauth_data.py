@@ -8,7 +8,7 @@ class Command(BaseCommand):
     help = 'Moves oauth2 data to another (related) table'
 
     def handle(self, *args, **options):
-        VisitorExtra.objects.delete()
+        VisitorExtra.objects.all().delete()
         visitors = Visitor.objects.all()
         errors = []
         for data in visitors:
