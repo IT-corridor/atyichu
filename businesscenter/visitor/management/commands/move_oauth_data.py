@@ -8,6 +8,7 @@ class Command(BaseCommand):
     help = 'Moves oauth2 data to another (related) table'
 
     def handle(self, *args, **options):
+        VisitorExtra.objects.delete()
         visitors = Visitor.objects.all()
         errors = []
         for data in visitors:
@@ -24,5 +25,10 @@ class Command(BaseCommand):
                 errors.append((e.message, data))
                 self.stdout.write(
                     self.style.WARNING(e.message))
+        if errors:
+            for error, obj in errors:
+                self.stdout.write(
+                    self.style.DANGER('Error {}, Objgect.id {}'
+                                      .format(error, obj.id)))
         self.stdout.write(
             self.style.SUCCESS('OAuth2 data has been moved!'))
