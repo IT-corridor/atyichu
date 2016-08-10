@@ -188,13 +188,16 @@ def openid(request):
                 'backend': backend,
             }
     }
+    mail_admins('data to handle', str(data))
     try:
         extra = VisitorExtra.objects.get(openid=token_data['openid'],
                                          backend=backend)
         visitor = extra.visitor
-    except Visitor.DoesNotExist:
+    except VisitorExtra.DoesNotExist:
+        mail_admins('Attempt to create new visitor', 'Uhuh')
         serializer = VisitorSerializer(data=data)
         extra = None
+
     else:
         serializer = VisitorSerializer(instance=visitor)
 
@@ -204,6 +207,7 @@ def openid(request):
         extra = visitor.visitorextra_set.get(backend=backend)
     user = authenticate(weixin=extra.openid, backend=backend)
     login(request, user)
+    mail_admins('Finish handling', 'the End')
     return response
 
 
