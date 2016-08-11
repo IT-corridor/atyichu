@@ -27,7 +27,7 @@ from .sutils import check_sign
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin, \
     VisitorCreateMixin, PaginationMixin
 from utils.paginators import CustomPagination
-from visitor.permissions import IsVisitor
+from visitor.permissions import IsVisitor, IsVisitorOrVendor
 from visitor.serializers import VisitorShortSerializer
 from visitor.models import Visitor
 from account.models import Vendor, Store
@@ -577,7 +577,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.select_related('author__visitor')
     serializer_class = serializers.CommentSerializer
-    permission_classes = [IsVisitor]
+    permission_classes = [IsVisitorOrVendor]
     pagination_class = None
 
     def create(self, request, *args, **kwargs):

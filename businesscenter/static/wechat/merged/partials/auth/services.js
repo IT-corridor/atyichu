@@ -46,9 +46,10 @@ auth.factory('IsSmartDevice', ['$window',
     }
 ]);
 auth.factory('Auth', ['$rootScope', '$cookies', '$window', '$location', '$translate', 'IsAuthenticated',
-                      'Me', 'Logout', 'IsSmartDevice',
+                      'Me', 'Logout', 'IsSmartDevice', 'LoadScript',
 function($rootScope, $cookies, $window, $location, $translate, IsAuthenticated,
-         Me, Logout, IsSmartDevice){
+         Me, Logout, IsSmartDevice, LoadScript){
+    /* Logic set for authentication */
     var auth = {};
     auth.get = function(key){
         return $cookies.getObject(key) ? $cookies.getObject(key) : null;
@@ -69,6 +70,20 @@ function($rootScope, $cookies, $window, $location, $translate, IsAuthenticated,
 
         return IsAuthenticated.get().$promise;
     };
+    auth.login_handler = function(){
+        var WxLoginScript = LoadScript('http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js');
+        WxLoginScript.then(function(success){
+            var url = encodeURIComponent("http://" + window.location.host + "/visitor/openid?qr=1");
+            var login = new WxLogin({
+                id:"qr",
+                appid: "wx6ad4cd8923e9ea5e",
+                scope: "snsapi_login",
+                redirect_uri: url,
+                state: Math.ceil(Math.random()*1000),
+            });
+        });
+
+    };
     auth.get_user = function() {
         /*The main authentication logic */
 
@@ -85,7 +100,7 @@ function($rootScope, $cookies, $window, $location, $translate, IsAuthenticated,
                         $window.location.replace("/visitor/");
                     }
                     else{
-                        //$window.location.replace("/visitor/?qr=1");
+                        self.login_handler();
                     }
                 }
                 else{

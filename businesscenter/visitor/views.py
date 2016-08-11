@@ -5,14 +5,14 @@ from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.contrib.auth import login, logout, authenticate
 from django.core.urlresolvers import reverse
-from django.core.mail import send_mail, mail_admins
+from django.core.mail import mail_admins
 from django.http import HttpResponseRedirect, JsonResponse
 from django.core.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
-from .serializers import WeixinSerializer, VisitorSerializer
+from .serializers import VisitorSerializer
 from .oauth2 import WeixinBackend, WeixinQRBackend
 from .models import Visitor, VisitorExtra
 from .permissions import IsVisitorSimple
@@ -148,7 +148,6 @@ def openid(request):
                                          backend=backend)
         visitor = extra.visitor
     except VisitorExtra.DoesNotExist:
-        mail_admins('Attempt to create new visitor', 'Uhuh')
         serializer = VisitorSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         visitor = serializer.save()
@@ -199,8 +198,7 @@ def get_me(request):
 def test_auth(request):
     host = request.get_host()
     if host == '127.0.0.1:8000':
-        visitor = Visitor.objects.get(weixin='weixin2')
-        extra = visitor.visitorextra_set.get(backend='weixin')
+        extra = VisitorExtra.objects.get(backend='weixin', openid='weixin')
         user = authenticate(weixin=extra.openid)
         login(request, user)
         response = HttpResponseRedirect('/#!/')

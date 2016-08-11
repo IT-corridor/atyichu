@@ -99,6 +99,7 @@ angular.module('photo.controllers', ['photo.services', 'photo.directives',
         $scope.enough = false;
         $scope.r = Photo.similar({pk: $routeParams.pk}, function(success){
             $scope.page = success.current;
+            $scope.enough = ($scope.page >= success.total) ? true : false;
         });
 
         $scope.get_more = function(){

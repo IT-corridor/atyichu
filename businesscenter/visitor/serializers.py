@@ -11,6 +11,8 @@ from utils.utils import get_content_file
 
 # PART 1 FEATURES #
 class WeixinSerializer(serializers.ModelSerializer):
+    """ Currently not used"""
+    # TODO: remove it
     avatar_url = serializers.URLField(required=False, write_only=True,
                                       allow_blank=True, allow_null=True)
     nickname = serializers.CharField(required=True, write_only=True)

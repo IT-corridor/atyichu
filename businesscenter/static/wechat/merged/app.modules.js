@@ -3,6 +3,7 @@ var app = angular.module('app.main', [
     'ngAria',
     'ngTouch',
     'ui.bootstrap',
+    'asyncload.services',
     'pascalprecht.translate',
     'app.constants',
     'app.route',

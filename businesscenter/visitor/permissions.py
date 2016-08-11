@@ -4,7 +4,7 @@ from rest_framework import permissions
 
 
 class IsVisitor(permissions.IsAuthenticated):
-
+    """Left as legacy """
     def has_permission(self, request, view):
         if view.action == 'create':
             # Allow any user to create mirror instances
@@ -12,6 +12,21 @@ class IsVisitor(permissions.IsAuthenticated):
         base_perm = super(IsVisitor, self).has_permission(request, view)
         if base_perm:
             if hasattr(request.user, 'visitor'):
+                return True
+        return request.user.is_staff
+
+
+class IsVisitorOrVendor(permissions.IsAuthenticated):
+
+    def has_permission(self, request, view):
+        if view.action == 'create':
+            # Allow any user to create mirror instances
+            return True
+        base_perm = super(IsVisitorOrVendor, self)\
+            .has_permission(request, view)
+        if base_perm:
+            if hasattr(request.user, 'visitor') or \
+                    hasattr(request.user, 'vendor'):
                 return True
         return request.user.is_staff
 

@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from .models import Visitor, VisitorExtra
-from .serializers import WeixinSerializer
 
 
 class WeixinBackend(object):

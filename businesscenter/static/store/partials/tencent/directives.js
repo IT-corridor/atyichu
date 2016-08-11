@@ -48,7 +48,7 @@ angular.module('tencent', [])
     },
   };
 })
-.directive('mapAddress', function() {
+.directive('mapAddress',['LoadScript', function(LoadScript) {
   return {
     restrict: 'AC',
     scope: {
@@ -58,9 +58,12 @@ angular.module('tencent', [])
     },
     link: function(scope, element, attrs) {
       // Set up center coordinates
+      var script = LoadScript('http://map.qq.com/api/js?v=2.exp&callback=init_async', true);
       var unwatch = scope.$watch('address', function(newValue, oldValue) {
           if (newValue){
-            render_map();
+            script.then(function(success){
+                render_map();
+            });
             unwatch();
           }
       });
@@ -102,4 +105,4 @@ angular.module('tencent', [])
 
     },
   };
-});
+}]);

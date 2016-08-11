@@ -4,7 +4,7 @@ from django.template.defaultfilters import timesince, truncatechars_html
 from rest_framework import serializers
 
 from . import models
-from visitor.serializers import WeixinSerializer, VisitorShortSerializer
+from visitor.serializers import VisitorSerializer, VisitorShortSerializer
 from account.serializers import StoreShortSerializer
 from catalog.serializers import CommodityLinkSerializer
 
@@ -58,7 +58,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_author_data(self, obj):
         if hasattr(obj.author, 'visitor'):
-            serializer = WeixinSerializer(instance=obj.author.visitor,
+            serializer = VisitorSerializer(instance=obj.author.visitor,
                                           read_only=True)
             return serializer.data
         elif hasattr(obj.author, 'vendor'):
