@@ -175,7 +175,7 @@ def update_visitor(request):
     visitor = request.user.visitor
     extra = VisitorExtra.objects.get(visitor=visitor, backend=backend)
     data = {'access_token': extra.access_token,
-            'openid': extra.weixin}
+            'openid': extra.openid}
     if extra.is_expired():
         data.update(wx.refresh_user_credentials(extra.refresh_token))
     user_info = wx.get_user_info(data['access_token'], data['openid'])
