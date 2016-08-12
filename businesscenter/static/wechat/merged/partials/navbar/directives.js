@@ -15,11 +15,12 @@ var navbar = angular.module('navbar', ['auth.services'])
 
             $rootScope.$on("$routeChangeStart", function(event, next, current) {
                 $scope.isCollapsed = false;
+                Auth.get_user();
             });
 
             $rootScope.$on("$routeChangeSuccess", function(event, next, current) {
                 /* Authentication logic inside */
-                Auth.get_user();
+                //Auth.get_user();
             });
 
             $scope.logout = function(){
