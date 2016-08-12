@@ -157,9 +157,15 @@ class VisitorSerializer(serializers.ModelSerializer):
         if extra:
             if extra.get('expires_in', None):
                 extra['token_date'] = timezone.now()
-            VisitorExtra.objects.filter(visitor_id=instance.pk,
-                                        backend=extra['backend'])\
-                .update(**extra)
+            openid = extra.pop('openid')
+            backend = extra.pop('backend')
+            extra_instance = VisitorExtra.objects.get(openid=openid,
+                                                      backend=backend)
+            for k, v in extra.items():
+                if hasattr(extra_instance, k):
+                    setattr(extra_instance, k, v)
+
+            extra_instance.save()
 
         for k, v in validated_data.items():
             if hasattr(instance, k):
