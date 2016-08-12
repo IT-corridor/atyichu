@@ -146,6 +146,10 @@ def openid(request):
     try:
         extra = VisitorExtra.objects.get(openid=token_data['openid'],
                                          backend=backend)
+        s = VisitorExtraSerializer(instance=extra, data=data['extra'],
+                                   partial=True)
+        s.is_valid(raise_exception=True)
+        s.save()
         visitor = extra.visitor
     except VisitorExtra.DoesNotExist:
         serializer = VisitorSerializer(data=data)
