@@ -45,9 +45,9 @@ auth.factory('IsSmartDevice', ['$window',
         }
     }
 ]);
-auth.factory('Auth', ['$rootScope', '$cookies', '$window', '$location', '$translate', 'IsAuthenticated',
+auth.factory('Auth', ['$rootScope', '$cookies', '$window', '$location', '$route', '$translate', 'IsAuthenticated',
                       'Me', 'Logout', 'IsSmartDevice', 'LoadScript', 'ProfileSync',
-function($rootScope, $cookies, $window, $location, $translate, IsAuthenticated,
+function($rootScope, $cookies, $window, $location, $route, $translate, IsAuthenticated,
          Me, Logout, IsSmartDevice, LoadScript, ProfileSync){
     /* Logic set for authentication */
     var auth = {};
@@ -90,9 +90,10 @@ function($rootScope, $cookies, $window, $location, $translate, IsAuthenticated,
     };
     auth.get_user = function() {
         /*The main authentication logic */
-
+        console.log('get user trigger');
         var self = this;
         if (this.user && !$rootScope.visitor){
+
             $rootScope.visitor_resolved = true;
             $rootScope.visitor = this.user;
         }
@@ -134,7 +135,8 @@ function($rootScope, $cookies, $window, $location, $translate, IsAuthenticated,
             self.remove();
             $rootScope.visitor_resolved = false;
             $rootScope.visitor = null;
-            $location.path('/');
+            $route.reload();
+            //$location.path('/');
         });
     };
 
