@@ -8,7 +8,6 @@ from rest_framework import serializers
 from .models import Visitor, VisitorExtra
 from utils.utils import get_content_file
 
-from django.core.mail import mail_admins
 
 # PART 1 FEATURES #
 class WeixinSerializer(serializers.ModelSerializer):

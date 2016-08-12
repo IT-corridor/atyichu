@@ -11,8 +11,6 @@ var navbar = angular.module('navbar', ['auth.services'])
 
             $scope.p = $routeParams;
 
-                //Auth.get_user();
-
             $rootScope.$on("$routeChangeStart", function(event, next, current) {
                 $scope.isCollapsed = false;
             });
@@ -27,7 +25,9 @@ var navbar = angular.module('navbar', ['auth.services'])
             }
 
             $scope.sync_profile = function(){
-                Auth.sync_profile();
+                Auth.sync();
+                $scope.isCollapsed = false;
+
             }
 
             $scope.animationsEnabled = true;

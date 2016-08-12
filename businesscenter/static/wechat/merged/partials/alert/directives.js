@@ -12,7 +12,7 @@ angular.module('alert', [])
                 $rootScope.alerts.splice(index, 1);
             };
             $rootScope.$watchCollection('alerts', function(newValue, oldValue, scope) {
-                if (scope.alerts.length >= 1){
+                if (scope.alerts.length > 0){
                     $timeout(function(){
                         scope.alerts.splice(0, 1);
                     }, 3000);

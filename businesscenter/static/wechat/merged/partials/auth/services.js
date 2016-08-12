@@ -140,18 +140,20 @@ function($rootScope, $cookies, $window, $location, $route, $translate, IsAuthent
         });
     };
 
-    auth.sync_profile = function(){
+    auth.sync = function(){
         var qr = (IsSmartDevice()) ? null : 1;
         ProfileSync.post({qr: qr},function(success){
             $rootScope.visitor = success;
             $translate('AUTHENTICATION.PROFILE_UPDATE').then(function (msg) {
                 $rootScope.alerts.push({ type: 'info', msg:  msg});
             });
-                $location.path('/');
+                $location.path('/my_groups');
+
             },
             function(error){
                 $translate('FAIL').then(function (msg) {
                     $rootScope.alerts.push({ type: 'danger', msg:  msg});
+                    console.log(msg);
                 });
             }
         );
