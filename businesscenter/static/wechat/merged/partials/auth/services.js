@@ -92,7 +92,7 @@ function($rootScope, $cookies, $window, $location, $translate, IsAuthenticated,
         /*The main authentication logic */
 
         var self = this;
-        if (this.user){
+        if (this.user && !$rootScope.visitor){
             $rootScope.visitor_resolved = true;
             $rootScope.visitor = this.user;
         }
