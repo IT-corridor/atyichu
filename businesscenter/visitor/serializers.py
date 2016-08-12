@@ -116,8 +116,7 @@ class VisitorSerializer(serializers.ModelSerializer):
                                            read_only=True)
     group_count = serializers.IntegerField(source='user.group_set.count',
                                            read_only=True)
-    extra = VisitorExtraSerializer(source='visitorextra_set',
-                                   write_only=True)
+    extra = VisitorExtraSerializer(write_only=True, allow_null=True)
 
     def create(self, validated_data):
 
