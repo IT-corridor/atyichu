@@ -139,24 +139,20 @@ function($rootScope, $cookies, $window, $location, $translate, IsAuthenticated,
     };
 
     auth.sync_profile = function(){
-
-        $scope.sync_profile = function(){
-
-            var qr = (IsSmartDevice()) ? 1 : null;
-            ProfileSync.post({qr: qr}, function(success){
-                $rootScope.visitor = success;
-                $translate('AUTHENTICATION.PROFILE_UPDATE').then(function (msg) {
-                    $rootScope.alerts.push({ type: 'info', msg:  msg});
-                });
-                    $location.path('/');
-                },
-                function(error){
-                    $translate('FAIL').then(function (msg) {
+        var qr = (IsSmartDevice()) ? 1 : null;
+        ProfileSync.post(function(success){
+            $rootScope.visitor = success;
+            $translate('AUTHENTICATION.PROFILE_UPDATE').then(function (msg) {
+                $rootScope.alerts.push({ type: 'info', msg:  msg});
+            });
+                $location.path('/');
+            },
+            function(error){
+                $translate('FAIL').then(function (msg) {
                     $rootScope.alerts.push({ type: 'danger', msg:  msg});
                 });
-                }
-
-            );
+            }
+        );
     };
     return auth;
 }]);
