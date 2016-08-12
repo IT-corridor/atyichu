@@ -95,6 +95,16 @@ class VisitorExtraSerializer(serializers.ModelSerializer):
         model = VisitorExtra
         exclude = ('visitor',)
 
+    def update(self, instance, validated_data):
+        if validated_data.get('expires_in', None):
+            validated_data['token_date'] = timezone.now()
+        for k, v in validated_data.items():
+            if hasattr(instance, k):
+                setattr(instance, k, v)
+
+        instance.save()
+        return instance
+
 
 class VisitorSerializer(serializers.ModelSerializer):
     avatar_url = serializers.URLField(required=False, write_only=True,
@@ -107,7 +117,8 @@ class VisitorSerializer(serializers.ModelSerializer):
                                            read_only=True)
     group_count = serializers.IntegerField(source='user.group_set.count',
                                            read_only=True)
-    extra = VisitorExtraSerializer(write_only=True)
+    extra = VisitorExtraSerializer(source='visitorextra_set',
+                                   write_only=True)
 
     def create(self, validated_data):
 
@@ -153,21 +164,6 @@ class VisitorSerializer(serializers.ModelSerializer):
                 ext, content_file = get_content_file(avatar_url)
                 instance.avatar.save('{}.{}'.format(user.username,
                                                     ext), content_file)
-
-        extra = validated_data.pop('extra', None)
-
-        if extra:
-            if extra.get('expires_in', None):
-                extra['token_date'] = timezone.now()
-            openid = extra.pop('openid')
-            backend = extra.pop('backend')
-            extra_instance = VisitorExtra.objects.get(openid=openid,
-                                                      backend=backend)
-            for k, v in extra.items():
-                if hasattr(extra_instance, k):
-                    setattr(extra_instance, k, v)
-
-            extra_instance.save()
 
         for k, v in validated_data.items():
             if hasattr(instance, k):

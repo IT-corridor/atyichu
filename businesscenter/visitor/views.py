@@ -12,7 +12,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
-from .serializers import VisitorSerializer
+from .serializers import VisitorSerializer, VisitorExtraSerializer
 from .oauth2 import WeixinBackend, WeixinQRBackend
 from .models import Visitor, VisitorExtra
 from .permissions import IsVisitorSimple
@@ -178,17 +178,20 @@ def update_visitor(request):
             'openid': extra.openid}
     if extra.is_expired():
         data.update(wx.refresh_user_credentials(extra.refresh_token))
+        s = VisitorExtraSerializer(instance=extra, data=data, partial=True)
+        s.is_valid(raise_exception=True)
+        s.save()
+        mail_admins('updating data', str(data))
     user_info = wx.get_user_info(data['access_token'], data['openid'])
     user_data = {
         'avatar_url': user_info.get('headimgurl'),
         'nickname': user_info.get('nickname'),
-        'extra': data,
     }
     mail_admins('testing updating profile', 'todo')
     serializer = VisitorSerializer(instance=visitor,
                                    data=user_data, partial=True)
     serializer.is_valid(raise_exception=True)
-    serializer.save()
+    #serializer.save()
     return Response(data=serializer.data)
 
 

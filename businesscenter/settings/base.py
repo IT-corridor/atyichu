@@ -142,4 +142,4 @@ AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',
 
 # SESSION:
 
-SESSION_COOKIE_AGE = 1200
+#SESSION_COOKIE_AGE = 1200
