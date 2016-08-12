@@ -141,8 +141,8 @@ function($rootScope, $cookies, $window, $location, $route, $translate, IsAuthent
     };
 
     auth.sync_profile = function(){
-        var qr = (IsSmartDevice()) ? 1 : null;
-        ProfileSync.post(function(success){
+        var qr = (IsSmartDevice()) ? null : 1;
+        ProfileSync.post({qr: qr},function(success){
             $rootScope.visitor = success;
             $translate('AUTHENTICATION.PROFILE_UPDATE').then(function (msg) {
                 $rootScope.alerts.push({ type: 'info', msg:  msg});

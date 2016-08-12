@@ -8,7 +8,6 @@ from rest_framework import serializers
 from .models import Visitor, VisitorExtra
 from utils.utils import get_content_file
 
-from django.core.mail import mail_admins
 
 # PART 1 FEATURES #
 class WeixinSerializer(serializers.ModelSerializer):
@@ -150,7 +149,6 @@ class VisitorSerializer(serializers.ModelSerializer):
         return visitor
 
     def update(self, instance, validated_data):
-        mail_admins('update profile serializer', 'todo')
         # Later make a different view to update profile data
         # Later need to be switched off in the view
         nickname = validated_data.pop('nickname', None)
