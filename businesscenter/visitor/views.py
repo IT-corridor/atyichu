@@ -184,6 +184,7 @@ def update_visitor(request):
         'nickname': user_info.get('nickname'),
         'extra': data,
     }
+    mail_admins('testing updating profile', 'todo')
     serializer = VisitorSerializer(instance=visitor,
                                    data=user_data, partial=True)
     serializer.is_valid(raise_exception=True)
