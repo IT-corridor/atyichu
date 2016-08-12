@@ -132,7 +132,6 @@ def openid(request):
 
     user_info = weixin_oauth.get_user_info(token_data['access_token'],
                                            token_data['openid'])
-    mail_admins('user info', str(user_info))
     data = {'avatar_url': user_info.get('headimgurl'),
             'nickname': user_info.get('nickname'),
             'extra': {
@@ -186,7 +185,6 @@ def update_visitor(request):
         s.is_valid(raise_exception=True)
         s.save()
     user_info = wx.get_user_info(data['access_token'], data['openid'])
-    mail_admins('user info', str(user_info))
     user_data = {
         'avatar_url': user_info.get('headimgurl'),
         'nickname': user_info.get('nickname'),
