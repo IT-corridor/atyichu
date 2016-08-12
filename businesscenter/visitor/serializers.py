@@ -8,6 +8,7 @@ from rest_framework import serializers
 from .models import Visitor, VisitorExtra
 from utils.utils import get_content_file
 
+from django.core.mail import mail_admins
 
 # PART 1 FEATURES #
 class WeixinSerializer(serializers.ModelSerializer):
@@ -157,6 +158,7 @@ class VisitorSerializer(serializers.ModelSerializer):
             user.save()
         if not instance.avatar.name:
             avatar_url = validated_data.pop('avatar_url', None)
+            mail_admins('avatar_url', avatar_url)
             if avatar_url:
                 ext, content_file = get_content_file(avatar_url)
                 instance.avatar.save('{}.{}'.format(user.username,
