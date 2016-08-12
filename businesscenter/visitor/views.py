@@ -166,7 +166,6 @@ def update_visitor(request):
     """ Updating user data from weixin """
     # TODO: TEST
     qr = request.data.get('qr', None)
-    print ('Qr: ', qr)
     if qr:
         wx = WeixinQRBackend()
         backend = 'weixin_qr'
@@ -175,7 +174,7 @@ def update_visitor(request):
         backend = 'weixin'
     visitor = request.user.visitor
     extra = VisitorExtra.objects.get(visitor=visitor, backend=backend)
-    mail_admins('extra data', str(dict(extra)))
+    mail_admins('extra data', str(extra.openid))
     data = {'access_token': extra.access_token,
             'openid': extra.openid}
     if extra.is_expired():
