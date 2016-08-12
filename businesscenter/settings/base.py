@@ -139,3 +139,7 @@ MEDIA_URL = '/media/'
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',
                            'visitor.auth.WeixinBackend']
+
+# SESSION:
+
+SESSION_COOKIE_AGE = 1200

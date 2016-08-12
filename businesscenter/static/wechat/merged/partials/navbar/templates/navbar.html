@@ -28,6 +28,16 @@
                     </div>
                 </div>
             </form>
+            <ul class="nav navbar-nav box-shadow" data-ng-if="visitor">
+            <li><a data-ng-click="sync_profile()">
+                <i class="fa fa-sign-out"></i> {{ 'NAVBAR.SYNC' | translate }}</a>
+            </li>
+            <li><a data-ng-click="logout()">
+                    <i class="fa fa-sign-out"></i> {{ 'NAVBAR.LOGOUT' | translate }}
+                </a>
+            </li>
+
+        </ul>
         </div>
         <!-- / search form -->
     </div>

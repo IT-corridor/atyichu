@@ -165,8 +165,13 @@ def openid(request):
 def update_visitor(request):
     """ Updating user data from weixin """
     # TODO: TEST
-    backend = request.query_params.get('b', 'weixin')
-    wx = WeixinBackend() if backend == 'weixin' else WeixinQRBackend()
+    qr = request.query_params.get('qr', None)
+    if qr:
+        wx = WeixinQRBackend()
+        backend = 'weixin_qr'
+    else:
+        wx = WeixinBackend()
+        backend = 'weixin'
     visitor = request.user.visitor
     extra = VisitorExtra.objects.get(visitor=visitor, backend=backend)
     data = {'access_token': extra.access_token,

@@ -46,16 +46,20 @@ auth.factory('IsSmartDevice', ['$window',
     }
 ]);
 auth.factory('Auth', ['$rootScope', '$cookies', '$window', '$location', '$translate', 'IsAuthenticated',
-                      'Me', 'Logout', 'IsSmartDevice', 'LoadScript',
+                      'Me', 'Logout', 'IsSmartDevice', 'LoadScript', 'ProfileSync',
 function($rootScope, $cookies, $window, $location, $translate, IsAuthenticated,
-         Me, Logout, IsSmartDevice, LoadScript){
+         Me, Logout, IsSmartDevice, LoadScript, ProfileSync){
     /* Logic set for authentication */
     var auth = {};
     auth.get = function(key){
         return $cookies.getObject(key) ? $cookies.getObject(key) : null;
     };
     auth.set = function(user){
-        $cookies.putObject('weixin', user);
+
+        /* SETTING COOKIE FOR 20 minutes */
+        var expires = new Date();
+        expires.setMinutes(expires.getMinutes() + 20);
+        $cookies.putObject('weixin', user, {expires: expires});
         this.refresh();
     };
     auth.refresh = function(){
@@ -134,5 +138,25 @@ function($rootScope, $cookies, $window, $location, $translate, IsAuthenticated,
         });
     };
 
+    auth.sync_profile = function(){
+
+        $scope.sync_profile = function(){
+
+            var qr = (IsSmartDevice()) ? 1 : null;
+            ProfileSync.post({qr: qr}, function(success){
+                $rootScope.visitor = success;
+                $translate('AUTHENTICATION.PROFILE_UPDATE').then(function (msg) {
+                    $rootScope.alerts.push({ type: 'info', msg:  msg});
+                });
+                    $location.path('/');
+                },
+                function(error){
+                    $translate('FAIL').then(function (msg) {
+                    $rootScope.alerts.push({ type: 'danger', msg:  msg});
+                });
+                }
+
+            );
+    };
     return auth;
 }]);

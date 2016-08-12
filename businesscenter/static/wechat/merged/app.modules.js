@@ -73,6 +73,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             'SUCCESS': 'Welcome back!',
             'ERROR': 'Authentication error',
             'LOGOUT': 'Good by',
+            'PROFILE_UPDATE': 'Profile has been updated',
 
         },
         'NAVBAR': {
@@ -92,6 +93,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             'SIGN': 'Sign',
             'SIGN_IN': 'Sign in',
             'CHANGE_PASSWORD': 'Change password',
+            'SYNC': 'Sync profile',
         },
         'FOOTER': {
             'DISCOVERY': 'Discovery',
@@ -219,6 +221,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             'SUCCESS': 'Welcome back!',
             'ERROR': 'Authentication error',
             'LOGOUT': 'Good by',
+            'PROFILE_UPDATE': 'Profile has been updated',
 
         },
         'NAVBAR': {
@@ -238,6 +241,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             'SIGN': 'Sign',
             'SIGN_IN': 'Sign in',
             'CHANGE_PASSWORD': 'Change password',
+            'SYNC': 'Sync profile',
         },
         'FOOTER': {
             'DISCOVERY': 'Discovery',

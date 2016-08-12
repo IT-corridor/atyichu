@@ -22,6 +22,9 @@ var navbar = angular.module('navbar', ['auth.services'])
                 Auth.logout();
             }
 
+            $scope.sync_profile = function(){
+                Auth.sync_profile();
+            }
 
             $scope.animationsEnabled = true;
             $scope.toggleAnimation = function () {
