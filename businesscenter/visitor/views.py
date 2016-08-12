@@ -184,7 +184,7 @@ def update_visitor(request):
         s.save()
         mail_admins('updating data', str(data))
     user_info = wx.get_user_info(data['access_token'], data['openid'])
-    mail_admins('user info data', str(data))
+    mail_admins('user info data', str(user_info))
     user_data = {
         'avatar_url': user_info.get('headimgurl'),
         'nickname': user_info.get('nickname'),
