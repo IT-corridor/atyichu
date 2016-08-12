@@ -184,6 +184,7 @@ def update_visitor(request):
         s.save()
         mail_admins('updating data', str(data))
     user_info = wx.get_user_info(data['access_token'], data['openid'])
+    mail_admins('user info data', str(data))
     user_data = {
         'avatar_url': user_info.get('headimgurl'),
         'nickname': user_info.get('nickname'),
@@ -192,7 +193,7 @@ def update_visitor(request):
     serializer = VisitorSerializer(instance=visitor,
                                    data=user_data, partial=True)
     serializer.is_valid(raise_exception=True)
-    #serializer.save()
+    serializer.save()
     return Response(data=serializer.data)
 
 
