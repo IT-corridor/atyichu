@@ -156,13 +156,12 @@ class VisitorSerializer(serializers.ModelSerializer):
         if nickname:
             user.username = nickname
             user.save()
-        if not instance.avatar.name:
-            avatar_url = validated_data.pop('avatar_url', None)
-            mail_admins('avatar_url', avatar_url)
-            if avatar_url:
-                ext, content_file = get_content_file(avatar_url)
-                instance.avatar.save('{}.{}'.format(user.username,
-                                                    ext), content_file)
+
+        avatar_url = validated_data.pop('avatar_url', None)
+        if avatar_url:
+            ext, content_file = get_content_file(avatar_url)
+            instance.avatar.save('{}.{}'.format(user.username,
+                                                ext), content_file)
 
         for k, v in validated_data.items():
             if hasattr(instance, k):
