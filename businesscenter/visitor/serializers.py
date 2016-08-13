@@ -130,11 +130,13 @@ class VisitorSerializer(serializers.ModelSerializer):
             password = user_model.objects.make_random_password()
             user.set_password(password)
             user.save()
-        exists = user.visitor.visitorextra_set.\
-            filter(backend=extra['backend']).exists()
-        if exists:
-            error = {'detail': _('Such kind of relation already exists.')}
-            raise serializers.ValidationError(error)
+        if hasattr(user, 'visitor'):
+            exists = user.visitor.visitorextra_set.\
+                filter(backend=extra['backend']).exists()
+            if exists:
+                error = {'detail': _('Such kind of relation already exists.')}
+                raise serializers.ValidationError(error)
+
         visitor, c = Visitor.objects.get_or_create(user=user)
 
         avatar_url = validated_data.pop('avatar_url', None)
