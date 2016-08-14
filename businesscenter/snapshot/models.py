@@ -356,3 +356,49 @@ class Tag(models.Model):
         verbose_name = _('Group tag')
         verbose_name_plural = _('Group tags')
         ordering = ('pk',)
+
+
+class FollowGroup(models.Model):
+    """
+    Representation of follers for a group.
+    Relation between :model:`auth.User` (visitor)
+    and :model:`snapshot.Group` (group).
+    """
+
+    group = models.ForeignKey(Group, verbose_name=_('Group'),
+                              on_delete=models.CASCADE)
+    follower = models.ForeignKey('auth.User', verbose_name=_('Follower'),
+                                 on_delete=models.CASCADE,
+                                 related_name='follow_groups',
+                                 related_query_name='follow_group')
+
+    def __unicode__(self):
+        return '{}, {}'.format(self.group, self.follower)
+
+    class Meta:
+        verbose_name = _('Group Follower')
+        verbose_name_plural = _('Group Followers')
+        ordering = ('pk',)
+
+
+class FollowUser(models.Model):
+    """
+    Representation of followers for a user.
+    Relation between :model:`auth.User` (visitor)
+    and :model:`auth.User` (follower).
+    """
+    user = models.ForeignKey('auth.User', verbose_name=_('User'),
+                             on_delete=models.CASCADE)
+
+    follower = models.ForeignKey('auth.User', verbose_name=_('Follower'),
+                                 on_delete=models.CASCADE,
+                                 related_name='follow_users',
+                                 related_query_name='follow_user')
+
+    def __unicode__(self):
+        return '{}, {}'.format(self.user, self.follower)
+
+    class Meta:
+        verbose_name = _('User Follower')
+        verbose_name_plural = _('User Followers')
+        ordering = ('pk',)

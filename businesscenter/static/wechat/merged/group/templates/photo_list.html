@@ -94,6 +94,7 @@
                     <li><i class="fa fa-comments"></i> {{ photo.comment_count }}</li>
                     <li><a data-ng-click="like($index, photo.id)"><i class="fa fa-heart"></i> {{ photo.like_count }}</a></li>
                     <li><i class="fa fa-share-alt"></i> {{ photo.clone_count }}</li>
+                    <li><i data-ng-click="follow($index, photo.group)" class="fa fa-star"></i></li>
                 </ul>
             </div>
         </div>

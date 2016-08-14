@@ -134,8 +134,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-# AUTH model
-#AUTH_USER_MODEL = 'account.Profile'
+# AUTH
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',
                            'visitor.auth.WeixinBackend']
@@ -143,3 +142,6 @@ AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',
 # SESSION:
 
 #SESSION_COOKIE_AGE = 1200
+
+UMENG_APP_KEY = '571459b267e58e826f000239'
+UMENG_APP_MASTER_SECRET = 'ydcfc8leufv2efcm4slwmhb2pfffaiop'

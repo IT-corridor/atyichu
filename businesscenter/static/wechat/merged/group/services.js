@@ -16,6 +16,9 @@ angular.module('group.services', ['ngResource'])
             my: {method:'GET', params:{pk: null, action: 'my_groups'}, responseType:'json'},
             my_short_list: {method:'GET', params:{pk: null, action: 'my_groups_short'},
                 responseType:'json', isArray: true},
+            follow: {method: 'GET', params: {action:'follow'}},
+            unfollow: {method: 'GET', params: {action:'unfollow'}},
+            get_follows: {method:'GET', params:{pk: null, action: 'follow_groups'}, responseType:'json'},
     });
 }])
 .factory('GroupPhoto', ['$resource', 'source_path',
@@ -37,6 +40,14 @@ angular.module('group.services', ['ngResource'])
         return $resource(source_path + 'member/short_list/', {}, {
             query: {method:'GET', responseType:'json', isArray:true},
     });
+}])
+.factory('Visitor', ['$resource', 'source_path',
+    function($resource, source_path){
+        return $resource(source_path + 'visitor/:pk/:action/', {}, {
+            follow_user: {method: 'GET', params: {action:'follow_user'}},
+            unfollow_user: {method: 'GET', params: {action:'unfollow_user'}},
+            get_follow_users: {method:'GET', params:{pk: null, action: 'follow_users'}, responseType:'json'},
+        });
 }])
 .factory('MultipartForm', ['$http', function ($http){
     return function(method, form_id, url){

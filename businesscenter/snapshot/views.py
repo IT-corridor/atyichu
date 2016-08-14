@@ -18,7 +18,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import ValidationError, PermissionDenied
-from .models import Mirror, Photo, Comment, Tag, Member, Group, Like, Link
+from .models import Mirror, Photo, Comment, Tag, Member, Group, Like, Link, \
+    FollowUser, FollowGroup
 
 from . import serializers
 from .permissions import IsOwnerOrMember, MemberCanServe, \
@@ -852,14 +853,152 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         serializer = serializers.GroupShortSerializer(qs, many=True)
         return Response(serializer.data)
 
+    @list_route(methods=['get'])
+    def follow_groups(self, request, *args, **kwargs):
+        """ Dan`s Job. Need to set a comment."""
+        visitor = self.request.user
+        qs = FollowGroup.objects.filter(follower=visitor)
+        group_ids = [item.group.id for item in qs]
+        qs = Group.objects.filter(id__in=group_ids)
+
+        serializer_class = self.get_serializer_class()
+        page = self.paginate_queryset(qs)
+
+        if page is not None:
+            serializer = serializer_class(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = serializer_class(qs, many=True)
+        return Response(serializer.data)
+
+    @detail_route(methods=['get'])
+    def follow(self, request, *args, **kwargs):
+        """ Dan`s Job. Need to set a comment. """
+        obj = self.get_object()
+
+        try:
+            FollowGroup.objects.create(follower_id=request.user.id,
+                                       group_id=obj.id)
+
+            # TODO: WHAT THIS. I think follow count is redundant,
+            #  or you need to set a real follow_count
+            follow_count = 10
+            data = {'follow_count': follow_count}
+            status = 200
+
+            # send notification to the owner
+            # push_unicast(user.device_token, request.user.username+"wants to follow you!")
+            push_unicast('Aml5E5JNRCF3VF7XtyEU5xGwcG8p3qu3UPwUaHaYMpX4',
+                         request.user.username + "wants to follow your group!")
+
+        except IntegrityError:
+            data = {'error': _('You have followed it already!')}
+            status = 400
+
+        return Response(data, status)
+
+    @detail_route(methods=['get'])
+    def unfollow(self, request, *args, **kwargs):
+        """ Dan`s Job. Need to set a comment."""
+        obj = self.get_object()
+
+        try:
+            FollowGroup.objects.get(follower_id=request.user.id,
+                                    group_id=obj.id).delete()
+
+            # Not using default object or queryset, to reduce the queryset
+            # like_count = Photo.objects.get(id=obj.id).like_set.count()
+            follow_count = 10
+            data = {'follow_count': follow_count}
+            status = 200
+
+            # send notification to the owner
+            # push_unicast(user.device_token, request.user.username+"wants to follow you!")
+            push_unicast('Aml5E5JNRCF3VF7XtyEU5xGwcG8p3qu3UPwUaHaYMpX4',
+                         request.user.username + "stops to follow your group!")
+
+        except IntegrityError:
+            data = {'error': _('You have followed it already!')}
+            status = 400
+
+        return Response(data, status)
+
 
 class GroupPhotoViewSet(mixins.UpdateModelMixin,
                         mixins.DestroyModelMixin,
                         viewsets.GenericViewSet):
+    """ Currently not used"""
+    # TODO: delete
     queryset = Photo.objects.select_related('group', 'visitor__visitor')
     serializer_class = serializers.PhotoDetailSerializer
     pagination_class = None
     permission_classes = [MemberCanServe]
+
+
+class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
+    """ Dan`s Job."""
+    queryset = FollowUser.objects.all()
+
+    @list_route(methods=['get'])
+    def follow_users(self, request, *args, **kwargs):
+        visitor = self.request.user
+        qs = FollowUser.objects.filter(follower=visitor)
+        user_ids = [item.user.id for item in qs]
+        qs = Visitor.objects.filter(user__id__in=user_ids)
+
+        serializer = VisitorShortSerializer(qs, many=True)
+        data = serializer.data
+        status = 200
+        # TODO: ask
+        return Response(data={'results': data}, status=status)
+
+    @detail_route(methods=['get'])
+    def follow_user(self, request, *args, **kwargs):
+        """ Handler that increments follows """
+        try:
+            FollowUser.objects.create(follower_id=request.user.id,
+                                      user_id=kwargs['pk'])
+
+            # Not using default object or queryset, to reduce the queryset
+            # like_count = Photo.objects.get(id=obj.id).like_set.count()
+            follow_count = 10
+            data = {'follow_count': follow_count}
+            status = 200
+
+            # send notification to the owner
+            # push_unicast(user.device_token, request.user.username+"wants to follow you!")
+            push_unicast('Aml5E5JNRCF3VF7XtyEU5xGwcG8p3qu3UPwUaHaYMpX4',
+                         request.user.username + "wants to follow you!")
+
+        except IntegrityError:
+            data = {'error': _('You have followed the user already!')}
+            status = 400
+
+        return Response(data, status)
+
+    @detail_route(methods=['get'])
+    def unfollow_user(self, request, *args, **kwargs):
+        """ Handler that increments likes """
+        try:
+            FollowUser.objects.get(follower_id=request.user.id,
+                                   user_id=kwargs['pk']).delete()
+
+            # Not using default object or queryset, to reduce the queryset
+            # like_count = Photo.objects.get(id=obj.id).like_set.count()
+            follow_count = 10
+            data = {'follow_count': follow_count}
+            status = 200
+
+            # send notification to the owner
+            # push_unicast(user.device_token, request.user.username+"wants to follow you!")
+            push_unicast('Aml5E5JNRCF3VF7XtyEU5xGwcG8p3qu3UPwUaHaYMpX4',
+                         request.user.username + "stops to follow you!")
+
+        except IntegrityError:
+            data = {'error': _('You have followed the user already!')}
+            status = 400
+
+        return Response(data, status)
 
 
 @api_view(['GET'])

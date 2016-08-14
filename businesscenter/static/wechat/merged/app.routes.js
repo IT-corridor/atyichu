@@ -83,6 +83,22 @@ angular.module('app.route', [
                 my: function(){return true;},
             }
         }).
+        when('/follow_groups', {
+            templateUrl: PATH + 'group/templates/follow.html',
+            controller: 'CtrlFollowGroupList',
+            resolve: {
+                title: function(){return 'Follow Groups';},
+                follow: function(){return true;},
+            }
+        }).
+        when('/follow_users', {
+            templateUrl: PATH + 'group/templates/follow_user.html',
+            controller: 'CtrlFollowUserList',
+            resolve: {
+                title: function(){return 'Follow Users';},
+                follow: function(){return true;},
+            }
+        }).
         when('/error/404/', {
             templateUrl: PATH + 'partials/error/templates/404.html'}).
         otherwise({

@@ -5,12 +5,12 @@
     </li>
     <li data-ng-init="menu.photo = false">
         <a data-ng-click="menu.photo = !menu.photo">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-            <i class="fa fa-camera text-primary-dker"></i>
-            <span class="font-bold" translate="ASIDE.PHOTO.TITLE">Photos</span>
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+                <i class="fa fa-camera text-primary-dker"></i>
+                <span class="font-bold" translate="ASIDE.PHOTO.TITLE">Photos</span>
         </a>
         <ul class="nav dk" data-ng-class="{'nav-sub': !menu.photo}">
             <li class="nav-sub-header">
@@ -19,8 +19,18 @@
                 </a>
             </li>
             <li>
+                <a data-ng-href="#!/group">
+                    <span translate="ASIDE.PHOTO.ALL_GROUPS">All Wardrobes</span>
+                </a>
+            </li>
+            <li>
                 <a data-ng-href="#!/my_groups">
                     <span translate="ASIDE.PHOTO.MY_GROUPS">My Wardrobes</span>
+                </a>
+            </li>
+            <li>
+                <a data-ng-href="#!/my_groups">
+                    <span translate="ASIDE.PHOTO.FOLLOWING_GROUPS">Following Wardrobes</span>
                 </a>
             </li>
             <li>

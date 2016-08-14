@@ -3,16 +3,11 @@ angular.module('group.controllers', ['group.services', 'group.directives',
 .controller('CtrlGroupAdd', ['$scope', '$rootScope','$http',
 '$location', '$route', 'Auth', 'Group',
     function($scope, $rootScope, $http, $location, $route, Auth, Group) {
-
+        /*TODO: Dan, you don`t have to add new factories everywhere,
+        just place them in that controllers, which use these factories.
+        I mean, your 'Visitor' */
         $rootScope.title = 'New group';
         $scope.members = [];
-        var auth_promise = Auth.is_authenticated();
-
-        auth_promise.then(function(result){
-            if (!result.is_authenticated){
-                $window.location.replace("/visitor/");
-            }
-        });
 
         $scope.add = function() {
             $scope.data.members = [];
@@ -38,9 +33,9 @@ angular.module('group.controllers', ['group.services', 'group.directives',
     }
 ])
 .controller('CtrlGroupList', ['$scope', '$rootScope','$http', '$window',
-'$location', '$routeParams','GetPageLink' , 'Group', 'title', 'my', 'WindowScroll',
+'$location', '$routeParams','GetPageLink' , 'Group', 'title', 'my', 'WindowScroll', 'Visitor',
     function($scope, $rootScope, $http, $window, $location, $routeParams,
-    GetPageLink, Group, title, my, WindowScroll) {
+    GetPageLink, Group, title, my, WindowScroll, Visitor) {
 
         $rootScope.title = title;
         var query = (my) ? Group.my : Group.query;
@@ -103,6 +98,19 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                 for (l; l < empty; l++){ obj.results[k].empty_array.push(l);}
             }
         }
+
+        $scope.follow_user = function(owner_id){
+            Visitor.follow_user({pk: owner_id},
+                function(success){
+                    // $scope.r.results[index].like_count = success.like_count;
+                },
+                function(error){
+                    /*TODO: Dan, replace it with $translate directive.
+                    I know that it was not available, but now it is.*/
+                    $rootScope.alerts.push({ type: 'danger', msg: 'You have followed the user already!'});
+                }
+            );
+        };
     }
 ])
 .controller('CtrlGroupPhotoList', ['$scope', '$rootScope','$http', '$window',
@@ -179,7 +187,18 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                     $rootScope.alerts.push({ type: 'danger', msg: 'You have like it already!'});
                 }
             );
-        }
+        };
+
+        $scope.follow = function(index, group_id){
+            Group.follow({pk: group_id},
+                function(success){
+                    // $scope.r.results[index].like_count = success.like_count;
+                },
+                function(error){
+                    $rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
+                }
+            );
+        };
     }
 ])
 .controller('CtrlGroupManage', ['$scope', '$rootScope','$http',
@@ -334,5 +353,145 @@ angular.module('group.controllers', ['group.services', 'group.directives',
 
         };
 
+    }
+])
+.controller('CtrlFollowGroupList', ['$scope', '$rootScope','$http', '$window',
+'$location', '$routeParams','GetPageLink' , 'Group', 'title', 'follow', 'WindowScroll',
+    function($scope, $rootScope, $http, $window, $location, $routeParams,
+    GetPageLink, Group, title, follow, WindowScroll) {
+        /* TODO: remove this controller, it can use a simple group list controller or anything else.
+        We need to create a map for this. Just keep in mind for now.*/
+        $rootScope.title = title;
+        var query = (follow) ? Group.get_follows : Group.query;
+
+        if (follow){
+            $rootScope.bar = 'verbose';
+        }
+
+        $scope.enough = false;
+
+        $scope.r = query($routeParams,
+            function(success){
+
+                $scope.enough = success.total > 1 ? false : true;
+                $scope.page_link = GetPageLink();
+                $scope.page = success.current;
+                $scope.prev_pages = [];
+                $scope.next_pages = [];
+                var i = (success.current - 1 > 5) ? success.current - 5: 1;
+                var next_lim = (success.total - success.current > 5) ? 5 + success.current : success.total;
+                var j = success.current + 1;
+                for (i; i < success.current; i++){ $scope.prev_pages.push(i);}
+                for (j; j <= next_lim; j++){ $scope.next_pages.push(j);}
+
+                /* Create an empty array for each group*/
+                create_empty_arrays(success);
+            },
+            function(error){
+                for (var e in error.data){
+                        $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
+                    }
+                    $scope.error = error.data;
+            }
+        );
+
+        $scope.get_more = function(){
+            $scope.page += 1;
+            var params = $routeParams;
+            params['page'] = $scope.page;
+            query(params, function(success){
+                    $scope.r.results = $scope.r.results.concat(success.results);
+                    $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
+                    create_empty_arrays(success);
+                },
+                function(error){
+                    $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
+                }
+            );
+        };
+        WindowScroll($scope, $scope.get_more);
+
+        $scope.unfollow = function(group_id){
+            $scope.r.results = remove_group($scope.r.results, group_id);
+            Group.unfollow({pk: group_id},
+                    function(success){
+
+                    },
+                    function(error){
+                        //$rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
+                    }
+                );
+
+        };
+
+    function remove_group(list, group_id){
+            var k = 0;
+            var group_len = list.length;
+        tp_list = []
+            for (k; k < group_len; k++){
+                if(list[k]['id'] != group_id)
+            tp_list.push(list[k])
+            }
+
+        return tp_list
+        }
+
+        function create_empty_arrays(obj){
+            var k = 0;
+            var group_len = obj.results.length;
+            for (k; k < group_len; k++){
+                var l = 0;
+                var len = obj.results[k].overview.length;
+                var empty = 3 - len;
+                obj.results[k].empty_array = [];
+                for (l; l < empty; l++){ obj.results[k].empty_array.push(l);}
+            }
+        }
+    }
+])
+.controller('CtrlFollowUserList', ['$scope', '$rootScope','$http', '$window',
+'$location', '$routeParams','GetPageLink' , 'Visitor', 'title', 'follow',
+    function($scope, $rootScope, $http, $window, $location, $routeParams,
+    GetPageLink, Visitor, title, follow) {
+
+        $rootScope.title = title;
+        var query = Visitor.get_follow_users;
+
+        if (follow){
+            $rootScope.bar = 'verbose';
+        }
+
+        $scope.r = query($routeParams,
+            function(success){
+            },
+            function(error){
+                for (var e in error.data){
+                    $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
+                }
+                $scope.error = error.data;
+            }
+        );
+
+        $scope.unfollow = function(user_id) {
+            $scope.r.results = remove_user($scope.r.results, user_id);
+            Visitor.unfollow_user({pk: user_id},
+                function(success){
+                },
+                function(error){
+                    //$rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
+                }
+            );
+        }
+
+        function remove_user(list, user_id){
+            var k = 0;
+            var num_user = list.length;
+            tp_list = []
+
+            for (k; k < num_user; k++)
+                if(list[k]['pk'] != user_id)
+                    tp_list.push(list[k])
+            return tp_list
+        }
     }
 ]);

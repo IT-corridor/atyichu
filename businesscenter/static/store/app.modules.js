@@ -106,6 +106,8 @@ app.config(['$translateProvider', function ($translateProvider) {
             'DASHBOARD': 'Dashboard',
             'PHOTO': {
                 'TITLE': 'Photos',
+                'ALL_GROUPS': 'All Groups',
+                'FOLLOWING_GROUPS': 'Following Groups',
                 'MY_GROUPS': 'My Wardrobes',
                 'ADD_GROUP': 'Add A Wardrobe',
                 'DISCOVERY': 'Discovery',
@@ -171,6 +173,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             'LIST': {
                 'NO_GROUPS': 'No groups',
                 'UPLOAD': 'Upload a photo',
+                'FOLLOW': 'Follow this group',
             },
             'MANAGE': {
                     'HEADER': 'Edit a wardrobe',

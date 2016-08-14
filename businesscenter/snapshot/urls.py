@@ -15,6 +15,7 @@ snapshot_router.register(r'member', views.MemberViewSet, 'member')
 snapshot_router.register(r'group', views.GroupViewSet, 'group')
 snapshot_router.register(r'group-photo', views.GroupPhotoViewSet,
                          'photo-g')
+snapshot_router.register(r'visitor', views.VisitorViewSet, 'visitor')
 
 urlpatterns = [
     url(r'^signature/$', views.get_signature, name='signature'),

@@ -21,7 +21,10 @@
 <div class="container" data-ng-if="group">
     <div class="row">
         <div class="col-md-12 col-xs-12">
-            <p class="text-center"><a class="btn btn-success" data-ng-href="#!group/{{ group.id }}/photo/add">{{ 'GROUP.LIST.UPLOAD' | translate }}</a></p>
+            <p class="text-center">
+                <a class="btn btn-success" data-ng-href="#!group/{{ group.id }}/photo/add">{{ 'GROUP.LIST.UPLOAD' | translate }}</a>
+                <a class="btn btn-success" data-ng-href="#!group/{{ group.id }}/photo/add">{{ 'GROUP.LIST.FOLLOW' | translate }}</a>
+            </p>
         </div>
     </div>
     <div class="row" data-ng-if="group.tags.length > 0">
