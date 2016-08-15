@@ -10,18 +10,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        try:
-            photos = Photo.objects.all()
-            for photo in photos:
-                print photo
-                if photo.photo and os.path.isfile(photo.photo.path):
-                    photo.crop.delete(True)
-                    photo.thumb.delete(True)
-                    photo.cover.delete(True)
-                    photo.save()
+        photos = Photo.objects.all()
+        for photo in photos:
+            print photo
+            if photo.photo and os.path.isfile(photo.photo.path):
+                photo.crop.delete(True)
+                photo.thumb.delete(True)
+                photo.cover.delete(True)
+                photo.save()
 
-        except Exception as e:
-            raise CommandError('An error has been occurred: {}'.format(e))
-        else:
-            self.stdout.write(
-                self.style.SUCCESS('Photos have been refreshed!'))
+        self.stdout.write(
+            self.style.SUCCESS('Photos have been refreshed!'))
