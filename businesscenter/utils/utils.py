@@ -133,7 +133,7 @@ def create_thumb(instance, fieldname, m=100, ratio_f=default_ratio):
         w, h = img.size
         w, h = ratio_f(w, h, m)
 
-        filepath, _ = field.name.split('.')
+        filepath, _ = os.path.splitext(field.name)
         name = filepath.split('/')[-1]
         ext = imghdr.what(filename)
         n_fn = name + '_thumb.' + ext
@@ -162,7 +162,7 @@ def create_crop(instance, input_field, m=100, output_field='crop'):
             centering = (0.5, 0.5)
         cropped = ImageOps.fit(img, (m, m), Image.ANTIALIAS,
                                centering=centering)
-        filepath, _ = field.name.split('.')
+        filepath, _ = os.path.splitext(field.name)
         name = filepath.split('/')[-1]
         ext = imghdr.what(filename)
         n_fn = name + '_' + output_field + '.' + ext
