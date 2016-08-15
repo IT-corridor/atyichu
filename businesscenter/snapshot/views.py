@@ -949,7 +949,8 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         serializer = VisitorShortSerializer(qs, many=True)
         data = serializer.data
         status = 200
-        # TODO: ask
+        # TODO: it is not neccassary to create data in the dict
+        # 'results' is redundand'
         return Response(data={'results': data}, status=status)
 
     @detail_route(methods=['get'])
