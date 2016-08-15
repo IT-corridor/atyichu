@@ -63,10 +63,12 @@ def max_ratio(w, h, m):
     :param m: Minimum size of both width and height
     :return: new width, new height
     """
-    rw = m / w
-    rh = m / h
-    r = rw if rw > rh else rh
-    return int(r*w), int(r*h)
+    if w > m and h > m:
+        rw = m / w
+        rh = m / h
+        r = rw if rw > rh else rh
+        return int(r*w), int(r*h)
+    return w, h
 
 
 def default_ratio(w, h, m):
