@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import os
 from django.core.management.base import BaseCommand, CommandError
 from snapshot.models import Photo
 
@@ -12,10 +13,12 @@ class Command(BaseCommand):
         try:
             photos = Photo.objects.all()
             for photo in photos:
-                photo.crop.delete(True)
-                photo.thumb.delete(True)
-                photo.cover.delete(True)
-                photo.save()
+                print photo
+                if photo.photo and os.path.isfile(photo.photo.path):
+                    photo.crop.delete(True)
+                    photo.thumb.delete(True)
+                    photo.cover.delete(True)
+                    photo.save()
 
         except Exception as e:
             raise CommandError('An error has been occurred: {}'.format(e))

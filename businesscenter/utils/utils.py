@@ -10,10 +10,9 @@ from django.utils.deconstruct import deconstructible
 from django.core.files.base import ContentFile
 
 
-
 @deconstructible
 class UploadPath(object):
-
+    """ Handling upload path """
     def __init__(self, path, fieldname=None, suff='', *args):
         self.path = path
         self.suff = suff
@@ -32,6 +31,65 @@ class UploadPath(object):
         else:
             sub = ''
         return os.path.join(self.path, sub, filename)
+
+
+def rotate_image(image):
+    """ Rotate an image if it is required."""
+    if hasattr(image, '_getexif'):
+        exif = image._getexif()
+        if exif is not None:
+            # PYTHON 2!
+            # tag = filter(lambda x: x[1] == 'Orientation', ExifTags.TAGS.items())[0]
+            # key, value = tag
+            # Exif orientation tag
+            key = 0x0112
+            exif_data = dict(image._getexif().items())
+            orientation_tag = exif_data.get(key)
+            if orientation_tag:
+                if orientation_tag == 3:
+                    image = image.rotate(180, expand=True)
+                elif orientation_tag == 6:
+                    image = image.rotate(270, expand=True)
+                elif orientation_tag == 8:
+                    image = image.rotate(90, expand=True)
+    return image
+
+
+def max_ratio(w, h, m):
+    """
+    Order to retrieve a new size of photo
+    :param w: Width
+    :param h: Height
+    :param m: Minimum size of both width and height
+    :return: new width, new height
+    """
+    rw = m / w
+    rh = m / h
+    r = rw if rw > rh else rh
+    return int(r*w), int(r*h)
+
+
+def default_ratio(w, h, m):
+    """ This is a opposite of max ratio, this returns new size,
+    where m is maximum size for both width and height."""
+    if w > m:
+        ratio = m / w
+        w = m
+        h = int(h * ratio)
+
+    if h > m:
+        ratio = m / h
+        h = m
+        w = int(w * ratio)
+
+    return w, h
+
+
+def get_content_file(url):
+    """Creating a django file from content fetched by url"""
+    r = requests.get(url)
+    ext = r.headers['Content-Type'].split('/')[-1]
+    return ext, ContentFile(r.content)
 
 
 def cleanup_files(instance, fieldname):
@@ -63,22 +121,15 @@ def cleanup_if_none(instance, fieldname):
             crop.delete()
 
 
-def create_thumb(instance, fieldname, m=100):
+def create_thumb(instance, fieldname, m=100, ratio_f=default_ratio):
+    """ Creating a thumb """
     field = getattr(instance, fieldname)
     if field and not instance.thumb.name:
         filename = field.path
         img = Image.open(filename)
         img = rotate_image(img)
         w, h = img.size
-        if w > m:
-            ratio = m / w
-            w = m
-            h = int(h * ratio)
-
-        if h > m:
-            ratio = m / h
-            h = m
-            w = int(w * ratio)
+        w, h = ratio_f(w, h, m)
 
         filepath, _ = field.name.split('.')
         name = filepath.split('/')[-1]
@@ -118,30 +169,3 @@ def create_crop(instance, input_field, m=100, output_field='crop'):
         cropped.save(output, ext)
         crop_field.save(n_fn, File(output), save=True)
         output.close()
-
-
-def get_content_file(url):
-    r = requests.get(url)
-    ext = r.headers['Content-Type'].split('/')[-1]
-    return ext, ContentFile(r.content)
-
-
-def rotate_image(image):
-    if hasattr(image, '_getexif'):
-        exif = image._getexif()
-        if exif is not None:
-            # PYTHON 2!
-            # tag = filter(lambda x: x[1] == 'Orientation', ExifTags.TAGS.items())[0]
-            # key, value = tag
-            # Exif orientation tag
-            key = 0x0112
-            exif_data = dict(image._getexif().items())
-            orientation_tag = exif_data.get(key)
-            if orientation_tag:
-                if orientation_tag == 3:
-                    image = image.rotate(180, expand=True)
-                elif orientation_tag == 6:
-                    image = image.rotate(270, expand=True)
-                elif orientation_tag == 8:
-                    image = image.rotate(90, expand=True)
-    return image
