@@ -8,6 +8,9 @@ import requests
 import json
 import urllib2
 import datetime
+import pusher
+import os
+import cgi
 
 from django.conf import settings
 
@@ -62,3 +65,14 @@ def push_unicast(device_token, text):
     except urllib2.URLError, e:
         print e.reason
     return post_body, success_info
+
+def trigger_notification():
+    app_id = '236840'#os.environ.get('PUSHER_APP_ID')
+    key = "4c8e6d909a1f7ccc44ed"#os.environ.get('PUSHER_APP_KEY')
+    secret = "119328e419074c206e29"#os.environ.get('PUSHER_APP_SECRET')
+
+    p = pusher.Pusher(app_id=app_id, key=key, secret=secret)
+
+    message =  cgi.escape(request.form['message'])
+    p.trigger('notifications', 'new_notification', {'message': message})
+    return "Notification triggered!"
