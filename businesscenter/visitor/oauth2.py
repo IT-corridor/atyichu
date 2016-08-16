@@ -11,7 +11,7 @@ class WeixinBackend(object):
     authorize = {'url': 'https://open.weixin.qq.com/connect/oauth2/authorize',
                  'extra': {'response_type': 'code',
                            'state': 'STATE#wechat_redirect',
-                           'scope': 'snsapi_userinfo',
+                           'scope': 'snsapi_userinfo, snsapi_base',
                            }
                  }
 
@@ -29,7 +29,6 @@ class WeixinBackend(object):
         'extra': {'grant_type': 'client_credential'}
     }
     user_url = 'https://api.weixin.qq.com/sns/userinfo'
-    #user_url = 'https://api.weixin.qq.com/cgi-bin/user/info'
 
     appid = settings.WEIXIN_APP_ID
     secret = settings.WEIXIN_SECRET
@@ -61,6 +60,16 @@ class WeixinBackend(object):
         # data['encoding'] = response.encoding
         return data
 
+    def get_user_basic_info(self, access_token, openid):
+        params = {'access_token': access_token,
+                  'openid': openid}
+
+        user_url = 'https://api.weixin.qq.com/cgi-bin/user/info'
+        response = requests.get(user_url, params=params)
+        response.encoding = 'utf-8'
+        data = response.json()
+        return data
+
     def refresh_user_credentials(self, refresh_token):
         params = self.refresh['extra']
         params['appid'] = self.appid
@@ -81,7 +90,7 @@ class WeixinQRBackend(WeixinBackend):
     authorize = {'url': 'https://open.weixin.qq.com/connect/qrconnect',
                  'extra': {'response_type': 'code',
                            'state': 'STATE#wechat_redirect',
-                           'scope': 'snsapi_userinfo',
+                           'scope': 'snsapi_userinfo, snsapi_base',
                            }
                  }
 
