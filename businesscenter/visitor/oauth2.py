@@ -15,16 +15,19 @@ class WeixinBackend(object):
                            }
                  }
 
-    access = {'url': 'https://api.weixin.qq.com/sns/oauth2/access_token',
+    access = {
+              'url': 'https://api.weixin.qq.com/cgi-bin/token',
+              #'url': 'https://api.weixin.qq.com/sns/oauth2/access_token',
               'extra': {'grant_type': 'authorization_code'}
               }
 
-    refresh = {'url': 'https://api.weixin.qq.com/sns/oauth2/refresh_token',
+    refresh = {
+               'url': 'https://api.weixin.qq.com/sns/oauth2/refresh_token',
                'extra': {'grant_type': 'refresh_token'}
               }
 
-    user_url = 'https://api.weixin.qq.com/sns/userinfo'
-    #user_url = 'https://api.weixin.qq.com/cgi-bin/user/info'
+    #user_url = 'https://api.weixin.qq.com/sns/userinfo'
+    user_url = 'https://api.weixin.qq.com/cgi-bin/user/info'
 
     appid = settings.WEIXIN_APP_ID
     secret = settings.WEIXIN_SECRET
