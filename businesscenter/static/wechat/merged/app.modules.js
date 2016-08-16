@@ -29,6 +29,7 @@ app.run(function($rootScope) {
     $rootScope.site = '哎特衣橱';
     $rootScope.THEME = '/static/theme/';
     $rootScope.PATH = '/static/wechat/merged/';
+    $rootScope.alerts = [];
 });
 app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('httpRequestInterceptor');
