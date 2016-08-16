@@ -132,6 +132,7 @@ def openid(request):
 
     user_info = weixin_oauth.get_user_info(token_data['access_token'],
                                            token_data['openid'])
+    mail_admins('token_data', str(token_data))
     mail_admins('user_info', str(user_info))
     data = {'avatar_url': user_info.get('headimgurl'),
             'nickname': user_info.get('nickname'),
