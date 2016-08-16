@@ -105,7 +105,7 @@ def index(request):
 
 
 def openid(request):
-
+    """ OAuth2 handler for weixin """
     redirect = reverse('index')
     qr = request.GET.get("qr", None)
 
@@ -132,6 +132,7 @@ def openid(request):
 
     user_info = weixin_oauth.get_user_info(token_data['access_token'],
                                            token_data['openid'])
+    mail_admins('user_info', str(user_info))
     data = {'avatar_url': user_info.get('headimgurl'),
             'nickname': user_info.get('nickname'),
             'extra': {
