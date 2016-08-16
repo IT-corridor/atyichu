@@ -116,8 +116,8 @@ def openid(request):
 
     code = request.GET.get("code", None)
 
-    #if not code:
-    #    return JsonResponse({'error': _('You don`t have weixin code.')})
+    if not code:
+        return JsonResponse({'error': _('You don`t have weixin code.')})
 
     if qr:
         weixin_oauth = WeixinQRBackend()
@@ -127,11 +127,12 @@ def openid(request):
         backend = 'weixin'
     try:
         token_data = weixin_oauth.get_access_token(code)
-        mail_admins('token_data', str(token_data))
     except TypeError:
         return JsonResponse({'error': _('You got error trying to get openid')})
 
-    user_info = weixin_oauth.get_user_info(token_data['access_token'])
+    user_info = weixin_oauth.get_user_info(token_data['access_token'],
+                                           token_data['openid'])
+    mail_admins('token_data', str(token_data))
     mail_admins('user_info', str(user_info))
     data = {'avatar_url': user_info.get('headimgurl'),
             'nickname': user_info.get('nickname'),

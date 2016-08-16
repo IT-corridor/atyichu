@@ -28,8 +28,8 @@ class WeixinBackend(object):
         'url': 'https://api.weixin.qq.com/cgi-bin/token',
         'extra': {'grant_type': 'client_credential'}
     }
-    #user_url = 'https://api.weixin.qq.com/sns/userinfo'
-    user_url = 'https://api.weixin.qq.com/cgi-bin/user/info'
+    user_url = 'https://api.weixin.qq.com/sns/userinfo'
+    #user_url = 'https://api.weixin.qq.com/cgi-bin/user/info'
 
     appid = settings.WEIXIN_APP_ID
     secret = settings.WEIXIN_SECRET
@@ -42,17 +42,18 @@ class WeixinBackend(object):
 
     def get_access_token(self, code):
 
-        params = self.access_2['extra']
-        #params['code'] = code
+        params = self.access['extra']
+        params['code'] = code
         params['appid'] = self.appid
         params['secret'] = self.secret
 
-        response = requests.get(self.access_2['url'], params=params)
+        response = requests.get(self.access['url'], params=params)
         data = response.json()
         return data
 
-    def get_user_info(self, access_token):
-        params = {'access_token': access_token}
+    def get_user_info(self, access_token, openid):
+        params = {'access_token': access_token,
+                  'openid': openid}
 
         response = requests.get(self.user_url, params=params)
         response.encoding = 'utf-8'
