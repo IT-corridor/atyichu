@@ -18,6 +18,11 @@ class Visitor(models.Model):
     thumb = models.ImageField(_('Thumbnail'),
                               upload_to='visitors/thumbs',
                               null=True, blank=True)
+    # blanked for the compatibility existing data
+    username = models.CharField(_('Username'), max_length=30, blank=True)
+    unionid = models.CharField(_('Union ID'), max_length=40,
+                               blank=True, db_index=True,
+                               help_text=_('For Weixin purpose only'))
 
     def __unicode__(self):
         return self.user.username

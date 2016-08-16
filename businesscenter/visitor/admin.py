@@ -7,6 +7,7 @@ from . import models
 class VisitorAdmin(admin.ModelAdmin):
 
     list_display = ('user',)
+    readonly_fields = ('unionid',)
 
 
 class VisitorExtraAdmin(admin.ModelAdmin):

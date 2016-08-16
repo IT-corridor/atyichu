@@ -125,19 +125,28 @@ class VisitorSerializer(serializers.ModelSerializer):
 
         user_model = get_user_model()
         nickname = smart_unicode(validated_data['nickname'])
-        user, created = user_model.objects.get_or_create(username=nickname)
-        if created:
-            password = user_model.objects.make_random_password()
-            user.set_password(password)
-            user.save()
-        if hasattr(user, 'visitor'):
-            exists = user.visitor.visitorextra_set.\
-                filter(backend=extra['backend']).exists()
-            if exists:
-                error = {'detail': _('Such kind of relation already exists.')}
-                raise serializers.ValidationError(error)
+        unionid = validated_data['unionid']
+        try:
+            visitor = Visitor.objects.get(unionid=unionid)
+        except Visitor.DoesNotExist:
+            user, created = user_model.objects.get_or_create(username=nickname)
+            # TODO: handle duplicate names
+            if created:
+                password = user_model.objects.make_random_password()
+                user.set_password(password)
+                user.save()
 
-        visitor, c = Visitor.objects.get_or_create(user=user)
+            if hasattr(user, 'visitor'):
+                exists = user.visitor.visitorextra_set.\
+                    filter(backend=extra['backend']).exists()
+                if exists:
+                    error = {'detail': _('Such relation already exists.')}
+                    raise serializers.ValidationError(error)
+
+                visitor = user.visitor
+            else:
+                visitor = Visitor.objects.create(user=user, username=nickname,
+                                                 unionid=unionid)
 
         avatar_url = validated_data.pop('avatar_url', None)
 
@@ -155,16 +164,14 @@ class VisitorSerializer(serializers.ModelSerializer):
         # Later make a different view to update profile data
         # Later need to be switched off in the view
         nickname = validated_data.pop('nickname', None)
-        user = self.instance.user
         if nickname:
-            user.username = nickname
-            user.save()
+            instance.username = nickname
 
         avatar_url = validated_data.pop('avatar_url', None)
         if avatar_url:
             instance.thumb.delete(True)
             ext, content_file = get_content_file(avatar_url)
-            instance.avatar.save('{}.{}'.format(user.username,
+            instance.avatar.save('{}.{}'.format(instance.username,
                                                 ext), content_file)
 
         for k, v in validated_data.items():
@@ -176,7 +183,7 @@ class VisitorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Visitor
-        fields = ('avatar_url', 'nickname', 'thumb', 'username',
+        fields = ('avatar_url', 'nickname', 'thumb', 'username', 'unionid',
                   'avatar', 'group_count', 'photo_count', 'pk', 'extra')
         extra_kwargs = {'thumb': {'read_only': True},
                         'avatar': {'read_only': True},
@@ -185,7 +192,13 @@ class VisitorSerializer(serializers.ModelSerializer):
 
 
 class VisitorShortSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='__unicode__', read_only=True)
+    username = serializers.SerializerMethodField(read_only=True)
+
+    def get_username(self, obj):
+        if obj.username:
+            return obj.username
+        else:
+            return obj.user.username
 
     class Meta:
         model = Visitor
