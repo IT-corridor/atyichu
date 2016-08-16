@@ -154,6 +154,14 @@ def openid(request):
         s.is_valid(raise_exception=True)
         s.save()
         visitor = extra.visitor
+        # Remove after WIPE
+        visitor_data = {'nickname': data['nickname'],
+                        'unionid': data['unionid']}
+
+        visitor_s = VisitorSerializer(instance=visitor, data=visitor_data,
+                                      partial=True)
+        visitor_s.is_valid(raise_exception=True)
+        visitor = visitor_s.save()
     except VisitorExtra.DoesNotExist:
         serializer = VisitorSerializer(data=data)
         serializer.is_valid(raise_exception=True)
