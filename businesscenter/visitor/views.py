@@ -116,8 +116,8 @@ def openid(request):
 
     code = request.GET.get("code", None)
 
-    if not code:
-        return JsonResponse({'error': _('You don`t have weixin code.')})
+    #if not code:
+    #    return JsonResponse({'error': _('You don`t have weixin code.')})
 
     if qr:
         weixin_oauth = WeixinQRBackend()

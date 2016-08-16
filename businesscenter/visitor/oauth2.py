@@ -18,7 +18,7 @@ class WeixinBackend(object):
     access = {
               'url': 'https://api.weixin.qq.com/cgi-bin/token',
               #'url': 'https://api.weixin.qq.com/sns/oauth2/access_token',
-              'extra': {'grant_type': 'authorization_code'}
+              'extra': {'grant_type': 'client_credential'}
               }
 
     refresh = {
@@ -41,7 +41,7 @@ class WeixinBackend(object):
     def get_access_token(self, code):
 
         params = self.access['extra']
-        params['code'] = code
+        #params['code'] = code
         params['appid'] = self.appid
         params['secret'] = self.secret
 
