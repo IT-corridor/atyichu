@@ -110,7 +110,13 @@ class VisitorSerializer(serializers.ModelSerializer):
     avatar_url = serializers.URLField(required=False, write_only=True,
                                       allow_blank=True)
     nickname = serializers.CharField(required=True, write_only=True)
-    username = serializers.CharField(source='user.username', read_only=True)
+    username = serializers.SerializerMethodField(read_only=True)
+
+    def get_username(self, obj):
+        if obj.username:
+            return obj.username
+        else:
+            return obj.user.username
 
     # Added 23.06.2016
     photo_count = serializers.IntegerField(source='user.photo_set.count',
@@ -169,10 +175,10 @@ class VisitorSerializer(serializers.ModelSerializer):
 
         avatar_url = validated_data.pop('avatar_url', None)
         if avatar_url:
-            instance.thumb.delete(True)
             ext, content_file = get_content_file(avatar_url)
             instance.avatar.save('{}.{}'.format(instance.username,
                                                 ext), content_file)
+            instance.thumb.delete(True)
 
         for k, v in validated_data.items():
             if hasattr(instance, k):
