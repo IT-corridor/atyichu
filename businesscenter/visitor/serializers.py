@@ -187,7 +187,8 @@ class VisitorSerializer(serializers.ModelSerializer):
                   'avatar', 'group_count', 'photo_count', 'pk', 'extra')
         extra_kwargs = {'thumb': {'read_only': True},
                         'avatar': {'read_only': True},
-                        'pk': {'read_only': True}
+                        'pk': {'read_only': True},
+                        'unionid': {'write_only': True}
                         }
 
 
