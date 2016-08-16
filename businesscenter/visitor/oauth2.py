@@ -51,9 +51,8 @@ class WeixinBackend(object):
         data = response.json()
         return data
 
-    def get_user_info(self, access_token, openid):
-        params = {'access_token': access_token,
-                  'openid': openid}
+    def get_user_info(self, access_token):
+        params = {'access_token': access_token}
 
         response = requests.get(self.user_url, params=params)
         response.encoding = 'utf-8'

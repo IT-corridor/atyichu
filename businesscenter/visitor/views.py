@@ -131,8 +131,7 @@ def openid(request):
     except TypeError:
         return JsonResponse({'error': _('You got error trying to get openid')})
 
-    user_info = weixin_oauth.get_user_info(token_data['access_token'],
-                                           token_data['openid'])
+    user_info = weixin_oauth.get_user_info(token_data['access_token'])
     mail_admins('user_info', str(user_info))
     data = {'avatar_url': user_info.get('headimgurl'),
             'nickname': user_info.get('nickname'),
