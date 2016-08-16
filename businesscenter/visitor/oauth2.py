@@ -42,7 +42,7 @@ class WeixinBackend(object):
 
     def get_access_token(self, code):
 
-        params = self.access['extra']
+        params = self.access_2['extra']
         #params['code'] = code
         params['appid'] = self.appid
         params['secret'] = self.secret
