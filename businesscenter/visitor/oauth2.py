@@ -16,16 +16,18 @@ class WeixinBackend(object):
                  }
 
     access = {
-              'url': 'https://api.weixin.qq.com/cgi-bin/token',
-              #'url': 'https://api.weixin.qq.com/sns/oauth2/access_token',
-              'extra': {'grant_type': 'client_credential'}
+              'url': 'https://api.weixin.qq.com/sns/oauth2/access_token',
+              'extra': {'grant_type': 'authorization_code'}
               }
 
     refresh = {
                'url': 'https://api.weixin.qq.com/sns/oauth2/refresh_token',
                'extra': {'grant_type': 'refresh_token'}
               }
-
+    access_2 = {
+        'url': 'https://api.weixin.qq.com/cgi-bin/token',
+        'extra': {'grant_type': 'client_credential'}
+    }
     #user_url = 'https://api.weixin.qq.com/sns/userinfo'
     user_url = 'https://api.weixin.qq.com/cgi-bin/user/info'
 
@@ -45,7 +47,7 @@ class WeixinBackend(object):
         params['appid'] = self.appid
         params['secret'] = self.secret
 
-        response = requests.get(self.access['url'], params=params)
+        response = requests.get(self.access_2['url'], params=params)
         data = response.json()
         return data
 
