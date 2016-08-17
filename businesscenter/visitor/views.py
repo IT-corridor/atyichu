@@ -25,11 +25,10 @@ def login_view(request):
     status = 400
     backend = 'weixin'
     try:
-        visitor = Visitor.objects.get(visitorextra__openid=request.data['weixin'],
-                                      visitorextra__backend=backend)
-        serializer = VisitorSerializer(instance=visitor)
+        extra = VisitorExtra.objects.get(openid=request.data['weixin'],
+                                         backend=backend)
+        serializer = VisitorSerializer(instance=extra.weixin.visitor)
         user_data = serializer.data
-        extra = visitor.visitorextra_set.get(backend=backend)
         user = authenticate(weixin=extra.openid)
         login(request, user)
     except KeyError as e:
@@ -151,7 +150,7 @@ def openid(request):
                                    partial=True)
         s.is_valid(raise_exception=True)
         s.save()
-        visitor = extra.visitor
+        visitor = extra.weixin.visitor
         # Remove after WIPE
         visitor_data = {'nickname': data['nickname'],
                         'unionid': data['unionid']}

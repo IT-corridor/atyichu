@@ -9,9 +9,9 @@ class WeixinBackend(object):
 
     def authenticate(self, weixin=None, backend='weixin'):
         try:
-            extra = VisitorExtra.objects.select_related('visitor__user')\
+            ve = VisitorExtra.objects.select_related('weixin__visitor__user')\
                 .get(openid=weixin, backend=backend)
-            user = extra.visitor.user
+            user = ve.weixin.visitor.user
         except VisitorExtra.DoesNotExist:
             user = None
         return user

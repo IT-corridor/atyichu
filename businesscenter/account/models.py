@@ -5,7 +5,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
-from utils.validators import SizeValidator
+from utils.validators import SizeValidator, phone_regex
 # Create your models here.
 
 
@@ -26,6 +26,8 @@ class Vendor(models.Model):
     thumb = models.ImageField(_('Thumbnail'),
                               upload_to='vendors/thumbs',
                               null=True, blank=True)
+    phone = models.CharField(_('Phone'), max_length=16, blank=True, null=True,
+                             validators=[phone_regex], unique=True)
 
     def __unicode__(self):
         return self.user.username
