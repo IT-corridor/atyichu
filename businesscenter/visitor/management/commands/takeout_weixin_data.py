@@ -8,13 +8,12 @@ class Command(BaseCommand):
     help = 'Moves weixin unionid and move visitor_id to weixin_id'
 
     def handle(self, *args, **options):
-        extra = VisitorExtra.objects.all()
+        extra = VisitorExtra.objects.filter(weixin__isnull=True)
         for ve in extra:
-            ve.weixin_id = ve.visitor_id
-            ve.save()
             weixin = Weixin.objects.create(visitor=ve.visitor,
                                            unionid=ve.visitor.unionid)
             ve.weixin = weixin
-            weixin.save()
+            ve.save()
+
         self.stdout.write(
             self.style.SUCCESS('OAuth2 data has been success!'))
