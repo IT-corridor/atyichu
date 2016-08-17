@@ -30,7 +30,7 @@ class VisitorExtraSerializer(serializers.ModelSerializer):
 
 
 class VisitorSerializer(serializers.ModelSerializer):
-    """ Serializer for Weixin data"""
+    """ Serializer for Weixin user data"""
     avatar_url = serializers.URLField(required=False, write_only=True,
                                       allow_blank=True)
     nickname = serializers.CharField(required=True, write_only=True)
