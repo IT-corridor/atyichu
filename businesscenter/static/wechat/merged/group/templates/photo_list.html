@@ -62,8 +62,8 @@
                     <div class="clear">
                       <div id="photo-o-name">{{ photo.owner.username }}</div>
 					  <div class="user-follow-status">
-					  <i class="icon-user-follow"></i>
-					  <i class="icon-user-following"></i>
+						<i class="icon-user-follow"></i>
+						<i class="icon-user-following"></i>
 					  </div>
                     </div>
 
@@ -99,7 +99,7 @@
                 </div>
                 <p class="b-b b-light font-bold" data-ng-if="photo.title">{{ photo.title }}</p>
                 <p class="b-b b-light font-bold" data-ng-if="!photo.title && photo.origin.title">{{ photo.origin.title }}</p>
-                <p class="b-b b-light" data-ng-if="photo.descr"> {{ photo.descr }}</p>
+                <p class="photo-description" data-ng-if="photo.descr"> {{ photo.descr }}</p>
                 <div class="photo-description" data-ng-if="!photo.descr && photo.origin.descr"> {{ photo.descr.descr }}</div>
 
 
@@ -112,7 +112,7 @@
                     <li><i class="fa fa-floppy-o"></i> {{ photo.comment_count }}</li>
                     <li><a data-ng-click="like($index, photo.id)"><i class="fa fa-heart-o"></i> {{ photo.like_count }}</a></li>
                     <li><i class="fa fa-share-alt"></i> {{ photo.clone_count }}</li>
-                </ul>
+                </ul>  
 
 
 

@@ -1,3 +1,5 @@
+/* ========== Photo_list.html  ==============*/
+
 body {
     padding-top: 0px;
 }
@@ -59,9 +61,7 @@ left: 4% !important;
     padding-bottom: 8px;
     padding-left: 10px;
     padding-right: 10px;
-    //position: relative;
-    //width: 100%;
-    //float: left;
+   
 }
 
 .pin p {
@@ -77,13 +77,14 @@ left: 4% !important;
     float: left;
 }
 
-.photo-description {
+.pin p.photo-description {
     font-size: 12px;
     padding: 4px 10px;
     float: left;
     padding-bottom: 20px;
     width: 100%;
     display: block;
+	font-weight:normal !important
 }
 
 
@@ -151,6 +152,11 @@ left: 4% !important;
 }
 
 
+.navbar-fixed-bottom .wrapper-xs
+{
+	padding:0px !important;
+}
+
 
 @media only screen and (max-width: 767px)
 {
@@ -169,3 +175,157 @@ left: 4% !important;
 }
 
 }
+
+
+
+
+/* ========== detail.html  ==============*/
+
+.photo-detail .owner-img {
+    display: block;
+    border-radius: 100%;
+    float: left;
+    width: 28px;
+}
+
+
+
+.photo-detail .detail-user-follow-status {
+    float: right;
+    margin-top: 5px;
+}
+
+.photo-detail .detail-owner-section {
+    float: left;
+    width: 100%;
+    padding: 10px;
+	background:#fff;
+}
+
+.photo-detail .fa-angle-left {
+    float: left;
+    margin-top: 0px;
+    margin-right: 8px;
+    font-size: 28px;
+    color: #3c3c3c;
+}
+
+.photo-detail .panel {
+    width: 100%;
+    float: left;
+    padding: 0px !important;
+	    border: 0px;
+		margin:0px;
+		background:#f7f7f7
+}
+
+.photo-detail .owner-name {
+    padding-left: 10px;
+    margin-top: 4px;
+    float: left;
+    color: #000;
+    font-size: 16px;
+}
+	
+.photo-detail .panel .wrapper-lg {
+    width: 100%;
+    float: left;
+    padding: 0px;
+}
+
+
+.photo-detail .panel .wrapper-lg h4 {
+    padding: 15px 0px 0px 15px;
+    text-transform: inherit;
+        border-top: 1px solid #e6e5e5;
+	color: #000;
+}
+
+.photo-detail .panel .wrapper-lg .photo-detail-description {
+    padding: 0px 15px;
+    text-transform: inherit;
+    color: #565656;
+    font-weight: lighter;
+    border-bottom: 1px solid #e6e5e5;
+    font-family: arial;
+    padding-bottom: 15px;
+    font-size: 14px;
+}
+
+.photo-detail .detail-half {
+    width: 50%;
+    float: left;
+    padding: 8px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+
+.photo-detail .wrapper-sm .img-wrap-xs .col-xs-3 {
+    width: 25%;
+    padding: 0px;
+    height: 75%;
+    overflow: hidden;
+}
+
+.photo-detail
+{
+	width:100% !important;
+}
+
+.photo-detail .wrapper-sm
+{
+	padding:0px;
+}
+
+
+.photo-detail .m-l-xxl {
+    margin-left: 0px;
+    padding: 10px;
+    background: #fff;
+    border-top: 1px solid #d7d7d7;
+    position: fixed;
+    bottom: 57px;
+}
+
+.photo-detail .btn-info {
+    color: #929292 !important;
+    background: none !important;
+    border: none !important;
+}
+
+
+
+
+.photo-detail #photo-origin-owner-username {
+    float: left;
+    margin-left: 15px;
+    padding: 8px 0px;
+}
+
+.photo-detail .user-follow-status {
+    float: right;
+    margin-right: 5%;
+    padding: 12px 0px;
+}
+
+.photo-detail .form-control {
+    border-radius: 10px !important;
+    padding: 0px 15px;
+    border: 1px solid #d7d7d7;
+    font-size: 16px;
+}
+
+
+ .photo-detail .glyphicon-heart
+ {
+	 color: #f48b6b;
+	 margin:0px 8px
+ }
+ 
+ .photo-detail #photo-origin-owner-username .img-circle {
+    border-radius: 0%;
+    width: 32px;
+    margin-right: 8px;
+}
+
