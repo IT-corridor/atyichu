@@ -22,8 +22,6 @@ class Visitor(models.Model):
     username = models.CharField(_('Username'), max_length=30, blank=True)
     phone = models.CharField(_('Phone'), max_length=16, blank=True, null=True,
                              validators=[phone_regex], unique=True)
-    unionid = models.CharField(_('Union ID'), max_length=40,
-                               blank=True, db_index=True)
 
     def __unicode__(self):
         return self.user.username
@@ -61,10 +59,8 @@ class VisitorExtra(models.Model):
     token_date = models.DateTimeField(_('Token date'), default=timezone.now)
     backend = models.CharField(_('Auth backend'), max_length=50,
                                default='weixin')
-    visitor = models.ForeignKey(Visitor, verbose_name=_('Visitor'))
     weixin = models.ForeignKey(Weixin, verbose_name=_('Weixin'),
                                null=True, blank=True)
-
 
     def is_expired(self):
         """Not a field --- it is a method. Checks if token is expired.
@@ -74,4 +70,4 @@ class VisitorExtra(models.Model):
 
     class Meta:
         verbose_name = _('Extra Data')
-        unique_together = (('visitor', 'backend'), ('weixin', 'backend'),)
+        unique_together = (('weixin', 'backend'),)

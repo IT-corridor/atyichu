@@ -166,7 +166,7 @@ def openid(request):
         extra = None
 
     if not extra:
-        extra = visitor.visitorextra_set.get(backend=backend)
+        extra = visitor.weixin.visitorextra_set.get(backend=backend)
     user = authenticate(weixin=extra.openid, backend=backend)
     login(request, user)
     return response

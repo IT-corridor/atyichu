@@ -16,7 +16,7 @@ class VisitorExtraSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VisitorExtra
-        exclude = ('visitor', 'weixin')
+        exclude = ('weixin')
 
     def update(self, instance, validated_data):
         if validated_data.get('expires_in', None):
@@ -92,7 +92,7 @@ class VisitorSerializer(serializers.ModelSerializer):
             visitor.avatar.save('{}.{}'.format(nickname, ext), content_file)
 
         if extra:
-            VisitorExtra.objects.create(visitor=visitor, weixin=visitor.weixin,
+            VisitorExtra.objects.create(weixin=visitor.weixin,
                                         **extra)
 
         return visitor
