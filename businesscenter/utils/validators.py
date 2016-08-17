@@ -18,3 +18,8 @@ def validate_weixin(value):
               'English and Chinese letters, numbers and -, _ characters.')
     validator = RegexValidator(u'^[\w\d\-\u2E80-\u9FFF]+$', error)
     return validator(value)
+
+phone_regex = RegexValidator(regex=r'^\+\d{9,16}$',
+                             message='Phone number must be presented in '
+                                     'international format including "+" '
+                                     'and from 8 to 15 digits.')

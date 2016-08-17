@@ -6,7 +6,7 @@ from django.utils.encoding import smart_unicode
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import Visitor, VisitorExtra
+from .models import Visitor, VisitorExtra, Weixin
 from utils.utils import get_content_file
 
 from django.core.mail import mail_admins
@@ -16,7 +16,7 @@ class VisitorExtraSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VisitorExtra
-        exclude = ('visitor',)
+        exclude = ('weixin',)
 
     def update(self, instance, validated_data):
         if validated_data.get('expires_in', None):
@@ -34,6 +34,7 @@ class VisitorSerializer(serializers.ModelSerializer):
     avatar_url = serializers.URLField(required=False, write_only=True,
                                       allow_blank=True)
     nickname = serializers.CharField(required=True, write_only=True)
+    unionid = serializers.CharField(write_only=True)
     username = serializers.SerializerMethodField(read_only=True)
 
     def get_username(self, obj):
@@ -46,7 +47,8 @@ class VisitorSerializer(serializers.ModelSerializer):
                                            read_only=True)
     group_count = serializers.IntegerField(source='user.group_set.count',
                                            read_only=True)
-    extra = VisitorExtraSerializer(write_only=True, allow_null=True)
+    extra = VisitorExtraSerializer(source='weixin.visitorextra_set',
+                                   write_only=True, allow_null=True)
 
     def create(self, validated_data):
 
@@ -56,11 +58,12 @@ class VisitorSerializer(serializers.ModelSerializer):
         nickname = smart_unicode(validated_data['nickname'])
         unionid = validated_data['unionid']
         try:
-            visitor = Visitor.objects.get(unionid=unionid)
+            visitor = Visitor.objects.get(weixin__unionid=unionid)
         except Visitor.DoesNotExist:
             # If user with such nickname exists and he has unionid
             if User.objects.filter(username=nickname,
-                                   visitor__unionid__isnull=False).exists():
+                                   visitor__weixin__unionid__isnull=False)\
+                    .exists():
                 # generating new username
                 username = nickname[0:24] + '_' + uuid4().hex[0:5]
             else:
@@ -73,7 +76,7 @@ class VisitorSerializer(serializers.ModelSerializer):
                 user.save()
 
             if hasattr(user, 'visitor'):
-                exists = user.visitor.visitorextra_set.\
+                exists = user.visitor.weixin.visitorextra_set.\
                     filter(backend=extra['backend']).exists()
                 if exists:
                     error = {'detail': _('Such relation already exists.')}
@@ -81,9 +84,8 @@ class VisitorSerializer(serializers.ModelSerializer):
 
                 visitor = user.visitor
             else:
-                visitor = Visitor.objects.create(user=user, username=nickname,
-                                                 unionid=unionid)
-
+                visitor = Visitor.objects.create(user=user, username=nickname)
+                Weixin.objects.create(visitor=visitor, unionid=unionid)
         avatar_url = validated_data.pop('avatar_url', None)
 
         if avatar_url:
@@ -92,7 +94,8 @@ class VisitorSerializer(serializers.ModelSerializer):
             visitor.avatar.save('{}.{}'.format(nickname, ext), content_file)
 
         if extra:
-            VisitorExtra.objects.create(visitor=visitor, **extra)
+            VisitorExtra.objects.create(weixin=visitor.weixin,
+                                        **extra)
 
         return visitor
 
@@ -124,7 +127,6 @@ class VisitorSerializer(serializers.ModelSerializer):
         extra_kwargs = {'thumb': {'read_only': True},
                         'avatar': {'read_only': True},
                         'pk': {'read_only': True},
-                        'unionid': {'write_only': True}
                         }
 
 

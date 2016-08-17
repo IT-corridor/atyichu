@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from utils.validators import validate_weixin
+from utils.validators import validate_weixin, phone_regex
 from utils.validators import SizeValidator
 
 
@@ -20,16 +20,30 @@ class Visitor(models.Model):
                               null=True, blank=True)
     # blanked for the compatibility existing data
     username = models.CharField(_('Username'), max_length=30, blank=True)
-    unionid = models.CharField(_('Union ID'), max_length=40,
-                               blank=True, db_index=True,
-                               help_text=_('For Weixin purpose only'))
+    phone = models.CharField(_('Phone'), max_length=16, blank=True, null=True,
+                             validators=[phone_regex], unique=True)
 
     def __unicode__(self):
-        return self.user.username
+        return self.username if self.username else self.user.username
 
     class Meta:
         verbose_name = _('Visitor')
         verbose_name_plural = _('Visitors')
+
+
+class Weixin(models.Model):
+    """ Only for weixjn data """
+    visitor = models.OneToOneField(Visitor, on_delete=models.CASCADE,
+                                   primary_key=True, verbose_name=_('visitor'))
+    # blanked for the compatibility existing data
+    unionid = models.CharField(_('Union ID'), max_length=40,
+                               blank=True, db_index=True)
+
+    def __unicode__(self):
+        return '{}: {}'.format(self.visitor, self.unionid)
+
+    class Meta:
+        verbose_name = _('Weixin')
 
 
 class VisitorExtra(models.Model):
@@ -45,8 +59,8 @@ class VisitorExtra(models.Model):
     token_date = models.DateTimeField(_('Token date'), default=timezone.now)
     backend = models.CharField(_('Auth backend'), max_length=50,
                                default='weixin')
-    visitor = models.ForeignKey(Visitor, verbose_name=_('Visitor'))
-
+    weixin = models.ForeignKey(Weixin, verbose_name=_('Weixin'),
+                               null=True, blank=True)
 
     def is_expired(self):
         """Not a field --- it is a method. Checks if token is expired.
@@ -56,4 +70,4 @@ class VisitorExtra(models.Model):
 
     class Meta:
         verbose_name = _('Extra Data')
-        unique_together = ('visitor', 'backend')
+        unique_together = (('weixin', 'backend'),)

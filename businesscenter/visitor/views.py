@@ -25,11 +25,10 @@ def login_view(request):
     status = 400
     backend = 'weixin'
     try:
-        visitor = Visitor.objects.get(visitorextra__openid=request.data['weixin'],
-                                      visitorextra__backend=backend)
-        serializer = VisitorSerializer(instance=visitor)
+        extra = VisitorExtra.objects.get(openid=request.data['weixin'],
+                                         backend=backend)
+        serializer = VisitorSerializer(instance=extra.weixin.visitor)
         user_data = serializer.data
-        extra = visitor.visitorextra_set.get(backend=backend)
         user = authenticate(weixin=extra.openid)
         login(request, user)
     except KeyError as e:
@@ -151,7 +150,7 @@ def openid(request):
                                    partial=True)
         s.is_valid(raise_exception=True)
         s.save()
-        visitor = extra.visitor
+        visitor = extra.weixin.visitor
         # Remove after WIPE
         visitor_data = {'nickname': data['nickname'],
                         'unionid': data['unionid']}
@@ -167,7 +166,7 @@ def openid(request):
         extra = None
 
     if not extra:
-        extra = visitor.visitorextra_set.get(backend=backend)
+        extra = visitor.weixin.visitorextra_set.get(backend=backend)
     user = authenticate(weixin=extra.openid, backend=backend)
     login(request, user)
     return response
@@ -186,7 +185,7 @@ def update_visitor(request):
         wx = WeixinBackend()
         backend = 'weixin'
     visitor = request.user.visitor
-    extra = VisitorExtra.objects.get(visitor=visitor, backend=backend)
+    extra = VisitorExtra.objects.get(weixin=visitor.weixin, backend=backend)
     data = {'access_token': extra.access_token,
             'openid': extra.openid}
     if extra.is_expired():
