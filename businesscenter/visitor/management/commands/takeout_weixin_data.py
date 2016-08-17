@@ -10,8 +10,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         extra = VisitorExtra.objects.filter(weixin__isnull=True)
         for ve in extra:
-            weixin = Weixin.objects.create(visitor=ve.visitor,
-                                           unionid=ve.visitor.unionid)
+            weixin, _ = Weixin.objects.get_or_create(visitor=ve.visitor,
+                                                     unionid=ve.visitor.unionid)
             ve.weixin = weixin
             ve.save()
 
