@@ -24,9 +24,9 @@ ADMINS = ((data['ADMIN'], data['ADMIN_EMAIL']),)   # hide
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'db_atyichu2',
-        'USER': 'db_atyichu2',
-        'PASSWORD': '!7935824Ljx',
+        'NAME': data['DB_NAME'],
+        'USER': data['DB_USER'],
+        'PASSWORD': data['DB_PASSWORD'],
         'HOST': 'rm-2ze8182fmzl45fh0r.mysql.rds.aliyuncs.com',
         'PORT': 3306,
         'TEST': {
