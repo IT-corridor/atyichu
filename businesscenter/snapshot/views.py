@@ -34,7 +34,7 @@ from visitor.models import Visitor
 from account.models import Vendor, Store
 from account.serializers import VendorStoreSerializer
 from catalog.models import Commodity
-from vutils.umeng_push import push_unicast
+from vutils.notification import trigger_notification
 from vutils.wzhifuSDK import JsApi_pub
 
 
@@ -314,11 +314,11 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
         log.info('create photo id: {}'.format(photo.id))
         content = {'photo_id': photo.id}
-        # SENDING A request to umeng push service,
+        # SENDING A request for nitification to pusher service,
         # which will push the ANDROID APP.
-        send_json, receive_info = push_unicast('571459b267e58e826f000239',
-                                               'ydcfc8leufv2efcm4slwmhb2pfffaiop',
-                                               mirror.token, json.dumps(content))
+        send_json, receive_info = trigger_notification('nf_channel_%d'%visitor.id,
+                                               'new_notification',
+                                               "New photo (%d) is created!"%photo.id)
 
         log.info('umeng json: {}, {}'.format(send_json, receive_info))
         return Response(data={'id': photo.id}, status=201)
@@ -888,8 +888,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            # push_unicast(user.device_token, request.user.username+"wants to follow you!")
-            push_unicast('Aml5E5JNRCF3VF7XtyEU5xGwcG8p3qu3UPwUaHaYMpX4',
+            trigger_notification('nf_channel_%d'%obj.owner.id, 'new_notification',
                          request.user.username + "wants to follow your group!")
 
         except IntegrityError:
@@ -912,8 +911,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            # push_unicast(user.device_token, request.user.username+"wants to follow you!")
-            push_unicast('Aml5E5JNRCF3VF7XtyEU5xGwcG8p3qu3UPwUaHaYMpX4',
+            trigger_notification('nf_channel_%d'%obj.owner.id, 'new_notification',
                          request.user.username + "stops to follow your group!")
 
         except IntegrityError:
@@ -963,8 +961,7 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            # push_unicast(user.device_token, request.user.username+"wants to follow you!")
-            push_unicast('Aml5E5JNRCF3VF7XtyEU5xGwcG8p3qu3UPwUaHaYMpX4',
+            trigger_notification('nf_channel_%d'%kwargs['pk'], 'new_notification',
                          request.user.username + "wants to follow you!")
 
         except IntegrityError:
@@ -984,8 +981,7 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            # push_unicast(user.device_token, request.user.username+"wants to follow you!")
-            push_unicast('Aml5E5JNRCF3VF7XtyEU5xGwcG8p3qu3UPwUaHaYMpX4',
+            trigger_notification('nf_channel_%d'%kwargs['pk'], 'new_notification',
                          request.user.username + "stops to follow you!")
 
         except IntegrityError:

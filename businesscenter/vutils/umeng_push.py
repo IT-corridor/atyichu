@@ -8,7 +8,6 @@ import requests
 import json
 import urllib2
 import datetime
-import pusher
 import os
 import cgi
 
@@ -58,10 +57,3 @@ def push_unicast(device_token, text):
     except urllib2.URLError, e:
         print e.reason
     return post_body, success_info
-
-def trigger_notification():
-    p = pusher.Pusher(app_id=settings.PUSHER_APP_ID, key=settings.PUSHER_KEY, secret=settings.PUSHER_SECRET)
-
-    message =  cgi.escape(request.form['message'])
-    p.trigger('notifications', 'new_notification', {'message': message})
-    return "Notification triggered!"
