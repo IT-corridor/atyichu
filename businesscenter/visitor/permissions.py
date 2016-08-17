@@ -32,10 +32,11 @@ class IsVisitorOrVendor(permissions.IsAuthenticated):
 
 
 class IsVisitorSimple(permissions.IsAuthenticated):
-
+    """ For weixin user"""
     def has_permission(self, request, view):
         base_perm = super(IsVisitorSimple, self).has_permission(request, view)
         if base_perm:
             if hasattr(request.user, 'visitor'):
-                return True
+                if hasattr(request.user.visitor, 'weixin'):
+                    return True
         return request.user.is_staff
