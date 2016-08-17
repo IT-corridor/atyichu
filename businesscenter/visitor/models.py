@@ -24,7 +24,7 @@ class Visitor(models.Model):
                              validators=[phone_regex], unique=True)
 
     def __unicode__(self):
-        return self.user.username
+        return self.username if self.username else self.user.username
 
     class Meta:
         verbose_name = _('Visitor')
@@ -40,7 +40,7 @@ class Weixin(models.Model):
                                blank=True, db_index=True)
 
     def __unicode__(self):
-        return '{}: {}'.format(self.visitor_id, self.unionid)
+        return '{}: {}'.format(self.visitor, self.unionid)
 
     class Meta:
         verbose_name = _('Weixin')
