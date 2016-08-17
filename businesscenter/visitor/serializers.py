@@ -61,7 +61,8 @@ class VisitorSerializer(serializers.ModelSerializer):
         except Visitor.DoesNotExist:
             # If user with such nickname exists and he has unionid
             if User.objects.filter(username=nickname,
-                                   visitor__unionid__isnull=False).exists():
+                                   visitor__weixin__unionid__isnull=False)\
+                    .exists():
                 # generating new username
                 username = nickname[0:24] + '_' + uuid4().hex[0:5]
             else:
