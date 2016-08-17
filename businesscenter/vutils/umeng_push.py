@@ -15,13 +15,6 @@ import cgi
 from django.conf import settings
 
 
-# {"appkey": "56f3b94267e58e49270019e7", "production_mode": "false",
-# "description": "testaaa", "type": "unicast",
-# "payload": {"display_type": "message", "body": {"custom": "aaabbb"}},
-# "policy": {"expire_time": "2016-04-12 17:07:55"},
-# "device_tokens": "AjzbcO4OoVNsKfYPdSoilaohG3pjlfPCBdhpXGaBiGMs"}
-
-
 def md5(s):
     m = hashlib.md5(s)
     return m.hexdigest()
@@ -67,11 +60,7 @@ def push_unicast(device_token, text):
     return post_body, success_info
 
 def trigger_notification():
-    app_id = '236840'#os.environ.get('PUSHER_APP_ID')
-    key = "4c8e6d909a1f7ccc44ed"#os.environ.get('PUSHER_APP_KEY')
-    secret = "119328e419074c206e29"#os.environ.get('PUSHER_APP_SECRET')
-
-    p = pusher.Pusher(app_id=app_id, key=key, secret=secret)
+    p = pusher.Pusher(app_id=settings.PUSHER_APP_ID, key=settings.PUSHER_KEY, secret=settings.PUSHER_SECRET)
 
     message =  cgi.escape(request.form['message'])
     p.trigger('notifications', 'new_notification', {'message': message})

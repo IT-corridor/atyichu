@@ -648,8 +648,9 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
                                                'original__visitor',))
 
             qs = qs.prefetch_related(prefetch)
-            qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
-                           Q(member__visitor=visitor)).distinct()
+            # qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
+            #                Q(member__visitor=visitor)).distinct()
+            qs = qs.filter(Q(is_private=False)).exclude(Q(owner=visitor)).exclude(Q(member__visitor=visitor)).distinct()
         else:
             # TODO: optimize for detail view
             qs = qs.prefetch_related('member_set__visitor')
