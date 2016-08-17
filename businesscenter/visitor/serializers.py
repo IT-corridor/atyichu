@@ -16,7 +16,7 @@ class VisitorExtraSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VisitorExtra
-        exclude = ('weixin')
+        exclude = ('weixin',)
 
     def update(self, instance, validated_data):
         if validated_data.get('expires_in', None):
