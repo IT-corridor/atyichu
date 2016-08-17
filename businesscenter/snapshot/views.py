@@ -640,7 +640,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         visitor = self.request.user
         qs = Group.objects.select_related('owner__visitor').\
             prefetch_related('tag_set', 'member_set__visitor__visitor',
-                             'member_set__visitor__vendor__store')
+                             'member_set__visitor__vendor__store', 'followgroup_set')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             prefetch = Prefetch('photo_set',
                                 queryset=Photo.objects.
@@ -958,10 +958,7 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         try:
             FollowUser.objects.create(follower_id=request.user.id,
                                       user_id=kwargs['pk'])
-
-            # Not using default object or queryset, to reduce the queryset
-            # like_count = Photo.objects.get(id=obj.id).like_set.count()
-            follow_count = 10
+            follow_count = FollowUser.objects.filter(user_id=kwargs['pk']).count()
             data = {'follow_count': follow_count}
             status = 200
 
@@ -982,10 +979,7 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         try:
             FollowUser.objects.get(follower_id=request.user.id,
                                    user_id=kwargs['pk']).delete()
-
-            # Not using default object or queryset, to reduce the queryset
-            # like_count = Photo.objects.get(id=obj.id).like_set.count()
-            follow_count = 10
+            follow_count = FollowUser.objects.filter(user_id=kwargs['pk']).count()
             data = {'follow_count': follow_count}
             status = 200
 

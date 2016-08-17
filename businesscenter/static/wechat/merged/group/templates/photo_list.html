@@ -62,13 +62,10 @@
                     <div class="clear">
                       <div id="photo-o-name">{{ photo.owner.username }}</div>
 					  <div class="user-follow-status">
-					  <i class="icon-user-follow"></i>
-					  <i class="icon-user-following"></i>
+					  <span data-ng-if="!group.is_owner_followed" data-ng-click="follow_user(group.owner, group)"><i class="icon-user-follow"></i></span>
+					  <span data-ng-if="group.is_owner_followed"><i class="icon-user-following"></i></span>
 					  </div>
                     </div>
-
-
-
                 </div>
 
                 <a data-ng-href="#!/photo/{{ photo.id }}">
@@ -112,7 +109,7 @@
                     <li><i class="fa fa-floppy-o"></i> {{ photo.comment_count }}</li>
                     <li><a data-ng-click="like($index, photo.id)"><i class="fa fa-heart-o"></i> {{ photo.like_count }}</a></li>
                     <li><i class="fa fa-share-alt"></i> {{ photo.clone_count }}</li>
-                    <li><i data-ng-click="follow(photo.group)" class="fa fa-star"></i></li>
+                    <li data-ng-if="!group.is_followed"><i data-ng-click="follow(photo.group, group)" class="fa fa-star"></i></li>
                 </ul>
             </div>
         </div>

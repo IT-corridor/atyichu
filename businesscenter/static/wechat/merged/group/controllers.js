@@ -98,25 +98,12 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                 for (l; l < empty; l++){ obj.results[k].empty_array.push(l);}
             }
         }
-
-        $scope.follow_user = function(owner_id){
-            Visitor.follow_user({pk: owner_id},
-                function(success){
-                    // $scope.r.results[index].like_count = success.like_count;
-                },
-                function(error){
-                    /*TODO: Dan, replace it with $translate directive.
-                    I know that it was not available, but now it is.*/
-                    $rootScope.alerts.push({ type: 'danger', msg: 'You have followed the user already!'});
-                }
-            );
-        };
     }
 ])
 .controller('CtrlGroupPhotoList', ['$scope', '$rootScope','$http', '$window',
-'$location', '$routeParams','GetPageLink' , 'Group', 'IsMember', 'Photo', 'WindowScroll',
+'$location', '$routeParams','GetPageLink', 'Group', 'IsMember', 'Photo', 'WindowScroll', 'Visitor',
     function($scope, $rootScope, $http, $window, $location, $routeParams,
-    GetPageLink, Group, IsMember, Photo, WindowScroll) {
+    GetPageLink, Group, IsMember, Photo, WindowScroll, Visitor) {
 
         $scope.can_edit = false;
         $rootScope.photo_refer = $location.url();
@@ -189,7 +176,8 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             );
         };
 
-        $scope.follow = function(group_id){
+        $scope.follow = function(group_id, group) {
+            group.is_followed = true;
             Group.follow({pk: group_id},
                 function(success){
                     // $scope.r.results[index].like_count = success.like_count;
@@ -198,7 +186,21 @@ angular.module('group.controllers', ['group.services', 'group.directives',
                     $rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
                 }
             );
+            console.log($rootScope.visitor.pk);
         };
+
+        $scope.follow_user = function(owner_id, group) {
+            group.is_owner_followed = true;
+            Visitor.follow_user({pk: owner_id},
+                function(success){
+                },
+                function(error){
+                    /*TODO: Dan, replace it with $translate directive.
+                    I know that it was not available, but now it is.*/
+                    $rootScope.alerts.push({ type: 'danger', msg: 'You have followed the user already!'});
+                }
+            );
+        };        
     }
 ])
 .controller('CtrlGroupManage', ['$scope', '$rootScope','$http',
@@ -414,14 +416,12 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         $scope.unfollow = function(group_id){
             $scope.r.results = remove_group($scope.r.results, group_id);
             Group.unfollow({pk: group_id},
-                    function(success){
-
-                    },
-                    function(error){
-                        //$rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
-                    }
-                );
-
+                function(success){
+                },
+                function(error){
+                    //$rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
+                }
+            );
         };
 
     function remove_group(list, group_id){
