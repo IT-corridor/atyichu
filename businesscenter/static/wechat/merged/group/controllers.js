@@ -189,7 +189,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             );
         };
 
-        $scope.follow = function(index, group_id){
+        $scope.follow = function(group_id){
             Group.follow({pk: group_id},
                 function(success){
                     // $scope.r.results[index].like_count = success.like_count;

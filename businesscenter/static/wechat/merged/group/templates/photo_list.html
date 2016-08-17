@@ -112,10 +112,8 @@
                     <li><i class="fa fa-floppy-o"></i> {{ photo.comment_count }}</li>
                     <li><a data-ng-click="like($index, photo.id)"><i class="fa fa-heart-o"></i> {{ photo.like_count }}</a></li>
                     <li><i class="fa fa-share-alt"></i> {{ photo.clone_count }}</li>
+                    <li><i data-ng-click="follow(photo.group)" class="fa fa-star"></i></li>
                 </ul>
-
-
-
             </div>
         </div>
     </div>

@@ -878,12 +878,12 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         obj = self.get_object()
 
         try:
-            FollowGroup.objects.create(follower_id=request.user.id,
+            if not FollowGroup.objects.filter(follower_id=request.user.id,
+                                       group_id=obj.id):
+                FollowGroup.objects.create(follower_id=request.user.id,
                                        group_id=obj.id)
 
-            # TODO: WHAT THIS. I think follow count is redundant,
-            #  or you need to set a real follow_count
-            follow_count = 10
+            follow_count = FollowGroup.objects.filter(group_id=obj.id).count()
             data = {'follow_count': follow_count}
             status = 200
 
@@ -907,9 +907,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             FollowGroup.objects.get(follower_id=request.user.id,
                                     group_id=obj.id).delete()
 
-            # Not using default object or queryset, to reduce the queryset
-            # like_count = Photo.objects.get(id=obj.id).like_set.count()
-            follow_count = 10
+            follow_count = FollowGroup.objects.filter(group_id=obj.id).count()
             data = {'follow_count': follow_count}
             status = 200
 
