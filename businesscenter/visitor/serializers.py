@@ -34,6 +34,7 @@ class VisitorSerializer(serializers.ModelSerializer):
     avatar_url = serializers.URLField(required=False, write_only=True,
                                       allow_blank=True)
     nickname = serializers.CharField(required=True, write_only=True)
+    unionid = serializers.CharField(write_only=True)
     username = serializers.SerializerMethodField(read_only=True)
 
     def get_username(self, obj):
@@ -126,7 +127,6 @@ class VisitorSerializer(serializers.ModelSerializer):
         extra_kwargs = {'thumb': {'read_only': True},
                         'avatar': {'read_only': True},
                         'pk': {'read_only': True},
-                        'unionid': {'write_only': True}
                         }
 
 
