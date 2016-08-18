@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/animations.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/grid.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}newdesign/css/style.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}lib/toastr/toastr.min.css">
         {% verbatim %}
         <title data-ng-bind="site"></title>
         <!--<base href="/app/">-->
@@ -61,6 +62,9 @@
         <script src="{{ STATIC_URL }}lib/angularjs/other/ngStorage.js"></script>
         <script src="{{ STATIC_URL }}lib/masonry.pkgd.min.js"></script>
         <script src="{{ STATIC_URL }}lib/imagesloaded.pkgd.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/jquery/jquery-3.0.0.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/toastr/pusher.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/toastr/toastr.min.js"></script>
 
         <script src="{{ STATIC_URL }}wechat/merged/app.modules.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/app.constants.js"></script>
@@ -87,5 +91,16 @@
         <script src="{{ STATIC_URL }}wechat/merged/store/services.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/partials/grid/directives.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/partials/tencent/directives.js"></script>
+
+        <script>
+
+        var pusher = new Pusher('4c8e6d909a1f7ccc44ed');
+        var notificationsChannel = pusher.subscribe('nf_channel_{{user.id}}');
+
+        notificationsChannel.bind('new_notification', function(notification){
+            var message = notification.message;
+            toastr.success(message);
+        });
+        </script>        
     </body>
 </html>

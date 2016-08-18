@@ -8,15 +8,10 @@ import requests
 import json
 import urllib2
 import datetime
+import os
+import cgi
 
 from django.conf import settings
-
-
-# {"appkey": "56f3b94267e58e49270019e7", "production_mode": "false",
-# "description": "testaaa", "type": "unicast",
-# "payload": {"display_type": "message", "body": {"custom": "aaabbb"}},
-# "policy": {"expire_time": "2016-04-12 17:07:55"},
-# "device_tokens": "AjzbcO4OoVNsKfYPdSoilaohG3pjlfPCBdhpXGaBiGMs"}
 
 
 def md5(s):

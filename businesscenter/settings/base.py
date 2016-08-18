@@ -145,3 +145,7 @@ AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',
 
 UMENG_APP_KEY = '571459b267e58e826f000239'
 UMENG_APP_MASTER_SECRET = 'ydcfc8leufv2efcm4slwmhb2pfffaiop'
+
+PUSHER_APP_ID = '236840'
+PUSHER_KEY = "4c8e6d909a1f7ccc44ed"
+PUSHER_SECRET = "119328e419074c206e29"

@@ -34,7 +34,7 @@ from visitor.models import Visitor
 from account.models import Vendor, Store
 from account.serializers import VendorStoreSerializer
 from catalog.models import Commodity
-from vutils.umeng_push import push_unicast
+from vutils.notification import trigger_notification
 from vutils.wzhifuSDK import JsApi_pub
 
 
@@ -314,11 +314,11 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
         log.info('create photo id: {}'.format(photo.id))
         content = {'photo_id': photo.id}
-        # SENDING A request to umeng push service,
+        # SENDING A request for nitification to pusher service,
         # which will push the ANDROID APP.
-        send_json, receive_info = push_unicast('571459b267e58e826f000239',
-                                               'ydcfc8leufv2efcm4slwmhb2pfffaiop',
-                                               mirror.token, json.dumps(content))
+        send_json, receive_info = trigger_notification('nf_channel_%d'%visitor.id,
+                                               'new_notification',
+                                               "New photo (%d) is created!"%photo.id)
 
         log.info('umeng json: {}, {}'.format(send_json, receive_info))
         return Response(data={'id': photo.id}, status=201)
@@ -640,7 +640,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         visitor = self.request.user
         qs = Group.objects.select_related('owner__visitor').\
             prefetch_related('tag_set', 'member_set__visitor__visitor',
-                             'member_set__visitor__vendor__store')
+                             'member_set__visitor__vendor__store', 'followgroup_set')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             prefetch = Prefetch('photo_set',
                                 queryset=Photo.objects.
@@ -648,8 +648,9 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
                                                'original__visitor',))
 
             qs = qs.prefetch_related(prefetch)
-            qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
-                           Q(member__visitor=visitor)).distinct()
+            # qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
+            #                Q(member__visitor=visitor)).distinct()
+            qs = qs.filter(Q(is_private=False)).exclude(Q(owner=visitor)).exclude(Q(member__visitor=visitor)).distinct()
         else:
             # TODO: optimize for detail view
             qs = qs.prefetch_related('member_set__visitor')
@@ -877,18 +878,17 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         obj = self.get_object()
 
         try:
-            FollowGroup.objects.create(follower_id=request.user.id,
+            if not FollowGroup.objects.filter(follower_id=request.user.id,
+                                       group_id=obj.id):
+                FollowGroup.objects.create(follower_id=request.user.id,
                                        group_id=obj.id)
 
-            # TODO: WHAT THIS. I think follow count is redundant,
-            #  or you need to set a real follow_count
-            follow_count = 10
+            follow_count = FollowGroup.objects.filter(group_id=obj.id).count()
             data = {'follow_count': follow_count}
             status = 200
 
             # send notification to the owner
-            # push_unicast(user.device_token, request.user.username+"wants to follow you!")
-            push_unicast('Aml5E5JNRCF3VF7XtyEU5xGwcG8p3qu3UPwUaHaYMpX4',
+            trigger_notification('nf_channel_%d'%obj.owner.id, 'new_notification',
                          request.user.username + "wants to follow your group!")
 
         except IntegrityError:
@@ -906,15 +906,12 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             FollowGroup.objects.get(follower_id=request.user.id,
                                     group_id=obj.id).delete()
 
-            # Not using default object or queryset, to reduce the queryset
-            # like_count = Photo.objects.get(id=obj.id).like_set.count()
-            follow_count = 10
+            follow_count = FollowGroup.objects.filter(group_id=obj.id).count()
             data = {'follow_count': follow_count}
             status = 200
 
             # send notification to the owner
-            # push_unicast(user.device_token, request.user.username+"wants to follow you!")
-            push_unicast('Aml5E5JNRCF3VF7XtyEU5xGwcG8p3qu3UPwUaHaYMpX4',
+            trigger_notification('nf_channel_%d'%obj.owner.id, 'new_notification',
                          request.user.username + "stops to follow your group!")
 
         except IntegrityError:
@@ -959,16 +956,12 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         try:
             FollowUser.objects.create(follower_id=request.user.id,
                                       user_id=kwargs['pk'])
-
-            # Not using default object or queryset, to reduce the queryset
-            # like_count = Photo.objects.get(id=obj.id).like_set.count()
-            follow_count = 10
+            follow_count = FollowUser.objects.filter(user_id=kwargs['pk']).count()
             data = {'follow_count': follow_count}
             status = 200
 
             # send notification to the owner
-            # push_unicast(user.device_token, request.user.username+"wants to follow you!")
-            push_unicast('Aml5E5JNRCF3VF7XtyEU5xGwcG8p3qu3UPwUaHaYMpX4',
+            trigger_notification('nf_channel_%d'%kwargs['pk'], 'new_notification',
                          request.user.username + "wants to follow you!")
 
         except IntegrityError:
@@ -983,16 +976,12 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         try:
             FollowUser.objects.get(follower_id=request.user.id,
                                    user_id=kwargs['pk']).delete()
-
-            # Not using default object or queryset, to reduce the queryset
-            # like_count = Photo.objects.get(id=obj.id).like_set.count()
-            follow_count = 10
+            follow_count = FollowUser.objects.filter(user_id=kwargs['pk']).count()
             data = {'follow_count': follow_count}
             status = 200
 
             # send notification to the owner
-            # push_unicast(user.device_token, request.user.username+"wants to follow you!")
-            push_unicast('Aml5E5JNRCF3VF7XtyEU5xGwcG8p3qu3UPwUaHaYMpX4',
+            trigger_notification('nf_channel_%d'%kwargs['pk'], 'new_notification',
                          request.user.username + "stops to follow you!")
 
         except IntegrityError:

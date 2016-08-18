@@ -219,6 +219,19 @@ class GroupSerializer(serializers.ModelSerializer):
     photo_count = serializers.IntegerField(read_only=True)
     owner_name = serializers.CharField(source='owner', read_only=True)
     thumb = serializers.SerializerMethodField(read_only=True)
+    is_followed = serializers.SerializerMethodField(read_only=True)
+    is_owner_followed = serializers.SerializerMethodField(read_only=True)
+
+    def get_is_owner_followed(self, obj):
+        if self.context.get('request'):
+            return models.FollowUser.objects.filter(user=obj.owner, follower=self.context['request'].user).exists()
+        return False
+
+    def get_is_followed(self, obj):
+        fgs = [item.follower for item in obj.followgroup_set.all()]        
+        if self.context.get('request'):
+            return self.context['request'].user in fgs
+        return False
 
     def get_thumb(self, obj):
         photo = obj.photo_set.first()
