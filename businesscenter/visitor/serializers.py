@@ -39,18 +39,14 @@ class VisitorSerializer(serializers.ModelSerializer):
     unionid = serializers.CharField(write_only=True)
     username = serializers.SerializerMethodField(read_only=True)
 
-    def get_username(self, obj):
-        if obj.username:
-            return obj.username
-        else:
-            return obj.user.username
-
     photo_count = serializers.IntegerField(source='user.photo_set.count',
                                            read_only=True)
     group_count = serializers.IntegerField(source='user.group_set.count',
                                            read_only=True)
-    extra = VisitorExtraSerializer(source='weixin.visitorextra_set',
-                                   write_only=True, allow_null=True)
+    extra = VisitorExtraSerializer(write_only=True, allow_null=True)
+
+    def get_username(self, obj):
+        return obj.username if obj.username else obj.user.username
 
     def create(self, validated_data):
 
