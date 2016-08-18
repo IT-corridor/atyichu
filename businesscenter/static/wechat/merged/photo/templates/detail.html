@@ -101,13 +101,14 @@
 			
 			<div class="clear"></div>
 			<div class="photo-detail-heading">
+				
 				<div class="photo-detail-title">
                 <h4 data-ng-if="photo.title" class="m-t-none d-p-title">{{ photo.title }} </h4>
                 <h4 data-ng-if="!photo.title && photo.origin.title" class="m-t-none">{{ photo.origin.title }}</h4>
-				</div>
 				
-				<i class="icon-pencil"></i>
-			</div>
+				
+				
+		
 				<div class="clear"></div>
                 <div data-ng-if="photo.description">
                     <p class="photo-detail-description">{{ photo.description }}</p>
@@ -117,8 +118,12 @@
                 </div>
                <!-- <div class="wrapper-xs" data-ng-if="photo.original">
                     <a data-ng-href="#!/photo/{{ photo.origin.id }}/">Original is here</a>
-                </div> 
-                <div class="line line-lg b-b b-light"></div>-->
+                </div> -->
+				</div>
+				<i class="icon-pencil"></i>
+				</div>
+				
+                <div class="line line-lg b-b b-light"></div>
                 
                 <div class="row m-t-md">
                     <h4 class="text-center" data-ng-if="photo.link_set.length > 0">{{ 'PHOTO.EDIT.LINKS' | translate }}</h4>
@@ -217,6 +222,8 @@
             </div>
         </div>
     </div>
+	
+	<div class="line line-lg b-b b-light"></div>
 	
 	<h3 class="text-center related-photos">{{ 'PHOTO.DETAIL.SIMILAR' | translate }}</h3>
     <div data-ng-if="r" data-ng-include="PATH +'photo/templates/include/masonry_list.html'"></div>

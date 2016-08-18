@@ -224,7 +224,8 @@ left: 4% !important;
     padding: 0px !important;
 	    border: 0px;
 		margin:0px;
-		background:transparent
+		background:transparent;
+		box-shadow:none;
 }
 
 .photo-detail .owner-name {
@@ -246,10 +247,10 @@ left: 4% !important;
 
 
 .photo-detail .panel .wrapper-lg h4 {
-    padding: 15px 0px 0px 15px;
+    padding: 0px 0px 0px 15px;
     text-transform: inherit;
-        
-	color: #000;
+    color: #000;
+	font-size:16px;
 }
 
 .photo-detail .panel .wrapper-lg .photo-detail-description {
@@ -257,10 +258,12 @@ left: 4% !important;
     text-transform: inherit;
     color: #565656;
     font-weight: lighter;
-    //border-bottom: 1px solid #e6e5e5;
     font-family: arial;
-    padding-bottom: 15px;
-    font-size: 14px;
+    font-size: 12px;
+    width: 100%;
+    padding-right: 0px;
+    float: left;
+    margin-bottom: 0px;
 }
 
 .photo-detail .detail-half {
@@ -307,6 +310,7 @@ left: 4% !important;
     float: left;
     margin-left: 15px;
     padding: 8px 0px;
+	width:75%;
 }
 
 .photo-detail .user-follow-status {
@@ -349,15 +353,18 @@ left: 4% !important;
 
 .photo-detail .d-p-title
 {
-	width:90%;
+	width:100%;
 	float:left;
 }
 .photo-detail .icon-pencil {
     width: 25px;
-    padding-top: 20px;
     color: #000;
-    position: absolute;
+    position: relative;
     right: 0px;
+    float: left;
+    display: table;
+    margin-left: 15px;
+
 }
 
 .photo-detail .avatar img
@@ -393,10 +400,12 @@ left: 4% !important;
 
 .photo-detail .related-photos
 {
-	font-size:18px;
-	text-align:left;
-	padding-left:15px;
-	box-sizing:border-box;
+    font-size: 18px;
+    text-align: left;
+    padding-left: 15px;
+    padding-top: 0px;
+    box-sizing: border-box;
+    margin-top: 10px;
 }
 .photo-detail .comment-heading
 {
@@ -488,6 +497,8 @@ display:none;
 {
 width:100%;
 float: left;
+padding-top:10px;
+padding-bottom:10px;
     position: relative;	
 }
 
@@ -503,6 +514,16 @@ float: left;
     font-size: 12px;
 }
 
+.b-light {
+    border-color: #eaeaea;
+}
+
+.photo-detail-title
+{
+    display: table;
+    float: left;
+    width: 90%;
+}
 
 @media only screen and (max-width: 767px)
 {
