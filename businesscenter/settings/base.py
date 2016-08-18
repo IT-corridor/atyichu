@@ -137,6 +137,7 @@ MEDIA_URL = '/media/'
 # AUTH
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',
+                           'visitor.auth.PhoneBackend',
                            'visitor.auth.WeixinBackend']
 
 # SESSION:

@@ -15,6 +15,9 @@ class Vendor(models.Model):
     it uses foreign key of :model:`auth.User` as primary key.
     Maybe it is really redundant. But it is currently useful to create a vendor
     offline and after that vendor can login and create one store.
+    We can`t use django user`s email. Because it is too late. It is not unique.
+    And if i will change user model for new custom model,
+    it will break migrations.
     """
     # TODO: Fix auto creation with empty params
     user = models.OneToOneField(User, on_delete=models.CASCADE,
@@ -28,6 +31,7 @@ class Vendor(models.Model):
                               null=True, blank=True)
     phone = models.CharField(_('Phone'), max_length=16, blank=True, null=True,
                              validators=[phone_regex], unique=True)
+    email = models.EmailField(_('Email'), unique=True, blank=True, null=True)
 
     def __unicode__(self):
         return self.user.username

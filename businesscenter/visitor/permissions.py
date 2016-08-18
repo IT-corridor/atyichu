@@ -40,3 +40,13 @@ class IsVisitorSimple(permissions.IsAuthenticated):
                 if hasattr(request.user.visitor, 'weixin'):
                     return True
         return request.user.is_staff
+
+
+class IsVisitorOrReadOnly(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        if hasattr(request.user, 'visitor'):
+            if obj.pk == request.user.pk:
+                return True
+
+        return request.user.is_staff

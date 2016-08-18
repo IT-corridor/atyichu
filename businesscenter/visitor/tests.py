@@ -11,7 +11,7 @@ from visitor.models import Visitor, VisitorExtra, Weixin
 
 
 # Create your tests here.
-class VendorTests(APITestCase):
+class VisitorTests(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -24,13 +24,12 @@ class VendorTests(APITestCase):
         visitor = Visitor.objects.create(user=user)
         weixin = Weixin.objects.create(visitor=visitor,
                                         unionid="123")
-        VisitorExtra.objects.create(visitor=visitor, weixin=weixin, **cls.data)
+        VisitorExtra.objects.create(weixin=weixin, **cls.data)
 
     def test_rest_login_success(self):
         """ Test login view for all accounts """
         url = reverse('visitor:login')
         response = self.client.post(url, data={'weixin': self.data['openid']})
-        print(response.data)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
 
@@ -44,4 +43,52 @@ class VendorTests(APITestCase):
         self.client.logout()
 
 
+class VisitorProfileTests(APITestCase):
+    """ tEST FOR Visitor profiles """
+    @classmethod
+    def setUpTestData(cls):
+        cls.data_create = {'username': 'Jack', 'phone': '+380953396512',
+                           'password': 'Greeeat12ss',
+                           'confirm_password': 'Greeeat12ss'}
+        cls.user_data = {'username': 'Nik', 'password': 'GrreaAe3456aa'}
+        cls.visitor_data = {'phone': '+380971155608'}
+        cls.user = get_user_model()(username=cls.user_data['username'])
+        cls.user.set_password(cls.user_data['password'])
+        cls.user.save()
 
+        Visitor.objects.create(username=cls.user_data['username'],
+                               user=cls.user,
+                               **cls.visitor_data)
+
+    def test_registration(self):
+        # Expected redirect = 302
+        url = reverse('visitor:profile-list')
+        response = self.client.post(url, self.data_create)
+        self.assertEqual(response.status_code, 302)
+        self.client.logout()
+
+    def test_login(self):
+        url = reverse('visitor:profile-login')
+        data = {'password': self.user_data['password'],
+                'phone': self.visitor_data['phone']}
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+
+    def test_edit(self):
+        self.client.force_login(self.user)
+        url = reverse('visitor:profile-edit')
+        data = {'username': 'Jackson'}
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+
+    def test_change_password(self):
+        self.client.force_login(self.user)
+        data = {'password': self.user_data['password'],
+                'new_password': 'VectoraAdd3',
+                'confirm_password': 'VectoraAdd3'}
+        url = reverse('visitor:profile-change-password')
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 204)
+        self.client.logout()

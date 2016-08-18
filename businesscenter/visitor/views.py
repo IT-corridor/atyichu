@@ -3,20 +3,23 @@ from __future__ import unicode_literals
 from urllib import quote_plus
 from django.utils.translation import ugettext as _
 from django.utils import timezone
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, \
+    update_session_auth_hash
 from django.core.urlresolvers import reverse
 from django.core.mail import mail_admins
 from django.http import HttpResponseRedirect, JsonResponse
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-
-from .serializers import VisitorSerializer, VisitorExtraSerializer
+from rest_framework.decorators import api_view, permission_classes, list_route
+from rest_framework import viewsets
+from .serializers import VisitorSerializer, VisitorExtraSerializer,\
+    VisitorCreateSerializer, VisitorProfileSerializer, VisitorLoginSerializer
 from .oauth2 import WeixinBackend, WeixinQRBackend
 from .models import Visitor, VisitorExtra
-from .permissions import IsVisitorSimple
-
+from .permissions import IsVisitorSimple, IsVisitorOrReadOnly
+from utils.serializers import UserPasswordSerializer
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -175,7 +178,7 @@ def openid(request):
 @api_view(['POST'])
 @permission_classes((IsVisitorSimple,))
 def update_visitor(request):
-    """ Updating user data from weixin """
+    """ Updating user data from weixin. Sync """
     # TODO: TEST
     qr = request.data.get('qr', None)
     if qr:
@@ -223,3 +226,90 @@ def test_auth(request):
         response = HttpResponseRedirect('/#!/')
         return response
     raise PermissionDenied
+
+
+class ProfileViewSet(viewsets.GenericViewSet):
+    """
+    A simple ViewSet for listing or retrieving visitors.
+    """
+    permission_classes = (IsVisitorOrReadOnly,)
+
+    def get_serializer_class(self):
+        serializer_map = {
+            'retrieve': VisitorProfileSerializer,
+            'create': VisitorCreateSerializer,
+            'edit': VisitorProfileSerializer,
+            'change_password': UserPasswordSerializer,
+            'login': VisitorLoginSerializer,
+        }
+        return serializer_map[self.action]
+
+    def get_queryset(self):
+        return Visitor.objects.all()
+
+    def retrieve(self, request, pk=None):
+        """ retreive visitor information, may be useless. """
+        queryset = self.get_queryset()
+        visitor = get_object_or_404(queryset, pk=pk)
+        serializer = self.get_serializer(visitor)
+        return Response(serializer.data)
+
+    def create(self, request):
+        """ Create user. Redirect to get_me"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        visitor = serializer.save()
+        user = authenticate(phone=visitor.phone,
+                            password=request.data['password'])
+        login(request, user)
+        url = reverse('visitor:me')
+        return HttpResponseRedirect(url)
+
+    @list_route(methods=['patch'])
+    def edit(self, request):
+        """ PK not suplied visitor instance takes from request.user."""
+        user = request.user
+        # maybe following line is redundant
+        self.check_object_permissions(request, user.visitor)
+        serializer = self.get_serializer(instance=user.visitor,
+                                         data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    @list_route(methods=['post'])
+    def change_password(self, request):
+        """ Change user`s password. PK not supplied."""
+        user = request.user
+        self.check_object_permissions(request, user.visitor)
+        serializer = self.get_serializer(instance=user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        update_session_auth_hash(request, user)
+        return Response(status=204)
+
+    @list_route(methods=['post'])
+    def login(self, request):
+        """
+        Handles login visitor by phone number
+
+        :param request:
+                :param phone: required
+                :param password: required
+        :return:
+        """
+        # TODO: Add verification code handling
+        status = 400
+        s = self.get_serializer(data=self.request.data)
+        s.is_valid(raise_exception=True)
+        try:
+            user = authenticate(phone=s.data['phone'],
+                                password=s.data['password'])
+            serializer = VisitorSerializer(instance=user.visitor)
+            data = serializer.data
+            login(request, user)
+        except Exception as e:
+            data = {'error': e.message}
+        else:
+            status = 200
+        return Response(data, status=status)
