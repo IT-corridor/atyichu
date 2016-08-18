@@ -316,9 +316,9 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         content = {'photo_id': photo.id}
         # SENDING A request for nitification to pusher service,
         # which will push the ANDROID APP.
-        send_json, receive_info = trigger_notification('nf_channel_%d'%visitor.id,
+        send_json, receive_info = trigger_notification('nf_channel_{}'.format(visitor.id),
                                                'new_notification',
-                                               "New photo (%d) is created!"%photo.id)
+                                               'New photo ({}) is created!'.format(photo.id))
 
         log.info('umeng json: {}, {}'.format(send_json, receive_info))
         return Response(data={'id': photo.id}, status=201)
@@ -888,7 +888,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_%d'%obj.owner.id, 'new_notification',
+            trigger_notification('nf_channel_{}'.format(obj.owner.id), 
+                                'new_notification',
                          request.user.username + "wants to follow your group!")
 
         except IntegrityError:
@@ -911,7 +912,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_%d'%obj.owner.id, 'new_notification',
+            trigger_notification('nf_channel_{}'.format(obj.owner.id), 'new_notification',
                          request.user.username + "stops to follow your group!")
 
         except IntegrityError:
@@ -961,7 +962,7 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_%d'%kwargs['pk'], 'new_notification',
+            trigger_notification('nf_channel_{}'.format(kwargs['pk']), 'new_notification',
                          request.user.username + "wants to follow you!")
 
         except IntegrityError:
@@ -981,7 +982,7 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_%d'%kwargs['pk'], 'new_notification',
+            trigger_notification('nf_channel_{}'.format(kwargs['pk']), 'new_notification',
                          request.user.username + "stops to follow you!")
 
         except IntegrityError:
