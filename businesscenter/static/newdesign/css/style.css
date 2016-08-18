@@ -146,6 +146,7 @@ left: 4% !important;
 }
 .navbar-fixed-bottom {
     background:#41414d;
+	bottom:0px;
 }
 
 
