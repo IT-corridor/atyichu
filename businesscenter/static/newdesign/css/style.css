@@ -412,12 +412,14 @@ left: 4% !important;
 }
 
 .photo-detail .comment-heading {
-    font-size: 18px;
+       font-size: 18px;
     text-align: left;
     padding-left: 15px;
     box-sizing: border-box;
     padding: 0px 15px 0px 15px;
     margin: 0px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 
