@@ -322,6 +322,8 @@ left: 4% !important;
     padding: 12px 0px;
 }
 
+
+
 .photo-detail .form-control {
     border-radius: 6px !important;
     padding: 0px 8px;
@@ -544,6 +546,27 @@ padding-bottom:10px;
 .photo-detail .streamline .wrapper-xs:last-child {
     border-bottom: 0px solid transparent !important;
 }
+
+
+.maso .user-follow-status {
+    float: right;
+    margin-right: 5%;
+    padding: 2px 0px !important;
+}
+
+.maso .pin .photo-owner .thumb-xs.avatar
+{
+	width:28px !important;
+	height:28px !important;
+}
+ .maso .avatar img
+ {
+	 width:28px !important;
+	height:28px !important;
+ }
+
+
+
 
 
 @media only screen and (max-width: 767px)
