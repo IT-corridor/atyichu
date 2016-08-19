@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from uuid import uuid4
+from django.db import IntegrityError
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.utils.encoding import smart_unicode
@@ -164,11 +165,16 @@ class VisitorCreateSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password', None)
         username = validated_data.get('username')
         User = get_user_model()
-        user = User(username=username)
-        user.set_password(password)
-        user.save()
-        visitor = Visitor.objects.create(user=user, **validated_data)
-        return visitor
+        try:
+            user = User(username=username)
+            user.set_password(password)
+            user.save()
+        except IntegrityError:
+            msg = _('This name is occupied by another user.')
+            raise serializers.ValidationError({'username': [msg]})
+        else:
+            visitor = Visitor.objects.create(user=user, **validated_data)
+            return visitor
 
     class Meta:
         model = Visitor
@@ -179,6 +185,12 @@ class VisitorCreateSerializer(serializers.ModelSerializer):
 
 class VisitorProfileSerializer(serializers.ModelSerializer):
     """ Serializer for retreive / update visitor profile """
+
+    def update(self, instance, validated_data):
+        if validated_data.get('avatar', None):
+            instance.thumb.delete(True)
+        return super(VisitorProfileSerializer, self).\
+            update(instance, validated_data)
 
     class Meta:
         model = Visitor

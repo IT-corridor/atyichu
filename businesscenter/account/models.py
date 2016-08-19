@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from utils.validators import SizeValidator, phone_regex
+from utils.fields import EmailNullField, CharNullField
+
 # Create your models here.
 
 
@@ -29,9 +31,10 @@ class Vendor(models.Model):
     thumb = models.ImageField(_('Thumbnail'),
                               upload_to='vendors/thumbs',
                               null=True, blank=True)
-    phone = models.CharField(_('Phone'), max_length=16, blank=True, null=True,
-                             validators=[phone_regex], unique=True)
-    email = models.EmailField(_('Email'), unique=True, blank=True, null=True)
+    phone = CharNullField(_('Phone'), max_length=16, blank=True, null=True,
+                          validators=[phone_regex], unique=True, default=None)
+    email = EmailNullField(_('Email'), unique=True, blank=True, null=True,
+                           default=None)
 
     def __unicode__(self):
         return self.user.username

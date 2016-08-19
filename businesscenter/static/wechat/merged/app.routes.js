@@ -99,6 +99,14 @@ angular.module('app.route', [
                 follow: function(){return true;},
             }
         }).
+        when('/me', {
+            templateUrl: PATH + 'user/templates/user.html',
+            controller: 'CtrlProfile',
+        }).
+        when('/me/change_password', {
+            templateUrl: PATH + 'user/templates/change_password.html',
+            controller: 'CtrlChangePassword',
+        }).
         when('/error/404/', {
             templateUrl: PATH + 'partials/error/templates/404.html'}).
         otherwise({

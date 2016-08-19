@@ -241,6 +241,7 @@ class ProfileViewSet(viewsets.GenericViewSet):
             'edit': VisitorProfileSerializer,
             'change_password': UserPasswordSerializer,
             'login': VisitorLoginSerializer,
+            'me': VisitorProfileSerializer,
         }
         return serializer_map[self.action]
 
@@ -251,6 +252,13 @@ class ProfileViewSet(viewsets.GenericViewSet):
         """ retreive visitor information, may be useless. """
         queryset = self.get_queryset()
         visitor = get_object_or_404(queryset, pk=pk)
+        serializer = self.get_serializer(visitor)
+        return Response(serializer.data)
+
+    @list_route(methods=['get'])
+    def me(self, request):
+        queryset = self.get_queryset()
+        visitor = get_object_or_404(queryset, pk=request.user.id)
         serializer = self.get_serializer(visitor)
         return Response(serializer.data)
 
@@ -292,11 +300,6 @@ class ProfileViewSet(viewsets.GenericViewSet):
     def login(self, request):
         """
         Handles login visitor by phone number
-
-        :param request:
-                :param phone: required
-                :param password: required
-        :return:
         """
         # TODO: Add verification code handling
         status = 400

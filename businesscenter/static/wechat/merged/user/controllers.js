@@ -1,39 +1,78 @@
-angular.module('user.controllers', ['auth.services'])
+angular.module('user.controllers', ['user.services', 'auth.services'])
 .controller('CtrlProfile', ['$scope', '$rootScope','$http',
-'$location', '$route', 'Auth', 'Logout', 'Me', 'ProfileSync',
-    function($scope, $rootScope, $http, $location, $route, Auth, Logout, Me, ProfileSync) {
+'$location', '$translate', '$route', 'User', 'MultipartForm',
+    function($scope, $rootScope, $http, $location, $translate, $route, User,
+    MultipartForm) {
 
-        $rootScope.title = 'My profile';
+        $scope.wait = false;
+        $scope.me = User.me();
+        $scope.random = Math.floor((Math.random()*1000));
+        $scope.sync_profile = function(){
 
-        $scope.me = $rootScope.visitor;
+            /* TODO: implement connecting weixin account
+            to our visitors profile */
+        };
 
-
-        $scope.logout = function(){
-            $scope.r = Logout.query(function(success){
-                Auth.remove();
-                $rootScope.alerts.push({ type: 'info', msg: 'Good by.'});
-                //$route.reload();
-                  $location.path('/');
+        $scope.update_profile = function(){
+        var data = {
+            username: $scope.me.username,
+            phone: $scope.me.phone,
+            email: $scope.email
+        };
+            User.edit(data, function(success){
+                $scope.me = success;
+                $translate('SUCCESS').then(function (msg) {
+                    $rootScope.alerts.push({ type: 'success', msg:  msg});
+                });
             });
         };
 
-        $scope.sync_profile = function(){
+        $scope.update_avatar = function(){
 
-            ProfileSync.post(function(success){
-                $rootScope.visitor = success;
-                $rootScope.alerts.push({ type: 'info',
-                    msg: 'Profile was updated.'});
-                $location.path('/');
-                },
-                function(error){
-                    for (var e in error.data){
-                        $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
+            if( document.getElementById("avatar").files.length > 0){
+                $scope.wait = true;
+                var url = '/visitor/profile/edit/';
+                MultipartForm('PATCH', '#avatar_form', url).then(function(response) {
+                        $scope.random = Math.floor((Math.random()*1000));
+                        $scope.me = response.data;
+                        clear_input();
+                        $scope.wait = false;
+                    },
+                    function(error) {
+                        $scope.wait = false;
+                        $scope.error = error.data;
                     }
-                    $location.path('/');
-                }
+                );
+            }
 
-            );
+        };
 
+        function clear_input(){
+            var input = document.querySelector("#avatar");
+            angular.element(input).val(null);
         }
     }
-]);
+])
+.controller('CtrlChangePassword', ['$scope', '$rootScope','$http',
+'$location', '$translate', '$route', 'User',
+    function($scope, $rootScope, $http, $location, $translate, $route, User) {
+
+        $scope.wait = false;
+        $scope.data = {};
+        $scope.change_password = function(){
+            $scope.wait = true;
+            User.change_password($scope.data, function(success){
+                    $translate('SUCCESS').then(function (msg) {
+                        $rootScope.alerts.push({ type: 'success', msg:  msg});
+                    });
+                    $location.path('/me');
+                },
+                function(error){
+                    $scope.wait = false;
+                    $scope.error = error.data;
+                }
+            );
+        };
+    }
+
+]);;

@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from utils.validators import validate_weixin, phone_regex
 from utils.validators import SizeValidator
+from utils.fields import EmailNullField, CharNullField
 
 
 class Visitor(models.Model):
@@ -21,9 +22,10 @@ class Visitor(models.Model):
     # blanked for the compatibility existing data
     # this username is NOT unique
     username = models.CharField(_('Username'), max_length=30, blank=True)
-    phone = models.CharField(_('Phone'), max_length=16, blank=True, null=True,
-                             validators=[phone_regex], unique=True)
-    email = models.EmailField(_('Email'), unique=True, blank=True, null=True)
+    phone = CharNullField(_('Phone'), max_length=16, blank=True, null=True,
+                          validators=[phone_regex], unique=True, default=None)
+    email = EmailNullField(_('Email'), unique=True, blank=True, null=True,
+                           default=None)
 
     def __unicode__(self):
         return self.username if self.username else self.user.username
