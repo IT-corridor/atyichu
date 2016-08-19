@@ -439,6 +439,17 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
 
+    @list_route(methods=['get'])
+    def my_photos(self, request, *args, **kwargs):
+        """ Providing a newest list of public groups photos """
+        qs = Photo.a_objects.select_related('original', 'visitor__visitor',
+                                            'visitor__vendor__store', 'group')
+        qs = qs.filter(Q(group__is_private=False) &
+                       Q(visitor_id=request.user.id))\
+            .order_by('-pk').distinct()
+
+        return self.get_list_response(qs, serializers.PhotoListSerializer)
+
     @detail_route(methods=['post'])
     def clone(self, request, *args, **kwargs):
         """ Make a duplicate from existing photo record. GroupID required."""
