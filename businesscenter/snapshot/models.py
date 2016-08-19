@@ -146,6 +146,20 @@ class Stamp(models.Model):
         ordering = ('title',)
 
 
+class Article(models.Model):
+    title = models.CharField(max_length=500, verbose_name=_('Title'))
+    description = models.TextField(verbose_name=_('Description'))
+    author = models.ForeignKey('auth.User', verbose_name=_('Author'))
+    create_date = models.DateTimeField(_('Date created'), auto_now_add=True)
+
+    def __unicode__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _('Article')
+        verbose_name_plural = _('Articles')
+            
+
 class Photo(models.Model):
     """Model representing a photo record with extra data.
         Visitor means not instance of :model:`visitor.Visitor`,
@@ -189,7 +203,8 @@ class Photo(models.Model):
                                  related_query_name='clone',
                                  on_delete=models.SET_NULL)
     stamps = models.ManyToManyField(Stamp, through='PhotoStamp', blank=True)
-
+    article = models.ForeignKey(Article, null=True, blank=True,
+                                verbose_name=_('Article'))
     objects = models.Manager()
     p_objects = PhotoManager()
     a_objects = ActivePhotoManager()
@@ -402,3 +417,4 @@ class FollowUser(models.Model):
         verbose_name = _('User Follower')
         verbose_name_plural = _('User Followers')
         ordering = ('pk',)
+
