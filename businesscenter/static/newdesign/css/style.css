@@ -568,6 +568,11 @@ padding-bottom:10px;
 .maso p
 {
 	font-weight:normal !important;
+	font-size: 11px;
+}
+.maso .font-bold
+{
+	font-weight:bold !important;
 }
 
 
