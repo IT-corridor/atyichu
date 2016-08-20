@@ -7,6 +7,7 @@ from . import views
 
 snapshot_router = DefaultRouter()
 
+snapshot_router.register(r'article', views.ArticleViewSet, 'article')
 snapshot_router.register(r'mirror', views.MirrorViewSet, 'mirror')
 snapshot_router.register(r'photo', views.PhotoViewSet, 'photo')
 snapshot_router.register(r'comment', views.CommentViewSet, 'comment')

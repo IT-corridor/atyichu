@@ -19,7 +19,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from .models import Mirror, Photo, Comment, Tag, Member, Group, Like, Link, \
-    FollowUser, FollowGroup
+    FollowUser, FollowGroup, Article
 
 from . import serializers
 from .permissions import IsOwnerOrMember, MemberCanServe, \
@@ -249,6 +249,25 @@ class MirrorViewSet(viewsets.GenericViewSet):
         return Response(data=serializer.data, status=201)
 
 
+class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
+    def get_serializer_class(self):
+        return serializers.ArticleListSerializer
+
+    def get_queryset(self):
+        qs = Article.objects.all()
+        prefetch = Prefetch('photo_set', queryset=Photo.objects.all())
+
+        qs = qs.prefetch_related(prefetch)
+        return qs
+
+    def create(self, request, *args, **kwargs): 
+        data = request.data       
+        article = Article.objects.create(title=data['title'], description=data['description'], author=request.user)
+        for photo in data['photos']:
+            Photo.objects.filter(id=photo).update(article=article)
+        return Response(data={'id': article.id}, status=201)
+
+
 class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
     model = Photo
     serializer_class = serializers.PhotoDetailSerializer
@@ -441,10 +460,14 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def my_photos(self, request, *args, **kwargs):
-        """ Providing a newest list of public groups photos """
+        """ 
+        Providing a list of public groups photos that are not included in an article 
+        for a specific user
+        """
         qs = Photo.a_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store', 'group')
         qs = qs.filter(Q(group__is_private=False) &
+                       Q(article=None) &
                        Q(visitor_id=request.user.id))\
             .order_by('-pk').distinct()
 

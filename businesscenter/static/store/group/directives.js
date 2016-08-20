@@ -14,7 +14,6 @@ return {
 
         $scope.get_results = function (text) {
             $scope.results = Group.vendor_list({q: text});
-
         };
 
         $scope.on_focus = function(){
