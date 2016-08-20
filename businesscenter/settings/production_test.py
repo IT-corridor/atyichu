@@ -14,7 +14,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['.atyichu.com']
 USE_X_FORWARDED_HOST = True
-ADMINS = ((data['ADMIN'], data['ADMIN_EMAIL']),)   # hide
+ADMINS = ((data['ADMIN'], data['ADMIN_EMAIL']),
+          ('Dan', 'dan8931484@gmail.com'))   # hide
 
 
 # Database
