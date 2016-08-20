@@ -5,6 +5,7 @@ angular.module('article.services', ['ngResource'])
         return $resource(article_path + 'article/:pk/:action/', {}, {
             query: {method:'GET', params:{action: null}, responseType:'json'},
             save: {method: 'POST'},
+            detail: {method: 'GET', params:{action:null}, responseType:'json'},
     });
 }]);
 // .factory('Kind', ['$resource', 'catalog_path',

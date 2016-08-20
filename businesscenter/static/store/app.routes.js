@@ -38,6 +38,10 @@ angular.module('app.route', [
             templateUrl: PATH + 'article/templates/list.html',
             controller: 'CtrlArticleList',
         }).        
+        when('/article/:pk', {
+            templateUrl: PATH + 'article/templates/detail.html',
+            controller: 'CtrlArticleDetail',
+        }).        
         when('/commodities/add', {
             templateUrl: PATH + 'commodity/templates/create.html',
             controller: 'CtrlCommodityCreate',
