@@ -30,9 +30,13 @@ angular.module('app.route', [
             templateUrl: PATH + 'commodity/templates/my_list.html',
             controller: 'CtrlMyCommodityList',
         }).
-        when('/articles/add', {
+        when('/article/add', {
             templateUrl: PATH + 'article/templates/create.html',
             controller: 'CtrlArticleCreate',
+        }).        
+        when('/article', {
+            templateUrl: PATH + 'article/templates/list.html',
+            controller: 'CtrlArticleList',
         }).        
         when('/commodities/add', {
             templateUrl: PATH + 'commodity/templates/create.html',

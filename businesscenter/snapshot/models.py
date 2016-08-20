@@ -203,8 +203,8 @@ class Photo(models.Model):
                                  related_query_name='clone',
                                  on_delete=models.SET_NULL)
     stamps = models.ManyToManyField(Stamp, through='PhotoStamp', blank=True)
-    article = models.ForeignKey(Article, null=True, blank=True,
-                                verbose_name=_('Article'))
+    article = models.ForeignKey('snapshot.Article', null=True, blank=True,
+                                on_delete=models.SET_NULL)
     objects = models.Manager()
     p_objects = PhotoManager()
     a_objects = ActivePhotoManager()
