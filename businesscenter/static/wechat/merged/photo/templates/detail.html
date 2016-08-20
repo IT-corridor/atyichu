@@ -28,11 +28,15 @@
 			<i class="fa fa-angle-left" aria-hidden="true" data-ng-click="back()"></i>
                 <!-- -->
 				<i class="pull-left thumb-xxs avatar">
-                            <img data-ng-src="{{ photo.owner.thumb }}"
+                         <a href="data-ng-href=""> 
+						  <img data-ng-src="{{ photo.owner.thumb }}"
                                  class="img-circle" alt="{{ photo.owner.username }}">
+						 </a>
                  </i>
-                <a class="m-r-sm owner-name"> {{ photo.owner.username }}</a>
-				
+				<div class="p-d-o-username">
+					<a data-ng-href="#" class="m-r-sm owner-name"> {{ photo.owner.username }}</a>
+					<i class="uploaded-detail">Uploaded to x wardrobe</i>
+				</div>
 				<div class="detail-user-follow-status">
 					  <i class="icon-user-follow"></i>
 					  <i class="icon-user-following"></i>
@@ -70,8 +74,20 @@
 				
 				
 				<div class="clear" style="border-bottom: 1px solid #e6e5e5;">
-                    <div id="photo-origin-owner-username"><img data-ng-src="{{ photo.owner.thumb }}"
-                                 class="img-circle" alt="{{ photo.owner.username }}"> {{ photo.origin.owner.username }}</div>
+                    <div id="photo-origin-owner-username">
+					<i class="pull-left thumb-xxs avatar">
+					<a data-ng-href="#">
+					<img data-ng-src="{{ photo.owner.thumb }}"
+                                 class="img-circle" alt="{{ photo.owner.username }}"> 
+					</a>
+					</i>		 
+					<div class="p-d-o-username">
+						<a data-ng-href="#" class="m-r-sm owner-name"> {{ photo.origin.owner.username }}</a>
+						<i class="uploaded-detail">Uploaded to x wardrobe</i>
+					</div>			 
+								 
+								 
+					</div>
 					<div class="user-follow-status">
 						<i class="fa fa-floppy-o"></i>
 						<i class="glyphicon glyphicon-heart"></i>
@@ -83,10 +99,18 @@
 					</div>
                 </div>
 			
+			<div class="clear"></div>
+			<div class="photo-detail-heading">
+				
 			
-			
-                <h4 data-ng-if="photo.title" class="m-t-none d-p-title">{{ photo.title }} </h4><i class="icon-pencil"></i>
+				<div class="photo-detail-title">
+                <h4 data-ng-if="photo.title" class="m-t-none d-p-title">{{ photo.title }} </h4>
                 <h4 data-ng-if="!photo.title && photo.origin.title" class="m-t-none">{{ photo.origin.title }}</h4>
+				
+				
+				
+		
+				<div class="clear"></div>
                 <div data-ng-if="photo.description">
                     <p class="photo-detail-description">{{ photo.description }}</p>
                 </div>
@@ -96,7 +120,12 @@
                <!-- <div class="wrapper-xs" data-ng-if="photo.original">
                     <a data-ng-href="#!/photo/{{ photo.origin.id }}/">Original is here</a>
                 </div> -->
-                <div class="line line-lg b-b b-light"></div>
+				</div>
+				
+				<i class="icon-pencil"></i>
+				</div>
+				
+               <div class="line line-lg b-b b-light" style="margin:0px;padding:0px;"></div> 
                 
                 <div class="row m-t-md">
                     <h4 class="text-center" data-ng-if="photo.link_set.length > 0">{{ 'PHOTO.EDIT.LINKS' | translate }}</h4>
@@ -155,10 +184,10 @@
     </div>
     <!-- .comment-list -->
     <div class="row">
-        <div class="m-b b-l m-l-xs streamline col-md-12 col-xs-12">
-		<h4>Comments ({{ photo.comments.length }})</h4>
+        <div class="m-b  m-l-xs streamline col-md-12 col-xs-12">
+		<h4 class="comment-heading">Comments ({{ photo.comments.length }})</h4>
             <div class="wrapper-xs" data-ng-repeat="comment in photo.comments">
-                <a class="pull-left thumb-sm avatar m-l-n-md">
+                <a class="pull-left thumb-sm avatar">
                     <img data-ng-src="{{ comment.author_data.thumb }}"
                          class="img-circle" alt="...">
                 </a>
@@ -169,14 +198,15 @@
                             }}</strong></a>
                         <label data-ng-if="comment.author == photo.visitor"
                                class="label bg-info m-l-xs">Owner</label>
-                        <span class="text-muted m-l-sm pull-right">
-                            <i class="fa fa-clock-o"></i>
-                            {{ comment.create_date| date : 'longDate': '+0800' }}
-                        </span>
+                        
                     </div>
                     <div class="panel-body">
                         <div>{{ comment.message }}</div>
-                        <div class="m-t-sm">
+						<span class="text-muted  pull-left">
+                           
+                            {{ comment.create_date| date : 'longDate': '+0800' }}
+                        </span>
+                       <!-- <div class="m-t-sm">
                             <a ui-toggle-class
                                data-ng-click="like_comment($index, comment.id)"
                                class="btn btn-default btn-xs active">
@@ -188,12 +218,19 @@
                                 <i class="fa fa-mail-reply text-muted"></i>
                                 {{ 'PHOTO.DETAIL.REPLY' | translate }}
                             </a>
-                        </div>
+                        </div>-->
                     </div>
                 </div>
             </div>
         </div>
     </div>
+	
+	<div class="line line-lg b-b b-light" style="margin-top:0px;padding:0px;"></div>
+	
+	<h3 class="text-center related-photos">{{ 'PHOTO.DETAIL.SIMILAR' | translate }}</h3>
+    <div data-ng-if="r" data-ng-include="PATH +'photo/templates/include/masonry_list.html'"></div>
+	
+	
     <div class="row">
         <div class="col-xs-12 col-md-12">
             <div class="clearfix m-b-lg">
@@ -216,6 +253,5 @@
             </div>
         </div>
     </div>
-    <h3 class="text-center">{{ 'PHOTO.DETAIL.SIMILAR' | translate }}</h3>
-    <div data-ng-if="r" data-ng-include="PATH +'photo/templates/include/masonry_list.html'"></div>
+    
 </div>
