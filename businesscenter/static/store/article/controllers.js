@@ -28,4 +28,12 @@ angular.module('article.controllers', ['article.services', 'common.services', 'c
             }
         );
     }
+])
+.controller('CtrlArticleDetail', ['$scope', '$rootScope','$http', '$window',
+'$location', '$routeParams', 'Article',
+    function($scope, $rootScope, $http, $window, $location, $routeParams, Article) {
+        $scope.article = Article.detail({pk: $routeParams.pk},
+            function(success) {}
+        );
+    }
 ]);

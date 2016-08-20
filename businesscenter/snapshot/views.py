@@ -439,6 +439,12 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
             # Not using default object or queryset, to reduce the queryset
             like_count = Photo.objects.get(id=obj.id).like_set.count()
+
+            # send notification to the owner
+            trigger_notification('nf_channel_{}'.format(obj.creator.id), 
+                                'new_notification',
+                         "{} likes your photo({})!".format(request.user.username, obj.title))
+
             data = {'like_count': like_count}
             status = 200
         except IntegrityError:
@@ -622,6 +628,13 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+
+        photo = Photo.objects.get(id=int(data['photo']))
+        # send notification to the owner
+        trigger_notification('nf_channel_{}'.format(photo.creator.id), 
+                            'new_notification',
+                     "{} gives a comment to your photo({})!".format(request.user.username, photo.title))
+
         return Response(serializer.data, status=201, headers=headers)
 
     @detail_route(methods=['get'])
