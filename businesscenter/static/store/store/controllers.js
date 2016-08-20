@@ -97,7 +97,7 @@ angular.module('store.controllers', ['store.services','common.services', 'auth.s
             var data = $scope.r;
             delete data['photo'];
             delete data['thumb'];
-            Store.update({pk: $scope.r.id}, data,
+            Store.update({pk: $scope.r.vendor}, data,
                 function(success){
                     $translate('STORE.UPDATE.SUCCESS').then(function (msg) {
                         $rootScope.alerts.push({ type: 'info', msg:  msg});
