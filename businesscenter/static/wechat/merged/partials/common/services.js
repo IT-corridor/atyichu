@@ -54,6 +54,24 @@ angular.module('common.services', ['ngResource'])
         }
     }
 )
+.factory('MultipartForm', ['$http', function ($http){
+    return function(method, form_id, url){
+        if (form_id){
+            var form = document.querySelector(form_id);
+            var formData = new FormData(form);
+        }
+        else{
+            var formData = null;
+        }
+        var req = {
+            method: method,
+            url: url,
+            headers: {'Content-Type': undefined, 'X-Requested-With': 'XMLHttpRequest'},
+            data: formData,
+        };
+        return $http(req);
+    }
+}])
 .factory('WindowScroll', ['$window', function($window){
     // Perform action when scroll touch the document bottom
     return function(scope, callback){

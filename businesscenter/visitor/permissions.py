@@ -37,6 +37,16 @@ class IsVisitorSimple(permissions.IsAuthenticated):
         base_perm = super(IsVisitorSimple, self).has_permission(request, view)
         if base_perm:
             if hasattr(request.user, 'visitor'):
-                if hasattr(request.user.visitor, 'weixin'):
-                    return True
+                # if hasattr(request.user.visitor, 'weixin'):
+                return True
+        return request.user.is_staff
+
+
+class IsVisitorOrReadOnly(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        if hasattr(request.user, 'visitor'):
+            if obj.pk == request.user.pk:
+                return True
+
         return request.user.is_staff

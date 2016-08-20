@@ -269,3 +269,22 @@ class GroupDetailSerializer(GroupSerializer):
 
     class Meta:
         model = models.Group
+
+class ArticleListSerializer(serializers.ModelSerializer):
+    photos = PhotoSerializer(source='photo_set', many=True, read_only=True)
+    thumb = serializers.SerializerMethodField(read_only=True)
+
+    def get_thumb(self, obj):
+        photo = obj.photo_set.first()
+        if photo and photo.original_id:
+            photo = photo.original
+        if photo and photo.cover.name:
+            request = self.context.get('request', None)
+            url = photo.cover.url
+            if request is not None:
+                return request.build_absolute_uri(url)
+            return url
+        return
+
+    class Meta:
+        model = models.Article

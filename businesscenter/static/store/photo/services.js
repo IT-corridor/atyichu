@@ -15,6 +15,7 @@ angular.module('photo.services', ['ngResource'])
             add_links: {method: 'POST', params: {action: 'add_links'}, responseType: 'json', isArray: true},
             remove_link: {method: 'POST', params: {action: 'remove_link'}, responseType: 'json'},
             similar: {method: 'GET', params: {action: 'similar'}, responseType: 'json'},
+            my: {method: 'GET', params: {action: 'my_photos'}, responseType: 'json'},                               
     });
 }])
 .factory('Comment', ['$resource', 'api_path',

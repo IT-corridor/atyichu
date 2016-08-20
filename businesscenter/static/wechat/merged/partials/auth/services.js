@@ -109,6 +109,7 @@ function($rootScope, $cookies, $window, $location, $route, $translate, IsAuthent
                     }
                 }
                 else{
+                    console.log('getting personal data');
                     Me.get(
                         function(success){
                             self.set(success);
@@ -135,8 +136,8 @@ function($rootScope, $cookies, $window, $location, $route, $translate, IsAuthent
             self.remove();
             $rootScope.visitor_resolved = false;
             $rootScope.visitor = null;
-            $route.reload();
-            //$location.path('/');
+            //$route.reload();
+            $location.path('/');
         });
     };
 

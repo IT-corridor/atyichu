@@ -2,6 +2,7 @@ angular.module('app.route', [
     'ngRoute',
     'common.controllers',
     'store.controllers',
+    'article.controllers',
     'commodity.controllers',
     'photo.controllers',
     'group.controllers',
@@ -29,6 +30,18 @@ angular.module('app.route', [
             templateUrl: PATH + 'commodity/templates/my_list.html',
             controller: 'CtrlMyCommodityList',
         }).
+        when('/article/add', {
+            templateUrl: PATH + 'article/templates/create.html',
+            controller: 'CtrlArticleCreate',
+        }).        
+        when('/article', {
+            templateUrl: PATH + 'article/templates/list.html',
+            controller: 'CtrlArticleList',
+        }).        
+        when('/article/:pk', {
+            templateUrl: PATH + 'article/templates/detail.html',
+            controller: 'CtrlArticleDetail',
+        }).        
         when('/commodities/add', {
             templateUrl: PATH + 'commodity/templates/create.html',
             controller: 'CtrlCommodityCreate',

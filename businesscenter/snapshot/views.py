@@ -19,7 +19,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from .models import Mirror, Photo, Comment, Tag, Member, Group, Like, Link, \
-    FollowUser, FollowGroup
+    FollowUser, FollowGroup, Article
 
 from . import serializers
 from .permissions import IsOwnerOrMember, MemberCanServe, \
@@ -249,6 +249,25 @@ class MirrorViewSet(viewsets.GenericViewSet):
         return Response(data=serializer.data, status=201)
 
 
+class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
+    def get_serializer_class(self):
+        return serializers.ArticleListSerializer
+
+    def get_queryset(self):
+        qs = Article.objects.all()
+        prefetch = Prefetch('photo_set', queryset=Photo.objects.all())
+
+        qs = qs.prefetch_related(prefetch)
+        return qs
+
+    def create(self, request, *args, **kwargs): 
+        data = request.data       
+        article = Article.objects.create(title=data['title'], description=data['description'], author=request.user)
+        for photo in data['photos']:
+            Photo.objects.filter(id=photo).update(article=article)
+        return Response(data={'id': article.id}, status=201)
+
+
 class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
     model = Photo
     serializer_class = serializers.PhotoDetailSerializer
@@ -316,9 +335,9 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         content = {'photo_id': photo.id}
         # SENDING A request for nitification to pusher service,
         # which will push the ANDROID APP.
-        send_json, receive_info = trigger_notification('nf_channel_%d'%visitor.id,
+        send_json, receive_info = trigger_notification('nf_channel_{}'.format(visitor.id),
                                                'new_notification',
-                                               "New photo (%d) is created!"%photo.id)
+                                               'New photo ({}) is created!'.format(photo.id))
 
         log.info('umeng json: {}, {}'.format(send_json, receive_info))
         return Response(data={'id': photo.id}, status=201)
@@ -420,6 +439,12 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
             # Not using default object or queryset, to reduce the queryset
             like_count = Photo.objects.get(id=obj.id).like_set.count()
+
+            # send notification to the owner
+            trigger_notification('nf_channel_{}'.format(obj.creator.id), 
+                                'new_notification',
+                         "{} likes your photo({})!".format(request.user.username, obj.title))
+
             data = {'like_count': like_count}
             status = 200
         except IntegrityError:
@@ -435,6 +460,21 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                                             'visitor__vendor__store', 'group')
         qs = qs.filter(Q(group__is_private=False) &
                        ~Q(visitor_id=request.user.id))\
+            .order_by('-pk').distinct()
+
+        return self.get_list_response(qs, serializers.PhotoListSerializer)
+
+    @list_route(methods=['get'])
+    def my_photos(self, request, *args, **kwargs):
+        """ 
+        Providing a list of public groups photos that are not included in an article 
+        for a specific user
+        """
+        qs = Photo.a_objects.select_related('original', 'visitor__visitor',
+                                            'visitor__vendor__store', 'group')
+        qs = qs.filter(Q(group__is_private=False) &
+                       Q(article=None) &
+                       Q(visitor_id=request.user.id))\
             .order_by('-pk').distinct()
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
@@ -588,6 +628,13 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+
+        photo = Photo.objects.get(id=int(data['photo']))
+        # send notification to the owner
+        trigger_notification('nf_channel_{}'.format(photo.creator.id), 
+                            'new_notification',
+                     "{} gives a comment to your photo({})!".format(request.user.username, photo.title))
+
         return Response(serializer.data, status=201, headers=headers)
 
     @detail_route(methods=['get'])
@@ -888,7 +935,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_%d'%obj.owner.id, 'new_notification',
+            trigger_notification('nf_channel_{}'.format(obj.owner.id), 
+                                'new_notification',
                          request.user.username + "wants to follow your group!")
 
         except IntegrityError:
@@ -911,7 +959,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_%d'%obj.owner.id, 'new_notification',
+            trigger_notification('nf_channel_{}'.format(obj.owner.id), 'new_notification',
                          request.user.username + "stops to follow your group!")
 
         except IntegrityError:
@@ -961,7 +1009,7 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_%d'%kwargs['pk'], 'new_notification',
+            trigger_notification('nf_channel_{}'.format(kwargs['pk']), 'new_notification',
                          request.user.username + "wants to follow you!")
 
         except IntegrityError:
@@ -981,7 +1029,7 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_%d'%kwargs['pk'], 'new_notification',
+            trigger_notification('nf_channel_{}'.format(kwargs['pk']), 'new_notification',
                          request.user.username + "stops to follow you!")
 
         except IntegrityError:

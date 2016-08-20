@@ -1,10 +1,13 @@
 from __future__ import unicode_literals
 
 from uuid import uuid4
+from django.db import IntegrityError
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.utils.encoding import smart_unicode
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password as vp
 from rest_framework import serializers
 from .models import Visitor, VisitorExtra, Weixin
 from utils.utils import get_content_file
@@ -37,18 +40,14 @@ class VisitorSerializer(serializers.ModelSerializer):
     unionid = serializers.CharField(write_only=True)
     username = serializers.SerializerMethodField(read_only=True)
 
-    def get_username(self, obj):
-        if obj.username:
-            return obj.username
-        else:
-            return obj.user.username
-
     photo_count = serializers.IntegerField(source='user.photo_set.count',
                                            read_only=True)
     group_count = serializers.IntegerField(source='user.group_set.count',
                                            read_only=True)
-    extra = VisitorExtraSerializer(source='weixin.visitorextra_set',
-                                   write_only=True, allow_null=True)
+    extra = VisitorExtraSerializer(write_only=True, allow_null=True)
+
+    def get_username(self, obj):
+        return obj.username if obj.username else obj.user.username
 
     def create(self, validated_data):
 
@@ -143,3 +142,61 @@ class VisitorShortSerializer(serializers.ModelSerializer):
         model = Visitor
         fields = ('pk', 'username', 'thumb')
         extra_kwargs = {'pk': {'read_only': True}}
+
+
+class VisitorCreateSerializer(serializers.ModelSerializer):
+    """ Serializer for creating new Visitor """
+    password = serializers.CharField(allow_blank=False, write_only=True)
+    confirm_password = serializers.CharField(allow_blank=False,
+                                             write_only=True)
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs.pop('confirm_password'):
+            raise serializers.ValidationError({'confirm_password':
+                                                   _('Passwords do not match')})
+        return attrs
+
+    def validate_password(self, value):
+        """ Validate password with django password validation """
+        vp(value)
+        return value
+
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)
+        username = validated_data.get('username')
+        User = get_user_model()
+        try:
+            user = User(username=username)
+            user.set_password(password)
+            user.save()
+        except IntegrityError:
+            msg = _('This name is occupied by another user.')
+            raise serializers.ValidationError({'username': [msg]})
+        else:
+            visitor = Visitor.objects.create(user=user, **validated_data)
+            return visitor
+
+    class Meta:
+        model = Visitor
+        exclude = ('user',)
+        extra_kwargs = {'phone': {'required': True},
+                        'username': {'required': True}}
+
+
+class VisitorProfileSerializer(serializers.ModelSerializer):
+    """ Serializer for retreive / update visitor profile """
+
+    def update(self, instance, validated_data):
+        if validated_data.get('avatar', None):
+            instance.thumb.delete(True)
+        return super(VisitorProfileSerializer, self).\
+            update(instance, validated_data)
+
+    class Meta:
+        model = Visitor
+
+
+class VisitorLoginSerializer(serializers.Serializer):
+    phone = serializers.CharField(label=_('Phone'))
+    password = serializers.CharField(label=_('Password'),
+                                     style={'input_type': 'password'})

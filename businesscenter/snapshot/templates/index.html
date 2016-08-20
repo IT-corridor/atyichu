@@ -29,17 +29,20 @@
     <body id="app" class="app purple-50">
         <div data-d-navbar></div>
         <noscript><h4 class="text-danger">{% trans 'This site requires JavaScript to be enabled' %}</h4></noscript>
-        <div class="container" data-ng-if="!visitor">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-xs-12 fixed-alerts">
+                    <div data-d-alerts></div>
+                </div>
+            </div>
+        </div>
+        <div data-ng-if="!visitor" class="m-t-md" data-user-sign></div>
+        <div data-ng-if="!visitor" class="container">
             <div class="row">
                 <div class="col-md-12">
                     <div class="text-center m-t-md">
                         <div id="qr"></div>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-8 col-md-offset-1 col-xs-12 fixed-alerts">
-                    <div data-d-alerts></div>
                 </div>
             </div>
         </div>
@@ -84,6 +87,8 @@
         <script src="{{ STATIC_URL }}wechat/merged/photo/controllers.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/photo/services.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/photo/directives.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/user/services.js"></script>
+        <script src="{{ STATIC_URL }}wechat/merged/user/directives.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/user/controllers.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/group/services.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/group/directives.js"></script>
@@ -93,7 +98,7 @@
         <script src="{{ STATIC_URL }}wechat/merged/partials/tencent/directives.js"></script>
 
         <script>
-
+        // TODO: DAN, please replace it to a indepented script file and refer it
         var pusher = new Pusher('4c8e6d909a1f7ccc44ed');
         var notificationsChannel = pusher.subscribe('nf_channel_{{user.id}}');
 

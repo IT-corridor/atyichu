@@ -14,6 +14,7 @@ var app = angular.module('app.main', [
     'alert',
     'selfie',
     'grid',
+    'user.directives',
 
 ]);
 app.factory('httpRequestInterceptor', function () {
@@ -192,6 +193,28 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'FILES': 'Photos',
             },
         },
+        'USER': {
+            'BAR': {
+                'LOGIN': 'Sign in',
+                'REG': 'Sign up',
+            },
+            'FORM': {
+                'USERNAME': 'Username',
+                'PHONE': 'Phone',
+                'EMAIL': 'Email',
+                'AVATAR': 'Avatar',
+                'PASSWORD': 'Password',
+                'NEW_PASSWORD': 'New password',
+                'CONFIRM_PASSWORD': 'Confirm password',
+            },
+            'ME': {
+                'HEADER': 'My profile',
+                'CONNECT': 'Connect weixin account',
+            },
+            'PASSWORD': {
+                'HEADER': 'Change password',
+            }
+        }
     });
 
     $translateProvider.translations('zh', {
@@ -340,6 +363,28 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'FILES': 'Photos',
             },
         },
+        'USER': {
+            'BAR': {
+                'LOGIN': 'Sign in',
+                'REG': 'Sign up',
+            },
+            'FORM': {
+                'USERNAME': 'Username',
+                'PHONE': 'Phone',
+                'EMAIL': 'Email',
+                'AVATAR': 'Avatar',
+                'PASSWORD': 'Password',
+                'NEW_PASSWORD': 'New password',
+                'CONFIRM_PASSWORD': 'Confirm password',
+            },
+            'ME': {
+                'HEADER': 'My profile',
+                'CONNECT': 'Connect weixin account',
+            },
+            'PASSWORD': {
+                'HEADER': 'Change password',
+            }
+        }
     });
 
   $translateProvider.preferredLanguage('en');

@@ -113,6 +113,11 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'DISCOVERY': 'Discovery',
                 'LIKED': 'Favorite',
             },
+            'ARTICLE': {
+                'TITLE': 'Article',
+                'MY': 'My Articles',
+                'ADD': 'Add An Article',
+            },            
             'COMMODITY': {
                 'TITLE': 'Commodity',
                 'MY': 'My Commodities',
@@ -232,6 +237,20 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'DESCRIPTION': 'Description',
             }
         },
+        'ARTICLE': {
+            'CREATE': {
+                'HEADER': 'Add an article',
+                'SUCCESS': 'A new article has been added to your store',
+                'NO_COLOR': 'Required color is missed? Then send us your extra color',
+            },
+            'UPDATE': {
+                'HEADER': 'Update a article',
+                'PHOTO_HEADER': 'Article`s photo',
+                'PHOTO_ADD': 'Add a new photo',
+                'DATA_HEADER': 'Update a article data',
+                'SUCCESS': 'Article has been updated',
+            },
+        },                
         'COMMODITY': {
             'CREATE': {
                 'HEADER': 'Add a commodity',
@@ -452,6 +471,20 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'GROUP': 'Group',
             }
         },
+        'ARTICLE': {
+            'CREATE': {
+                'HEADER': 'Add an article',
+                'SUCCESS': 'A new article has been added to your store',
+                'NO_COLOR': 'Required color is missed? Then send us your extra color',
+            },
+            'UPDATE': {
+                'HEADER': 'Update a article',
+                'PHOTO_HEADER': 'Article`s photo',
+                'PHOTO_ADD': 'Add a new photo',
+                'DATA_HEADER': 'Update a article data',
+                'SUCCESS': 'Article has been updated',
+            },
+        },        
         'COMMODITY': {
             'CREATE': {
                 'HEADER': 'Add a commodity',

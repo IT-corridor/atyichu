@@ -29,11 +29,6 @@
                 </a>
             </li>
             <li>
-                <a data-ng-href="#!/my_groups">
-                    <span translate="ASIDE.PHOTO.FOLLOWING_GROUPS">Following Wardrobes</span>
-                </a>
-            </li>
-            <li>
                 <a data-ng-href="#!/group/create">
                     <span translate="ASIDE.PHOTO.ADD_GROUP">Add A Wardrobes</span>
                 </a>
@@ -77,6 +72,28 @@
             </li>
         </ul>
     </li>
+    <li data-ng-init="menu.article = false">
+        <a data-ng-click="menu.article = !menu.article">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-newspaper-o text-success"></i>
+            <span class="font-bold" translate="ASIDE.ARTICLE.TITLE"></span>
+        </a>
+        <ul class="nav dk" data-ng-class="{'nav-sub': !menu.article}">
+            <li>
+                <a data-ng-href="#!/article/">
+                    <span translate="ASIDE.ARTICLE.MY"></span>
+                </a>
+            </li>
+            <li>
+                <a data-ng-href="#!/article/add/">
+                    <span translate="ASIDE.ARTICLE.ADD"></span>
+                </a>
+            </li>
+        </ul>
+    </li>    
     <li data-ng-init="menu.store = false">
         <a data-ng-click="menu.store = !menu.store">
       <span class="pull-right text-muted">

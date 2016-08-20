@@ -15,10 +15,11 @@ left: 4% !important;
 	margin-left: 0px;
     margin-bottom: 2% !important;
     margin-top: 0px !important;
+	overflow:hidden;
 }
 
 .purple-50 {
-    background-color: #f7f7f7;
+    background-color: #fff;
 }
 
 
@@ -28,6 +29,7 @@ left: 4% !important;
 {
 	float:right;
 	margin-right:10px;
+	padding-top:10px;
 }
 
 .pin .img-pin {
@@ -108,6 +110,11 @@ left: 4% !important;
 	border-radius:0px !important;
 }
 
+.pin .avatar img
+{
+	height:28px !important;
+}
+
 .pin #photo-origin-owner-section{
     padding-bottom: 8px;
     padding-left: 8px;
@@ -139,6 +146,7 @@ left: 4% !important;
 }
 .navbar-fixed-bottom {
     background:#41414d;
+	bottom:0px;
 }
 
 
@@ -205,9 +213,10 @@ left: 4% !important;
 .photo-detail .fa-angle-left {
     float: left;
     margin-top: 0px;
-    margin-right: 8px;
-    font-size: 28px;
+    margin-right: 5px;
+    font-size: 34px;
     color: #3c3c3c;
+    width: 25px;
 }
 
 .photo-detail .panel {
@@ -216,15 +225,19 @@ left: 4% !important;
     padding: 0px !important;
 	    border: 0px;
 		margin:0px;
-		background:#f7f7f7
+		background:transparent;
+		box-shadow:none;
 }
 
 .photo-detail .owner-name {
     padding-left: 10px;
-    margin-top: 4px;
+    margin-top: 0px;
     float: left;
     color: #000;
     font-size: 16px;
+    padding-top: 0px;
+    line-height: 13px;
+	width:75%;
 }
 	
 .photo-detail .panel .wrapper-lg {
@@ -235,10 +248,11 @@ left: 4% !important;
 
 
 .photo-detail .panel .wrapper-lg h4 {
-    padding: 15px 0px 0px 15px;
+    padding: 0px 0px 0px 15px;
     text-transform: inherit;
-        
-	color: #000;
+    color: #000;
+	font-size:16px;
+	margin-bottom:0px;
 }
 
 .photo-detail .panel .wrapper-lg .photo-detail-description {
@@ -246,10 +260,13 @@ left: 4% !important;
     text-transform: inherit;
     color: #565656;
     font-weight: lighter;
-    border-bottom: 1px solid #e6e5e5;
     font-family: arial;
-    padding-bottom: 15px;
-    font-size: 14px;
+    font-size: 12px;
+    width: 100%;
+    padding-right: 0px;
+    float: left;
+	margin-top:5px;
+    margin-bottom: 0px;
 }
 
 .photo-detail .detail-half {
@@ -283,9 +300,12 @@ left: 4% !important;
     margin-left: 0px;
     padding: 10px;
     background: #fff;
-    border-top: 1px solid #d7d7d7;
+    border-top: 0.1px solid #e4e4e4;
     position: fixed;
+    left: 0px;
+    width: 100%;
     bottom: 50px;
+    z-index: 999999999999999 !important;
 }
 
 
@@ -293,6 +313,7 @@ left: 4% !important;
     float: left;
     margin-left: 15px;
     padding: 8px 0px;
+	width:75%;
 }
 
 .photo-detail .user-follow-status {
@@ -301,12 +322,15 @@ left: 4% !important;
     padding: 12px 0px;
 }
 
+
+
 .photo-detail .form-control {
     border-radius: 6px !important;
     padding: 0px 8px;
-    border: 1px solid #d7d7d7;
-    font-size: 13px;
+    border: 1px solid #f1f1f1;
+    font-size: 14px;
     height: 30px;
+	width:96% !important
 }
 
 
@@ -319,6 +343,7 @@ left: 4% !important;
  .photo-detail #photo-origin-owner-username .img-circle {
     border-radius: 0%;
     width: 32px;
+	height: 32px;
     margin-right: 8px;
 }
 
@@ -333,12 +358,245 @@ left: 4% !important;
 
 .photo-detail .d-p-title
 {
-	width:90%;
+	width:100%;
 	float:left;
 }
 .photo-detail .icon-pencil {
     width: 25px;
-    float: right;
-    padding-top: 20px;
     color: #000;
+    position: relative;
+    right: 0px;
+    float: left;
+    display: table;
+    margin-left: 15px;
+	font-size:16px;
+
+}
+
+.photo-detail .avatar img
+{
+	height: 35px !important;
+    width: 35px !important;
+}
+
+.photo-detail {
+    max-width: 525px !important;
+    margin: auto;
+    display: table;
+    float: none;
+    position: relative;
+    border: 1px solid #f7f7f7;
+    background: #f5f5f5;
+}
+
+.photo-detail .row
+{
+	margin-left:auto !important;
+	margin-right:auto !important;
+}
+
+.photo-detail .img-center {
+    margin: 0 auto;
+	min-width:100%;
+	
+}
+
+
+
+
+.photo-detail .related-photos
+{
+    font-size: 18px;
+    text-align: left;
+    padding-left: 15px;
+    padding-top: 0px;
+    box-sizing: border-box;
+    margin-top: 10px;
+}
+
+.photo-detail .comment-heading {
+       font-size: 18px;
+    text-align: left;
+    padding-left: 15px;
+    box-sizing: border-box;
+    padding: 0px 15px 0px 15px;
+    margin: 0px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+
+.photo-detail .streamline:after
+{
+display:none;	
+}
+
+.photo-detail .arrow.left:after,
+.photo-detail .arrow.left
+{
+	display:none;
+}
+
+.photo-detail .streamline {
+    position: relative;
+    border-color: #dee5e7;
+    padding: 0px;
+    margin: 0px;
+}
+
+
+.photo-detail .streamline .avatar img {
+    margin-left: 0px;
+    float: left;
+    height: 42px !important;
+    width: 42px !important;
+    border-radius: 100%;
+}
+
+.m-l-lg.panel.b-a {
+    display: table;
+    float: none;
+    width: 80%;
+}
+
+
+.photo-detail .streamline .thumb-sm {
+    display: table;
+    width: 45px;
+	margin-left: 15px;
+}
+
+
+
+.photo-detail .streamline .panel-heading {
+    padding: 0px 10px !important;
+    border: none;
+    box-shadow: none;
+}
+
+.photo-detail .streamline .panel-body {
+    padding: 0px 10px !important;
+    border: none;
+    box-shadow: none;
+}
+
+.photo-detail .streamline .panel
+{
+	box-shadow:none;
+}
+
+.photo-detail .streamline .wrapper-xs
+{
+
+	border-bottom: 1px solid #dee5e7;
+	padding:8px 0px;
+}
+
+
+.photo-detail .pin {
+    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.1);
+    width: 226px !important;
+    margin-left: 8px;
+    margin-bottom: 2% !important;
+    margin-top: 0px !important;
+    overflow: hidden;
+    margin-right: 8px;
+}
+
+.photo-detail-heading
+{
+width:100%;
+float: left;
+padding-top:10px;
+padding-bottom:10px;
+    position: relative;	
+}
+
+.photo-detail .uploaded-detail {
+    margin-left: 10px;
+    margin-top: 5px !important;
+    display: block;
+    float: left;
+}
+
+.photo-detail .p-d-o-username
+{
+	display:block;
+	float:left;
+    font-size: 12px;
+}
+
+.b-light {
+    border-color: #eaeaea;
+}
+
+.photo-detail-title
+{
+    display: table;
+    float: left;
+    width: 90%;
+}
+
+.photo-detail .thumb-xxs {
+    display: inline-block;
+    width: 35px;
+}
+
+
+.photo-detail .streamline .wrapper-xs:last-child {
+    border-bottom: 0px solid transparent !important;
+}
+
+
+.maso .user-follow-status {
+    float: right;
+    margin-right: 5%;
+    padding: 2px 0px !important;
+}
+
+.maso .pin .photo-owner .thumb-xs.avatar
+{
+	width:28px !important;
+	height:28px !important;
+}
+ .maso .avatar img
+ {
+	 width:28px !important;
+	height:28px !important;
+ }
+
+.maso p
+{
+	font-weight:normal !important;
+	font-size: 11px;
+}
+.maso .font-bold
+{
+	font-weight:bold !important;
+}
+
+
+
+@media only screen and (max-width: 767px)
+{
+	.photo-detail  .pin {
+    width: 215px !important;
+	margin-left: 0px;
+    margin-bottom: 2% !important;
+    margin-top: 0px !important;
+	}
+
+}
+
+
+
+@media only screen and (max-width: 480px)
+{
+.photo-detail  .pin {
+    width: 45% !important;
+	margin-left: 0px;
+    margin-bottom: 2% !important;
+    margin-top: 0px !important;
+}
+
 }

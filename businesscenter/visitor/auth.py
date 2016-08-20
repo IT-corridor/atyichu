@@ -1,8 +1,9 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.backends import ModelBackend
 from .models import Visitor, VisitorExtra
 
 
-class WeixinBackend(object):
+class WeixinBackend(ModelBackend):
     """
     Authenticate with weixin id. Base is "auth.User" model. It is strict.
     """
@@ -16,8 +17,18 @@ class WeixinBackend(object):
             user = None
         return user
 
-    def get_user(self, pk):
+
+class PhoneBackend(ModelBackend):
+    """ Authenticate user (visitor) with phone number """
+    def authenticate(self, phone=None, password=None, **kwargs):
+        UserModel = get_user_model()
         try:
-            return User.objects.get(pk=pk)
-        except User.DoesNotExist:
-            return None
+            if phone:
+                visitor = Visitor.objects.get(phone=phone)
+                user = visitor.user
+                if user.check_password(password):
+                    return user
+        except Visitor.DoesNotExist:
+            # Run the default password hasher once to reduce the timing
+            # difference between an existing and a non-existing user (#20760).
+            UserModel().set_password(password)

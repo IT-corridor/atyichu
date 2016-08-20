@@ -58,7 +58,8 @@ angular.module('tencent', [])
     },
     link: function(scope, element, attrs) {
       // Set up center coordinates
-      var script = LoadScript('http://map.qq.com/api/js?v=2.exp&callback=init_async', true);
+      var callback_name = 'init_lazy';
+      var script = new LoadScript('http://map.qq.com/api/js?v=2.exp&callback='+callback_name, callback_name, true);
       var unwatch = scope.$watch('address', function(newValue, oldValue) {
           if (newValue){
             script.then(function(success){
