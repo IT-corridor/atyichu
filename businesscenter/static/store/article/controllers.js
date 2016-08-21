@@ -7,6 +7,7 @@ angular.module('article.controllers', ['article.services', 'common.services', 'c
         $scope.r = Photo.my({pk:$routeParams.pk}, function(success) {});
 
         $scope.create = function() {
+            console.log($scope.data);
             Article.save($scope.data, 
                 function(success){
                     $location.path('/article/' + success.id + '/edit');
