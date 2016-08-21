@@ -19,6 +19,7 @@
                         <label class="col-sm-2 control-label">{{ 'GROUP.FORM.DESCRIPTION' | translate }}</label>
                         <div class="col-sm-10">
                             <textarea name="description"
+                                      ui-tinymce="tinymceOptions"
                                       data-ng-model="data.description"
                                       class="form-control" required=""></textarea>
                             <p class="text-danger"
@@ -71,3 +72,5 @@
         </form>
     </div>
 </div>
+
+
