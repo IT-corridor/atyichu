@@ -250,6 +250,8 @@ class MirrorViewSet(viewsets.GenericViewSet):
 
 
 class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
+    # TODO: Dan put your permissions here
+    permission_classes = ()
     def get_serializer_class(self):
         return serializers.ArticleListSerializer
 
@@ -261,8 +263,11 @@ class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
         return qs
 
     def create(self, request, *args, **kwargs): 
-        data = request.data       
-        article = Article.objects.create(title=data['title'], description=data['description'], author=request.user)
+        data = request.data
+        # PEP 8 Dan
+        article = Article.objects.create(title=data['title'],
+                                         description=data['description'],
+                                         author=request.user)
         for photo in data['photos']:
             Photo.objects.filter(id=photo).update(article=article)
         return Response(data={'id': article.id}, status=201)

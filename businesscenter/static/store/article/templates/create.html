@@ -32,7 +32,7 @@
                             <div class="pinGrid"
                                  data-masonry='{ "transitionDuration" : "0.4s" , "itemSelector" : ".tile", "percentPosition": "true"}'>
                                 <div class="pin animate tile" data-masonry-tile data-ng-repeat="photo in r.results">
-                                    <input type="checkbox" checklist-value="photo.id" checklist-model="data.photos">
+                                    <input type="checkbox" data-checklist-value="photo.id" data-checklist-model="data.photos">
                                     <a data-ng-href="#!/photo/{{ photo.id }}">
                                         <img data-ng-if="!photo.original && photo.thumb" data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
                                         <img data-ng-if="photo.original && !photo.thumb" data-ng-src="{{ photo.origin.thumb }}" alt="{{ photo.title }}" class="img-pin">
