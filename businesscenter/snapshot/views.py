@@ -346,10 +346,11 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         """
         get all photo order by time desc. Currently not used.
         """
-        qs = Photo.a_objects.select_related('original', 'visitor__visitor',
-                                            'visitor__vendor__store',
+        qs = Photo.p_objects.select_related('original', 'visitor__visitor',
+                                            'visitor__vendor__store', 
                                             'group')
-        qs = qs.filter(Q(group__is_private=False))\
+        # qs = qs.filter(Q(group__is_private=False))\
+        qs = qs.filter(~Q(article=None))\
             .order_by('-stamps__photostamp__confidence').distinct()
         qs = self.filter_queryset(qs)
 

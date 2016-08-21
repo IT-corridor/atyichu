@@ -221,7 +221,9 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
 
         $rootScope.title = title;
         var query = (kind === 'newest') ? Photo.newest : Photo.liked_list;
-
+        if (kind === 'article')
+            query = Photo.query;
+        
         $scope.enough = false;
         $scope.is_owner = false;
 
@@ -272,6 +274,11 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                 }
             );
         }
+
+        $scope.read_article = function(article_id) {
+            $location.path('/article/' + article_id);
+        }
+
     }
 ])
 .controller('CtrlPhotoClone', ['$scope', '$rootScope', '$http', '$routeParams',

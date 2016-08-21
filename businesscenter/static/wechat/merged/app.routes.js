@@ -17,12 +17,24 @@ angular.module('app.route', [
                 kind: function(){return 'newest'},
             }
         }).
+        when('/article/:pk', {
+            templateUrl: PATH + 'article/templates/detail.html',
+            controller: 'CtrlArticleDetail',
+        }).                
         when('/mirror/', {
             templateUrl: PATH + 'mirror/templates/list.html',
             controller: 'CtrlMirrorList'}).
         when('/mirror/:pk', {
             templateUrl: PATH + 'mirror/templates/detail.html',
             controller: 'CtrlMirrorDetail'}).
+        when('/article_photos', {
+            templateUrl: PATH + 'group/templates/photo_list.html',
+            controller: 'CtrlPhotoNewest',
+            resolve: {
+                title: function(){return 'Article Photos';},
+                kind: function(){return 'article'},
+            }
+        }).
         when('/photo/newest', {
             templateUrl: PATH + 'group/templates/photo_list.html',
             controller: 'CtrlPhotoNewest',

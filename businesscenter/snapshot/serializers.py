@@ -97,6 +97,15 @@ class PhotoOriginalSerializer(serializers.ModelSerializer):
                   'description', 'descr', 'group', 'owner')
 
 
+class ArticleShortSerializer(serializers.ModelSerializer):
+    # username = serializers.CharField(source='brand_name', read_only=True)
+    # thumb = serializers.ImageField(source='crop', read_only=True)
+
+    class Meta:
+        model = models.Article
+        fields = ('title', 'pk')
+        extra_kwargs = {'pk': {'read_only': True}}
+
 class PhotoListSerializer(serializers.ModelSerializer):
     """ Works only with PhotoManager or ActivePhotoManager """
     owner = serializers.SerializerMethodField(read_only=True)
@@ -106,6 +115,13 @@ class PhotoListSerializer(serializers.ModelSerializer):
     clone_count = serializers.SerializerMethodField(read_only=True)
     like_count = serializers.IntegerField(read_only=True)
     group_title = serializers.CharField(source='group.title', read_only=True)
+    article = serializers.SerializerMethodField(read_only=True)
+
+    def get_article(self, obj):
+        serializer = ArticleShortSerializer(instance=obj.article,
+                                      read_only=True,
+                                      context=self.context)
+        return serializer.data
 
     def get_descr(self, obj):
         if obj.description:
@@ -136,7 +152,7 @@ class PhotoListSerializer(serializers.ModelSerializer):
         fields = ('id', 'create_date', 'visitor', 'title',
                   'thumb', 'group', 'group_title', 'owner',
                   'descr', 'creator', 'original', 'origin',
-                  'comment_count', 'clone_count', 'like_count',)
+                  'comment_count', 'clone_count', 'like_count', 'article')
 
 
 class PhotoDetailSerializer(PhotoListSerializer):

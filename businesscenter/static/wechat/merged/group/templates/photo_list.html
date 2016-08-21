@@ -118,7 +118,7 @@
                     <li><a data-ng-click="like($index, photo.id)"><i class="fa fa-heart-o"></i> {{ photo.like_count }}</a></li>
                     <li><i class="fa fa-share-alt"></i> {{ photo.clone_count }}</li>
                     <li data-ng-if="!group.is_followed"><i data-ng-click="follow(photo.group, group)" class="fa fa-star"></i></li>
-                    <li data-ng-click="read_article(photo.id)">Read it</li>
+                    <li data-ng-click="read_article(photo.article.pk)">Read it</li>
                 </ul>
             </div>
         </div>
