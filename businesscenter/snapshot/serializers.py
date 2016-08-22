@@ -12,6 +12,7 @@ from catalog.serializers import CommodityLinkSerializer
 def get_owner(obj):
     """ Serializing data, depending of the user instance type.
     Only for photo serializers. """
+    # TODO: add context instance
     # Looks like serializers do not support multiple inheritance
     if hasattr(obj.visitor, 'visitor'):
         serializer = VisitorShortSerializer(instance=obj.visitor.visitor,
@@ -21,7 +22,9 @@ def get_owner(obj):
         serializer = StoreShortSerializer(
             instance=obj.visitor.vendor.store,
             read_only=True)
-        return serializer.data
+        data = serializer.data
+        data['is_store'] = True
+        return data
     return
 
 
@@ -138,7 +141,9 @@ class PhotoListSerializer(serializers.ModelSerializer):
             serializer = StoreShortSerializer(instance=obj.visitor.vendor.store,
                                               read_only=True,
                                               context=self.context)
-            return serializer.data
+            data = serializer.data
+            data['is_store'] = True
+            return data
         return
 
     def get_clone_count(self, obj):
@@ -162,7 +167,6 @@ class PhotoDetailSerializer(PhotoListSerializer):
     owner_thumb = serializers.SerializerMethodField(read_only=True)
     is_store = serializers.SerializerMethodField(read_only=True)
     link_set = LinkSerializer(read_only=True, many=True)
-
 
     def get_owner_thumb(self, obj):
         if hasattr(obj.visitor, 'visitor'):

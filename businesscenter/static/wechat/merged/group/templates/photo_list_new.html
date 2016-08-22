@@ -57,7 +57,8 @@
 
 				<div class="b-b b-light m-b-xs wrapper-xs photo-owner" >
                     <a data-ng-href="#!/group/?owner={{ photo.owner.pk }}" class="pull-left thumb-xs avatar m-r">
-                      <img data-ng-src="{{ photo.owner.thumb }}" alt="{{ photo.owner.username }}" class="img-circle">
+                      <img data-ng-src="{{ photo.owner.thumb }}" alt="{{ photo.owner.username }}"
+                           data-ng-class="{'img-circle': !photo.owner.is_store}">
                     </a>
                     <div class="clear">
                       <div id="photo-o-name">{{ photo.owner.username }}</div>
@@ -66,9 +67,6 @@
 					  <span data-ng-if="photo.owner_followed" data-ng-click="unfollow_user(photo.visitor, $index)"><i class="icon-user-following"></i></span>
 					  </div>
                     </div>
-
-
-
                 </div>
 
                 <a data-ng-href="#!/photo/{{ photo.id }}">
@@ -80,44 +78,46 @@
                 </a>
 
                 <div data-ng-if="photo.original">
-                   <!-- <div class="m-b-xs wrapper-xs">
-                        <span>{{ 'GROUP.PHOTO_LIST.SAVED_FROM' | translate }}</span>
-                        <a class="text-danger" data-ng-href="#!/group/{{ photo.origin.group.pk }}/photo">{{ photo.origin.group.title }}</a>
-                    </div> -->
                     <div id="photo-origin-owner-section" class="b-b b-light m-b-xs wrapper-xs">
                         <a data-ng-href="#!/group/?owner={{ photo.origin.owner.pk }}" class="pull-left thumb-xs avatar m-r">
-                          <img data-ng-src="{{ photo.origin.owner.thumb }}" alt="{{ photo.origin.owner.username }}" id="img-square" class="img-circle">
+                          <img data-ng-src="{{ photo.origin.owner.thumb }}" alt="{{ photo.origin.owner.username }}" id="img-square"
+                          data-ng-class="{'img-circle': !photo.origin.owner.is_store}">
                         </a>
                         <div class="clear">
                           <div id="photo-origin-owner-username">{{ photo.origin.owner.username }}</div>
 						  <div class="user-follow-status">
-<!-- 					  <i class="icon-user-follow"></i>
-					  <i class="icon-user-following"></i>
- -->					  </div>
+                            <span data-ng-if="!photo.owner_followed" data-ng-click="follow_user(photo.origin.owner.pk, $index, true)"><i class="icon-user-follow"></i></span>
+					        <span data-ng-if="photo.owner_followed" data-ng-click="unfollow_user(photo..origin.owner.pk, $index, true)"><i class="icon-user-following"></i></span>
+                          </div>
                         </div>
                     </div>
                 </div>
 
-
-
-
-
+                <div data-ng-if="!photo.original">
+                    <div id="photo-origin-owner-section" class="b-b b-light m-b-xs wrapper-xs">
+                        <a data-ng-href="#!/group/?owner={{ photo.owner.pk }}" class="pull-left thumb-xs avatar m-r">
+                          <img data-ng-src="{{ photo.owner.thumb }}" alt="{{ photo.owner.username }}" id="img-square"
+                            data-ng-class="{'img-circle': !photo.owner.is_store}">
+                        </a>
+                        <div class="clear">
+                          <div id="photo-origin-owner-username">{{ photo.owner.username }}</div>
+						  <div class="user-follow-status">
+					  <span data-ng-if="!photo.owner_followed" data-ng-click="follow_user(photo.visitor, $index)"><i class="icon-user-follow"></i></span>
+					  <span data-ng-if="photo.owner_followed" data-ng-click="unfollow_user(photo.visitor, $index)"><i class="icon-user-following"></i></span>
+					  </div>
+                        </div>
+                    </div>
+                </div>
 
                 <p class="b-b b-light font-bold" data-ng-if="photo.title">{{ photo.title }}</p>
                 <p class="b-b b-light font-bold" data-ng-if="!photo.title && photo.origin.title">{{ photo.origin.title }}</p>
                 <p class="photo-description" data-ng-if="photo.descr"> {{ photo.descr }}</p>
                 <div class="photo-description" data-ng-if="!photo.descr && photo.origin.descr"> {{ photo.descr.descr }}</div>
 
-
-                <!--<div class="m-b-xs wrapper-xs">
-                    <span>{{ 'GROUP.PHOTO_LIST.SAVED_TO' | translate }}</span>
-                    <a class="text-danger" data-ng-href="#!/group/{{ photo.group }}/photo">{{ photo.group_title }}</a>
-                </div>-->
                 <ul class="list-inline text-muted text-center small">
-                    <li><i class="fa fa-floppy-o"></i> {{ photo.comment_count }}</li>
+                    <li><i class="fa fa-floppy-o"></i> {{ photo.clone_count }}</li>
                     <li><a data-ng-click="like($index, photo.id)"><i class="fa fa-heart-o"></i> {{ photo.like_count }}</a></li>
-                    <li><i class="fa fa-share-alt"></i> {{ photo.clone_count }}</li>
-                    <li data-ng-if="!group.is_followed"><i data-ng-click="follow(photo.group, group)" class="fa fa-star"></i></li>
+                    <li><i class="fa fa-share-alt"></i></li>
                     <li data-ng-click="read_article(photo.article.pk)">Read it</li>
                 </ul>
             </div>

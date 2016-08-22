@@ -1024,7 +1024,7 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         except IntegrityError:
             data = {'error': _('You have followed the user already!')}
             status = 400
-
+        # TODO: more convinient
         return Response(data, status)
 
     @detail_route(methods=['get'])
