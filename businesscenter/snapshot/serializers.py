@@ -101,12 +101,15 @@ class PhotoOriginalSerializer(serializers.ModelSerializer):
 
 
 class ArticleShortSerializer(serializers.ModelSerializer):
-    # username = serializers.CharField(source='brand_name', read_only=True)
-    # thumb = serializers.ImageField(source='crop', read_only=True)
+    descr = serializers.SerializerMethodField(read_only=True)
+
+    def get_descr(self, obj):
+        if obj.description:
+            return truncatechars_html(obj.description, 50)
 
     class Meta:
         model = models.Article
-        fields = ('title', 'pk')
+        fields = ('title', 'pk', 'descr')
         extra_kwargs = {'pk': {'read_only': True}}
 
 

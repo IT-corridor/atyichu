@@ -104,9 +104,11 @@
 				
 				
                 <p class="b-b b-light font-bold" data-ng-if="photo.title">{{ photo.title }}</p>
-                <p class="b-b b-light font-bold" data-ng-if="!photo.title && photo.origin.title">{{ photo.origin.title }}</p>
+                <p class="b-b b-light font-bold" data-ng-if="!photo.title && photo.article.title">{{ photo.article.title }}</p>
+                <p class="b-b b-light font-bold" data-ng-if="!photo.title && !photo.article.title && photo.origin.title">{{ photo.origin.title }}</p>
                 <p class="photo-description" data-ng-if="photo.descr"> {{ photo.descr }}</p>
-                <div class="photo-description" data-ng-if="!photo.descr && photo.origin.descr"> {{ photo.descr.descr }}</div>
+                <div class="photo-description" data-ng-if="!photo.descr && photo.article.descr" ng-bind-html="photo.article.descr"></div>
+                <div class="photo-description" data-ng-if="!photo.descr && !photo.article.descr && photo.origin.descr"> {{ photo.descr.descr }}</div>
 
 
                 <!--<div class="m-b-xs wrapper-xs">

@@ -34,6 +34,10 @@ angular.module('app.route', [
             templateUrl: PATH + 'article/templates/create.html',
             controller: 'CtrlArticleCreate',
         }).        
+        when('/article/:pk/update', {
+            templateUrl: PATH + 'article/templates/update.html',
+            controller: 'CtrlArticleUpdate',
+        }).        
         when('/article', {
             templateUrl: PATH + 'article/templates/list.html',
             controller: 'CtrlArticleList',
