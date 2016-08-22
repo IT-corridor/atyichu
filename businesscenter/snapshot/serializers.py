@@ -106,6 +106,7 @@ class ArticleShortSerializer(serializers.ModelSerializer):
         fields = ('title', 'pk')
         extra_kwargs = {'pk': {'read_only': True}}
 
+
 class PhotoListSerializer(serializers.ModelSerializer):
     """ Works only with PhotoManager or ActivePhotoManager """
     owner = serializers.SerializerMethodField(read_only=True)
@@ -240,7 +241,9 @@ class GroupSerializer(serializers.ModelSerializer):
 
     def get_is_owner_followed(self, obj):
         if self.context.get('request'):
-            return models.FollowUser.objects.filter(user=obj.owner, follower=self.context['request'].user).exists()
+            return models.FollowUser\
+                .objects.filter(user=obj.owner,
+                                follower=self.context['request'].user).exists()
         return False
 
     def get_is_followed(self, obj):
@@ -285,6 +288,7 @@ class GroupDetailSerializer(GroupSerializer):
 
     class Meta:
         model = models.Group
+
 
 class ArticleListSerializer(serializers.ModelSerializer):
     photos = PhotoSerializer(source='photo_set', many=True, read_only=True)

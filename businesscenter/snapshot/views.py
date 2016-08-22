@@ -447,9 +447,10 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             like_count = Photo.objects.get(id=obj.id).like_set.count()
 
             # send notification to the owner
-            trigger_notification('nf_channel_{}'.format(obj.creator.id), 
-                                'new_notification',
-                         "{} likes your photo({})!".format(request.user.username, obj.title))
+            msg = "{} likes your photo({})!".format(request.user.username,
+                                                    obj.title)
+            trigger_notification('nf_channel_{}'.format(obj.creator.id),
+                                 'new_notification', msg)
 
             data = {'like_count': like_count}
             status = 200
@@ -473,8 +474,8 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def my_photos(self, request, *args, **kwargs):
         """ 
-        Providing a list of public groups photos that are not included in an article 
-        for a specific user
+        Providing a list of public groups photos that are not included
+        in an article  for a specific user
         """
         qs = Photo.a_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store', 'group')
@@ -1010,13 +1011,15 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         try:
             FollowUser.objects.create(follower_id=request.user.id,
                                       user_id=kwargs['pk'])
-            follow_count = FollowUser.objects.filter(user_id=kwargs['pk']).count()
+            follow_count = FollowUser.objects\
+                .filter(user_id=kwargs['pk']).count()
             data = {'follow_count': follow_count}
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_{}'.format(kwargs['pk']), 'new_notification',
-                         request.user.username + "wants to follow you!")
+            trigger_notification('nf_channel_{}'.format(kwargs['pk']),
+                                 'new_notification',
+                                 request.user.username + "wants to follow you!")
 
         except IntegrityError:
             data = {'error': _('You have followed the user already!')}

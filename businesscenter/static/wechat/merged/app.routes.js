@@ -36,7 +36,7 @@ angular.module('app.route', [
             }
         }).
         when('/photo/newest', {
-            templateUrl: PATH + 'group/templates/photo_list.html',
+            templateUrl: PATH + 'group/templates/photo_list_new.html',
             controller: 'CtrlPhotoNewest',
             resolve: {
                 title: function(){return 'Newest Photos';},
@@ -44,7 +44,7 @@ angular.module('app.route', [
             }
         }).
         when('/photo/liked', {
-            templateUrl: PATH + 'group/templates/photo_list.html',
+            templateUrl: PATH + 'group/templates/photo_list_new.html',
             controller: 'CtrlPhotoNewest',
             resolve: {
                 title: function(){return 'Liked Photos';},
@@ -52,7 +52,7 @@ angular.module('app.route', [
             }
         }).
         when('/photo/search', {
-            templateUrl: PATH + 'group/templates/photo_list.html',
+            templateUrl: PATH + 'group/templates/photo_list_new.html',
             controller: 'CtrlPhotoList',
         }).
         when('/photo/:pk', {
