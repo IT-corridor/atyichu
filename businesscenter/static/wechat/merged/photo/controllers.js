@@ -288,8 +288,8 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     $scope.page = success.current;
                     var i = 0, l = success.results.length;
                     for (i; i < l; i++){
-                        success.results[i]['owner_followed'] = IsMember(list.results, success.results[i].visitor, 'pk');
-                        success.results[i]['creator_followed'] = IsMember(list.results, success.results[i].creator, 'pk');
+                        success.results[i]['owner_followed'] = IsMember($scope.followed.results, success.results[i].visitor, 'pk');
+                        success.results[i]['creator_followed'] = IsMember($scope.followed.results, success.results[i].creator, 'pk');
                     };
                 },
                 function(error){
