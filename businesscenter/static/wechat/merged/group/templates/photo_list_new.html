@@ -86,8 +86,8 @@
                         <div class="clear">
                           <div id="photo-origin-owner-username">{{ photo.origin.owner.username }}</div>
 						  <div class="user-follow-status">
-                            <span data-ng-if="!photo.owner_followed" data-ng-click="follow_user(photo.origin.owner.pk, $index, true)"><i class="icon-user-follow"></i></span>
-					        <span data-ng-if="photo.owner_followed" data-ng-click="unfollow_user(photo..origin.owner.pk, $index, true)"><i class="icon-user-following"></i></span>
+                            <span data-ng-if="!photo.creator_followed" data-ng-click="follow_user(photo.origin.owner.pk, $index, true)"><i class="icon-user-follow"></i></span>
+					        <span data-ng-if="photo.creator_followed" data-ng-click="unfollow_user(photo.origin.owner.pk, $index, true)"><i class="icon-user-following"></i></span>
                           </div>
                         </div>
                     </div>

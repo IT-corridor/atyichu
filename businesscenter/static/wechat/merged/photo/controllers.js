@@ -73,35 +73,47 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
 .controller('CtrlPhotoDetail', ['$scope', '$rootScope', '$http', '$routeParams',
                                 '$window', '$location', 'Photo', 'Comment',
                                 'WXI', 'Store', 'WindowScroll',
+                                'Visitor', 'IsMember', 'RemoveItem',
     function($scope, $rootScope, $http, $routeParams, $window, $location,
-    Photo, Comment,  WXI, Store, WindowScroll) {
+    Photo, Comment,  WXI, Store, WindowScroll, Visitor, IsMember, RemoveItem) {
         $scope.is_owner = false;
         function handle_error(error){
             $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
             $location.path('/photo');
         }
 
-        $scope.photo = Photo.get({pk: $routeParams.pk},
-            function(success){
-                var title = (success.title) ? success.title : 'Untitled'
-                $rootScope.title = 'Photo -' + success.title;
-                if ($rootScope.visitor.pk == success.visitor){
-                    $scope.is_owner = true;
-                }
-                if (success.is_store === true){
-                    $scope.store = Store.overview({pk: success.owner.pk},
-                        function (success){
-                            create_empty_array(success);
-                        }
-                    );
-                }
-                var title = (success.title) ? success.title : '品味和格调兼具';
-                var photo_desc = (success.description) ? success.description : '大家快来看，秀出你的品味和格调!';
-                var descr = title + ': ' + photo_desc;
-                WXI.set_on_share(descr, success.photo);
-            },
-            handle_error
-        );
+
+        $scope.followed = Visitor.get_follow_users();
+
+        $scope.followed.$promise.then(function(list){
+
+            $scope.photo = Photo.get({pk: $routeParams.pk},
+                function(success){
+                    var title = (success.title) ? success.title : 'Untitled'
+                    $rootScope.title = 'Photo -' + success.title;
+                    if ($rootScope.visitor.pk == success.visitor){
+                        $scope.is_owner = true;
+                    }
+                    if (success.is_store === true){
+                        $scope.store = Store.overview({pk: success.owner.pk},
+                            function (success){
+                                create_empty_array(success);
+                            }
+                        );
+                    }
+
+                    success['owner_followed'] = IsMember(list.results, success.visitor, 'pk');
+                    success['creator_followed'] = IsMember(list.results, success.creator, 'pk');
+
+                    var title = (success.title) ? success.title : '品味和格调兼具';
+                    var photo_desc = (success.description) ? success.description : '大家快来看，秀出你的品味和格调!';
+                    var descr = title + ': ' + photo_desc;
+                    WXI.set_on_share(descr, success.photo);
+                },
+                handle_error
+            );
+        });
+
 
         /* "Similar photos block. Need to be cleaned */
 
@@ -184,6 +196,39 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
             var l = 0;
             for (l; l < empty; l++){ obj.empty_array.push(l);}
         }
+
+        $scope.follow_user = function(user_id, index, is_creator) {
+            Visitor.follow_user({pk: user_id},
+                function(success){
+                    $scope.followed.results.push({'pk': user_id});
+                    if (is_creator){
+                        $scope.photo['creator_followed'] = true;
+                    }
+                    else {
+                        $scope.photo['owner_followed'] = true;
+                    }
+                },
+                function(error){
+                    $rootScope.alerts.push({ type: 'danger', msg: 'You have followed the user already!'});
+                }
+            );
+        };
+
+        $scope.unfollow_user = function(user_id, index, is_creator) {
+            Visitor.unfollow_user({pk: user_id},
+                function(success){
+                    RemoveItem($scope.followed.results, user_id, 'pk');
+                    if (is_creator){
+                        $scope.photo['creator_followed'] = false;
+                    }
+                    else {
+                        $scope.photo['owner_followed'] = false;
+                    }
+                },
+                function(error){
+                }
+            );
+        };
     }
 ])
 .controller('CtrlPhotoEdit', ['$scope', '$rootScope', '$http', '$routeParams',
@@ -231,6 +276,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
         $scope.new_message = '';
         $rootScope.title = 'Newest photos';
         $rootScope.photo_refer = $location.url();
+        // TODO: optimize it, move this to the $rootScope.
         $scope.followed = Visitor.get_follow_users();
 
         $scope.followed.$promise.then(function(list){

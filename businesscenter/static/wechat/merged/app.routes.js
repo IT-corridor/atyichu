@@ -56,7 +56,7 @@ angular.module('app.route', [
             controller: 'CtrlPhotoList',
         }).
         when('/photo/:pk', {
-            templateUrl: PATH + 'photo/templates/detail.html',
+            templateUrl: PATH + 'photo/templates/detail_new.html',
             controller: 'CtrlPhotoDetail'}).
         when('/photo/:pk/edit', {
             templateUrl: PATH + 'photo/templates/edit.html',
