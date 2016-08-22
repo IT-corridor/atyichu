@@ -308,6 +308,11 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
             $scope.page += 1;
             var params = {page: $scope.page};
             query(params, function(success){
+                    var i = 0, l = success.results.length;
+                    for (i; i < l; i++){
+                        success.results[i]['owner_followed'] = IsMember(list.results, success.results[i].visitor, 'pk');
+                        success.results[i]['creator_followed'] = IsMember(list.results, success.results[i].creator, 'pk');
+                    };
                     $scope.r.results = $scope.r.results.concat(success.results);
                     $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
                 },

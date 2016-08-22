@@ -54,8 +54,8 @@
                         </div>
 					</div>
 					<div class="user-follow-status">
-						<span><a data-ng-href="#!/photo/{{ photo.id }}/share/"><i class="fa fa-floppy-o"></i>{{ photo.clone_count }}</a></span>
-						<span data-ng-click="like_photo()"><i class="glyphicon glyphicon-heart"></i>{{ photo.like_count }}</span>
+						<span><a data-ng-href="#!/photo/{{ photo.id }}/share/"><i class="fa fa-floppy-o"></i></a></span>
+						<span data-ng-click="like_photo()"><i class="glyphicon glyphicon-heart"></i></span>
 						<span><i class="icon-share"></i></span>
 					</div>
                 </div>
@@ -83,7 +83,7 @@
                 </div> -->
 				</div>
 
-				<i class="icon-pencil"></i>
+				<a data-ng-href="#!/photo/{{ photo.id }}/edit/"><i class="icon-pencil"></i></a>
 				</div>
 
                <div class="line line-lg b-b b-light" style="margin:0px;padding:0px;"></div>
