@@ -1,5 +1,5 @@
 angular.module('photo.controllers', ['photo.services', 'group.services',
-'store.services', 'tencent'])
+'store.services', 'common.services', 'tencent'])
 .controller('CtrlPhotoList', ['$scope', '$rootScope','$http', '$window',
 '$location', '$routeParams', 'GetPageLink' , 'Photo', 'WindowScroll',
     function($scope, $rootScope, $http, $window, $location, $routeParams,
@@ -214,9 +214,10 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
     }
 ])
 .controller('CtrlPhotoNewest', ['$scope', '$rootScope','$http', '$window',
-'$location', '$routeParams','GetPageLink' , 'Photo', 'title', 'kind', 'WindowScroll',
+'$location', '$routeParams','GetPageLink' , 'Photo',
+'WindowScroll', 'Visitor', 'IsMember', 'RemoveItem', 'title', 'kind',
     function($scope, $rootScope, $http, $window, $location, $routeParams,
-    GetPageLink, Photo, title, kind, WindowScroll) {
+    GetPageLink, Photo, WindowScroll, Visitor, IsMember, RemoveItem, title, kind) {
         // Controller for newest photos and for the liked photos
 
         $rootScope.title = title;
@@ -228,19 +229,29 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
         $scope.is_owner = false;
 
         $scope.new_message = '';
-
         $rootScope.title = 'Newest photos';
         $rootScope.photo_refer = $location.url();
-        $scope.r = query(
-            function(success){
-                $scope.enough = success.total > 1 ? false : true;
-                $scope.page_link = GetPageLink();
-                $scope.page = success.current;
-            },
-            function(error){
-                console.log(error.data);
-            }
-        );
+        $scope.followed = Visitor.get_follow_users();
+
+        $scope.followed.$promise.then(function(list){
+
+            $scope.r = query(
+                function(success){
+                    $scope.enough = success.total > 1 ? false : true;
+                    $scope.page_link = GetPageLink();
+                    $scope.page = success.current;
+                    var i = 0, l = success.results.length;
+                    for (i; i < l; i++){
+                        success.results[i]['owner_followed'] = IsMember(list.results, success.results[i].visitor, 'pk');
+                        success.results[i]['creator_followed'] = IsMember(list.results, success.results[i].creator, 'pk');
+                    };
+                },
+                function(error){
+                    console.log(error.data);
+                }
+            );
+        });
+
 
         $scope.show_current = function(index){
             $scope.current = index;
@@ -277,6 +288,42 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
 
         $scope.read_article = function(article_id) {
             $location.path('/article/' + article_id);
+        }
+
+        $scope.follow_user = function(user_id, index, is_creator) {
+            Visitor.follow_user({pk: user_id},
+                function(success){
+                    $scope.followed.results.push({'pk': user_id});
+                    if (is_creator){
+                        $scope.r.results[index]['creator_followed'] = true;
+                    }
+                    else {
+                        $scope.r.results[index]['owner_followed'] = true;
+                    }
+                    console.log($scope.followed);
+                },
+                function(error){
+                    $rootScope.alerts.push({ type: 'danger', msg: 'You have followed the user already!'});
+                }
+            );
+        };
+
+        $scope.unfollow_user = function(user_id, index, is_creator) {
+            Visitor.unfollow_user({pk: user_id},
+                function(success){
+                    RemoveItem($scope.followed.results, user_id, 'pk');
+                    if (is_creator){
+                        $scope.r.results[index]['creator_followed'] = false;
+                    }
+                    else {
+                        $scope.r.results[index]['owner_followed'] = false;
+                    }
+                    console.log($scope.followed);
+                },
+                function(error){
+                    //$rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
+                }
+            );
         }
 
     }

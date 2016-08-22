@@ -43,10 +43,14 @@ angular.module('common.services', ['ngResource'])
 )
 .factory('RemoveItem',
     function(){
-        return function (list, id){
+        return function (list, id, fieldname){
             var i = 0;
+            if (!fieldname){
+                var fieldname = 'id';
+            }
+            /* Check this */
             for (i; i < list.length; i++){
-                if (list[i].id == id){
+                if (list[i][fieldname] == id){
                     list.splice(i, 1);
                     break;
                 }

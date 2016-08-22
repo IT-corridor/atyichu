@@ -393,6 +393,7 @@ class FollowGroup(models.Model):
     class Meta:
         verbose_name = _('Group Follower')
         verbose_name_plural = _('Group Followers')
+        unique_together = (('group', 'follower'),)
         ordering = ('pk',)
 
 
@@ -416,5 +417,6 @@ class FollowUser(models.Model):
     class Meta:
         verbose_name = _('User Follower')
         verbose_name_plural = _('User Followers')
+        unique_together = (('user', 'follower'),)
         ordering = ('pk',)
 

@@ -250,6 +250,8 @@ class MirrorViewSet(viewsets.GenericViewSet):
 
 
 class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
+    # TODO: Dan put your permissions here
+    permission_classes = ()
     def get_serializer_class(self):
         return serializers.ArticleListSerializer
 
@@ -261,8 +263,11 @@ class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
         return qs
 
     def create(self, request, *args, **kwargs): 
-        data = request.data       
-        article = Article.objects.create(title=data['title'], description=data['description'], author=request.user)
+        data = request.data
+        # PEP 8 Dan
+        article = Article.objects.create(title=data['title'],
+                                         description=data['description'],
+                                         author=request.user)
         for photo in data['photos']:
             Photo.objects.filter(id=photo).update(article=article)
         return Response(data={'id': article.id}, status=201)
@@ -442,9 +447,10 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             like_count = Photo.objects.get(id=obj.id).like_set.count()
 
             # send notification to the owner
-            trigger_notification('nf_channel_{}'.format(obj.creator.id), 
-                                'new_notification',
-                         "{} likes your photo({})!".format(request.user.username, obj.title))
+            msg = "{} likes your photo({})!".format(request.user.username,
+                                                    obj.title)
+            trigger_notification('nf_channel_{}'.format(obj.creator.id),
+                                 'new_notification', msg)
 
             data = {'like_count': like_count}
             status = 200
@@ -468,8 +474,8 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def my_photos(self, request, *args, **kwargs):
         """ 
-        Providing a list of public groups photos that are not included in an article 
-        for a specific user
+        Providing a list of public groups photos that are not included
+        in an article  for a specific user
         """
         qs = Photo.a_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store', 'group')
@@ -1005,18 +1011,20 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         try:
             FollowUser.objects.create(follower_id=request.user.id,
                                       user_id=kwargs['pk'])
-            follow_count = FollowUser.objects.filter(user_id=kwargs['pk']).count()
+            follow_count = FollowUser.objects\
+                .filter(user_id=kwargs['pk']).count()
             data = {'follow_count': follow_count}
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_{}'.format(kwargs['pk']), 'new_notification',
-                         request.user.username + "wants to follow you!")
+            trigger_notification('nf_channel_{}'.format(kwargs['pk']),
+                                 'new_notification',
+                                 request.user.username + "wants to follow you!")
 
         except IntegrityError:
             data = {'error': _('You have followed the user already!')}
             status = 400
-
+        # TODO: more convinient
         return Response(data, status)
 
     @detail_route(methods=['get'])

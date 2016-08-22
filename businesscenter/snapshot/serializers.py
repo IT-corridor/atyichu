@@ -12,6 +12,7 @@ from catalog.serializers import CommodityLinkSerializer
 def get_owner(obj):
     """ Serializing data, depending of the user instance type.
     Only for photo serializers. """
+    # TODO: add context instance
     # Looks like serializers do not support multiple inheritance
     if hasattr(obj.visitor, 'visitor'):
         serializer = VisitorShortSerializer(instance=obj.visitor.visitor,
@@ -21,7 +22,9 @@ def get_owner(obj):
         serializer = StoreShortSerializer(
             instance=obj.visitor.vendor.store,
             read_only=True)
-        return serializer.data
+        data = serializer.data
+        data['is_store'] = True
+        return data
     return
 
 
@@ -106,6 +109,7 @@ class ArticleShortSerializer(serializers.ModelSerializer):
         fields = ('title', 'pk')
         extra_kwargs = {'pk': {'read_only': True}}
 
+
 class PhotoListSerializer(serializers.ModelSerializer):
     """ Works only with PhotoManager or ActivePhotoManager """
     owner = serializers.SerializerMethodField(read_only=True)
@@ -137,7 +141,9 @@ class PhotoListSerializer(serializers.ModelSerializer):
             serializer = StoreShortSerializer(instance=obj.visitor.vendor.store,
                                               read_only=True,
                                               context=self.context)
-            return serializer.data
+            data = serializer.data
+            data['is_store'] = True
+            return data
         return
 
     def get_clone_count(self, obj):
@@ -161,7 +167,6 @@ class PhotoDetailSerializer(PhotoListSerializer):
     owner_thumb = serializers.SerializerMethodField(read_only=True)
     is_store = serializers.SerializerMethodField(read_only=True)
     link_set = LinkSerializer(read_only=True, many=True)
-
 
     def get_owner_thumb(self, obj):
         if hasattr(obj.visitor, 'visitor'):
@@ -240,7 +245,9 @@ class GroupSerializer(serializers.ModelSerializer):
 
     def get_is_owner_followed(self, obj):
         if self.context.get('request'):
-            return models.FollowUser.objects.filter(user=obj.owner, follower=self.context['request'].user).exists()
+            return models.FollowUser\
+                .objects.filter(user=obj.owner,
+                                follower=self.context['request'].user).exists()
         return False
 
     def get_is_followed(self, obj):
@@ -285,6 +292,7 @@ class GroupDetailSerializer(GroupSerializer):
 
     class Meta:
         model = models.Group
+
 
 class ArticleListSerializer(serializers.ModelSerializer):
     photos = PhotoSerializer(source='photo_set', many=True, read_only=True)
