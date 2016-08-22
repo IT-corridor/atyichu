@@ -103,6 +103,10 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
             handle_error
         );
 
+        $scope.read_article = function(article_id) {
+            $location.path('/article/' + article_id);
+        }
+        
         /* "Similar photos block. Need to be cleaned */
 
         $scope.enough = false;
@@ -284,10 +288,6 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     $rootScope.alerts.push({ type: 'danger', msg: 'You have liked it already!'});
                 }
             );
-        }
-
-        $scope.read_article = function(article_id) {
-            $location.path('/article/' + article_id);
         }
 
         $scope.follow_user = function(user_id, index, is_creator) {
