@@ -294,7 +294,10 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     for (i; i < l; i++){
                         success.results[i]['owner_followed'] = IsMember(list.results, success.results[i].visitor, 'pk');
                         success.results[i]['creator_followed'] = IsMember(list.results, success.results[i].creator, 'pk');
-                        success.results[i]['article']['descr'] = $sce.trustAsHtml(success.results[i]['article']['descr'])
+                        if (success.results[i]['article']){
+                            success.results[i]['article']['descr'] = $sce.trustAsHtml(success.results[i]['article']['descr']);
+                        }
+
                     };
                 },
                 function(error){
@@ -317,6 +320,9 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     for (i; i < l; i++){
                         success.results[i]['owner_followed'] = IsMember($scope.followed.results, success.results[i].visitor, 'pk');
                         success.results[i]['creator_followed'] = IsMember($scope.followed.results, success.results[i].creator, 'pk');
+                        if (success.results[i]['article']){
+                            success.results[i]['article']['descr'] = $sce.trustAsHtml(success.results[i]['article']['descr']);
+                        }
                     };
                     $scope.r.results = $scope.r.results.concat(success.results);
                     $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
