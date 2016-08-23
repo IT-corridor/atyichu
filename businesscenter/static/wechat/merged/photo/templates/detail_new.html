@@ -6,13 +6,13 @@
 			<i class="fa fa-angle-left" aria-hidden="true" data-ng-click="back()"></i>
                 <!-- -->
 				<i class="pull-left thumb-xxs avatar">
-                         <a data-ng-href="#!/group/?owner={{ photo.origin.owner.pk }}">
+                         <a data-ng-href="#!/group/?owner={{ photo.owner.pk }}">
 						  <img data-ng-src="{{ photo.owner.thumb }}"
                                  alt="{{ photo.owner.username }}" data-ng-class="{'img-circle': !photo.owner.is_store}">
 						 </a>
                  </i>
 				<div class="p-d-o-username">
-					<a data-ng-href="#" class="m-r-sm owner-name"> {{ photo.owner.username }}</a>
+					<a data-ng-href="#!/group/?owner={{ photo.owner.pk }}" class="m-r-sm owner-name"> {{ photo.owner.username }}</a>
 					<i class="uploaded-detail"><a data-ng-href="#!/group/{{ photo.group }}/photo">{{ photo.group_title }}</a></i>
 				</div>
 				<div class="user-follow-status">
