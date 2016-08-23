@@ -11,7 +11,7 @@ angular.module('app.route', [
     function($routeProvider, PATH) {
         $routeProvider.
         when('/', {
-            templateUrl: PATH + 'group/templates/photo_list.html',
+            templateUrl: PATH + 'group/templates/photo_list_new.html',
             controller: 'CtrlPhotoNewest',
             resolve: {
                 title: function(){return 'Newest Photos';},
