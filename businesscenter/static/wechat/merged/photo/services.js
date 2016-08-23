@@ -1,4 +1,4 @@
-angular.module('photo.services', ['ngResource'])
+angular.module('photo.services', ['ngResource', 'common.services'])
 .constant('source_path', 'api/v1/')
 .factory('Photo', ['$resource', 'source_path',
     function($resource, source_path){
@@ -25,4 +25,23 @@ angular.module('photo.services', ['ngResource'])
             remove: {method: 'DELETE'},
             like: {method: 'GET', params: {action:'like'}}
     });
+}])
+.factory('ProcessExtraData', ['$sce', 'IsMember',
+    function($sce, IsMember){
+        return function (base_arr, compare_arr) {
+            /*TODO: this function repeats for several times, It have to be organized
+            as a factory and placed into photo/services.js */
+            /** USED ONLY WITH PHOTO LISTS**/
+            var i = 0,
+                l = compare_arr.length;
+            for (i; i < l; i++) {
+                compare_arr[i]['owner_followed'] = IsMember(base_arr, compare_arr[i].visitor, 'pk');
+                compare_arr[i]['creator_followed'] = IsMember(base_arr, compare_arr[i].creator, 'pk');
+                if (compare_arr[i]['article']) {
+                    compare_arr[i]['article']['descr'] = $sce.trustAsHtml(compare_arr[i]['article']['descr']);
+                }
+            };
+
+        };
+
 }]);

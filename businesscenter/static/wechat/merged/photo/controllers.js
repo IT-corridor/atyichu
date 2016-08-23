@@ -3,9 +3,9 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
     ])
     .controller('CtrlPhotoList', ['$scope', '$rootScope', '$http', '$window',
         '$location', '$routeParams', 'GetPageLink', 'Photo',
-        'WindowScroll', 'Visitor', 'IsMember', 'RemoveItem', 'title', 'kind', '$sce',
+        'WindowScroll', 'Visitor', 'RemoveItem', 'title', 'kind', 'ProcessExtraData',
         function($scope, $rootScope, $http, $window, $location, $routeParams,
-            GetPageLink, Photo, WindowScroll, Visitor, IsMember, RemoveItem, title, kind, $sce) {
+            GetPageLink, Photo, WindowScroll, Visitor, RemoveItem, title, kind, ProcessExtraData) {
             // Controller for newest photos and for the liked photos
 
             $rootScope.title = title;
@@ -33,7 +33,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                         $scope.enough = success.total > 1 ? false : true;
                         $scope.page_link = GetPageLink();
                         $scope.page = success.current;
-                        process_extra_data($rootScope.following.results, success.results);
+                        ProcessExtraData($rootScope.following.results, success.results);
                     },
                     function(error) {
                         console.log(error.data);
@@ -51,7 +51,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     params['q'] = routeParams.q;
                 }
                 query(params, function(success) {
-                        process_extra_data($rootScope.following.results, success.results);
+                        ProcessExtraData($rootScope.following.results, success.results);
                         $scope.r.results = $scope.r.results.concat(success.results);
                         $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
                     },
@@ -97,7 +97,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                         } else {
                             $scope.r.results[index]['owner_followed'] = true;
                         }
-                        process_extra_data($rootScope.following.results, $scope.r.results);
+                        ProcessExtraData($rootScope.following.results, $scope.r.results);
                     },
                     function(error) {
                         $rootScope.alerts.push({
@@ -119,7 +119,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                         } else {
                             $scope.r.results[index]['owner_followed'] = false;
                         }
-                        process_extra_data($rootScope.following.results, $scope.r.results);
+                        ProcessExtraData($rootScope.following.results, $scope.r.results);
                     },
                     function(error) {
                         //$rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
@@ -148,27 +148,14 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                 );
             };
 
-            function process_extra_data(base_arr, compare_arr) {
-                var i = 0,
-                    l = compare_arr.length;
-                for (i; i < l; i++) {
-                    compare_arr[i]['owner_followed'] = IsMember(base_arr, compare_arr[i].visitor, 'pk');
-                    compare_arr[i]['creator_followed'] = IsMember(base_arr, compare_arr[i].creator, 'pk');
-                    if (compare_arr[i]['article']) {
-                        compare_arr[i]['article']['descr'] = $sce.trustAsHtml(compare_arr[i]['article']['descr']);
-                    }
-                };
-
-            }
-
         }
     ])
     .controller('CtrlPhotoDetail', ['$scope', '$rootScope', '$http', '$routeParams',
         '$window', '$location', '$translate', 'Photo', 'Comment',
         'WXI', 'Store', 'WindowScroll',
-        'Visitor', 'IsMember', 'RemoveItem',
+        'Visitor', 'IsMember', 'RemoveItem', 'ProcessExtraData',
         function($scope, $rootScope, $http, $routeParams, $window, $location, $translate,
-            Photo, Comment, WXI, Store, WindowScroll, Visitor, IsMember, RemoveItem) {
+            Photo, Comment, WXI, Store, WindowScroll, Visitor, IsMember, RemoveItem, ProcessExtraData) {
 
             $scope.is_owner = false;
             $scope.new_message = null;
@@ -224,6 +211,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
             $scope.r = Photo.similar({
                 pk: $routeParams.pk
             }, function(success) {
+                ProcessExtraData($rootScope.following.results, success.results);
                 $scope.page = success.current;
                 $scope.enough = ($scope.page >= success.total) ? true : false;
             });
@@ -236,6 +224,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                 }, function(success) {
                     $scope.r.results = $scope.r.results.concat(success.results);
                     $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
+                    ProcessExtraData($rootScope.following.results, success.results);
                 });
             }
             WindowScroll($scope, $scope.get_more);
@@ -339,7 +328,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                 }
             }
 
-            $scope.follow_user = function(user_id, index, is_creator) {
+            $scope.follow_user_main = function(user_id, index, is_creator) {
                 Visitor.follow_user({
                         pk: user_id
                     },
@@ -362,7 +351,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                 );
             };
 
-            $scope.unfollow_user = function(user_id, index, is_creator) {
+            $scope.unfollow_user_main = function(user_id, index, is_creator) {
                 Visitor.unfollow_user({
                         pk: user_id
                     },
@@ -377,6 +366,50 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     function(error) {}
                 );
             };
+
+            $scope.follow_user = function(user_id, index, is_creator) {
+                Visitor.follow_user({
+                        pk: user_id
+                    },
+                    function(success) {
+                        $rootScope.following.results.push({
+                            'pk': user_id
+                        });
+                        if (is_creator) {
+                            $scope.r.results[index]['creator_followed'] = true;
+                        } else {
+                            $scope.r.results[index]['owner_followed'] = true;
+                        }
+                        ProcessExtraData($rootScope.following.results, $scope.r.results);
+                    },
+                    function(error) {
+                        $rootScope.alerts.push({
+                            type: 'danger',
+                            msg: 'You have followed the user already!'
+                        });
+                    }
+                );
+            };
+
+            $scope.unfollow_user = function(user_id, index, is_creator) {
+                Visitor.unfollow_user({
+                        pk: user_id
+                    },
+                    function(success) {
+                        RemoveItem($rootScope.following.results, user_id, 'pk');
+                        if (is_creator) {
+                            $scope.r.results[index]['creator_followed'] = false;
+                        } else {
+                            $scope.r.results[index]['owner_followed'] = false;
+                        }
+                        ProcessExtraData($rootScope.following.results, $scope.r.results);
+                    },
+                    function(error) {
+                        //$rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
+                    }
+                );
+            };
+
         }
     ])
     .controller('CtrlPhotoEdit', ['$scope', '$rootScope', '$http', '$routeParams',
@@ -389,7 +422,6 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     type: 'danger',
                     msg: error.data.error
                 });
-                $location.path('/photo');
             }
 
             $scope.photo = Photo.get({
