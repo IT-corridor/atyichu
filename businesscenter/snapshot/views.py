@@ -10,6 +10,7 @@ from django.db import IntegrityError
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.utils import timezone
+from django.contrib.auth.models import User
 from django.core.mail import mail_admins
 from django.db.models import F, Prefetch, Q, Count
 from rest_framework import viewsets, mixins, filters
@@ -32,7 +33,7 @@ from visitor.permissions import IsVisitor, IsVisitorOrVendor
 from visitor.serializers import VisitorShortSerializer
 from visitor.models import Visitor
 from account.models import Vendor, Store
-from account.serializers import VendorStoreSerializer
+from account.serializers import VendorStoreSerializer, StoreShortSerializer
 from catalog.models import Commodity
 from vutils.notification import trigger_notification
 from vutils.wzhifuSDK import JsApi_pub
@@ -709,7 +710,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         visitor = self.request.user
         qs = Group.objects.select_related('owner__visitor').\
             prefetch_related('tag_set', 'member_set__visitor__visitor',
-                             'member_set__visitor__vendor__store', 'followgroup_set')
+                             'member_set__visitor__vendor__store',
+                             'followgroup_set')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             prefetch = Prefetch('photo_set',
                                 queryset=Photo.objects.
@@ -1008,13 +1010,20 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def follow_users(self, request, *args, **kwargs):
+        # TODO: Simplify, I am not sure about all purposes
+        # in which this handler used
+        # We can return just a simple list with pk
         visitor = self.request.user
-        qs = FollowUser.objects.filter(follower=visitor)
-        user_ids = [item.user.id for item in qs]
-        qs = Visitor.objects.filter(user__id__in=user_ids)
+        qs_follow = FollowUser.objects.filter(follower=visitor)
+        user_ids = [item.user.id for item in qs_follow]
 
-        serializer = VisitorShortSerializer(qs, many=True)
-        data = serializer.data
+        qs_visitor = Visitor.objects.filter(user__id__in=user_ids)
+        qs_store = Store.objects.filter(vendor__user__id__in=user_ids)
+
+        v_serializer = VisitorShortSerializer(qs_visitor, many=True)
+        v_store = StoreShortSerializer(qs_store, many=True)
+
+        data = v_serializer.data + v_store.data
         status = 200
         # TODO: it is not neccassary to create data in the dict
         # 'results' is redundand'
