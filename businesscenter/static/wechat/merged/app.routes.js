@@ -5,6 +5,7 @@ angular.module('app.route', [
     'photo.controllers',
     'user.controllers',
     'group.controllers',
+    'article.controllers',
 ])
 .config(['$routeProvider','PATH',
     function($routeProvider, PATH) {

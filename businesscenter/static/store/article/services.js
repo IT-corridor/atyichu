@@ -5,6 +5,8 @@ angular.module('article.services', ['ngResource'])
         return $resource(article_path + 'article/:pk/:action/', {}, {
             query: {method:'GET', params:{action: null}, responseType:'json'},
             save: {method: 'POST'},
+            update: {method: 'PATCH'},
+            remove: {method: 'DELETE'},
             detail: {method: 'GET', params:{action:null}, responseType:'json'},
     });
 }]);

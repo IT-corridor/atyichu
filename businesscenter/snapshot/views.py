@@ -263,6 +263,9 @@ class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
         return qs
 
     def create(self, request, *args, **kwargs): 
+        '''
+        photos in data in form [23,43,242]
+        '''
         data = request.data
         # PEP 8 Dan
         article = Article.objects.create(title=data['title'],
@@ -271,6 +274,18 @@ class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
         for photo in data['photos']:
             Photo.objects.filter(id=photo).update(article=article)
         return Response(data={'id': article.id}, status=201)
+
+    def update(self, request, *args, **kwargs): 
+        '''
+        photos in data is in the array of photo objects
+        '''
+        data = request.data.copy()
+        # remove original photos and add new ones
+        Photo.objects.filter(article_id=data['id']).update(article=None)
+        for item in data['photos']:
+            Photo.objects.filter(id=item['id']).update(article_id=data['id'])
+    
+        return super(ArticleViewSet, self).update(request, args, kwargs)
 
 
 class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):

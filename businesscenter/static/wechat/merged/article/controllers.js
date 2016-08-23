@@ -1,4 +1,4 @@
-angular.module('article.controllers', ['article.services', 'common.services', 'checklist-model', 'ui.tinymce'])
+angular.module('article.controllers', ['article.services', 'common.services'])
 .controller('CtrlArticleCreate', ['$scope', '$rootScope','$http',
 '$location', '$translate', '$routeParams', 'Photo', 'Article',
     function($scope, $rootScope, $http, $location, $translate, $routeParams, Photo, Article) {

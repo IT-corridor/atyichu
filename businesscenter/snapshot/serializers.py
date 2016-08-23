@@ -101,12 +101,15 @@ class PhotoOriginalSerializer(serializers.ModelSerializer):
 
 
 class ArticleShortSerializer(serializers.ModelSerializer):
-    # username = serializers.CharField(source='brand_name', read_only=True)
-    # thumb = serializers.ImageField(source='crop', read_only=True)
+    descr = serializers.SerializerMethodField(read_only=True)
+
+    def get_descr(self, obj):
+        if obj.description:
+            return truncatechars_html(obj.description, 50)
 
     class Meta:
         model = models.Article
-        fields = ('title', 'pk')
+        fields = ('title', 'pk', 'descr')
         extra_kwargs = {'pk': {'read_only': True}}
 
 
@@ -119,13 +122,7 @@ class PhotoListSerializer(serializers.ModelSerializer):
     clone_count = serializers.SerializerMethodField(read_only=True)
     like_count = serializers.IntegerField(read_only=True)
     group_title = serializers.CharField(source='group.title', read_only=True)
-    article = serializers.SerializerMethodField(read_only=True)
-
-    def get_article(self, obj):
-        serializer = ArticleShortSerializer(instance=obj.article,
-                                      read_only=True,
-                                      context=self.context)
-        return serializer.data
+    article = ArticleShortSerializer(instance='article', read_only=True)
 
     def get_descr(self, obj):
         if obj.description:
@@ -167,7 +164,8 @@ class PhotoDetailSerializer(PhotoListSerializer):
     owner_thumb = serializers.SerializerMethodField(read_only=True)
     is_store = serializers.SerializerMethodField(read_only=True)
     link_set = LinkSerializer(read_only=True, many=True)
-
+    article = ArticleShortSerializer(instance='article', read_only=True)
+    
     def get_owner_thumb(self, obj):
         if hasattr(obj.visitor, 'visitor'):
             return serializers.ImageField(source='visitor.visitor.thumb',

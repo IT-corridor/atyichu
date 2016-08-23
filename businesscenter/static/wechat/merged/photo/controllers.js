@@ -115,6 +115,10 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
         });
 
 
+        $scope.read_article = function(article_id) {
+            $location.path('/article/' + article_id);
+        }
+        
         /* "Similar photos block. Need to be cleaned */
 
         $scope.enough = false;
@@ -260,9 +264,9 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
 ])
 .controller('CtrlPhotoNewest', ['$scope', '$rootScope','$http', '$window',
 '$location', '$routeParams','GetPageLink' , 'Photo',
-'WindowScroll', 'Visitor', 'IsMember', 'RemoveItem', 'title', 'kind',
+'WindowScroll', 'Visitor', 'IsMember', 'RemoveItem', 'title', 'kind', '$sce',
     function($scope, $rootScope, $http, $window, $location, $routeParams,
-    GetPageLink, Photo, WindowScroll, Visitor, IsMember, RemoveItem, title, kind) {
+    GetPageLink, Photo, WindowScroll, Visitor, IsMember, RemoveItem, title, kind, $sce) {
         // Controller for newest photos and for the liked photos
 
         $rootScope.title = title;
@@ -290,6 +294,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     for (i; i < l; i++){
                         success.results[i]['owner_followed'] = IsMember(list.results, success.results[i].visitor, 'pk');
                         success.results[i]['creator_followed'] = IsMember(list.results, success.results[i].creator, 'pk');
+                        success.results[i]['article']['descr'] = $sce.trustAsHtml(success.results[i]['article']['descr'])
                     };
                 },
                 function(error){
@@ -335,10 +340,6 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     $rootScope.alerts.push({ type: 'danger', msg: 'You have liked it already!'});
                 }
             );
-        }
-
-        $scope.read_article = function(article_id) {
-            $location.path('/article/' + article_id);
         }
 
         $scope.follow_user = function(user_id, index, is_creator) {
