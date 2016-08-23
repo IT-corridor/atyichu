@@ -83,7 +83,7 @@
                 </div> -->
 				</div>
 
-				<a data-ng-href="#!/photo/{{ photo.id }}/edit/"><i class="icon-pencil"></i></a>
+				<a data-ng-if="is_owner" data-ng-href="#!/photo/{{ photo.id }}/edit/"><i class="icon-pencil"></i></a>
 				</div>
 
                <div class="line line-lg b-b b-light" style="margin:0px;padding:0px;"></div>
