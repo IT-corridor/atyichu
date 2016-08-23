@@ -15,38 +15,55 @@ var app = angular.module('app.main', [
     'selfie',
     'grid',
     'user.directives',
+    'group.services',
 
 ]);
-app.factory('httpRequestInterceptor', function () {
+app.factory('httpRequestInterceptor', function() {
     return {
-        request: function (config) {
+        request: function(config) {
             config.headers['X-Requested-With'] = 'XMLHttpRequest';
             return config;
         }
     };
 });
-app.run(function($rootScope) {
-    //$rootScope.site = 'atyichu.cn';
+app.run(['$rootScope', 'Visitor', function($rootScope, Visitor) {
+    /*Initialization*/
     $rootScope.site = '哎特衣橱';
     $rootScope.THEME = '/static/theme/';
     $rootScope.PATH = '/static/wechat/merged/';
     $rootScope.alerts = [];
-});
-app.config(function ($httpProvider) {
+
+    // $rootScope.following -- a list of users which authenticating user is following
+
+    var unwatch = $rootScope.$watch('visitor', function(newValue, oldValue) {
+        if (newValue) {
+            if (newValue.hasOwnProperty('$promise')) {
+                newValue.$promise.then(function(success) {
+                    $rootScope.following = Visitor.get_follow_users();
+                });
+
+            } else {
+                $rootScope.following = Visitor.get_follow_users();
+            }
+            unwatch();
+        }
+    });
+}]);
+app.config(function($httpProvider) {
     $httpProvider.interceptors.push('httpRequestInterceptor');
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.useApplyAsync(true);
 });
 app.config(function($resourceProvider) {
-  $resourceProvider.defaults.stripTrailingSlashes = false;
+    $resourceProvider.defaults.stripTrailingSlashes = false;
 });
-app.config(['$locationProvider', function($locationProvider){
+app.config(['$locationProvider', function($locationProvider) {
     //$locationProvider.html5Mode(true);
     $locationProvider.hashPrefix('!');
 }]);
 
-app.config(['$translateProvider', function ($translateProvider) {
+app.config(['$translateProvider', function($translateProvider) {
     $translateProvider.translations('en', {
         'NO_PERMISSION': 'You have not enough privileges perform this action.',
         'ERROR': 'Error',
@@ -116,9 +133,9 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'UPLOAD': 'Upload a photo',
             },
             'MANAGE': {
-                    'HEADER': 'Edit a wardrobe',
-                    'MEMBER_EXCLUDED': 'Collaborator has been excluded',
-                    'TAG_REMOVED': 'Tag has been removed',
+                'HEADER': 'Edit a wardrobe',
+                'MEMBER_EXCLUDED': 'Collaborator has been excluded',
+                'TAG_REMOVED': 'Tag has been removed',
             },
             'FORM': {
                 'TITLE': 'Title',
@@ -288,9 +305,9 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'UPLOAD': 'Upload a photo',
             },
             'MANAGE': {
-                    'HEADER': 'Edit a wardrobe',
-                    'MEMBER_EXCLUDED': 'Collaborator has been excluded',
-                    'TAG_REMOVED': 'Tag has been removed',
+                'HEADER': 'Edit a wardrobe',
+                'MEMBER_EXCLUDED': 'Collaborator has been excluded',
+                'TAG_REMOVED': 'Tag has been removed',
             },
             'FORM': {
                 'TITLE': 'Title',
@@ -391,5 +408,5 @@ app.config(['$translateProvider', function ($translateProvider) {
         }
     });
 
-  $translateProvider.preferredLanguage('en');
+    $translateProvider.preferredLanguage('en');
 }]);
