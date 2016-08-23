@@ -217,7 +217,9 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'LIKE': 'Like',
                 'REPLY': 'Reply',
                 'DELETED': 'Photo has been deleted.',
-                'SIMILAR': 'Similar Photos'
+                'SIMILAR': 'Similar Photos',
+                'EMPTY_COMMENT': 'You have to type something.',
+                'COMMENT': 'Your comment is posted',
             },
             'EDIT': {
                 'HEADER': 'Edit photo data',
@@ -451,7 +453,9 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'LIKE': 'Like',
                 'REPLY': 'Reply',
                 'DELETED': 'Photo has been deleted.',
-                'SIMILAR': 'Similar Photos'
+                'SIMILAR': 'Similar Photos',
+                'EMPTY_COMMENT': 'You have to type something.',
+                'COMMENT': 'Your comment is posted',
             },
             'EDIT': {
                 'HEADER': 'Edit photo data',

@@ -71,15 +71,17 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
     }
 ])
 .controller('CtrlPhotoDetail', ['$scope', '$rootScope', '$http', '$routeParams',
-                                '$window', '$location', 'Photo', 'Comment',
+                                '$window', '$location', '$translate', 'Photo', 'Comment',
                                 'WXI', 'Store', 'WindowScroll',
                                 'Visitor', 'IsMember', 'RemoveItem',
-    function($scope, $rootScope, $http, $routeParams, $window, $location,
+    function($scope, $rootScope, $http, $routeParams, $window, $location, $translate,
     Photo, Comment,  WXI, Store, WindowScroll, Visitor, IsMember, RemoveItem) {
+
         $scope.is_owner = false;
+        $scope.new_message = null;
+
         function handle_error(error){
             $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
-            $location.path('/photo');
         }
 
 
@@ -162,14 +164,25 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
             }
         }
         $scope.comment = function(){
-            data = {photo: $routeParams.pk, message: $scope.new_message};
-                Comment.save(data, function(success){
-                    $scope.photo.comments.push(success);
-                    $rootScope.alerts.push({ type: 'info', msg: 'Thanks for the comment!'});
-                    $scope.new_message = '';
-                },
-                handle_error
-            );
+            if (!$scope.new_message){
+                $translate('PHOTO.DETAIL.EMPTY_COMMENT').then(function (msg) {
+                    $rootScope.alerts.push({ type: 'warning', msg: msg});
+
+                });
+            }
+            else{
+                data = {photo: $routeParams.pk, message: $scope.new_message};
+                    Comment.save(data, function(success){
+                        $scope.photo.comments.push(success);
+                        $translate('PHOTO.DETAIL.COMMENT').then(function (msg) {
+                            $rootScope.alerts.push({ type: 'info', msg: msg});
+                        });
+                        $scope.new_message = null;
+                    },
+                    handle_error
+                );
+            }
+
         }
         $scope.like_photo = function(){
             Photo.like({pk: $routeParams.pk},
