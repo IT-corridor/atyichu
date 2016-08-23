@@ -2,37 +2,56 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
         'store.services', 'common.services', 'tencent'
     ])
     .controller('CtrlPhotoList', ['$scope', '$rootScope', '$http', '$window',
-        '$location', '$routeParams', 'GetPageLink', 'Photo', 'WindowScroll',
+        '$location', '$routeParams', 'GetPageLink', 'Photo',
+        'WindowScroll', 'Visitor', 'IsMember', 'RemoveItem', 'title', 'kind', '$sce',
         function($scope, $rootScope, $http, $window, $location, $routeParams,
-            GetPageLink, Photo, WindowScroll) {
-            // Controller for searching photos
-            // TODO: Merge with newest controller
+            GetPageLink, Photo, WindowScroll, Visitor, IsMember, RemoveItem, title, kind, $sce) {
+            // Controller for newest photos and for the liked photos
+
+            $rootScope.title = title;
+            var resource_map = {
+                'list': Photo.query,
+                'newest': Photo.newest,
+                'liked': Photo.liked,
+                'articles': Photo.my_photos,
+            };
+
+            var query = resource_map[kind];
 
             $scope.enough = false;
             $scope.is_owner = false;
 
             $scope.new_message = '';
-
-
+            $rootScope.title = 'Newest photos';
             $rootScope.photo_refer = $location.url();
-            $scope.r = Photo.query($routeParams,
-                function(success) {
-                    $scope.enough = success.total > 1 ? false : true;
-                    $scope.page_link = GetPageLink();
-                    $scope.page = success.current;
-                },
-                function(error) {
-                    console.log(error.data);
-                }
-            );
+            // TODO: optimize it, move this to the $rootScope.
+
+            $rootScope.following.$promise.then(function(list) {
+
+                $scope.r = query($routeParams,
+                    function(success) {
+                        $scope.enough = success.total > 1 ? false : true;
+                        $scope.page_link = GetPageLink();
+                        $scope.page = success.current;
+                        process_extra_data($rootScope.following.results, success.results);
+                    },
+                    function(error) {
+                        console.log(error.data);
+                    }
+                );
+            });
+
 
             $scope.get_more = function() {
                 $scope.page += 1;
                 var params = {
-                    page: $scope.page,
-                    q: $routeParams.q
+                    page: $scope.page
                 };
-                Photo.query(params, function(success) {
+                if ($routeParams.q){
+                    params['q'] = routeParams.q;
+                }
+                query(params, function(success) {
+                        process_extra_data($rootScope.following.results, success.results);
                         $scope.r.results = $scope.r.results.concat(success.results);
                         $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
                     },
@@ -47,7 +66,6 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     }
                 );
             };
-
             WindowScroll($scope, $scope.get_more);
 
             $scope.like = function(index, photo_id) {
@@ -60,8 +78,51 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     function(error) {
                         $rootScope.alerts.push({
                             type: 'danger',
-                            msg: 'Already liked'
+                            msg: 'You have liked it already!'
                         });
+                    }
+                );
+            }
+
+            $scope.follow_user = function(user_id, index, is_creator) {
+                Visitor.follow_user({
+                        pk: user_id
+                    },
+                    function(success) {
+                        $rootScope.following.results.push({
+                            'pk': user_id
+                        });
+                        if (is_creator) {
+                            $scope.r.results[index]['creator_followed'] = true;
+                        } else {
+                            $scope.r.results[index]['owner_followed'] = true;
+                        }
+                        process_extra_data($rootScope.following.results, $scope.r.results);
+                    },
+                    function(error) {
+                        $rootScope.alerts.push({
+                            type: 'danger',
+                            msg: 'You have followed the user already!'
+                        });
+                    }
+                );
+            };
+
+            $scope.unfollow_user = function(user_id, index, is_creator) {
+                Visitor.unfollow_user({
+                        pk: user_id
+                    },
+                    function(success) {
+                        RemoveItem($rootScope.following.results, user_id, 'pk');
+                        if (is_creator) {
+                            $scope.r.results[index]['creator_followed'] = false;
+                        } else {
+                            $scope.r.results[index]['owner_followed'] = false;
+                        }
+                        process_extra_data($rootScope.following.results, $scope.r.results);
+                    },
+                    function(error) {
+                        //$rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
                     }
                 );
             };
@@ -86,6 +147,20 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     }
                 );
             };
+
+            function process_extra_data(base_arr, compare_arr) {
+                var i = 0,
+                    l = compare_arr.length;
+                for (i; i < l; i++) {
+                    compare_arr[i]['owner_followed'] = IsMember(base_arr, compare_arr[i].visitor, 'pk');
+                    compare_arr[i]['creator_followed'] = IsMember(base_arr, compare_arr[i].creator, 'pk');
+                    if (compare_arr[i]['article']) {
+                        compare_arr[i]['article']['descr'] = $sce.trustAsHtml(compare_arr[i]['article']['descr']);
+                    }
+                };
+
+            }
+
         }
     ])
     .controller('CtrlPhotoDetail', ['$scope', '$rootScope', '$http', '$routeParams',
@@ -343,139 +418,6 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     handle_error
                 );
             }
-        }
-    ])
-    .controller('CtrlPhotoNewest', ['$scope', '$rootScope', '$http', '$window',
-        '$location', '$routeParams', 'GetPageLink', 'Photo',
-        'WindowScroll', 'Visitor', 'IsMember', 'RemoveItem', 'title', 'kind', '$sce',
-        function($scope, $rootScope, $http, $window, $location, $routeParams,
-            GetPageLink, Photo, WindowScroll, Visitor, IsMember, RemoveItem, title, kind, $sce) {
-            // Controller for newest photos and for the liked photos
-
-            $rootScope.title = title;
-            var query = (kind === 'newest') ? Photo.newest : Photo.liked_list;
-            if (kind === 'article')
-                query = Photo.query;
-
-            $scope.enough = false;
-            $scope.is_owner = false;
-
-            $scope.new_message = '';
-            $rootScope.title = 'Newest photos';
-            $rootScope.photo_refer = $location.url();
-            // TODO: optimize it, move this to the $rootScope.
-
-            $rootScope.following.$promise.then(function(list) {
-
-                $scope.r = query(
-                    function(success) {
-                        $scope.enough = success.total > 1 ? false : true;
-                        $scope.page_link = GetPageLink();
-                        $scope.page = success.current;
-                        process_extra_data($rootScope.following.results, success.results);
-                    },
-                    function(error) {
-                        console.log(error.data);
-                    }
-                );
-            });
-
-
-            $scope.get_more = function() {
-                $scope.page += 1;
-                var params = {
-                    page: $scope.page
-                };
-                query(params, function(success) {
-                        process_extra_data($rootScope.following.results, success.results);
-                        $scope.r.results = $scope.r.results.concat(success.results);
-                        $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
-                    },
-                    function(error) {
-                        for (var e in error.data) {
-                            $rootScope.alerts.push({
-                                type: 'danger',
-                                msg: error.data[e]
-                            });
-                        }
-                        $scope.error = error.data;
-                    }
-                );
-            };
-            WindowScroll($scope, $scope.get_more);
-
-            $scope.like = function(index, photo_id) {
-                Photo.like({
-                        pk: photo_id
-                    },
-                    function(success) {
-                        $scope.r.results[index].like_count = success.like_count;
-                    },
-                    function(error) {
-                        $rootScope.alerts.push({
-                            type: 'danger',
-                            msg: 'You have liked it already!'
-                        });
-                    }
-                );
-            }
-
-            $scope.follow_user = function(user_id, index, is_creator) {
-                Visitor.follow_user({
-                        pk: user_id
-                    },
-                    function(success) {
-                        $rootScope.following.results.push({
-                            'pk': user_id
-                        });
-                        if (is_creator) {
-                            $scope.r.results[index]['creator_followed'] = true;
-                        } else {
-                            $scope.r.results[index]['owner_followed'] = true;
-                        }
-                        process_extra_data($rootScope.following.results, $scope.r.results);
-                    },
-                    function(error) {
-                        $rootScope.alerts.push({
-                            type: 'danger',
-                            msg: 'You have followed the user already!'
-                        });
-                    }
-                );
-            };
-
-            $scope.unfollow_user = function(user_id, index, is_creator) {
-                Visitor.unfollow_user({
-                        pk: user_id
-                    },
-                    function(success) {
-                        RemoveItem($rootScope.following.results, user_id, 'pk');
-                        if (is_creator) {
-                            $scope.r.results[index]['creator_followed'] = false;
-                        } else {
-                            $scope.r.results[index]['owner_followed'] = false;
-                        }
-                        process_extra_data($rootScope.following.results, $scope.r.results);
-                    },
-                    function(error) {
-                        //$rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
-                    }
-                );
-            };
-
-            function process_extra_data(base_arr, compare_arr) {
-                var i = 0,
-                    l = compare_arr.length;
-                for (i; i < l; i++) {
-                    compare_arr[i]['owner_followed'] = IsMember(base_arr, compare_arr[i].visitor, 'pk');
-                    compare_arr[i]['creator_followed'] = IsMember(base_arr, compare_arr[i].creator, 'pk');
-                    if (compare_arr[i]['article']) {
-                        compare_arr[i]['article']['descr'] = $sce.trustAsHtml(compare_arr[i]['article']['descr']);
-                    }
-                };
-
-            }
-
         }
     ])
     .controller('CtrlPhotoClone', ['$scope', '$rootScope', '$http', '$routeParams',

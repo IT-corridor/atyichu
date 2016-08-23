@@ -365,13 +365,12 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         """
-        get all photo order by time desc. Currently not used.
+        get all photo order by time desc. USED FOR SEARCH!
         """
         qs = Photo.p_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store', 
                                             'group')
-        # qs = qs.filter(Q(group__is_private=False))\
-        qs = qs.filter(~Q(article=None))\
+        qs = qs.filter(Q(group__is_private=False))\
             .order_by('-stamps__photostamp__confidence').distinct()
         qs = self.filter_queryset(qs)
 
@@ -495,8 +494,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         """
         qs = Photo.a_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store', 'group')
-        qs = qs.filter(Q(group__is_private=False) &
-                       Q(article=None) &
+        qs = qs.filter(Q(article=None) &
                        Q(visitor_id=request.user.id))\
             .order_by('-pk').distinct()
 

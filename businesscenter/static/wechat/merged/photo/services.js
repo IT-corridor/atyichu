@@ -13,6 +13,7 @@ angular.module('photo.services', ['ngResource'])
             clone: {method: 'POST', params: {action: 'clone'}, responseType: 'json'},
             liked_list: {method: 'GET', params: {action: 'liked_list'}, responseType: 'json'},
             similar: {method: 'GET', params: {action: 'similar'}, responseType: 'json'},
+            my_photos: {method: 'GET', params: {action: 'my_photos'}, responseType: 'json'},
     });
 }])
 .factory('Comment', ['$resource', 'source_path',

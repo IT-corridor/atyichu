@@ -12,7 +12,7 @@ angular.module('app.route', [
         $routeProvider.
         when('/', {
             templateUrl: PATH + 'group/templates/photo_list_new.html',
-            controller: 'CtrlPhotoNewest',
+            controller: 'CtrlPhotoList',
             resolve: {
                 title: function(){return 'Newest Photos';},
                 kind: function(){return 'newest'},
@@ -30,15 +30,15 @@ angular.module('app.route', [
             controller: 'CtrlMirrorDetail'}).
         when('/article_photos', {
             templateUrl: PATH + 'group/templates/photo_list.html',
-            controller: 'CtrlPhotoNewest',
+            controller: 'CtrlPhotoList',
             resolve: {
                 title: function(){return 'Article Photos';},
-                kind: function(){return 'article'},
+                kind: function(){return 'articles'},
             }
         }).
         when('/photo/newest', {
             templateUrl: PATH + 'group/templates/photo_list_new.html',
-            controller: 'CtrlPhotoNewest',
+            controller: 'CtrlPhotoList',
             resolve: {
                 title: function(){return 'Newest Photos';},
                 kind: function(){return 'newest'},
@@ -46,7 +46,7 @@ angular.module('app.route', [
         }).
         when('/photo/liked', {
             templateUrl: PATH + 'group/templates/photo_list_new.html',
-            controller: 'CtrlPhotoNewest',
+            controller: 'CtrlPhotoList',
             resolve: {
                 title: function(){return 'Liked Photos';},
                 kind: function(){return 'liked'},
@@ -55,6 +55,10 @@ angular.module('app.route', [
         when('/photo/search', {
             templateUrl: PATH + 'group/templates/photo_list_new.html',
             controller: 'CtrlPhotoList',
+            resolve: {
+                title: function(){return 'Search results';},
+                kind: function(){return 'list'},
+            }
         }).
         when('/photo/:pk', {
             templateUrl: PATH + 'photo/templates/detail_new.html',
