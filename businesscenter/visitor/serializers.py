@@ -46,6 +46,16 @@ class VisitorSerializer(serializers.ModelSerializer):
                                            read_only=True)
     extra = VisitorExtraSerializer(write_only=True, allow_null=True)
 
+    # number of users followed by this visitor
+    fu_count = serializers.IntegerField(source='user.follow_users.count',
+                                           read_only=True)
+    # number of users who are following this visitor
+    fum_count = serializers.IntegerField(source='user.followuser_set.count',
+                                           read_only=True)
+    # number of groups followed by this visitor
+    fg_count = serializers.IntegerField(source='user.follow_groups.count',
+                                        read_only=True)
+
     def get_username(self, obj):
         return obj.username if obj.username else obj.user.username
 
@@ -122,7 +132,8 @@ class VisitorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Visitor
         fields = ('avatar_url', 'nickname', 'thumb', 'username', 'unionid',
-                  'avatar', 'group_count', 'photo_count', 'pk', 'extra')
+                  'avatar', 'group_count', 'photo_count', 'pk', 'extra',
+                  'fu_count', 'fg_count', 'fum_count')
         extra_kwargs = {'thumb': {'read_only': True},
                         'avatar': {'read_only': True},
                         'pk': {'read_only': True},

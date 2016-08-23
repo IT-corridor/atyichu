@@ -14,6 +14,7 @@ angular.module('photo.services', ['ngResource', 'common.services'])
             liked_list: {method: 'GET', params: {action: 'liked_list'}, responseType: 'json'},
             similar: {method: 'GET', params: {action: 'similar'}, responseType: 'json'},
             my_photos: {method: 'GET', params: {action: 'my_photos'}, responseType: 'json'},
+            article_photos: {method: 'GET', params: {action: 'article_photos'}, responseType: 'json'},
     });
 }])
 .factory('Comment', ['$resource', 'source_path',

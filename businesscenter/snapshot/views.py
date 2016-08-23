@@ -376,6 +376,21 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
 
+    @list_route(methods=['get'])
+    def article_photos(self, request, *args, **kwargs):
+        """
+        get all photos included in articles
+        """
+        qs = Photo.p_objects.select_related('original', 'visitor__visitor',
+                                            'visitor__vendor__store', 
+                                            'group')
+        # qs = qs.filter(Q(group__is_private=False))\
+        qs = qs.filter(Q(article__isnull=False))\
+            .order_by('-stamps__photostamp__confidence').distinct()
+        qs = self.filter_queryset(qs)
+
+        return self.get_list_response(qs, serializers.PhotoListSerializer)
+
     def partial_update(self, request, *args, **kwargs):
         """
         THIS REQUEST CALLED FROM ANDROID APP.
@@ -489,12 +504,12 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def my_photos(self, request, *args, **kwargs):
         """ 
-        Providing a list of public groups photos that are not included
-        in an article  for a specific user
+        Providing a list of photos in public groups that are not included
+        in an article of current visitor
         """
         qs = Photo.a_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store', 'group')
-        qs = qs.filter(Q(article=None) &
+        qs = qs.filter(Q(article__isnull=True) &
                        Q(visitor_id=request.user.id))\
             .order_by('-pk').distinct()
 
@@ -653,8 +668,9 @@ class CommentViewSet(viewsets.ModelViewSet):
         photo = Photo.objects.get(id=int(data['photo']))
         # send notification to the owner
         trigger_notification('nf_channel_{}'.format(photo.creator.id), 
-                            'new_notification',
-                     "{} gives a comment to your photo({})!".format(request.user.username, photo.title))
+                             'new_notification',
+                             '{} gives a comment to your photo({})!' \
+                             .format(request.user.username, photo.title))
 
         return Response(serializer.data, status=201, headers=headers)
 
@@ -719,7 +735,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             qs = qs.prefetch_related(prefetch)
             # qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
             #                Q(member__visitor=visitor)).distinct()
-            qs = qs.filter(Q(is_private=False)).exclude(Q(owner=visitor)).exclude(Q(member__visitor=visitor)).distinct()
+            qs = qs.filter(Q(is_private=False)).exclude(Q(owner=visitor)) \
+                   .exclude(Q(member__visitor=visitor)).distinct()
         else:
             # TODO: optimize for detail view
             qs = qs.prefetch_related('member_set__visitor')

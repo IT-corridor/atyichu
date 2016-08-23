@@ -13,7 +13,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                 'list': Photo.query,
                 'newest': Photo.newest,
                 'liked': Photo.liked,
-                'articles': Photo.my_photos,
+                'articles': Photo.article_photos,
             };
 
             var query = resource_map[kind];

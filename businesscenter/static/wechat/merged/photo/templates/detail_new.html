@@ -52,6 +52,7 @@
                         <span><a data-ng-href="#!/photo/{{ photo.id }}/share/"><i class="fa fa-floppy-o"></i></a></span>
                         <span data-ng-click="like_photo()"><i class="glyphicon glyphicon-heart"></i></span>
                         <span><i class="icon-share"></i></span>
+                        <span data-ng-click="read_article(photo.article.pk)" data-ng-if="photo.article" class="btn btn-default btn-sm" style="margin-left:10px; margin-top:-3px;"><b>Read it</b></span>
                     </div>
                 </div>
 
