@@ -26,12 +26,15 @@ app.factory('httpRequestInterceptor', function() {
         }
     };
 });
-app.run(['$rootScope', 'Visitor', function($rootScope, Visitor) {
+app.run(['$rootScope','$q','Visitor', function($rootScope, $q, Visitor) {
     /*Initialization*/
     $rootScope.site = '哎特衣橱';
     $rootScope.THEME = '/static/theme/';
     $rootScope.PATH = '/static/wechat/merged/';
     $rootScope.alerts = [];
+
+    var follow_d = $q.defer();
+    $rootScope.follow_promise = follow_d.promise;
 
     // $rootScope.following -- a list of users which authenticating user is following
 
@@ -39,11 +42,19 @@ app.run(['$rootScope', 'Visitor', function($rootScope, Visitor) {
         if (newValue) {
             if (newValue.hasOwnProperty('$promise')) {
                 newValue.$promise.then(function(success) {
-                    $rootScope.following = Visitor.get_follow_users();
+                    $rootScope.following = Visitor.get_follow_users(
+                        function(success){
+                            follow_d.resolve();
+                        }
+                    );
                 });
 
             } else {
-                $rootScope.following = Visitor.get_follow_users();
+                $rootScope.following = Visitor.get_follow_users(
+                    function(success){
+                        follow_d.resolve();
+                    }
+                );
             }
             unwatch();
         }
