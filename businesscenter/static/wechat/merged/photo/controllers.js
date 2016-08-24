@@ -167,7 +167,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                 });
             }
 
-            $rootScope.follow_promise.then(function(list) {
+            $rootScope.follow_promise.then(function(result) {
 
                 $scope.photo = Photo.get({
                         pk: $routeParams.pk
@@ -188,8 +188,8 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                             );
                         }
 
-                        success['owner_followed'] = IsMember(list.results, success.visitor, 'pk');
-                        success['creator_followed'] = IsMember(list.results, success.creator, 'pk');
+                        success['owner_followed'] = IsMember($rootScope.following.results, success.visitor, 'pk');
+                        success['creator_followed'] = IsMember($rootScope.following.results, success.creator, 'pk');
 
                         var title = (success.title) ? success.title : '品味和格调兼具';
                         var photo_desc = (success.description) ? success.description : '大家快来看，秀出你的品味和格调!';
@@ -291,7 +291,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                         pk: $routeParams.pk
                     },
                     function(success) {
-                        $scope.photo.like_count = success.like_count;
+                        $scope.photo.is_liked = true;
                     },
                     function(error) {
                         $rootScope.alerts.push({
@@ -300,6 +300,20 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                         });
                     }
                 );
+            };
+
+            $scope.dislike_photo = function (){
+                Photo.dislike({pk: $routeParams.pk},
+                    function(success){
+                        $scope.photo.is_liked = false;
+                    },
+                    function(error){
+                        $rootScope.alerts.push({
+                            type: 'danger',
+                            msg: error.data.detail
+                        });
+                    }
+                )
             }
 
             $scope.like_comment = function(index, comment_id) {
@@ -316,7 +330,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                         });
                     }
                 );
-            }
+            };
 
             function create_empty_array(obj) {
                 var len = obj.overview.length;

@@ -165,7 +165,8 @@ class PhotoDetailSerializer(PhotoListSerializer):
     is_store = serializers.SerializerMethodField(read_only=True)
     link_set = LinkSerializer(read_only=True, many=True)
     article = ArticleShortSerializer(instance='article', read_only=True)
-    
+    is_liked = serializers.SerializerMethodField(read_only=True)
+
     def get_owner_thumb(self, obj):
         if hasattr(obj.visitor, 'visitor'):
             return serializers.ImageField(source='visitor.visitor.thumb',
@@ -177,6 +178,11 @@ class PhotoDetailSerializer(PhotoListSerializer):
 
     def get_is_store(self, obj):
         return hasattr(obj.visitor, 'vendor')
+
+    def get_is_liked(self, obj):
+        user = self.context['request'].user
+        return models.Like.objects.filter(visitor_id=user.pk, photo=obj)\
+            .exists()
 
     class Meta:
         model = models.Photo

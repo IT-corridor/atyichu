@@ -483,11 +483,25 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
             data = {'like_count': like_count}
             status = 200
+            # Like count is useless
         except IntegrityError:
             data = {'error': _('You have like it already!')}
             status = 400
 
         return Response(data, status)
+
+    @detail_route(methods=['delete'], permission_classes=())
+    def dislike(self, request, *args, **kwargs):
+        """ Remove like from liked list. this handler does not
+        require any special permission. Because it will throw exception
+        if anything is  wrong. """
+        obj = self.get_object()
+        try:
+            Like.objects.get(visitor_id=request.user.id, photo_id=obj.id)\
+                .delete()
+            return Response(status=204)
+        except Exception:
+            raise ValidationError({'detail': _('You can dislike it.')})
 
     @list_route(methods=['get'])
     def newest(self, request, *args, **kwargs):
