@@ -190,14 +190,15 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         };
 
         $scope.follow_user = function(owner_id, group) {
-            group.is_owner_followed = true;
             Visitor.follow_user({pk: owner_id},
                 function(success){
+                    group.is_owner_followed = true;
                 },
                 function(error){
-                    /*TODO: Dan, replace it with $translate directive.
-                    I know that it was not available, but now it is.*/
-                    $rootScope.alerts.push({ type: 'danger', msg: 'You have followed the user already!'});
+                    $rootScope.alerts.push({
+                        type: 'danger',
+                        msg: error.data.error
+                    });
                 }
             );
         };        
@@ -476,6 +477,7 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             $scope.r.results = remove_user($scope.r.results, user_id);
             Visitor.unfollow_user({pk: user_id},
                 function(success){
+                    // RemoveItem($rootScope.following.results, user_id, 'pk');
                 },
                 function(error){
                     //$rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});

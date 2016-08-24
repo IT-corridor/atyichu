@@ -385,8 +385,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                                             'visitor__vendor__store', 
                                             'group')
         # qs = qs.filter(Q(group__is_private=False))\
-        qs = qs.filter(Q(article__isnull=False))\
-            .order_by('-stamps__photostamp__confidence').distinct()
+        qs = qs.filter(Q(article__isnull=False)).distinct()
         qs = self.filter_queryset(qs)
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
@@ -733,10 +732,9 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
                                                'original__visitor',))
 
             qs = qs.prefetch_related(prefetch)
-            # qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
-            #                Q(member__visitor=visitor)).distinct()
-            qs = qs.filter(Q(is_private=False)).exclude(Q(owner=visitor)) \
-                   .exclude(Q(member__visitor=visitor)).distinct()
+            qs = qs.filter(is_private=False) \
+                   .exclude(owner=visitor, member__visitor=visitor) \
+                   .distinct()
         else:
             # TODO: optimize for detail view
             qs = qs.prefetch_related('member_set__visitor')
@@ -1047,6 +1045,11 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def follow_user(self, request, *args, **kwargs):
         """ Handler that increments follows """
+        if request.user.id == int(kwargs['pk']):
+            data = {'error': _('You cannot follow yourself!')}
+            status = 400
+            return Response(data, status)
+
         try:
             FollowUser.objects.create(follower_id=request.user.id,
                                       user_id=kwargs['pk'])

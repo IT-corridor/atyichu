@@ -85,16 +85,6 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
             }
 
             $scope.follow_user = function(user_id, index, is_creator) {
-                // if it is himself, return
-                if (user_id == $scope.visitor.pk) {
-                    $rootScope.alerts.push({
-                        type: 'danger',
-                        msg: 'You cannot follow yourself!'
-                    });
-
-                    return;
-                }
-
                 Visitor.follow_user({
                         pk: user_id
                     },
@@ -112,7 +102,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     function(error) {
                         $rootScope.alerts.push({
                             type: 'danger',
-                            msg: 'You have followed the user already!'
+                            msg: error.data.error
                         });
                     }
                 );
@@ -339,16 +329,6 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
             }
 
             $scope.follow_user_main = function(user_id, index, is_creator) {
-                // if it is himself, return
-                if (user_id == $scope.visitor.pk) {
-                    $rootScope.alerts.push({
-                        type: 'danger',
-                        msg: 'You cannot follow yourself!'
-                    });
-
-                    return;
-                }
-
                 Visitor.follow_user({
                         pk: user_id
                     },
@@ -388,16 +368,6 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
             };
 
             $scope.follow_user = function(user_id, index, is_creator) {
-                // if it is himself, return
-                if (user_id == $scope.visitor.pk) {
-                    $rootScope.alerts.push({
-                        type: 'danger',
-                        msg: 'You cannot follow yourself!'
-                    });
-
-                    return;
-                }
-                                
                 Visitor.follow_user({
                         pk: user_id
                     },
