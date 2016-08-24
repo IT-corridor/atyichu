@@ -385,7 +385,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     function(error) {
                         $rootScope.alerts.push({
                             type: 'danger',
-                            msg: 'You have followed the user already!'
+                            msg: error.data.error
                         });
                     }
                 );
