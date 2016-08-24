@@ -182,9 +182,11 @@ class PhotoDetailSerializer(PhotoListSerializer):
     def get_is_liked(self, obj):
         """ We need always request instance, so if we not taking it,
          something goes wrong."""
-        user = self.context['request'].user
-        return models.Like.objects.filter(visitor_id=user.pk, photo=obj)\
-            .exists()
+        request = self.context.get('request', None)
+        if request:
+            user = request.user
+            return models.Like.objects.filter(visitor_id=user.pk, photo=obj)\
+                .exists()
 
     class Meta:
         model = models.Photo
