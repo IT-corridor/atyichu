@@ -44,5 +44,4 @@ angular.module('photo.services', ['ngResource', 'common.services'])
             };
 
         };
-
 }]);
