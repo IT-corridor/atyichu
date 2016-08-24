@@ -12,8 +12,8 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
             var resource_map = {
                 'list': Photo.query,
                 'newest': Photo.newest,
-                'liked': Photo.liked,
-                'articles': Photo.my_photos,
+                'liked': Photo.liked_list,
+                'articles': Photo.article_photos,
             };
 
             var query = resource_map[kind];
@@ -102,7 +102,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     function(error) {
                         $rootScope.alerts.push({
                             type: 'danger',
-                            msg: 'You have followed the user already!'
+                            msg: error.data.error
                         });
                     }
                 );
@@ -385,7 +385,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     function(error) {
                         $rootScope.alerts.push({
                             type: 'danger',
-                            msg: 'You have followed the user already!'
+                            msg: error.data.error
                         });
                     }
                 );
