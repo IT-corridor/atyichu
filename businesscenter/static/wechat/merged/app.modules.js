@@ -142,6 +142,9 @@ app.config(['$translateProvider', function($translateProvider) {
             'LIST': {
                 'NO_GROUPS': 'No groups',
                 'UPLOAD': 'Upload a photo',
+                'PHOTO_COUNT': '{{photo_count}} photo(s)',
+                'MEMBER_COUNT': 'Collaborators ({{member_count}})',
+
             },
             'MANAGE': {
                 'HEADER': 'Edit a wardrobe',
@@ -167,6 +170,13 @@ app.config(['$translateProvider', function($translateProvider) {
                 'PHOTO_LIKED': 'You have liked the photo already',
                 'SAVED_TO': 'Saved to',
                 'SAVED_FROM': 'Saved from',
+            },
+            'MY': {
+                'HEADER': 'My wardrobes',
+                'INVITE': 'Invite',
+                'DELETE': 'Delete',
+                'SET_PUBLIC': 'Set public',
+                'SET_PRIVATE': 'Set private',
             }
         },
         'PHOTO': {

@@ -338,7 +338,7 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'FORGOT': 'I forgot my password',
             },
             'TOGGLE_NAV': 'Toggle Navigation',
-            'LOGGED': 'You logged as {{username}}',
+            'LOGGED': 'You are logged as {{username}}',
             'PROFILE': 'My profile',
             'STORE': 'My store',
             'LOGOUT': 'Logout',

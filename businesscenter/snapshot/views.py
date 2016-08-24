@@ -736,8 +736,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         """ Pretty complex queryset for retreiving groups """
         visitor = self.request.user
         qs = Group.objects.select_related('owner__visitor').\
-            prefetch_related('tag_set', 'member_set__visitor__visitor',
-                             'member_set__visitor__vendor__store',
+            prefetch_related('tag_set', 'member_set',
                              'followgroup_set')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             prefetch = Prefetch('photo_set',
@@ -751,7 +750,9 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
                    .distinct()
         else:
             # TODO: optimize for detail view
-            qs = qs.prefetch_related('member_set__visitor')
+            # TODO: something redundant with prefech related
+            qs = qs.prefetch_related('member_set__visitor__visitor',
+                                     'member_set__visitor__vendor__store')
         return qs
 
     def get_serializer_class(self):

@@ -180,6 +180,8 @@ class PhotoDetailSerializer(PhotoListSerializer):
         return hasattr(obj.visitor, 'vendor')
 
     def get_is_liked(self, obj):
+        """ We need always request instance, so if we not taking it,
+         something goes wrong."""
         user = self.context['request'].user
         return models.Like.objects.filter(visitor_id=user.pk, photo=obj)\
             .exists()
@@ -242,6 +244,8 @@ class MemberSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     photo_count = serializers.IntegerField(read_only=True)
+    member_count = serializers.IntegerField(source='member_set.count',
+                                            read_only=True)
     owner_name = serializers.CharField(source='owner', read_only=True)
     thumb = serializers.SerializerMethodField(read_only=True)
     is_followed = serializers.SerializerMethodField(read_only=True)
@@ -255,6 +259,8 @@ class GroupSerializer(serializers.ModelSerializer):
         return False
 
     def get_is_followed(self, obj):
+        # TODO: BAD REQUEST, it repeats for many times
+        # this action run for the eact item of the queryset
         fgs = [item.follower for item in obj.followgroup_set.all()]        
         if self.context.get('request'):
             return self.context['request'].user in fgs
@@ -281,7 +287,7 @@ class GroupListSerializer(GroupSerializer):
     overview = serializers.SerializerMethodField(read_only=True)
 
     def get_overview(self, obj):
-        qs = obj.photo_set.all()[1:4]
+        qs = obj.photo_set.all()[1:8]
         serializer = PhotoCropSerializer(instance=qs, many=True)
         return serializer.data
 
