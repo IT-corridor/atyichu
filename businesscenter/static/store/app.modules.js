@@ -103,6 +103,9 @@ app.config(['$translateProvider', function ($translateProvider) {
             'CHANGE_PASSWORD': 'Change password',
         },
         'ASIDE': {
+            'NAV': {
+                'HEADER': 'Navigation'
+            },
             'DASHBOARD': 'Dashboard',
             'PHOTO': {
                 'TITLE': 'Photos',
@@ -347,6 +350,9 @@ app.config(['$translateProvider', function ($translateProvider) {
             'CHANGE_PASSWORD': 'Change password',
         },
         'ASIDE': {
+            'NAV': {
+                'HEADER': 'Navigation'
+            },
             'DASHBOARD': 'Dashboard',
             'PHOTO': {
                 'TITLE': 'Photos',
