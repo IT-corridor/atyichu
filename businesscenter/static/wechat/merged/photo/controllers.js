@@ -85,6 +85,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
             }
 
             $scope.follow_user = function(user_id, index, is_creator) {
+                console.log(user_id);
                 Visitor.follow_user({
                         pk: user_id
                     },
@@ -100,6 +101,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                         ProcessExtraData($rootScope.following.results, $scope.r.results);
                     },
                     function(error) {
+                        console.log(error);
                         $rootScope.alerts.push({
                             type: 'danger',
                             msg: error.data.error
@@ -345,7 +347,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                     function(error) {
                         $rootScope.alerts.push({
                             type: 'danger',
-                            msg: 'You have followed the user already!'
+                            msg: error.data.error
                         });
                     }
                 );
