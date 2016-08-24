@@ -26,7 +26,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
             $rootScope.photo_refer = $location.url();
             // TODO: optimize it, move this to the $rootScope.
 
-            $rootScope.following.$promise.then(function(list) {
+            $rootScope.follow_promise.then(function(list) {
 
                 $scope.r = query($routeParams,
                     function(success) {
@@ -167,7 +167,7 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                 });
             }
 
-            $rootScope.following.$promise.then(function(list) {
+            $rootScope.follow_promise.then(function(list) {
 
                 $scope.photo = Photo.get({
                         pk: $routeParams.pk
