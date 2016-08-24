@@ -1,10 +1,12 @@
-<div class="container">
-    <div class="wrapper-md">
+<div class="container create-wardrobe-bg">
+    <div class="wrapper-md t-middle">
+
         <form data-ng-submit="add()" name="form" id="group_form">
-            <div class="panel panel-default">
-                <div class="panel-heading font-bold">{{ 'GROUP.CREATE.HEADER' | translate }}</div>
+            <div class="panel panel-default b-r-c">
+               <!-- <div class="panel-heading font-bold">{{ 'GROUP.CREATE.HEADER' | translate }}</div>-->
+                <div class="panel-heading font-bold create-wardrobe-title">Create new wardrobe <a data-ng-href="#!/my_groups"><i class="fa fa-mail-reply" ></i></a></div>
                 <div class="panel-body">
-                    <div class="form-group">
+                    <div class="form-group" style="display:none">
                         <label class="col-sm-2 control-label">{{ 'GROUP.FORM.MEMBERS' | translate }}</label>
                         <div class="col-sm-10">
                             <member-choice data-member="member"
@@ -41,7 +43,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="line line-dashed b-b line-lg pull-in"></div>
+                    <!--<div class="line line-dashed b-b line-lg pull-in"></div>-->
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'GROUP.FORM.TITLE' | translate }}</label>
                         <div class="col-sm-10">
@@ -52,7 +54,7 @@
                                data-ng-repeat="e in error.title">{{ e }}</p>
                         </div>
                     </div>
-                    <div class="line line-dashed b-b line-lg pull-in"></div>
+                    <!--<div class="line line-dashed b-b line-lg pull-in"></div>-->
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'GROUP.FORM.DESCRIPTION' | translate }}</label>
                         <div class="col-sm-10">
@@ -63,8 +65,8 @@
                                data-ng-repeat="e in error.description">{{ e }}</p>
                         </div>
                     </div>
-                    <div class="line line-dashed b-b line-lg pull-in"></div>
-                    <div class="form-group">
+                   <!-- <div class="line line-dashed b-b line-lg pull-in"></div> -->
+                   <!-- <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'GROUP.FORM.IS_PRIVATE' | translate }}</label>
                         <div class="col-sm-10">
                             <label class="i-switch bg-info m-t-xs m-r">
@@ -77,18 +79,20 @@
                             <p class="text-danger"
                                data-ng-repeat="e in error.is_private">{{ e }}</p>
                         </div>
-                    </div>
+                    </div>-->
                 </div>
                 <div class="panel-footer">
                     <div class="row">
                         <div class="col-md-12 col-xs-12">
-                            <div class="pull-right">
-                                <a data-ng-href="#!/my_groups" class="btn btn-default">
+                            
+							
+                                <!--<a data-ng-href="#!/my_groups" class="btn btn-default">
                                     {{ 'FORM.CANCEL' | translate }}
-                                </a>
-                                <button type="submit" class="btn btn-primary">{{ 'FORM.SUBMIT' | translate }}
+                                </a>-->
+                                <button type="submit" class="btn btn-primary create-wr-btn">{{ 'FORM.SUBMIT' | translate }}
                                 </button>
-                            </div>
+								<br>
+                            
                         </div>
                     </div>
                 </div>
