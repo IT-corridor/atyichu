@@ -470,14 +470,8 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             like_count = Photo.objects.get(id=obj.id).like_set.count()
 
             # send notification to the owner
-            if hasattr(request.user, 'vendor'):
-                msg = "{} likes your photo({})!".format(request.user.vendor
-                                                        .store.brand_name,
-                                                        obj.title)
-            else:
-                msg = "{} likes your photo({})!".format(request.user.visitor
-                                                        .username,
-                                                        obj.title)
+            msg = "{} likes your photo({})!"\
+                .format(get_nickname(request.user), obj.title)
 
             trigger_notification('nf_channel_{}'.format(obj.visitor_id),
                                  'new_notification', msg)
@@ -537,15 +531,8 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             else request.data['description']
 
         # send notification to the owner
-        if hasattr(request.user, 'vendor'):
-            msg = "{} saves your photo({})!".format(request.user.vendor
-                                                    .store.brand_name,
-                                                    obj.title)
-        else:
-            msg = "{} saves your photo({})!".format(request.user.visitor
-                                                    .username,
-                                                    obj.title)
-
+        msg = "{} saves your photo({})!" \
+            .format(get_nickname(request.user), obj.title)
         trigger_notification('nf_channel_{}'.format(obj.visitor_id),
                              'new_notification', msg)
 
@@ -680,15 +667,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         photo = Photo.objects.get(id=int(data['photo']))
         # send notification to the owner
-        if hasattr(request.user, 'vendor'):
-            msg = "{} gives a comment to your photo({})!"\
-                .format(request.user.vendor.store.brand_name,
-                        photo.title)
-        else:
-            msg = "{} gives a comment to your photo({})!"\
-                .format(request.user.visitor.username,
-                        photo.title)
-
+        msg = "{} gives a comment to your photo({})!" \
+            .format(get_nickname(request.user), photo.title)
         trigger_notification('nf_channel_{}'.format(photo.visitor_id),
                              'new_notification', msg)
 
@@ -994,14 +974,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            if hasattr(request.user, 'vendor'):
-                msg = "{} wants to follow your group({})!"\
-                    .format(request.user.vendor.store.brand_name,
-                            obj.title)
-            else:
-                msg = "{} wants to follow your group({})!"\
-                    .format(request.user.visitor.username,
-                            obj.title)
+            msg = "{} wants to follow your group({})!" \
+                .format(get_nickname(request.user), obj.title)
 
             trigger_notification('nf_channel_{}'.format(obj.owner.id),
                                  'new_notification', msg)
@@ -1026,14 +1000,8 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            if hasattr(request.user, 'vendor'):
-                msg = "{} stops to follow your group({})!" \
-                    .format(request.user.vendor.store.brand_name,
-                            obj.title)
-            else:
-                msg = "{} stops to follow your group({})!" \
-                    .format(request.user.visitor.username,
-                            obj.title)
+            msg = "{} stops to follow your group({})!" \
+                .format(get_nickname(request.user), obj.title)
 
             trigger_notification('nf_channel_{}'.format(obj.owner.id),
                                  'new_notification', msg)
@@ -1098,12 +1066,8 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            if hasattr(request.user, 'vendor'):
-                msg = "{} wants to follow you!" \
-                    .format(request.user.vendor.store.brand_name)
-            else:
-                msg = "{} wants to follow you!" \
-                    .format(request.user.visitor.username)
+            msg = "{} wants to follow you!" \
+                .format(get_nickname(request.user))
 
             trigger_notification('nf_channel_{}'.format(kwargs['pk']),
                                  'new_notification', msg)
@@ -1125,12 +1089,8 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            if hasattr(request.user, 'vendor'):
-                msg = "{} stops to follow you!" \
-                    .format(request.user.vendor.store.brand_name)
-            else:
-                msg = "{} stops to follow you!" \
-                    .format(request.user.visitor.username)
+            msg = "{} stops to follow you!" \
+                .format(get_nickname(request.user))
 
             trigger_notification('nf_channel_{}'.format(kwargs['pk']),
                                  'new_notification', msg)
@@ -1182,3 +1142,10 @@ def index(request):
     """ A simple view, which presents only a starting template.
      It is an entry. Later should be migrate to static service like Nginx."""
     return render(request, 'index.html')
+
+
+def get_nickname(user):
+    if hasattr(user, 'vendor'):
+        return user.vendor.store.brand_name
+    else:
+        return user.visitor.username
