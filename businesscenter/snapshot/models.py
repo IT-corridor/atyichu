@@ -282,6 +282,7 @@ class Like(models.Model):
     data and data migration."""
     photo = models.ForeignKey(Photo, verbose_name=_('Photo'))
     visitor = models.ForeignKey('auth.User', verbose_name=_('Visitor'))
+    like_date = models.DateTimeField(_('Date Started Like'), auto_now_add=True)
 
     def __unicode__(self):
         return '{}:{}'.format(self.photo, self.visitor.id)
