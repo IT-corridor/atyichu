@@ -8,6 +8,7 @@ angular.module('photo.services', ['ngResource', 'common.services'])
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
             like: {method: 'GET', params: {action:'like'}},
+            dislike: {method: 'DELETE', params: {action:'dislike'}},
             newest: {method: 'GET', params: {action: 'newest'}, responseType: 'json'},
             edit: {method: 'PATCH', params: {action: 'edit'}, responseType: 'json'},
             clone: {method: 'POST', params: {action: 'clone'}, responseType: 'json'},
@@ -30,8 +31,6 @@ angular.module('photo.services', ['ngResource', 'common.services'])
 .factory('ProcessExtraData', ['$sce', 'IsMember',
     function($sce, IsMember){
         return function (base_arr, compare_arr) {
-            /*TODO: this function repeats for several times, It have to be organized
-            as a factory and placed into photo/services.js */
             /** USED ONLY WITH PHOTO LISTS**/
             var i = 0,
                 l = compare_arr.length;

@@ -310,7 +310,6 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                      Comment.objects.select_related('author__visitor'))
         qs = qs.prefetch_related(p)
         if self.request.method == 'GET' and self.kwargs.get('pk'):
-
             qs = qs.prefetch_related('link_set__commodity__kind',
                                      'link_set__commodity__color')
         return qs
@@ -356,12 +355,6 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         photo = Photo.objects.create(visitor=visitor, mirror=mirror)
 
         log.info('create photo id: {}'.format(photo.id))
-        content = {'photo_id': photo.id}
-        # SENDING A request for nitification to pusher service,
-        # which will push the ANDROID APP.
-        send_json, receive_info = trigger_notification('nf_channel_{}'.format(visitor.id),
-                                               'new_notification',
-                                               'New photo ({}) is created!'.format(photo.id))
 
         # log.info('umeng json: {}, {}'.format(send_json, receive_info))
         return Response(data={'id': photo.id}, status=201)
@@ -614,7 +607,6 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             sliced = commodities[:lim]
             response_data = []
             for n, i in enumerate(sliced):
-
                 data = {'commodity': i, 'photo': pk}
                 serializer = serializers.LinkSerializer(data=data)
                 serializer.is_valid(True)
@@ -659,10 +651,10 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             This view is not tested yet.
         """
         obj = self.get_object()
-        mc = 15    # minimal confidence
-        stamp_ids = obj.stamps.filter(photostamp__confidence__gte=mc)\
-                       .order_by('-pk')\
-                       .values_list('id', flat=True)
+        mc = 15  # minimal confidence
+        stamp_ids = obj.stamps.filter(photostamp__confidence__gte=mc) \
+            .order_by('-pk') \
+            .values_list('id', flat=True)
 
         qs = Photo.a_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store',
@@ -747,19 +739,25 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         """ Pretty complex queryset for retreiving groups """
         visitor = self.request.user
+<<<<<<< HEAD
         qs = Group.objects.select_related('owner__visitor').\
             prefetch_related('tag_set', 'member_set',
+=======
+        qs = Group.objects.select_related('owner__visitor'). \
+            prefetch_related('tag_set', 'member_set__visitor__visitor',
+                             'member_set__visitor__vendor__store',
+>>>>>>> remotes/origin/dan
                              'followgroup_set')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             prefetch = Prefetch('photo_set',
                                 queryset=Photo.objects.
                                 select_related('original__group',
-                                               'original__visitor',))
+                                               'original__visitor', ))
 
             qs = qs.prefetch_related(prefetch)
             qs = qs.filter(is_private=False) \
-                   .exclude(owner=visitor, member__visitor=visitor) \
-                   .distinct()
+                .exclude(owner=visitor, member__visitor=visitor) \
+                .distinct()
         else:
             # TODO: optimize for detail view
             # TODO: something redundant with prefech related
@@ -1167,7 +1165,7 @@ class AnalyticsViewSet(viewsets.ViewSet):
             data.append([day, follows])
 
         status = 200
-        # data = [[0, 7], [1, 6.5], [2, 12.5], [3, 7], [4, 9], [5, 6], [6, 11], [7, 6.5], [8, 8], [9, 7], [10, 12]]
+        data = [[0, 7], [1, 6.5], [2, 12.5], [3, 7], [4, 9], [5, 6], [6, 11], [7, 6.5], [8, 8], [9, 7], [10, 12]]
         return Response(data, status)
 
 

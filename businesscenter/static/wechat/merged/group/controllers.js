@@ -33,10 +33,11 @@ angular.module('group.controllers', ['group.services', 'group.directives',
     }
 ])
 .controller('CtrlGroupList', ['$scope', '$rootScope','$http', '$window',
-'$location', '$routeParams','GetPageLink' , 'Group', 'title', 'my', 'WindowScroll', 'Visitor',
-    function($scope, $rootScope, $http, $window, $location, $routeParams,
+'$location', '$routeParams', '$translate', 'GetPageLink' , 'Group', 'title', 'my', 'WindowScroll', 'Visitor',
+    function($scope, $rootScope, $http, $window, $location, $routeParams, $translate,
     GetPageLink, Group, title, my, WindowScroll, Visitor) {
 
+        /* Add check fpr the ownership */
         $rootScope.title = title;
         var query = (my) ? Group.my : Group.query;
 
@@ -87,13 +88,45 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         };
         WindowScroll($scope, $scope.get_more);
 
+
+        $scope.remove = function(index){
+            var group = $scope.r.results[index];
+            $translate('CONFIRM').then(function (msg) {
+                $scope.confirm = $window.confirm(msg);
+                if ($scope.confirm){
+                    Group.remove({pk: group.id}, {},
+                        function(success){
+                            $translate('GROUP.MY.DELETED').then(function (msg) {
+                                $rootScope.alerts.push({ type: 'success', msg: msg});
+                            });
+                            $scope.r.results.splice(index, 1);
+                        }
+                    );
+                }
+            });
+        };
+        $scope.toggle_privacy = function(index){
+            var group = $scope.r.results[index];
+            var is_private = (group.is_private) ? false : true;
+            var data = {'is_private': is_private};
+            Group.update({pk: group.id}, data,
+                function(success){
+                    $translate('SUCCESS').then(function (msg) {
+                        $rootScope.alerts.push({ type: 'success', msg: msg});
+                        group.is_private = is_private;
+
+                    });
+                }
+            );
+        };
+
         function create_empty_arrays(obj){
-            var k = 0;
+            var k = 0, base_len = 7;
             var group_len = obj.results.length;
             for (k; k < group_len; k++){
                 var l = 0;
                 var len = obj.results[k].overview.length;
-                var empty = 3 - len;
+                var empty = base_len - len;
                 obj.results[k].empty_array = [];
                 for (l; l < empty; l++){ obj.results[k].empty_array.push(l);}
             }

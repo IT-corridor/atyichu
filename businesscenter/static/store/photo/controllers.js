@@ -123,7 +123,8 @@ angular.module('photo.controllers', ['photo.services', 'photo.directives',
             console.log($rootScope.photo_refer);
             $rootScope.refer = undefined;
             console.log($rootScope.refer);
-        }
+        };
+
         $scope.remove = function(){
             $translate('CONFIRM').then(function (msg) {
                 $scope.confirm = $window.confirm(msg);
@@ -139,7 +140,8 @@ angular.module('photo.controllers', ['photo.services', 'photo.directives',
                     );
                 }
             });
-        }
+        };
+
         $scope.comment = function(){
             data = {photo: $routeParams.pk, message: $scope.new_message};
                 Comment.save(data, function(success){

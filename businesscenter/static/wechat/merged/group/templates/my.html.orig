@@ -1,5 +1,8 @@
 <wx-self data-visitor="visitor" data-ng-if="bar == 'verbose'"></wx-self>
+<<<<<<< HEAD
 
+=======
+>>>>>>> remotes/origin/dan
 <div class="my-wardrobes-header">
 	<i class="fa fa-angle-left" aria-hidden="true" data-ng-click="back()" role="button" tabindex="0"></i>
 
@@ -13,7 +16,7 @@
 
 </div>
 
-<div class="container pull-left wardrobes">  
+<div class="container pull-left wardrobes">
 
 	<div class="row">
 

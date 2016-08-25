@@ -165,7 +165,8 @@ class PhotoDetailSerializer(PhotoListSerializer):
     is_store = serializers.SerializerMethodField(read_only=True)
     link_set = LinkSerializer(read_only=True, many=True)
     article = ArticleShortSerializer(instance='article', read_only=True)
-    
+    is_liked = serializers.SerializerMethodField(read_only=True)
+
     def get_owner_thumb(self, obj):
         if hasattr(obj.visitor, 'visitor'):
             return serializers.ImageField(source='visitor.visitor.thumb',
@@ -177,6 +178,15 @@ class PhotoDetailSerializer(PhotoListSerializer):
 
     def get_is_store(self, obj):
         return hasattr(obj.visitor, 'vendor')
+
+    def get_is_liked(self, obj):
+        """ We need always request instance, so if we not taking it,
+         something goes wrong."""
+        request = self.context.get('request', None)
+        if request:
+            user = request.user
+            return models.Like.objects.filter(visitor_id=user.pk, photo=obj)\
+                .exists()
 
     class Meta:
         model = models.Photo
@@ -236,6 +246,8 @@ class MemberSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     photo_count = serializers.IntegerField(read_only=True)
+    member_count = serializers.IntegerField(source='member_set.count',
+                                            read_only=True)
     owner_name = serializers.CharField(source='owner', read_only=True)
     thumb = serializers.SerializerMethodField(read_only=True)
     is_followed = serializers.SerializerMethodField(read_only=True)
@@ -249,6 +261,8 @@ class GroupSerializer(serializers.ModelSerializer):
         return False
 
     def get_is_followed(self, obj):
+        # TODO: BAD REQUEST, it repeats for many times
+        # this action run for the eact item of the queryset
         fgs = [item.follower for item in obj.followgroup_set.all()]        
         if self.context.get('request'):
             return self.context['request'].user in fgs
@@ -275,7 +289,7 @@ class GroupListSerializer(GroupSerializer):
     overview = serializers.SerializerMethodField(read_only=True)
 
     def get_overview(self, obj):
-        qs = obj.photo_set.all()[1:4]
+        qs = obj.photo_set.all()[1:8]
         serializer = PhotoCropSerializer(instance=qs, many=True)
         return serializer.data
 
