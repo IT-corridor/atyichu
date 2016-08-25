@@ -4,6 +4,7 @@ import json
 import logging
 import pickle
 import os
+import datetime
 from urlparse import urldefrag
 from datetime import timedelta
 from django.db import IntegrityError
@@ -37,6 +38,7 @@ from account.serializers import VendorStoreSerializer, StoreShortSerializer
 from catalog.models import Commodity
 from vutils.notification import trigger_notification
 from vutils.wzhifuSDK import JsApi_pub
+from vutils.utils import get_last_day_of_month
 
 log = logging.getLogger(__name__)
 
@@ -470,7 +472,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             like_count = Photo.objects.get(id=obj.id).like_set.count()
 
             # send notification to the owner
-            msg = "{} likes your photo({})!"\
+            msg = "{} likes your photo({})!" \
                 .format(get_nickname(request.user), obj.title)
 
             trigger_notification('nf_channel_{}'.format(obj.visitor_id),
@@ -942,7 +944,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def follow_groups(self, request, *args, **kwargs):
-        """ Dan`s Job. Need to set a comment."""
+        """ Returns the groups which the customer is following """
         visitor = self.request.user
         qs = FollowGroup.objects.filter(follower=visitor)
         group_ids = [item.group.id for item in qs]
@@ -960,7 +962,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @detail_route(methods=['get'])
     def follow(self, request, *args, **kwargs):
-        """ Dan`s Job. Need to set a comment. """
+        """ Follow the group by the customer """
         obj = self.get_object()
 
         try:
@@ -988,7 +990,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @detail_route(methods=['get'])
     def unfollow(self, request, *args, **kwargs):
-        """ Dan`s Job. Need to set a comment."""
+        """ Unfollow the group by the customer """
         obj = self.get_object()
 
         try:
@@ -1099,6 +1101,43 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             data = {'error': _('You have followed the user already!')}
             status = 400
 
+        return Response(data, status)
+
+
+class AnalyticsViewSet(viewsets.ViewSet):
+    permission_classes = ()
+
+    # def get_serializer_class(self):
+    #     return serializers.ArticleListSerializer
+    #
+    # def get_queryset(self):
+    #     qs = Article.objects.all()
+    #     prefetch = Prefetch('photo_set', queryset=Photo.objects.all())
+    #
+    #     qs = qs.prefetch_related(prefetch)
+    #     return qs
+    #
+    @list_route(methods=['get'])
+    def follow_users(self, request, *args, **kwargs):
+        print get_last_day_of_month(kwargs['year'], kwargs['month']), '###'
+        status = 200
+        data = [[1, 6.5], [2, 6.5], [3, 7], [4, 8], [5, 7.5], [6, 7],
+                [7, 6.8], [8, 7], [9, 7.2], [10, 7], [11, 6.8], [12, 7]]
+        return Response(data, status)
+
+    @list_route(methods=['get'])
+    def follow_groups(self, request, *args, **kwargs):
+        year = int(kwargs['year'])
+        month = int(kwargs['month'])
+        last_day = get_last_day_of_month(year, month)
+
+        data = []
+        for day in range(1, last_day):
+            date = datetime.date(year, month, day)
+            follows = FollowGroup.objects.filter(follow_date__date=date).count()
+            data.append([day, follows])
+
+        status = 200
         return Response(data, status)
 
 
