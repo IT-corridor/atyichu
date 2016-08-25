@@ -62,7 +62,7 @@
                     <div class="clear">
                       <div id="photo-o-name">{{ photo.owner.username }}</div>
 					  <div class="user-follow-status">
-					  <span data-ng-if="!group.is_owner_followed" data-ng-click="follow_user(group.owner, group)"><i class="icon-user-follow"></i></span>
+					  <span data-ng-if="!group.is_owner_followed" data-ng-click="follow_user(photo.owner.pk, group)"><i class="icon-user-follow"></i></span>
 					  <span data-ng-if="group.is_owner_followed"><i class="icon-user-following"></i></span>
 					  </div>
                     </div>

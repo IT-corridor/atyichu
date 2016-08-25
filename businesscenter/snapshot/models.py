@@ -282,6 +282,7 @@ class Like(models.Model):
     data and data migration."""
     photo = models.ForeignKey(Photo, verbose_name=_('Photo'))
     visitor = models.ForeignKey('auth.User', verbose_name=_('Visitor'))
+    like_date = models.DateTimeField(_('Date Started Like'), auto_now_add=True)
 
     def __unicode__(self):
         return '{}:{}'.format(self.photo, self.visitor.id)
@@ -386,6 +387,7 @@ class FollowGroup(models.Model):
                                  on_delete=models.CASCADE,
                                  related_name='follow_groups',
                                  related_query_name='follow_group')
+    follow_date = models.DateTimeField(_('Date Started Following'), auto_now_add=True)
 
     def __unicode__(self):
         return '{}, {}'.format(self.group, self.follower)
@@ -410,6 +412,7 @@ class FollowUser(models.Model):
                                  on_delete=models.CASCADE,
                                  related_name='follow_users',
                                  related_query_name='follow_user')
+    follow_date = models.DateTimeField(_('Date Started Following'), auto_now_add=True)
 
     def __unicode__(self):
         return '{}, {}'.format(self.user, self.follower)

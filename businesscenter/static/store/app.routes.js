@@ -6,6 +6,7 @@ angular.module('app.route', [
     'commodity.controllers',
     'photo.controllers',
     'group.controllers',
+    'dashboard.controllers',
 ])
 .config(['$routeProvider','PATH',
     function($routeProvider, PATH) {
@@ -13,6 +14,10 @@ angular.module('app.route', [
         when('/', {
             templateUrl: PATH + 'common/templates/home.html',
             controller: 'CtrlHome',
+        }).
+        when('/dashboard/', {
+            templateUrl: PATH + 'dashboard/templates/ui_chart.html',
+            controller: 'CtrlFlotChart',
         }).
         when('/stores/create/', {
             templateUrl: PATH + 'store/templates/create.html',

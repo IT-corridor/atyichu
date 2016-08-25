@@ -1,7 +1,13 @@
 <!-- list -->
 <ul class="nav">
     <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
-        <span translate="ASIDE.DASHBOARD">Dashboard</span>
+        <span translate="ASIDE.NAV.HEADER" class="ng-scope">Navigation</span>
+    </li>
+    <li>
+        <a data-ng-href="#!/dashboard" class="auto">
+            <i class="glyphicon glyphicon-stats icon text-primary-dker"></i>
+            <span class="font-bold" translate="ASIDE.DASHBOARD">Dashboard</span>
+        </a>
     </li>
     <li data-ng-init="menu.photo = false">
         <a data-ng-click="menu.photo = !menu.photo">
@@ -9,8 +15,8 @@
                 <i class="fa fa-fw fa-angle-right text"></i>
                 <i class="fa fa-fw fa-angle-down text-active"></i>
             </span>
-                <i class="fa fa-camera text-primary-dker"></i>
-                <span class="font-bold" translate="ASIDE.PHOTO.TITLE">Photos</span>
+            <i class="fa fa-camera text-primary-dker"></i>
+            <span class="font-bold" translate="ASIDE.PHOTO.TITLE">Photos</span>
         </a>
         <ul class="nav dk" data-ng-class="{'nav-sub': !menu.photo}">
             <li class="nav-sub-header">
@@ -93,7 +99,7 @@
                 </a>
             </li>
         </ul>
-    </li>    
+    </li>
     <li data-ng-init="menu.store = false">
         <a data-ng-click="menu.store = !menu.store">
       <span class="pull-right text-muted">

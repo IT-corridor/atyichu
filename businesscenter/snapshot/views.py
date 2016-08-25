@@ -4,6 +4,7 @@ import json
 import logging
 import pickle
 import os
+import datetime
 from urlparse import urldefrag
 from datetime import timedelta
 from django.db import IntegrityError
@@ -37,9 +38,10 @@ from account.serializers import VendorStoreSerializer, StoreShortSerializer
 from catalog.models import Commodity
 from vutils.notification import trigger_notification
 from vutils.wzhifuSDK import JsApi_pub
-
+from vutils.utils import get_last_day_of_month
 
 log = logging.getLogger(__name__)
+
 
 # API VIEWSETS
 
@@ -92,8 +94,8 @@ class MirrorViewSet(viewsets.GenericViewSet):
         mirrors = Mirror.objects.get_by_distance(latitude, longitude)
 
         # TODO: optimize with db query!
-        #online_mirrors = [i for i in mirrors if i.is_online()]
-        #online_mirrors = [i for i in mirrors]
+        # online_mirrors = [i for i in mirrors if i.is_online()]
+        # online_mirrors = [i for i in mirrors]
 
         # Mirror available if it is not locked or owner is current_user
         # Also mirror should be online.
@@ -253,6 +255,7 @@ class MirrorViewSet(viewsets.GenericViewSet):
 class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
     # TODO: Dan put your permissions here
     permission_classes = ()
+
     def get_serializer_class(self):
         return serializers.ArticleListSerializer
 
@@ -263,7 +266,7 @@ class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
         qs = qs.prefetch_related(prefetch)
         return qs
 
-    def create(self, request, *args, **kwargs): 
+    def create(self, request, *args, **kwargs):
         '''
         photos in data in form [23,43,242]
         '''
@@ -276,7 +279,7 @@ class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
             Photo.objects.filter(id=photo).update(article=article)
         return Response(data={'id': article.id}, status=201)
 
-    def update(self, request, *args, **kwargs): 
+    def update(self, request, *args, **kwargs):
         '''
         photos in data is in the array of photo objects
         '''
@@ -285,7 +288,7 @@ class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
         Photo.objects.filter(article_id=data['id']).update(article=None)
         for item in data['photos']:
             Photo.objects.filter(id=item['id']).update(article_id=data['id'])
-    
+
         return super(ArticleViewSet, self).update(request, args, kwargs)
 
 
@@ -341,7 +344,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             return Response(data={'error': _('Mirror is offline')},
                             status=400)
 
-        if (mirror.lock_date != mirror.modify_date) and\
+        if (mirror.lock_date != mirror.modify_date) and \
                 (timezone.now() < (mirror.modify_date + timedelta(seconds=2))):
             return Response(data={'error': _('You have to wait for 2 seconds')})
 
@@ -360,7 +363,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                                                'new_notification',
                                                'New photo ({}) is created!'.format(photo.id))
 
-        log.info('umeng json: {}, {}'.format(send_json, receive_info))
+        # log.info('umeng json: {}, {}'.format(send_json, receive_info))
         return Response(data={'id': photo.id}, status=201)
 
     def list(self, request, *args, **kwargs):
@@ -368,9 +371,9 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         get all photo order by time desc. USED FOR SEARCH!
         """
         qs = Photo.p_objects.select_related('original', 'visitor__visitor',
-                                            'visitor__vendor__store', 
+                                            'visitor__vendor__store',
                                             'group')
-        qs = qs.filter(Q(group__is_private=False))\
+        qs = qs.filter(Q(group__is_private=False)) \
             .order_by('-stamps__photostamp__confidence').distinct()
         qs = self.filter_queryset(qs)
 
@@ -382,7 +385,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         get all photos included in articles
         """
         qs = Photo.p_objects.select_related('original', 'visitor__visitor',
-                                            'visitor__vendor__store', 
+                                            'visitor__vendor__store',
                                             'group')
         # qs = qs.filter(Q(group__is_private=False))\
         qs = qs.filter(Q(article__isnull=False)).distinct()
@@ -476,9 +479,10 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             like_count = Photo.objects.get(id=obj.id).like_set.count()
 
             # send notification to the owner
-            msg = "{} likes your photo({})!".format(request.user.username,
-                                                    obj.title)
-            trigger_notification('nf_channel_{}'.format(obj.creator.id),
+            msg = "{} likes your photo({})!" \
+                .format(get_nickname(request.user), obj.title)
+
+            trigger_notification('nf_channel_{}'.format(obj.visitor_id),
                                  'new_notification', msg)
 
             data = {'like_count': like_count}
@@ -509,7 +513,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         qs = Photo.a_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store', 'group')
         qs = qs.filter(Q(group__is_private=False) &
-                       ~Q(visitor_id=request.user.id))\
+                       ~Q(visitor_id=request.user.id)) \
             .order_by('-pk').distinct()
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
@@ -523,7 +527,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         qs = Photo.a_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store', 'group')
         qs = qs.filter(Q(article__isnull=True) &
-                       Q(visitor_id=request.user.id))\
+                       Q(visitor_id=request.user.id)) \
             .order_by('-pk').distinct()
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
@@ -543,11 +547,17 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             creator = obj.visitor_id
             original = obj.id
 
-        title = obj.title if not request.data.get('title')\
+        title = obj.title if not request.data.get('title') \
             else request.data['title']
 
         description = obj.description if not request.data.get('description') \
             else request.data['description']
+
+        # send notification to the owner
+        msg = "{} saves your photo({})!" \
+            .format(get_nickname(request.user), obj.title)
+        trigger_notification('nf_channel_{}'.format(obj.visitor_id),
+                             'new_notification', msg)
 
         data = {'original': original,
                 'creator': creator,
@@ -559,6 +569,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
         return Response(serializer.data, status=201)
 
     @list_route(methods=['get'])
@@ -680,10 +691,10 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         photo = Photo.objects.get(id=int(data['photo']))
         # send notification to the owner
-        trigger_notification('nf_channel_{}'.format(photo.creator.id), 
-                             'new_notification',
-                             '{} gives a comment to your photo({})!' \
-                             .format(request.user.username, photo.title))
+        msg = "{} gives a comment to your photo({})!" \
+            .format(get_nickname(request.user), photo.title)
+        trigger_notification('nf_channel_{}'.format(photo.visitor_id),
+                             'new_notification', msg)
 
         return Response(serializer.data, status=201, headers=headers)
 
@@ -730,6 +741,7 @@ class MemberViewSet(viewsets.ModelViewSet):
 class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrMember]
     filter_fields = ('owner',)
+
     # For update use only method patch
 
     def get_queryset(self):
@@ -932,7 +944,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         prefetch = Prefetch('photo_set',
                             queryset=Photo.p_objects.select_related('original'))
         qs = qs.prefetch_related(prefetch)
-        qs = qs.filter(Q(owner=visitor) | Q(member__visitor=visitor))\
+        qs = qs.filter(Q(owner=visitor) | Q(member__visitor=visitor)) \
             .distinct()
         serializer_class = self.get_serializer_class()
         page = self.paginate_queryset(qs)
@@ -955,7 +967,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def follow_groups(self, request, *args, **kwargs):
-        """ Dan`s Job. Need to set a comment."""
+        """ Returns the groups which the customer is following """
         visitor = self.request.user
         qs = FollowGroup.objects.filter(follower=visitor)
         group_ids = [item.group.id for item in qs]
@@ -973,23 +985,25 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @detail_route(methods=['get'])
     def follow(self, request, *args, **kwargs):
-        """ Dan`s Job. Need to set a comment. """
+        """ Follow the group by the customer """
         obj = self.get_object()
 
         try:
             if not FollowGroup.objects.filter(follower_id=request.user.id,
-                                       group_id=obj.id):
+                                              group_id=obj.id):
                 FollowGroup.objects.create(follower_id=request.user.id,
-                                       group_id=obj.id)
+                                           group_id=obj.id)
 
             follow_count = FollowGroup.objects.filter(group_id=obj.id).count()
             data = {'follow_count': follow_count}
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_{}'.format(obj.owner.id), 
-                                'new_notification',
-                         request.user.username + "wants to follow your group!")
+            msg = "{} wants to follow your group({})!" \
+                .format(get_nickname(request.user), obj.title)
+
+            trigger_notification('nf_channel_{}'.format(obj.owner.id),
+                                 'new_notification', msg)
 
         except IntegrityError:
             data = {'error': _('You have followed it already!')}
@@ -999,7 +1013,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @detail_route(methods=['get'])
     def unfollow(self, request, *args, **kwargs):
-        """ Dan`s Job. Need to set a comment."""
+        """ Unfollow the group by the customer """
         obj = self.get_object()
 
         try:
@@ -1011,8 +1025,11 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_{}'.format(obj.owner.id), 'new_notification',
-                         request.user.username + "stops to follow your group!")
+            msg = "{} stops to follow your group({})!" \
+                .format(get_nickname(request.user), obj.title)
+
+            trigger_notification('nf_channel_{}'.format(obj.owner.id),
+                                 'new_notification', msg)
 
         except IntegrityError:
             data = {'error': _('You have followed it already!')}
@@ -1068,15 +1085,17 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         try:
             FollowUser.objects.create(follower_id=request.user.id,
                                       user_id=kwargs['pk'])
-            follow_count = FollowUser.objects\
+            follow_count = FollowUser.objects \
                 .filter(user_id=kwargs['pk']).count()
             data = {'follow_count': follow_count}
             status = 200
 
             # send notification to the owner
+            msg = "{} wants to follow you!" \
+                .format(get_nickname(request.user))
+
             trigger_notification('nf_channel_{}'.format(kwargs['pk']),
-                                 'new_notification',
-                                 request.user.username + "wants to follow you!")
+                                 'new_notification', msg)
 
         except IntegrityError:
             data = {'error': _('You have followed the user already!')}
@@ -1095,13 +1114,60 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
             status = 200
 
             # send notification to the owner
-            trigger_notification('nf_channel_{}'.format(kwargs['pk']), 'new_notification',
-                         request.user.username + "stops to follow you!")
+            msg = "{} stops to follow you!" \
+                .format(get_nickname(request.user))
+
+            trigger_notification('nf_channel_{}'.format(kwargs['pk']),
+                                 'new_notification', msg)
 
         except IntegrityError:
             data = {'error': _('You have followed the user already!')}
             status = 400
 
+        return Response(data, status)
+
+
+class AnalyticsViewSet(viewsets.ViewSet):
+    permission_classes = ()
+
+    @list_route(methods=['get'])
+    def following_users(self, request, **kwargs):
+        """
+        Get the list of number of users the customer follows per day in the month
+        """
+        year = int(kwargs['year'])
+        month = int(kwargs['month'])
+        last_day = get_last_day_of_month(year, month)
+
+        data = []
+        for day in range(1, last_day):
+            date = datetime.date(year, month, day)
+            follows = FollowUser.objects.\
+                filter(follow_date__date=date, follower=request.user).count()
+            data.append([day, follows])
+
+        status = 200
+        data = [[1, 6.5], [2, 6.5], [3, 7], [4, 8], [5, 7.5], [6, 7], [7, 6.8], [8, 7], [9, 7.2], [10, 7], [11, 6.8], [12, 7]]
+        return Response(data, status)
+
+    @list_route(methods=['get'])
+    def following_groups(self, request, **kwargs):
+        """
+        Get the list of number of groups the customer follows per day in the month
+        """
+        year = int(kwargs['year'])
+        month = int(kwargs['month'])
+        last_day = get_last_day_of_month(year, month)
+
+        data = []
+        for day in range(1, last_day):
+            date = datetime.date(year, month, day)
+            follows = FollowGroup.objects.\
+                filter(follow_date__date=date, follower=request.user).count()
+            data.append([day, follows])
+
+        status = 200
+        data = [[0, 7], [1, 6.5], [2, 12.5], [3, 7], [4, 9], [5, 6], [6, 11], [7, 6.5], [8, 8], [9, 7], [10, 12]]
         return Response(data, status)
 
 
@@ -1145,3 +1211,10 @@ def index(request):
     """ A simple view, which presents only a starting template.
      It is an entry. Later should be migrate to static service like Nginx."""
     return render(request, 'index.html')
+
+
+def get_nickname(user):
+    if hasattr(user, 'vendor'):
+        return user.vendor.store.brand_name
+    else:
+        return user.visitor.username
