@@ -1107,26 +1107,11 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 class AnalyticsViewSet(viewsets.ViewSet):
     permission_classes = ()
 
-    # def get_serializer_class(self):
-    #     return serializers.ArticleListSerializer
-    #
-    # def get_queryset(self):
-    #     qs = Article.objects.all()
-    #     prefetch = Prefetch('photo_set', queryset=Photo.objects.all())
-    #
-    #     qs = qs.prefetch_related(prefetch)
-    #     return qs
-    #
     @list_route(methods=['get'])
-    def follow_users(self, request, *args, **kwargs):
-        print get_last_day_of_month(kwargs['year'], kwargs['month']), '###'
-        status = 200
-        data = [[1, 6.5], [2, 6.5], [3, 7], [4, 8], [5, 7.5], [6, 7],
-                [7, 6.8], [8, 7], [9, 7.2], [10, 7], [11, 6.8], [12, 7]]
-        return Response(data, status)
-
-    @list_route(methods=['get'])
-    def follow_groups(self, request, *args, **kwargs):
+    def following_users(self, request, **kwargs):
+        """
+        Get the list of number of users the customer follows per day in the month
+        """
         year = int(kwargs['year'])
         month = int(kwargs['month'])
         last_day = get_last_day_of_month(year, month)
@@ -1134,10 +1119,32 @@ class AnalyticsViewSet(viewsets.ViewSet):
         data = []
         for day in range(1, last_day):
             date = datetime.date(year, month, day)
-            follows = FollowGroup.objects.filter(follow_date__date=date).count()
+            follows = FollowUser.objects.\
+                filter(follow_date__date=date, follower=request.user).count()
             data.append([day, follows])
 
         status = 200
+        data = [[1, 6.5], [2, 6.5], [3, 7], [4, 8], [5, 7.5], [6, 7], [7, 6.8], [8, 7], [9, 7.2], [10, 7], [11, 6.8], [12, 7]]
+        return Response(data, status)
+
+    @list_route(methods=['get'])
+    def following_groups(self, request, **kwargs):
+        """
+        Get the list of number of groups the customer follows per day in the month
+        """
+        year = int(kwargs['year'])
+        month = int(kwargs['month'])
+        last_day = get_last_day_of_month(year, month)
+
+        data = []
+        for day in range(1, last_day):
+            date = datetime.date(year, month, day)
+            follows = FollowGroup.objects.\
+                filter(follow_date__date=date, follower=request.user).count()
+            data.append([day, follows])
+
+        status = 200
+        data = [[0, 7], [1, 6.5], [2, 12.5], [3, 7], [4, 9], [5, 6], [6, 11], [7, 6.5], [8, 8], [9, 7], [10, 12]]
         return Response(data, status)
 
 
