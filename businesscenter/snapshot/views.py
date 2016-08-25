@@ -1144,7 +1144,7 @@ class AnalyticsViewSet(viewsets.ViewSet):
             data.append([day, follows])
 
         status = 200
-        data = [[0, 7], [1, 6.5], [2, 12.5], [3, 7], [4, 9], [5, 6], [6, 11], [7, 6.5], [8, 8], [9, 7], [10, 12]]
+        # data = [[0, 7], [1, 6.5], [2, 12.5], [3, 7], [4, 9], [5, 6], [6, 11], [7, 6.5], [8, 8], [9, 7], [10, 12]]
         return Response(data, status)
 
 

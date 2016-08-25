@@ -1,19 +1,26 @@
 <div class="bg-light lter b-b wrapper-md">
-  <h1 class="m-n font-thin h3">Dashboard</h1>
+    <h1 class="m-n h3">Dashboard</h1>
+    <div style="margin-top: 10px;">
+        <span><b>Date: </b></span>
+        <select ng-model="year" ng-options="x for x in years" ng-change="date_change()">
+        </select> <span>/</span>
+        <select ng-model="month" ng-options="x for x in months" ng-click="date_change()">
+        </select>
+    </div>
 </div>
 <div class="wrapper-md">
-  <div ng-controller="CtrlFlotChart">
-    <div class="row" ng-repeat="graph_item in data">
-      <div class="col-md-12">
-        <div class="panel panel-default">
-          <div class="panel-heading font-bold">{{graph_item.label}}</div>
-          <div class="panel-body">
-            <div ui-jq="plot" ui-options="
+    <div ng-controller="CtrlFlotChart">
+        <div class="row" ng-repeat="graph_item in data">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading font-bold">{{ graph_item.label }}</div>
+                    <div class="panel-body">
+                        <div ui-jq="plot" ui-options="
               [
-                { data: {{graph_item.d}}, points: { show: true, radius: 6}, splines: { show: true, tension: 0.45, lineWidth: 3, fill: 0 } }
+                { data: {{ data[$index].d }}, points: { show: true, radius: 6}, splines: { show: true, tension: 0.45, lineWidth: 3, fill: 0 } }
               ], 
               {
-                colors: ['{{graph_item.color}}'],
+                colors: ['{{ graph_item.color }}'],
                 series: { shadowSize: 3 },
                 xaxis:{ 
                   font: { color: '#333' },
@@ -22,13 +29,13 @@
                 yaxis:{ font: { color: '#333' } },
                 grid: { hoverable: true, clickable: true, borderWidth: 0, color: '#ccc' },
                 tooltip: true,
-                tooltipOpts: { content: '{{graph_item.tick_desc}}',  defaultTheme: false, shifts: { x: 0, y: 20 } }
+                tooltipOpts: { content: '{{ graph_item.tick_desc }}',  defaultTheme: false, shifts: { x: 0, y: 20 } }
               }
-            " style="height:300px" >
+            " style="height:300px" ui-refresh="data[{{ $index }}].d">
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
