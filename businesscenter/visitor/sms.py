@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 import requests
 import datetime
@@ -8,12 +13,14 @@ import operator
 from django.conf import settings
 
 
+
 class TaoSMSAPI(object):
 
     def __init__(self, app_key=None, app_secret=None):
         self.url = 'http://gw.api.taobao.com/router/rest'
+        # TODO: fix. not working properly without direct parameters
         self.app_key = settings.TAO_SMS_KEY if not app_key else app_key
-        self.secret = settings.TAO_SMS_SECRET if not app_secret else app_secret
+        self.secret = settings.TAO_SMS_KEY if not app_secret else app_secret
 
     def get_payload(self, **kwargs):
         """ Do not forget sms_param"""
@@ -46,7 +53,7 @@ class TaoSMSAPI(object):
     def send(self, phone_number, sms_param):
         """ Send sms"""
         extra = {
-            'sms_param': sms_param,
+            'sms_param': sms_param.replace('"', '\"'),
             'sms_template_code': 'SMS_13500018',
             'partner_id': 'apidoc',
             'extend': '123456',
@@ -61,19 +68,22 @@ class TaoSMSAPI(object):
 
         r = requests.post(self.url, data=payload, headers=headers)
 
-        # assert r.status_code == 200
+        assert r.status_code == 200
 
         return r.json()
+
+    def send_code(self, phone_number, code):
+        """ Send a verification code """
+        sms_param = '{{"code":"{}","product":"@衣橱"}}'.format(code)
+        return self.send(phone_number, sms_param)
 
 if __name__ == '__main__':
     # TODO: remove before push
 
-    app_key = '23438643'
-    app_secret = '785f1713c9472a73596336a9f5e3eeeb'
     # 18510116627
     # 13521405982
-    sms_api = TaoSMSAPI(app_key, app_secret)
-    result = sms_api.send('18510116627',
-                          '{\"code\":\"1234\",\"product\":\"ATYICHU\"}')
+    # {\"code\":\"1234\",\"product\":\"ATYICHU\"}
+    sms_api = TaoSMSAPI('23438643', '785f1713c9472a73596336a9f5e3eeeb')
+    result = sms_api.send_code('18510116627', 4321)
 
     print (result)

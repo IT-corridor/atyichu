@@ -10,12 +10,16 @@ class PendingUserStore(object):
         self.pending = caches['pending']
 
     def add_by_sessionid(self, request, user):
-        """ Put user in the store """
+        """ Put user in the store,
+            returns a code
+         """
         request.session.cycle_key()
         sessionid = request.session.session_key
         code = random.randint(1000, 9999)
         mail_admins('Verification code', 'Code: {}'.format(code))
         self.pending.set(sessionid, (code, user), 120)
+        print(code)
+        return code
 
     def get_by_sessionid(self, sessionid, code):
         """ Get user by sessionid and code"""

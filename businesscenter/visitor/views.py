@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 
 import random
@@ -9,6 +11,7 @@ from django.contrib.auth import login, logout, authenticate, \
 from django.core.urlresolvers import reverse
 from django.core.mail import mail_admins
 from django.core.cache import cache
+from django.conf import settings
 from django.http import HttpResponseRedirect, JsonResponse
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
@@ -340,11 +343,14 @@ class ProfileViewSet(viewsets.GenericViewSet):
             # create a session key manually, because django does not create
             #  a session for anonymous user
             pending_store = PendingUserStore()
-            pending_store.add_by_sessionid(request, user)
-            phone = s.data['phone'].strip('+')
+            code = pending_store.add_by_sessionid(request, user)
+            phone = s.data['phone']
         except Exception as e:
             data = {'error': e.message}
         else:
+            sms_api = TaoSMSAPI(settings.TAO_SMS_KEY, settings.TAO_SMS_SECRET)
+            r = sms_api.send_code(phone, code)
+            print(r)
             status = 200
             data = {'status': 'sent'}
         return Response(data, status=status)
