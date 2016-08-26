@@ -1148,8 +1148,8 @@ class AnalyticsViewSet(viewsets.ViewSet):
             data_sum.append([day, follows_sum])
 
         status = 200
-        data_sum = [[1, 12 - month], [2, 13], [3, 20], [4, 28], [5, 28], [6, 32], [7, 36], [8, 41],
-                    [9, 41], [10, 42], [11, 45], [12, 51]]
+        # data_sum = [[1, 12 - month], [2, 13], [3, 20], [4, 28], [5, 28], [6, 32], [7, 36], [8, 41],
+        #             [9, 41], [10, 42], [11, 45], [12, 51]]
         return Response(data_sum, status)
 
     @list_route(methods=['get'])
