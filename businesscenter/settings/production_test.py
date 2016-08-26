@@ -40,7 +40,18 @@ CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
         'LOCATION': '/var/run/redis/redis.sock',
+        'OPTIONS': {
+            'DB': 0,
+        },
     },
+    'pending': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '/var/run/redis/redis.sock',
+        'OPTIONS': {
+            'DB': 1,
+        },
+    },
+
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'

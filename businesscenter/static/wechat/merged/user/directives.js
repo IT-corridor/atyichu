@@ -51,10 +51,14 @@ user.controller('LoginInstanceCtrl', ['$scope','$rootScope', '$translate', '$uib
                                         function ($scope, $rootScope, $translate, $uibModalInstance, User) {
 
     $scope.data = {};
-    $scope.authenticate = function(phone, password){
-        User.login($scope.data,
+    $scope.data_two = {};
+    $scope.sent = false;
+
+    $scope.auth_step_one = function(){
+        User.login_start($scope.data,
             function(success){
-                $uibModalInstance.close(success);
+                //$uibModalInstance.close(success);
+                $scope.sent = true;
             },
             function(error){
                 if (error.data instanceof Array){
@@ -67,8 +71,29 @@ user.controller('LoginInstanceCtrl', ['$scope','$rootScope', '$translate', '$uib
                 }
             }
         );
-        //
-    }
+    };
+
+    $scope.auth_step_two = function(){
+        if ($scope.sent){
+            console.log($scope.data_two);
+            User.login_end($scope.data_two,
+                function(success){
+                    $uibModalInstance.close(success);
+                },
+                function(error){
+                    if (error.data instanceof Array){
+                        $scope.error = error.data;
+                    }
+                    else{
+                        $translate('AUTHENTICATION.ERROR').then(function (msg) {
+                            $scope.detail = msg;
+                        });
+                    }
+                }
+            );
+        }
+    };
+
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     }

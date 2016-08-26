@@ -24,8 +24,12 @@ LOCALE_PATHS = (os.path.join(BASE_DIR, 'locale'),)
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(BASE_DIR, 'tmp'),
-    }
+        'LOCATION': os.path.join(BASE_DIR, 'tmp', 'default'),
+    },
+    'pending': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': os.path.join(BASE_DIR, 'tmp', 'pending'),
+        }
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'

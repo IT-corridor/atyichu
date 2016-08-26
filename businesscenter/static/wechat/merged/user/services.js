@@ -10,5 +10,7 @@ angular.module('user.services', ['ngResource'])
             edit: {method: 'PATCH', params: {action: 'edit'}, responseType: 'json'},
             change_password: {method: 'POST', params: {action: 'change_password'}, responseType: 'json'},
             login: {method: 'POST', params: {action: 'login'}, responseType: 'json'},
+            login_start: {method: 'POST', params: {action: 'login_start'}, responseType: 'json'},
+            login_end: {method: 'POST', params: {action: 'login_end'}, responseType: 'json'},
     });
 }]);
