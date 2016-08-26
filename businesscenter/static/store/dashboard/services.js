@@ -3,7 +3,7 @@ angular.module('dashboard.services', ['ngResource'])
     .factory('Dashboard', ['$resource', 'source_path',
         function ($resource, source_path) {
             return $resource(source_path + 'dashboard/:year/:month/:action/', {}, {
-                following_groups: {method: 'GET', params: {action: 'following_groups'}, responseType: 'json', isArray: true},
-                following_users: {method: 'GET', params: {action: 'following_users'}, responseType: 'json', isArray: true},
+                group_followers: {method: 'GET', params: {action: 'group_followers'}, responseType: 'json'},
+                store_followers: {method: 'GET', params: {action: 'store_followers'}, responseType: 'json', isArray: true},
             });
         }]);

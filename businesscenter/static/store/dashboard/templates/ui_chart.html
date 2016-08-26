@@ -10,14 +10,14 @@
 </div>
 <div class="wrapper-md">
     <div ng-controller="CtrlFlotChart">
-        <div class="row" ng-repeat="graph_item in data">
+        <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-default">
-                    <div class="panel-heading font-bold">{{ graph_item.label }}</div>
+                    <div class="panel-heading font-bold">Store Followers ( {{ year }} / {{ month }})</div>
                     <div class="panel-body">
                         <div ui-jq="plot" ui-options="
               [
-                { data: {{ data[$index].d }}, points: { show: true, radius: 6}, splines: { show: true, tension: 0.45, lineWidth: 3, fill: 0 } }
+                { data: {{ data.store_followers }}, points: { show: true, radius: 6}, splines: { show: true, tension: 0.45, lineWidth: 3, fill: 0 } }
               ], 
               {
                 colors: ['{{ graph_item.color }}'],
@@ -29,13 +29,85 @@
                 yaxis:{ font: { color: '#333' } },
                 grid: { hoverable: true, clickable: true, borderWidth: 0, color: '#ccc' },
                 tooltip: true,
-                tooltipOpts: { content: '{{ graph_item.tick_desc }}',  defaultTheme: false, shifts: { x: 0, y: 20 } }
+                tooltipOpts: { content: '%y.0 user(s) followed your store on %x.0th',  defaultTheme: false, shifts: { x: 0, y: 20 } }
               }
-            " style="height:300px" ui-refresh="data[{{ $index }}].d">
+            " style="height:300px" ui-refresh="data.store_followers">
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading font-bold">
+                        Group Followers ( {{ year }} / {{ month }})
+                        <select ng-model="data.group_now" ng-options="x for x in data.groups">
+                        </select>
+                    </div>
+                    <div class="panel-body">
+                        <div ui-jq="plot" ui-options="
+              [
+                { data: {{ data.group_followers[data.group_now] }}, points: { show: true, radius: 6}, splines: { show: true, tension: 0.45, lineWidth: 3, fill: 0 } }
+              ],
+              {
+                colors: ['#7266ba'],
+                series: { shadowSize: 3 },
+                xaxis:{
+                  font: { color: '#333' },
+                  position: 'bottom',
+                },
+                yaxis:{ font: { color: '#333' } },
+                grid: { hoverable: true, clickable: true, borderWidth: 0, color: '#ccc' },
+                tooltip: true,
+                tooltipOpts: { content: '%y.0 user(s) followed your group on %x.0th',  defaultTheme: false, shifts: { x: 0, y: 20 } }
+              }
+            " style="height:300px" ui-refresh="data.group_followers[data.group_now]">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading font-bold">Store Followers ( {{ year }} / {{ month }})</div>
+                    <table st-table="rowCollectionBasic" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Followers</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="row in data.store_followers" st-select-row="row">
+                            <td>{{ row[0] }}</td>
+                            <td>{{ row[1] }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading font-bold">
+                        Group Followers ( {{ year }} / {{ month }})
+                        <select ng-model="data.group_now" ng-options="x for x in data.groups">
+                        </select>
+                    </div>
+                    <table st-table="rowCollectionBasic" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Followers</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="row in data.group_followers[data.group_now]" st-select-row="row">
+                            <td>{{ row[0] }}</td>
+                            <td>{{ row[1] }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 </div>
