@@ -22,7 +22,7 @@ def get_last_day_of_month(year, month):
     """
     Get the available last day of month for dashboard
     :param year: integer e.g) 1981
-    :param month: integer e.g) 03
+    :param month: integer e.g) 3, 12
     :return: valid value for past
     """
     today = datetime.datetime.now().date()

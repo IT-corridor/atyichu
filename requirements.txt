@@ -12,3 +12,5 @@ django-rest-swagger==0.3.10
 docutils
 django-debug-toolbar
 pusher
+pytz
+

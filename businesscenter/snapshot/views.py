@@ -310,7 +310,6 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                      Comment.objects.select_related('author__visitor'))
         qs = qs.prefetch_related(p)
         if self.request.method == 'GET' and self.kwargs.get('pk'):
-
             qs = qs.prefetch_related('link_set__commodity__kind',
                                      'link_set__commodity__color')
         return qs
@@ -360,8 +359,8 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         # SENDING A request for nitification to pusher service,
         # which will push the ANDROID APP.
         send_json, receive_info = trigger_notification('nf_channel_{}'.format(visitor.id),
-                                               'new_notification',
-                                               'New photo ({}) is created!'.format(photo.id))
+                                                       'new_notification',
+                                                       'New photo ({}) is created!'.format(photo.id))
 
         # log.info('umeng json: {}, {}'.format(send_json, receive_info))
         return Response(data={'id': photo.id}, status=201)
@@ -501,7 +500,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         if anything is  wrong. """
         obj = self.get_object()
         try:
-            Like.objects.get(visitor_id=request.user.id, photo_id=obj.id)\
+            Like.objects.get(visitor_id=request.user.id, photo_id=obj.id) \
                 .delete()
             return Response(status=204)
         except Exception:
@@ -614,7 +613,6 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             sliced = commodities[:lim]
             response_data = []
             for n, i in enumerate(sliced):
-
                 data = {'commodity': i, 'photo': pk}
                 serializer = serializers.LinkSerializer(data=data)
                 serializer.is_valid(True)
@@ -659,10 +657,10 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             This view is not tested yet.
         """
         obj = self.get_object()
-        mc = 15    # minimal confidence
-        stamp_ids = obj.stamps.filter(photostamp__confidence__gte=mc)\
-                       .order_by('-pk')\
-                       .values_list('id', flat=True)
+        mc = 15  # minimal confidence
+        stamp_ids = obj.stamps.filter(photostamp__confidence__gte=mc) \
+            .order_by('-pk') \
+            .values_list('id', flat=True)
 
         qs = Photo.a_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store',
@@ -747,19 +745,19 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         """ Pretty complex queryset for retreiving groups """
         visitor = self.request.user
-        qs = Group.objects.select_related('owner__visitor').\
+        qs = Group.objects.select_related('owner__visitor'). \
             prefetch_related('tag_set', 'member_set',
                              'followgroup_set')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             prefetch = Prefetch('photo_set',
                                 queryset=Photo.objects.
                                 select_related('original__group',
-                                               'original__visitor',))
+                                               'original__visitor', ))
 
             qs = qs.prefetch_related(prefetch)
             qs = qs.filter(is_private=False) \
-                   .exclude(owner=visitor, member__visitor=visitor) \
-                   .distinct()
+                .exclude(owner=visitor, member__visitor=visitor) \
+                .distinct()
         else:
             # TODO: optimize for detail view
             # TODO: something redundant with prefech related
@@ -1131,43 +1129,111 @@ class AnalyticsViewSet(viewsets.ViewSet):
     permission_classes = ()
 
     @list_route(methods=['get'])
-    def following_users(self, request, **kwargs):
+    def store_followers(self, request, **kwargs):
         """
-        Get the list of number of users the customer follows per day in the month
+        Get the list of number of users who follow your store per day in the month
+        Return accumulated list.
         """
         year = int(kwargs['year'])
         month = int(kwargs['month'])
         last_day = get_last_day_of_month(year, month)
 
-        data = []
-        for day in range(1, last_day):
+        data_sum = []
+        follows_sum = 0
+        for day in range(1, last_day+1):
             date = datetime.date(year, month, day)
-            follows = FollowUser.objects.\
-                filter(follow_date__date=date, follower=request.user).count()
-            data.append([day, follows])
+            follows = FollowUser.objects. \
+                filter(follow_date__date=date, user=request.user).count()
+            follows_sum = follows_sum + follows
+            data_sum.append([day, follows_sum])
 
         status = 200
-        data = [[1, 6.5], [2, 6.5], [3, 7], [4, 8], [5, 7.5], [6, 7], [7, 6.8], [8, 7], [9, 7.2], [10, 7], [11, 6.8], [12, 7]]
+        data_sum = [[1, 12 - month], [2, 13], [3, 20], [4, 28], [5, 28], [6, 32], [7, 36], [8, 41],
+                    [9, 41], [10, 42], [11, 45], [12, 51]]
+        return Response(data_sum, status)
+
+    @list_route(methods=['get'])
+    def group_followers(self, request, **kwargs):
+        """
+        Get the list of number of users who follow each group per day in the month
+        Return accumulated list.
+        """
+        year = int(kwargs['year'])
+        month = int(kwargs['month'])
+        last_day = get_last_day_of_month(year, month)
+
+        data = {}
+        groups = Group.objects.filter(owner=request.user)
+        for group in groups:
+            data_sum = []
+            followers_sum = 0
+            for day in range(1, last_day+1):
+                date = datetime.date(year, month, day)
+                follows = FollowGroup.objects. \
+                    filter(follow_date__date=date, group=group).count()
+                followers_sum = followers_sum + follows
+                data_sum.append([day, followers_sum])
+            data[group.title] = data_sum
+
+        status = 200
+        # data = {'My Wardrobe': [[0, 12-month], [1, 6.5], [2, 12.5], [3, 7], [4, 9],
+        #                         [5, 6], [6, 11], [7, 6.5], [8, 8], [9, 7], [10, 12]]}
         return Response(data, status)
 
     @list_route(methods=['get'])
-    def following_groups(self, request, **kwargs):
+    def photo_fans(self, request, **kwargs):
         """
-        Get the list of number of groups the customer follows per day in the month
+        Get the list of number of users who like your each photo per day in the month
+        Return accumulated list.
         """
         year = int(kwargs['year'])
         month = int(kwargs['month'])
         last_day = get_last_day_of_month(year, month)
 
-        data = []
-        for day in range(1, last_day):
-            date = datetime.date(year, month, day)
-            follows = FollowGroup.objects.\
-                filter(follow_date__date=date, follower=request.user).count()
-            data.append([day, follows])
+        data = {}
+        # filter by owner
+        photos = Photo.objects.filter(visitor=request.user)
+        for photo in photos:
+            data_sum = []
+            followers_sum = 0
+            for day in range(1, last_day + 1):
+                date = datetime.date(year, month, day)
+                follows = Like.objects. \
+                    filter(like_date__date=date, photo=photo).count()
+                followers_sum = followers_sum + follows
+                data_sum.append([day, followers_sum])
+            title = photo.title or 'Untitled'
+            data[title] = data_sum
 
         status = 200
-        data = [[0, 7], [1, 6.5], [2, 12.5], [3, 7], [4, 9], [5, 6], [6, 11], [7, 6.5], [8, 8], [9, 7], [10, 12]]
+        return Response(data, status)
+
+    @list_route(methods=['get'])
+    def photo_clones(self, request, **kwargs):
+        """
+        Get the list of number of photos who clone your each photo per day in the month
+        Return accumulated list.
+        """
+        year = int(kwargs['year'])
+        month = int(kwargs['month'])
+        last_day = get_last_day_of_month(year, month)
+
+        data = {}
+        # filter by creator
+        photos = Photo.objects.filter(creator=request.user)
+        for photo in photos:
+            data_sum = []
+            followers_sum = 0
+            for day in range(1, last_day + 1):
+                date = datetime.date(year, month, day)
+                follows = Photo.objects. \
+                    filter(create_date__date=date, original=photo).count()
+                followers_sum = followers_sum + follows
+                data_sum.append([day, followers_sum])
+            title = photo.title or 'Untitled'
+            data[title] = data_sum
+
+        status = 200
         return Response(data, status)
 
 
