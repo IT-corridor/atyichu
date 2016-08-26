@@ -36,8 +36,25 @@ DATABASES = {
         #'ATOMIC_REQUESTS': True,
     }
 }
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '/var/run/redis/redis.sock',
+        'OPTIONS': {
+            'DB': 0,
+        },
+    },
+    'pending': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '/var/run/redis/redis.sock',
+        'OPTIONS': {
+            'DB': 1,
+        },
+    },
 
-# SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+}
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 # Static files will be serving by the proxy server
 # and it have to be outside of the project root
 
@@ -59,3 +76,6 @@ WEIXIN_QR_SECRET = data['WEIXIN_QR_SECRET']
 IMAGGA_KEY = data['IMAGGA_KEY']
 IMAGGA_SECRET = data['IMAGGA_SECRET']
 IMAGGA_LANG = 'zh_chs'
+
+TAO_SMS_KEY = data['TAO_SMS_KEY']
+TAO_SMS_SECRET = data['TAO_SMS_KEY']

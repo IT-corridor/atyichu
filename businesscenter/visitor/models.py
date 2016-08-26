@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from utils.validators import validate_weixin, phone_regex
+from utils.validators import validate_weixin, china_phone
 from utils.validators import SizeValidator
 from utils.fields import EmailNullField, CharNullField
 
@@ -23,7 +23,7 @@ class Visitor(models.Model):
     # this username is NOT unique
     username = models.CharField(_('Username'), max_length=30, blank=True)
     phone = CharNullField(_('Phone'), max_length=16, blank=True, null=True,
-                          validators=[phone_regex], unique=True, default=None)
+                          validators=[china_phone], unique=True, default=None)
     email = EmailNullField(_('Email'), unique=True, blank=True, null=True,
                            default=None)
 

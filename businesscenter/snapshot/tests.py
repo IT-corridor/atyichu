@@ -48,8 +48,8 @@ class MirrorTests(APITestCase):
         user_1 = User.objects.create(username='Nikolay')
         user_2 = User.objects.create(username='Jack')
 
-        Visitor.objects.create(user=user_1, **visitor_data_1)
-        Visitor.objects.create(user=user_2, **visitor_data_2)
+        Visitor.objects.create(user=user_1)
+        Visitor.objects.create(user=user_2)
 
         cls.vendor_data_1 = {'weixin': 'oRFOiwzjygVD6hwtyMFUZCZ299bo'}
         cls.vendor_data_2 = {'weixin': 'oRFOiwzjygVD6hwtyMFUZCZ299b1'}
@@ -183,13 +183,13 @@ class GroupTests(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.owner = User.objects.create(username="Nikolay")
-        user_1 = Visitor.objects.create(user=cls.owner, **visitor_data_1)
+        user_1 = Visitor.objects.create(user=cls.owner)
 
         cls.member = User.objects.create(username="Jack")
-        user_2 = Visitor.objects.create(user=cls.member, **visitor_data_2)
+        user_2 = Visitor.objects.create(user=cls.member)
 
         cls.member_2 = User.objects.create(username="Peter")
-        user_3 = Visitor.objects.create(user=cls.member_2, **visitor_data_3)
+        user_3 = Visitor.objects.create(user=cls.member_2)
 
         cls.group = Group.objects.create(owner=cls.owner, title='group 0')
         cls.group_private = Group.objects.create(owner=cls.owner, title='G 0',
@@ -504,7 +504,7 @@ class SnapshotVendorTests(APITestCase):
         vendor_3 = Vendor.objects.create(user=cls.user_3)
 
         cls.visitor = User.objects.create(username="Peter")
-        Visitor.objects.create(user=cls.visitor, **visitor_data_3)
+        Visitor.objects.create(user=cls.visitor)
 
         state = State.objects.create(title='Beijing')
         city = City.objects.create(title='Beijing', state=state)

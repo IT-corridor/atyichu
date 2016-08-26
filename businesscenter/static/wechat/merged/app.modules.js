@@ -246,6 +246,7 @@ app.config(['$translateProvider', function($translateProvider) {
                 'PASSWORD': 'Password',
                 'NEW_PASSWORD': 'New password',
                 'CONFIRM_PASSWORD': 'Confirm password',
+                'CODE': 'Verification code',
             },
             'ME': {
                 'HEADER': 'My profile',
@@ -418,6 +419,7 @@ app.config(['$translateProvider', function($translateProvider) {
                 'PASSWORD': 'Password',
                 'NEW_PASSWORD': 'New password',
                 'CONFIRM_PASSWORD': 'Confirm password',
+                'CODE': 'Verification code',
             },
             'ME': {
                 'HEADER': 'My profile',
