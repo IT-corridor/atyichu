@@ -1132,7 +1132,7 @@ class AnalyticsViewSet(viewsets.ViewSet):
     def store_followers(self, request, **kwargs):
         """
         Get the list of number of users who follow your store per day in the month
-        Return list of standard list and accumulated list.
+        Return accumulated list.
         """
         year = int(kwargs['year'])
         month = int(kwargs['month'])
@@ -1140,7 +1140,7 @@ class AnalyticsViewSet(viewsets.ViewSet):
 
         data_sum = []
         follows_sum = 0
-        for day in range(1, last_day):
+        for day in range(1, last_day+1):
             date = datetime.date(year, month, day)
             follows = FollowUser.objects. \
                 filter(follow_date__date=date, user=request.user).count()
@@ -1156,7 +1156,7 @@ class AnalyticsViewSet(viewsets.ViewSet):
     def group_followers(self, request, **kwargs):
         """
         Get the list of number of users who follow each group per day in the month
-        Return list of standard list and accumulated list.
+        Return accumulated list.
         """
         year = int(kwargs['year'])
         month = int(kwargs['month'])
@@ -1167,7 +1167,7 @@ class AnalyticsViewSet(viewsets.ViewSet):
         for group in groups:
             data_sum = []
             followers_sum = 0
-            for day in range(1, last_day):
+            for day in range(1, last_day+1):
                 date = datetime.date(year, month, day)
                 follows = FollowGroup.objects. \
                     filter(follow_date__date=date, group=group).count()
@@ -1178,6 +1178,62 @@ class AnalyticsViewSet(viewsets.ViewSet):
         status = 200
         # data = {'My Wardrobe': [[0, 12-month], [1, 6.5], [2, 12.5], [3, 7], [4, 9],
         #                         [5, 6], [6, 11], [7, 6.5], [8, 8], [9, 7], [10, 12]]}
+        return Response(data, status)
+
+    @list_route(methods=['get'])
+    def photo_fans(self, request, **kwargs):
+        """
+        Get the list of number of users who like your each photo per day in the month
+        Return accumulated list.
+        """
+        year = int(kwargs['year'])
+        month = int(kwargs['month'])
+        last_day = get_last_day_of_month(year, month)
+
+        data = {}
+        # filter by owner
+        photos = Photo.objects.filter(visitor=request.user)
+        for photo in photos:
+            data_sum = []
+            followers_sum = 0
+            for day in range(1, last_day + 1):
+                date = datetime.date(year, month, day)
+                follows = Like.objects. \
+                    filter(like_date__date=date, photo=photo).count()
+                followers_sum = followers_sum + follows
+                data_sum.append([day, followers_sum])
+            title = photo.title or 'Untitled'
+            data[title] = data_sum
+
+        status = 200
+        return Response(data, status)
+
+    @list_route(methods=['get'])
+    def photo_clones(self, request, **kwargs):
+        """
+        Get the list of number of photos who clone your each photo per day in the month
+        Return accumulated list.
+        """
+        year = int(kwargs['year'])
+        month = int(kwargs['month'])
+        last_day = get_last_day_of_month(year, month)
+
+        data = {}
+        # filter by creator
+        photos = Photo.objects.filter(creator=request.user)
+        for photo in photos:
+            data_sum = []
+            followers_sum = 0
+            for day in range(1, last_day + 1):
+                date = datetime.date(year, month, day)
+                follows = Photo.objects. \
+                    filter(create_date__date=date, original=photo).count()
+                followers_sum = followers_sum + follows
+                data_sum.append([day, followers_sum])
+            title = photo.title or 'Untitled'
+            data[title] = data_sum
+
+        status = 200
         return Response(data, status)
 
 
