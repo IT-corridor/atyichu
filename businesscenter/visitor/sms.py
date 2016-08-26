@@ -51,7 +51,7 @@ class TaoSMSAPI(object):
             'partner_id': 'apidoc',
             'extend': '123456',
             'rec_num': phone_number,
-            'sms_free_sign_name': '阿里大于',
+            'sms_free_sign_name': '李金星',
         }
         payload = self.get_payload(**extra)
 
@@ -70,9 +70,10 @@ if __name__ == '__main__':
 
     app_key = '23438643'
     app_secret = '785f1713c9472a73596336a9f5e3eeeb'
-
+    # 18510116627
+    # 13521405982
     sms_api = TaoSMSAPI(app_key, app_secret)
-    result = sms_api.send('13521405982',
+    result = sms_api.send('18510116627',
                           '{\"code\":\"1234\",\"product\":\"ATYICHU\"}')
 
     print (result)

@@ -36,8 +36,14 @@ DATABASES = {
         #'ATOMIC_REQUESTS': True,
     }
 }
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '/var/run/redis/redis.sock',
+    },
+}
 
-# SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 # Static files will be serving by the proxy server
 # and it have to be outside of the project root
 
