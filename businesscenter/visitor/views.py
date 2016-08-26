@@ -350,6 +350,7 @@ class ProfileViewSet(viewsets.GenericViewSet):
         else:
             sms_api = TaoSMSAPI(settings.TAO_SMS_KEY, settings.TAO_SMS_SECRET)
             r = sms_api.send_code(phone, code)
+            mail_admins('tao response', r)
             print(r)
             status = 200
             data = {'status': 'sent'}

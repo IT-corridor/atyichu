@@ -117,3 +117,4 @@ crashlytics-build.properties
 * .json
 /businesscenter/tmp/default/*
 /businesscenter/tmp/pending/*
+/deploy/config.json
