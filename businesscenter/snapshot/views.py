@@ -1281,6 +1281,6 @@ def index(request):
 
 def get_nickname(user):
     if hasattr(user, 'vendor'):
-        return user.vendor.store.brand_name
+        return user.vendor.store.brand_name or user.username
     else:
-        return user.visitor.username
+        return user.visitor.username or user.username
