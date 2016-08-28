@@ -119,7 +119,7 @@ def openid(request):
     """ OAuth2 handler for weixin """
     redirect = reverse('index')
     qr = request.GET.get("qr", None)
-
+    mail_admins('debug openid', 'start')
     response = HttpResponseRedirect(redirect + '#!/')
 
     if request.user.is_authenticated():
@@ -138,11 +138,13 @@ def openid(request):
         backend = 'weixin'
     try:
         token_data = weixin_oauth.get_access_token(code)
+        mail_admins('debug openid', str(token_data))
     except TypeError:
         return JsonResponse({'error': _('You got error trying to get openid')})
 
     user_info = weixin_oauth.get_user_info(token_data['access_token'],
                                            token_data['openid'])
+    mail_admins('debug openid', str(user_info))
     data = {'avatar_url': user_info.get('headimgurl'),
             'nickname': user_info.get('nickname'),
             'unionid': token_data['unionid'],
@@ -180,6 +182,7 @@ def openid(request):
     if not extra:
         extra = visitor.weixin.visitorextra_set.get(backend=backend)
     user = authenticate(weixin=extra.openid, backend=backend)
+    mail_admins('debug user', str(user))
     login(request, user)
     return response
 
