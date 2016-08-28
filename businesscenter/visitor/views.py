@@ -119,14 +119,12 @@ def openid(request):
     """ OAuth2 handler for weixin """
     redirect = reverse('index')
     qr = request.GET.get("qr", None)
-    mail_admins('debug openid', 'start')
     response = HttpResponseRedirect(redirect + '#!/')
 
     if request.user.is_authenticated():
         return response
 
     code = request.GET.get("code", None)
-
     if not code:
         return JsonResponse({'error': _('You don`t have weixin code.')})
 
@@ -138,13 +136,11 @@ def openid(request):
         backend = 'weixin'
     try:
         token_data = weixin_oauth.get_access_token(code)
-        mail_admins('debug openid', str(token_data))
     except TypeError:
         return JsonResponse({'error': _('You got error trying to get openid')})
 
     user_info = weixin_oauth.get_user_info(token_data['access_token'],
                                            token_data['openid'])
-    mail_admins('debug openid', str(user_info))
     data = {'avatar_url': user_info.get('headimgurl'),
             'nickname': user_info.get('nickname'),
             'unionid': token_data['unionid'],
@@ -182,7 +178,6 @@ def openid(request):
     if not extra:
         extra = visitor.weixin.visitorextra_set.get(backend=backend)
     user = authenticate(weixin=extra.openid, backend=backend)
-    mail_admins('debug user', str(user))
     login(request, user)
     return response
 
@@ -200,7 +195,7 @@ def update_visitor(request):
         wx = WeixinBackend()
         backend = 'weixin'
     visitor = request.user.visitor
-    extra = VisitorExtra.objects.get(openid=visitor.weixin, backend=backend)
+    extra = VisitorExtra.objects.get(weixin=visitor.weixin, backend=backend)
     data = {'access_token': extra.access_token,
             'openid': extra.openid}
     if extra.is_expired():
@@ -354,7 +349,6 @@ class ProfileViewSet(viewsets.GenericViewSet):
             sms_api = TaoSMSAPI(settings.TAO_SMS_KEY, settings.TAO_SMS_SECRET)
             r = sms_api.send_code(phone, code)
             mail_admins('tao response', str(r))
-            print(r)
             status = 200
             data = {'status': 'sent'}
         return Response(data, status=status)
