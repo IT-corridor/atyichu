@@ -51,6 +51,20 @@ CACHES = {
             'DB': 1,
         },
     },
+    'pending_phones': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '/var/run/redis/redis.sock',
+        'OPTIONS': {
+            'DB': 2,
+        },
+    },
+    'verify_phones': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '/var/run/redis/redis.sock',
+        'OPTIONS': {
+            'DB': 3,
+        },
+    },
 
 }
 

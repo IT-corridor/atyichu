@@ -21,11 +21,12 @@ from rest_framework.decorators import api_view, permission_classes, list_route
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 from .serializers import VisitorSerializer, VisitorExtraSerializer,\
-    VisitorCreateSerializer, VisitorProfileSerializer, VisitorLoginSerializer
+    VisitorCreateSerializer, VisitorProfileSerializer, VisitorLoginSerializer,\
+    PhoneSerializer, CodeSerializer
 from .oauth2 import WeixinBackend, WeixinQRBackend
 from .models import Visitor, VisitorExtra
 from .permissions import IsVisitorSimple, IsVisitorOrReadOnly
-from .extra_handlers import PendingUserStore
+from .extra_handlers import PendingUserVault, PhonesVault
 from .sms import TaoSMSAPI
 from utils.serializers import UserPasswordSerializer
 
@@ -253,6 +254,8 @@ class ProfileViewSet(viewsets.GenericViewSet):
             'login_start': VisitorLoginSerializer,
             'login_end': VisitorLoginSerializer,
             'me': VisitorProfileSerializer,
+            'send_code': PhoneSerializer,
+            'verify_code': CodeSerializer,
         }
         return serializer_map[self.action]
 
@@ -274,7 +277,15 @@ class ProfileViewSet(viewsets.GenericViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        """ Create user. Redirect to get_me"""
+        """ Create user. Redirect to get_me.
+        SIGN UP: Step 3
+        Important: this handler will take phone value only from cache.
+        """
+        data = request.data
+        sessionid = request.session.session_key
+        phones_vault = PhonesVault()
+        data['phone'] = phones_vault.get_verify_by_sessionid(sessionid)
+        print data['phone']
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         visitor = serializer.save()
@@ -342,7 +353,7 @@ class ProfileViewSet(viewsets.GenericViewSet):
                                 password=s.data['password'])
             # create a session key manually, because django does not create
             #  a session for anonymous user
-            pending_store = PendingUserStore()
+            pending_store = PendingUserVault()
             code = pending_store.add_by_sessionid(request, user)
             phone = s.data['phone']
         except Exception as e:
@@ -350,8 +361,11 @@ class ProfileViewSet(viewsets.GenericViewSet):
         else:
             sms_api = TaoSMSAPI(settings.TAO_SMS_KEY, settings.TAO_SMS_SECRET)
             r = sms_api.send_code(phone, code)
-            status = 200
-            data = {'status': 'sent'}
+            if r:
+                status = 200
+                data = {'status': 'sent'}
+            else:
+                raise ValidationError({'code': [_('Code has not been sent.')]})
         return Response(data, status=status)
 
     @list_route(methods=['post'])
@@ -361,8 +375,10 @@ class ProfileViewSet(viewsets.GenericViewSet):
             code = request.data['code']
             sessionid = request.session.session_key
 
-            pending_store = PendingUserStore()
+            pending_store = PendingUserVault()
             user = pending_store.get_by_sessionid(sessionid, code)
+            if user is None:
+                raise ValidationError({'detail': [_('Code not sent.')]})
         except KeyError:
             raise ValidationError({'detail':
                                        _('Verification code is required!')})
@@ -370,3 +386,42 @@ class ProfileViewSet(viewsets.GenericViewSet):
             login(request, user)
             url = reverse('visitor:me')
             return HttpResponseRedirect(url)
+
+    @list_route(methods=['post'])
+    def send_code(self, request):
+        """ Sending code to the phone. Required for the SIGN UP.
+        SIGN UP: Step 1 """
+        serializer = PhoneSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        phone = serializer.data['phone']
+        phones_vault = PhonesVault()
+        code = phones_vault.add_by_sessionid(request, phone)
+        sms_api = TaoSMSAPI(settings.TAO_SMS_KEY, settings.TAO_SMS_SECRET)
+        r = sms_api.send_code(phone, code)
+        if r:
+            data = {'status': 'sent'}
+            return Response(data, 200)
+        else:
+            raise ValidationError({'detail': [_('Code has not been sent.')]})
+
+    @list_route(methods=['post'])
+    def verify_code(self, request):
+        """ Verifying sms code. Required for the SIGN UP.
+        SIGN UP: Step 2 """
+        serializer = CodeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        code = serializer.data['code']
+        sessionid = request.session.session_key
+        phones_vault = PhonesVault()
+        phone = phones_vault.get_pending_by_sessionid(sessionid, code)
+        if phone is None:
+            raise ValidationError({'code': [_('Code is wrong or outdated.')]})
+
+        data = {'status': 'verified'}
+        return Response(data, 200)
+
+
+
+
+
+

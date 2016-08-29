@@ -27,9 +27,17 @@ CACHES = {
         'LOCATION': os.path.join(BASE_DIR, 'tmp', 'default'),
     },
     'pending': {
-            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-            'LOCATION': os.path.join(BASE_DIR, 'tmp', 'pending'),
-        }
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'tmp', 'pending'),
+    },
+    'pending_phones': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'tmp', 'pending_phones'),
+    },
+    'verify_phones': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'tmp', 'verify_phones'),
+    }
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
