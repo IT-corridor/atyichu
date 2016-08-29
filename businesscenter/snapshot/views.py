@@ -502,6 +502,12 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         try:
             Like.objects.get(visitor_id=request.user.id, photo_id=obj.id) \
                 .delete()
+            # send notification to the owner
+            msg = "{} does not like your photo({}) any more!" \
+                .format(get_nickname(request.user), obj.title)
+
+            trigger_notification('nf_channel_{}'.format(obj.visitor_id),
+                                 'new_notification', msg)
             return Response(status=204)
         except Exception:
             raise ValidationError({'detail': _('You can dislike it.')})
