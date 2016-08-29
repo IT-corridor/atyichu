@@ -99,62 +99,30 @@ user.controller('LoginInstanceCtrl', ['$scope','$rootScope', '$translate', '$uib
     }
 }]);
 
-user.controller('RegInstanceCtrl', ['$scope','$rootScope', '$translate', '$uibModalInstance' , 'MultipartForm', 'User',
-                                        function ($scope, $rootScope, $translate, $uibModalInstance, MultipartForm, User) {
+user.controller('RegInstanceCtrl', ['$scope','$rootScope', '$translate', '$uibModalInstance' , 'MultipartForm',
+                                        function ($scope, $rootScope, $translate, $uibModalInstance, MultipartForm) {
     $scope.wait = false;
-    $scope.step = 0;
-
-    $scope.register = function(){
-        if ($scope.step == 2){
-            $scope.wait = true;
-            var url = '/visitor/profile/';
-            MultipartForm('POST', '#reg_form', url).then(function(response) {
-                    $uibModalInstance.close(response.data);
-                    $scope.wait = false;
-                },
-                error_handler
-            );
-        }
-    };
-
-    $scope.send_code = function(phone){
-        /* Sends a random code to the phone */
-        if ($scope.step == 0){
-            $scope.wait = true;
-            User.send_code({phone: phone}, function(success){
-                $scope.step = 1;
+    $scope.authenticate = function(phone, password){
+        $scope.wait = true;
+        var url = '/visitor/profile/';
+        MultipartForm('POST', '#reg_form', url).then(function(response) {
+                $uibModalInstance.close(response.data);
                 $scope.wait = false;
             },
-            error_handler);
-        }
-    };
-
-    $scope.verify_code = function(code){
-        /* Send code to compare on the backend side */
-        if ($scope.step == 1){
-            $scope.wait = true;
-            User.verify_code({code: code}, function(success){
-                $scope.step = 2;
+            function(error) {
+                if (error.data instanceof Object){
+                    $scope.error = error.data;
+                }
+                else{
+                    $translate('AUTHENTICATION.ERROR').then(function (msg) {
+                        $scope.detail = msg;
+                    });
+                }
                 $scope.wait = false;
-            },
-            error_handler);
-        }
-
-    };
-
+            }
+        );
+    }
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
-    };
-
-    function error_handler (error) {
-        if (error.data instanceof Object){
-            $scope.error = error.data;
-        }
-        else{
-            $translate('ERROR').then(function (msg) {
-                $scope.detail = msg;
-            });
-        }
-        $scope.wait = false;
     }
 }]);
