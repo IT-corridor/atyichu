@@ -128,13 +128,13 @@ class StateView(AbsListView):
 class CityView(AbsListView):
 
     queryset = models.City.objects.select_related('state')
-    serializers = serializers.CitySerializer
+    serializer_class = serializers.CitySerializer
 
 
 class District(AbsListView):
 
     queryset = models.District.objects.select_related('city__state')
-    serializers = serializers.DistrictSerializer
+    serializer_class = serializers.DistrictSerializer
 
 
 class UserMixin:

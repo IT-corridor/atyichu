@@ -19,6 +19,29 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOCALE_PATHS = (os.path.join(BASE_DIR, 'locale'),)
 
+# IMPORTANT, CACHE:
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'tmp', 'default'),
+    },
+    'pending': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'tmp', 'pending'),
+    },
+    'pending_phones': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'tmp', 'pending_phones'),
+    },
+    'verify_phones': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'tmp', 'verify_phones'),
+    }
+}
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'tmp', 'email')
 
@@ -30,3 +53,6 @@ WEIXIN_QR_SECRET = 'a385ba5adf67452659c3ff7615e86198'
 IMAGGA_KEY = ''
 IMAGGA_SECRET = ''
 IMAGGA_LANG = 'zh_chs'
+
+TAO_SMS_KEY = '23438643'
+TAO_SMS_SECRET = '785f1713c9472a73596336a9f5e3eeeb'

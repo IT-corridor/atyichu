@@ -11,7 +11,7 @@ from django.contrib.auth.password_validation import validate_password as vp
 from rest_framework import serializers
 from .models import Visitor, VisitorExtra, Weixin
 from utils.utils import get_content_file
-
+from utils.validators import china_phone
 from django.core.mail import mail_admins
 
 
@@ -208,6 +208,14 @@ class VisitorProfileSerializer(serializers.ModelSerializer):
 
 
 class VisitorLoginSerializer(serializers.Serializer):
-    phone = serializers.CharField(label=_('Phone'))
+    phone = serializers.CharField(label=_('Phone'), validators=[china_phone])
     password = serializers.CharField(label=_('Password'),
                                      style={'input_type': 'password'})
+
+
+class PhoneSerializer(serializers.Serializer):
+    phone = serializers.CharField(label=_('Phone'), validators=[china_phone])
+
+
+class CodeSerializer(serializers.Serializer):
+    code = serializers.CharField(label=_('Code'))

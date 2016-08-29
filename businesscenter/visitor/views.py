@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 
+import random
 from urllib import quote_plus
 from django.utils.translation import ugettext as _
 from django.utils import timezone
@@ -7,6 +10,8 @@ from django.contrib.auth import login, logout, authenticate, \
     update_session_auth_hash
 from django.core.urlresolvers import reverse
 from django.core.mail import mail_admins
+from django.core.cache import cache
+from django.conf import settings
 from django.http import HttpResponseRedirect, JsonResponse
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
@@ -14,12 +19,17 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, list_route
 from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
 from .serializers import VisitorSerializer, VisitorExtraSerializer,\
-    VisitorCreateSerializer, VisitorProfileSerializer, VisitorLoginSerializer
+    VisitorCreateSerializer, VisitorProfileSerializer, VisitorLoginSerializer,\
+    PhoneSerializer, CodeSerializer
 from .oauth2 import WeixinBackend, WeixinQRBackend
 from .models import Visitor, VisitorExtra
 from .permissions import IsVisitorSimple, IsVisitorOrReadOnly
+from .extra_handlers import PendingUserVault, PhonesVault
+from .sms import TaoSMSAPI
 from utils.serializers import UserPasswordSerializer
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -220,7 +230,7 @@ def get_me(request):
 def test_auth(request):
     host = request.get_host()
     if host == '127.0.0.1:8000':
-        extra = VisitorExtra.objects.get(backend='weixin', openid='weixin3')
+        extra = VisitorExtra.objects.get(backend='weixin', openid='weixin')
         user = authenticate(weixin=extra.openid)
         login(request, user)
         response = HttpResponseRedirect('/#!/')
@@ -241,7 +251,11 @@ class ProfileViewSet(viewsets.GenericViewSet):
             'edit': VisitorProfileSerializer,
             'change_password': UserPasswordSerializer,
             'login': VisitorLoginSerializer,
+            'login_start': VisitorLoginSerializer,
+            'login_end': VisitorLoginSerializer,
             'me': VisitorProfileSerializer,
+            'send_code': PhoneSerializer,
+            'verify_code': CodeSerializer,
         }
         return serializer_map[self.action]
 
@@ -263,7 +277,15 @@ class ProfileViewSet(viewsets.GenericViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        """ Create user. Redirect to get_me"""
+        """ Create user. Redirect to get_me.
+        SIGN UP: Step 3
+        Important: this handler will take phone value only from cache.
+        """
+        data = request.data
+        sessionid = request.session.session_key
+        phones_vault = PhonesVault()
+        data['phone'] = phones_vault.get_verify_by_sessionid(sessionid)
+        print data['phone']
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         visitor = serializer.save()
@@ -316,3 +338,90 @@ class ProfileViewSet(viewsets.GenericViewSet):
         else:
             status = 200
         return Response(data, status=status)
+
+    @list_route(methods=['post'])
+    def login_start(self, request):
+        """
+                Handles login visitor by phone number
+                """
+        # TODO: Add verification code handling
+        status = 400
+        s = self.get_serializer(data=self.request.data)
+        s.is_valid(raise_exception=True)
+        try:
+            user = authenticate(phone=s.data['phone'],
+                                password=s.data['password'])
+            # create a session key manually, because django does not create
+            #  a session for anonymous user
+            pending_store = PendingUserVault()
+            code = pending_store.add_by_sessionid(request, user)
+            phone = s.data['phone']
+        except Exception as e:
+            data = {'error': e.message}
+        else:
+            sms_api = TaoSMSAPI(settings.TAO_SMS_KEY, settings.TAO_SMS_SECRET)
+            r = sms_api.send_code(phone, code)
+            if r:
+                status = 200
+                data = {'status': 'sent'}
+            else:
+                raise ValidationError({'code': [_('Code has not been sent.')]})
+        return Response(data, status=status)
+
+    @list_route(methods=['post'])
+    def login_end(self, request):
+        """ Verification code is required. """
+        try:
+            code = request.data['code']
+            sessionid = request.session.session_key
+
+            pending_store = PendingUserVault()
+            user = pending_store.get_by_sessionid(sessionid, code)
+            if user is None:
+                raise ValidationError({'detail': [_('Code not sent.')]})
+        except KeyError:
+            raise ValidationError({'detail':
+                                       _('Verification code is required!')})
+        else:
+            login(request, user)
+            url = reverse('visitor:me')
+            return HttpResponseRedirect(url)
+
+    @list_route(methods=['post'])
+    def send_code(self, request):
+        """ Sending code to the phone. Required for the SIGN UP.
+        SIGN UP: Step 1 """
+        serializer = PhoneSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        phone = serializer.data['phone']
+        phones_vault = PhonesVault()
+        code = phones_vault.add_by_sessionid(request, phone)
+        sms_api = TaoSMSAPI(settings.TAO_SMS_KEY, settings.TAO_SMS_SECRET)
+        r = sms_api.send_code(phone, code)
+        if r:
+            data = {'status': 'sent'}
+            return Response(data, 200)
+        else:
+            raise ValidationError({'detail': [_('Code has not been sent.')]})
+
+    @list_route(methods=['post'])
+    def verify_code(self, request):
+        """ Verifying sms code. Required for the SIGN UP.
+        SIGN UP: Step 2 """
+        serializer = CodeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        code = serializer.data['code']
+        sessionid = request.session.session_key
+        phones_vault = PhonesVault()
+        phone = phones_vault.get_pending_by_sessionid(sessionid, code)
+        if phone is None:
+            raise ValidationError({'code': [_('Code is wrong or outdated.')]})
+
+        data = {'status': 'verified'}
+        return Response(data, 200)
+
+
+
+
+
+

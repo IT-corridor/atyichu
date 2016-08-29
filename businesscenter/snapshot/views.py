@@ -310,6 +310,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                      Comment.objects.select_related('author__visitor'))
         qs = qs.prefetch_related(p)
         if self.request.method == 'GET' and self.kwargs.get('pk'):
+
             qs = qs.prefetch_related('link_set__commodity__kind',
                                      'link_set__commodity__color')
         return qs
@@ -619,6 +620,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             sliced = commodities[:lim]
             response_data = []
             for n, i in enumerate(sliced):
+
                 data = {'commodity': i, 'photo': pk}
                 serializer = serializers.LinkSerializer(data=data)
                 serializer.is_valid(True)
@@ -751,19 +753,18 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         """ Pretty complex queryset for retreiving groups """
         visitor = self.request.user
-        qs = Group.objects.select_related('owner__visitor'). \
+        qs = Group.objects.select_related('owner__visitor').\
             prefetch_related('tag_set', 'member_set',
                              'followgroup_set')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             prefetch = Prefetch('photo_set',
                                 queryset=Photo.objects.
                                 select_related('original__group',
-                                               'original__visitor', ))
+                                               'original__visitor',))
 
             qs = qs.prefetch_related(prefetch)
-            qs = qs.filter(is_private=False) \
-                .exclude(owner=visitor, member__visitor=visitor) \
-                .distinct()
+            qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
+                           Q(member__visitor=visitor)).distinct()
         else:
             # TODO: optimize for detail view
             # TODO: something redundant with prefech related

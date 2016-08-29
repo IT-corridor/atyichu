@@ -115,3 +115,6 @@ crashlytics-build.properties
 /businesscenter/static/theme_deprecated/
 
 * .json
+/businesscenter/tmp/default/*
+/businesscenter/tmp/pending/*
+/deploy/config.json

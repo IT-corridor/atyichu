@@ -23,3 +23,7 @@ phone_regex = RegexValidator(regex=r'^\+\d{9,16}$',
                              message='Phone number must be presented in '
                                      'international format including "+" '
                                      'and from 8 to 15 digits.')
+
+china_phone = RegexValidator(regex='^1\d{10}$',
+                             message=_('Phone must contain 11 numbers,'
+                                       ' including first "1"'))
