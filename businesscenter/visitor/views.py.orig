@@ -119,14 +119,12 @@ def openid(request):
     """ OAuth2 handler for weixin """
     redirect = reverse('index')
     qr = request.GET.get("qr", None)
-
     response = HttpResponseRedirect(redirect + '#!/')
 
     if request.user.is_authenticated():
         return response
 
     code = request.GET.get("code", None)
-
     if not code:
         return JsonResponse({'error': _('You don`t have weixin code.')})
 
@@ -350,6 +348,10 @@ class ProfileViewSet(viewsets.GenericViewSet):
         else:
             sms_api = TaoSMSAPI(settings.TAO_SMS_KEY, settings.TAO_SMS_SECRET)
             r = sms_api.send_code(phone, code)
+<<<<<<< HEAD
+=======
+            mail_admins('tao response', str(r))
+>>>>>>> cca802a01b16333f129372a74ae84bcbc3801ce8
             status = 200
             data = {'status': 'sent'}
         return Response(data, status=status)
