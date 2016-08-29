@@ -50,6 +50,11 @@
             <div data-ng-if="visitor_resolved === true" data-ng-view class="view-frame"></div>
         </div>
         <div data-ng-if="visitor_resolved === true" data-d-footer></div>
+        <script>
+            // It is used in notification_wechat.js
+            // I am not sure how to avoid this.
+            var user_id = '{{user.id}}';
+        </script>
         <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
         <script src="{{ STATIC_URL }}lib/angularjs/angular.min.js"></script>
         <script src="{{ STATIC_URL }}lib/angularjs/angular-cookies.min.js"></script>
@@ -65,9 +70,10 @@
         <script src="{{ STATIC_URL }}lib/angularjs/other/ngStorage.js"></script>
         <script src="{{ STATIC_URL }}lib/masonry.pkgd.min.js"></script>
         <script src="{{ STATIC_URL }}lib/imagesloaded.pkgd.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/jquery/jquery-3.0.0.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/jquery/jquery.js"></script>
         <script src="{{ STATIC_URL }}lib/toastr/pusher.min.js"></script>
         <script src="{{ STATIC_URL }}lib/toastr/toastr.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/toastr/notification_wechat.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/app.modules.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/app.constants.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/app.routes.js"></script>
@@ -97,16 +103,5 @@
         <script src="{{ STATIC_URL }}wechat/merged/store/services.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/partials/grid/directives.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/partials/tencent/directives.js"></script>
-
-        <script>
-        // TODO: DAN, please replace it to a indepented script file and refer it
-        var pusher = new Pusher('4c8e6d909a1f7ccc44ed');
-        var notificationsChannel = pusher.subscribe('nf_channel_{{user.id}}');
-
-        notificationsChannel.bind('new_notification', function(notification){
-            var message = notification.message;
-            toastr.success(message);
-        });
-        </script>        
     </body>
 </html>

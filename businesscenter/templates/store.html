@@ -10,12 +10,14 @@
         <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap.min.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}lib/font-awesome/css/font-awesome.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}lib/assets/animate/animate.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}lib/assets/simple-line-icons/css/simple-line-icons.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/font.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/app.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/md.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/style.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/animations.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/grid.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}lib/toastr/toastr.min.css">
         {% verbatim %}
         <title data-ng-bind="site"></title>
         <!--<base href="/app/">-->
@@ -41,6 +43,11 @@
             </div>
         </div>
         <noscript><h4 class="text-danger">{% trans 'This site requires JavaScript to be enabled' %}</h4></noscript>
+        <script>
+            // It is used in notification_wechat.js
+            // I am not sure how to avoid this.
+            var user_id = '{{user.id}}';
+        </script>
         <script src="{{ STATIC_URL }}lib/jquery/jquery.js"></script>
         <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
         <script src="{{ STATIC_URL }}lib/angularjs/angular.min.js"></script>
@@ -61,6 +68,9 @@
 
         <script src="{{ STATIC_URL }}lib/tinymce/tinymce.min.js"></script>
         <script src="{{ STATIC_URL }}lib/tinymce/tinymce.src.js"></script>
+        <script src="{{ STATIC_URL }}lib/toastr/pusher.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/toastr/toastr.min.js"></script>
+        <script src="{{ STATIC_URL }}lib/toastr/notification_web.js"></script>
 
         <script src="{{ STATIC_URL }}store/app.modules.js"></script>
         <script src="{{ STATIC_URL }}store/app.routes.js"></script>
