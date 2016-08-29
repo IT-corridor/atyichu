@@ -79,7 +79,7 @@ left: 4% !important;
     float: left;
 }
 
-.pin p.photo-description {
+.pin .photo-description {
     font-size: 12px;
     padding: 4px 10px;
     float: left;
@@ -308,11 +308,17 @@ left: 4% !important;
     z-index: 999999999999999 !important;
 }
 
-
-.photo-detail #photo-origin-owner-username {
+.photo-detail  #photo-origin-owner-username {
     float: left;
     margin-left: 15px;
     padding: 8px 0px;
+	width:75%;
+}
+
+.photo-detail .maso #photo-origin-owner-username {
+    float: left;
+    margin-left: 0px;
+    padding: 0px 0px;
 	width:75%;
 }
 
@@ -657,9 +663,10 @@ padding-bottom:10px;
 }
 
 
-.create-wardrobe-plus i
-{
-	color:#fe8a71;
+.create-wardrobe-plus i {
+    color: #fe8a71;
+    font-size: 35px;
+    width: 40px;
 }
 
 .wardrobes .hbox .col img
@@ -669,7 +676,8 @@ padding-bottom:10px;
 }
 
 
-.create-wardrobe-bg {
+.create-wardrobe-bg,
+.choose-a-wardrobe {
     position: fixed;
     top: 0px;
     left: 0px;
@@ -804,4 +812,75 @@ padding-bottom:10px;
 	height:40px;
 	background:none;
 	border:1px dotted;
+}
+
+
+.choose-a-wardrobe i.uploaded-to {
+    padding: 15px;
+    display: block;
+    border-bottom: 1px solid #ececec;
+    color: #b5b5b5;
+}
+
+.choose-a-wardrobe .panel-body
+{
+	padding:0px;
+}
+
+.create-new-wardrobe {
+    padding: 0px 15px;
+    margin-bottom: 20px;
+}
+
+
+.choose-a-wardrobe h5 {
+    padding: 15px;
+    font-size: 17px;
+    color: #2e2e2e;
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+}
+
+.choose-a-wardrobe .see-all-wardrobes {
+    padding: 0px 15px;
+    display: block;
+    color: #b5b5b5;
+}
+
+.create-new-wardrobe i.fa-plus {
+    padding: 15px;
+    border: 2px dashed #dadada;
+    margin-right: 10px;
+    border-radius: 5px;
+    color: #dadada;
+}
+
+.choose-a-wardrobe .my-wardrobe-list
+{
+	padding:15px;
+	width:100%;display:block;
+	box-sizing:border-box;
+}
+
+.my-wardrobe-list-images
+{
+	border:1px solid #d7d7d7;
+	width:60px;
+	height:25px;
+}
+
+.my-wardrobe-list-title {
+    color: #2e2e2e;
+    padding: 15px 10px;
+}
+
+.my-wardrobe-list-images,
+.my-wardrobe-list-title
+{
+	display:table-cell;
+}
+
+.my-wardrobe-list .clear
+{
+padding:3px 0px;	
 }

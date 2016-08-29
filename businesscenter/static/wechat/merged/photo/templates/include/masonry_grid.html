@@ -50,8 +50,8 @@
         </div>
         <p class="b-b b-light" data-ng-if="photo.title">{{ photo.title }}</p>
         <p class="b-b b-light" data-ng-if="!photo.title && photo.origin.title">{{ photo.origin.title }}</p>
-        <p class="b-b b-light" data-ng-if="photo.descr"> {{ photo.descr }}</p>
-        <p class="b-b b-light" data-ng-if="!photo.descr && photo.origin.descr"> {{ photo.descr.descr }}</p>
+      <div  class="b-b b-light photo-description" data-ng-if="photo.descr"> {{ photo.descr }}</div>
+        <div  class="b-b b-light photo-description" data-ng-if="!photo.descr && photo.origin.descr"> {{ photo.descr.descr }}</div>
         <ul class="list-inline text-muted text-center small">
             <li><i class="fa fa-floppy-o"></i> {{ photo.clone_count }}</li>
             <li><i class="fa fa-heart-o"></i> {{ photo.like_count }}</li>
