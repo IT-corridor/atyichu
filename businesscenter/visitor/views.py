@@ -391,6 +391,8 @@ class ProfileViewSet(viewsets.GenericViewSet):
     def send_code(self, request):
         """ Sending code to the phone. Required for the SIGN UP.
         SIGN UP: Step 1 """
+        # TODO: Check if this phone is free
+        # TODO: remove sms from login
         serializer = PhoneSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         phone = serializer.data['phone']

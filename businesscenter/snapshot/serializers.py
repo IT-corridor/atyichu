@@ -204,9 +204,9 @@ class PhotoCropSerializer(serializers.ModelSerializer):
         photo = obj
         if photo and photo.original:
             photo = photo.original
-        if photo and photo.crop.name:
+        if photo and photo.thumb.name:
             request = self.context.get('request', None)
-            url = photo.crop.url
+            url = photo.thumb.url
             if request is not None:
                 return request.build_absolute_uri(url)
             return url
