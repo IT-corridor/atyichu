@@ -62,7 +62,7 @@ angular.module('app.route', [
         }).
         when('/notifications', {
             templateUrl: PATH + 'common/templates/notifications.html',
-            controller: 'CtrlArticleList'
+            controller: 'CtrlNotification'
         }).
         when('/photo/:pk', {
             templateUrl: PATH + 'photo/templates/detail_new.html',

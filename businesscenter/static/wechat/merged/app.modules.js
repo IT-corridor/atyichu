@@ -32,6 +32,7 @@ app.run(['$rootScope','$q','Visitor', function($rootScope, $q, Visitor) {
     $rootScope.THEME = '/static/theme/';
     $rootScope.PATH = '/static/wechat/merged/';
     $rootScope.alerts = [];
+    $rootScope.notifications = [];
 
     var follow_d = $q.defer();
     $rootScope.follow_promise = follow_d.promise;
