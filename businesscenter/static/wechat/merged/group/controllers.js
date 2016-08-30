@@ -529,4 +529,18 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             return tp_list
         }
     }
+])
+.controller('CtrlFollowerList', ['$scope', '$rootScope','$http','Visitor', '$routeParams',
+    function($scope, $rootScope, $http,Visitor,$routeParams) {
+        $scope.r = Visitor.get_followers($routeParams,
+            function(success){
+            },
+            function(error){
+                for (var e in error.data){
+                    $rootScope.alerts.push({ type: 'danger', msg: error.data[e]});
+                }
+            }
+        );
+    }
 ]);
+

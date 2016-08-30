@@ -1079,6 +1079,25 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         # 'results' is redundand'
         return Response(data={'results': data}, status=status)
 
+    @list_route(methods=['get'])
+    def followers(self, request, *args, **kwargs):
+        """
+        Returns followers for a user
+        """
+        visitor = self.request.user
+        qs_follow = FollowUser.objects.filter(user=visitor)
+        user_ids = [item.follower.id for item in qs_follow]
+
+        qs_visitor = Visitor.objects.filter(user__id__in=user_ids)
+        qs_store = Store.objects.filter(vendor__user__id__in=user_ids)
+
+        v_serializer = VisitorShortSerializer(qs_visitor, many=True)
+        v_store = StoreShortSerializer(qs_store, many=True)
+
+        data = v_serializer.data + v_store.data
+        status = 200
+        return Response(data={'results': data}, status=status)
+
     @detail_route(methods=['get'])
     def follow_user(self, request, *args, **kwargs):
         """ Handler that increments follows """

@@ -18,9 +18,4 @@ angular.module('common.controllers', ['auth.services', 'ngCookies'])
                 });
             };
         }
-    ])
-    .controller('CtrlNotification', ['$scope', '$rootScope', function ($scope, $rootScope) {
-        $scope.add_notification = function (notification) {
-            $rootScope.notifications.push(notification);
-        }
-    }]);
+    ]);

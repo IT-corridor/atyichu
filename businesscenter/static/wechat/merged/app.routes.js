@@ -62,7 +62,7 @@ angular.module('app.route', [
         }).
         when('/notifications', {
             templateUrl: PATH + 'common/templates/notifications.html',
-            controller: 'CtrlNotification'
+            controller: 'CtrlDummy'
         }).
         when('/photo/:pk', {
             templateUrl: PATH + 'photo/templates/detail_new.html',
@@ -119,6 +119,10 @@ angular.module('app.route', [
                 title: function(){return 'Follow Users';},
                 follow: function(){return true;},
             }
+        }).
+        when('/followers', {
+            templateUrl: PATH + 'group/templates/follower.html',
+            controller: 'CtrlFollowerList',
         }).
         when('/me', {
             templateUrl: PATH + 'user/templates/user.html',

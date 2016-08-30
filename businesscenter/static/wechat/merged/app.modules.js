@@ -34,6 +34,10 @@ app.run(['$rootScope','$q','Visitor', function($rootScope, $q, Visitor) {
     $rootScope.alerts = [];
     $rootScope.notifications = [];
 
+    $rootScope.add_notification = function (notification) {
+        $rootScope.notifications.push(notification);
+    }
+
     var follow_d = $q.defer();
     $rootScope.follow_promise = follow_d.promise;
 

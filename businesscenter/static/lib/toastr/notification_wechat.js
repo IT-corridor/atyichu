@@ -10,6 +10,6 @@ notificationsChannel.bind('new_notification', function(notification){
     var message = notification.message;
     toastr.success(message);
 
-    angular.element($('#id_nf_group')).scope().add_notification(message);
-    angular.element($('#id_nf_group')).scope().$apply();
+    angular.element($('#app')).scope().add_notification(message);
+    angular.element($('#app')).scope().$apply();
 });

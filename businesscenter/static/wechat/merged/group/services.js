@@ -47,6 +47,7 @@ angular.module('group.services', ['ngResource'])
             follow_user: {method: 'GET', params: {action:'follow_user'}},
             unfollow_user: {method: 'GET', params: {action:'unfollow_user'}},
             get_follow_users: {method:'GET', params:{pk: null, action: 'follow_users'}, responseType:'json'},
+            get_followers: {method:'GET', params:{pk: null, action: 'followers'}, responseType:'json'},
         });
 }])
 .factory('MultipartForm', ['$http', function ($http){
