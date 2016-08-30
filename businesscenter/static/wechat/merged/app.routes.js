@@ -60,6 +60,10 @@ angular.module('app.route', [
                 kind: function(){return 'list'},
             }
         }).
+        when('/notifications', {
+            templateUrl: PATH + 'common/templates/notifications.html',
+            controller: 'CtrlArticleList'
+        }).
         when('/photo/:pk', {
             templateUrl: PATH + 'photo/templates/detail_new.html',
             controller: 'CtrlPhotoDetail'}).

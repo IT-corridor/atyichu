@@ -230,7 +230,7 @@ def get_me(request):
 def test_auth(request):
     host = request.get_host()
     if host == '127.0.0.1:8000':
-        extra = VisitorExtra.objects.get(backend='weixin', openid='weixin')
+        extra = VisitorExtra.objects.get(backend='weixin', openid='weixin3')
         user = authenticate(weixin=extra.openid)
         login(request, user)
         response = HttpResponseRedirect('/#!/')
