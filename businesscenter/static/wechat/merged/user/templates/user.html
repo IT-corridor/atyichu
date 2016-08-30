@@ -7,8 +7,12 @@
     <div class="row m-t-xxl">
         <div class="col-md-12 col-xs-12">
             <ul class="text-center list-inline">
-                <li><a class="btn btn-info" data-ng-href="#!/me/change_password">
+                <li data-ng-if="me.phone"><a class="btn btn-info" data-ng-href="#!/me/change_password">
                     {{ 'USER.PASSWORD.HEADER' | translate }}
+                    </a>
+                </li>
+                <li data-ng-if="!me.phone"><a class="btn btn-info" data-ng-href="#!/me/bind_phone">
+                    {{ 'USER.SET_PASSWORD.HEADER' | translate }}
                     </a>
                 </li>
                 <li><a class="btn btn-info" data-ng-href="#!/group/create">
@@ -60,7 +64,7 @@
                                 <p class="text-danger" data-ng-repeat="e in error.username">{{ e }}</p>
                             </td>
                         </tr>
-                        <tr>
+                        <tr data-ng-if="me.phone">
                             <td><input type="text" data-ng-model="me.phone" name="phone" class="form-control" data-ng-disabled="wait"
                                        placeholder="{{ 'USER.FORM.PHONE' | translate }}" required>
                                 <p class="text-danger" data-ng-repeat="e in error.phone">{{ e }}</p>

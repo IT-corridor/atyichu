@@ -118,3 +118,5 @@ crashlytics-build.properties
 /businesscenter/tmp/default/*
 /businesscenter/tmp/pending/*
 /deploy/config.json
+/businesscenter/tmp/pending_phones/*
+/businesscenter/tmp/verify_phones/*
