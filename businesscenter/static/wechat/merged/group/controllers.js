@@ -484,18 +484,13 @@ angular.module('group.controllers', ['group.services', 'group.directives',
     }
 ])
 .controller('CtrlFollowUserList', ['$scope', '$rootScope','$http', '$window',
-'$location', '$routeParams','GetPageLink' , 'Visitor', 'title', 'follow',
+'$location', '$routeParams','GetPageLink' , 'Visitor', 'title',
     function($scope, $rootScope, $http, $window, $location, $routeParams,
-    GetPageLink, Visitor, title, follow) {
+    GetPageLink, Visitor, title) {
 
         $rootScope.title = title;
-        var query = Visitor.get_follow_users;
 
-        if (follow){
-            $rootScope.bar = 'verbose';
-        }
-
-        $scope.r = query($routeParams,
+        $scope.r = Visitor.get_follow_users($routeParams,
             function(success){
             },
             function(error){
@@ -511,9 +506,6 @@ angular.module('group.controllers', ['group.services', 'group.directives',
             Visitor.unfollow_user({pk: user_id},
                 function(success){
                     // RemoveItem($rootScope.following.results, user_id, 'pk');
-                },
-                function(error){
-                    //$rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
                 }
             );
         }

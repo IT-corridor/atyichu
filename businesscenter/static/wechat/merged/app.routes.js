@@ -117,7 +117,6 @@ angular.module('app.route', [
             controller: 'CtrlFollowUserList',
             resolve: {
                 title: function(){return 'Follow Users';},
-                follow: function(){return true;},
             }
         }).
         when('/followers', {
