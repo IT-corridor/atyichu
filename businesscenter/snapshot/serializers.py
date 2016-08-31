@@ -289,7 +289,7 @@ class GroupListSerializer(GroupSerializer):
     overview = serializers.SerializerMethodField(read_only=True)
 
     def get_overview(self, obj):
-        qs = obj.photo_set.all()[1:8]
+        qs = obj.photo_set.all()[0:7]
         serializer = PhotoCropSerializer(instance=qs, many=True)
         return serializer.data
 
