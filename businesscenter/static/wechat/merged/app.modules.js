@@ -242,6 +242,7 @@ app.config(['$translateProvider', function($translateProvider) {
             'BAR': {
                 'LOGIN': 'Sign in',
                 'REG': 'Sign up',
+                'RESET': 'I forgot my password',
             },
             'FORM': {
                 'USERNAME': 'Username',
@@ -260,6 +261,9 @@ app.config(['$translateProvider', function($translateProvider) {
             },
             'PASSWORD': {
                 'HEADER': 'Change password',
+            },
+            'SET_PASSWORD': {
+                'HEADER': 'Bind phone (and set up the password)'
             }
         }
     });
@@ -331,6 +335,9 @@ app.config(['$translateProvider', function($translateProvider) {
             'LIST': {
                 'NO_GROUPS': 'No groups',
                 'UPLOAD': 'Upload a photo',
+                'PHOTO_COUNT': '{{photo_count}} photo(s)',
+                'MEMBER_COUNT': 'Collaborators ({{member_count}})',
+
             },
             'MANAGE': {
                 'HEADER': 'Edit a wardrobe',
@@ -356,6 +363,13 @@ app.config(['$translateProvider', function($translateProvider) {
                 'PHOTO_LIKED': 'You have liked the photo already',
                 'SAVED_TO': 'Saved to',
                 'SAVED_FROM': 'Saved from',
+            },
+            'MY': {
+                'HEADER': 'My wardrobes',
+                'INVITE': 'Invite',
+                'DELETE': 'Delete',
+                'SET_PUBLIC': 'Set public',
+                'SET_PRIVATE': 'Set private',
             }
         },
         'PHOTO': {
@@ -416,6 +430,7 @@ app.config(['$translateProvider', function($translateProvider) {
             'BAR': {
                 'LOGIN': 'Sign in',
                 'REG': 'Sign up',
+                'RESET': 'I forgot my password',
             },
             'FORM': {
                 'USERNAME': 'Username',
@@ -426,6 +441,7 @@ app.config(['$translateProvider', function($translateProvider) {
                 'NEW_PASSWORD': 'New password',
                 'CONFIRM_PASSWORD': 'Confirm password',
                 'CODE': 'Verification code',
+                'STEP': 'Step',
             },
             'ME': {
                 'HEADER': 'My profile',
@@ -433,6 +449,9 @@ app.config(['$translateProvider', function($translateProvider) {
             },
             'PASSWORD': {
                 'HEADER': 'Change password',
+            },
+            'SET_PASSWORD': {
+                'HEADER': 'Bind phone (and set up the password)'
             }
         }
     });

@@ -48,10 +48,11 @@ angular.module('grid', []).directive('masonry', ['$timeout', function($timeout) 
         restrict: 'AC',
         link: function(scope, elem) {
             elem.css('visibility', 'hidden');
-            var master = elem.parent('*[masonry]:first').scope(),
+            var master = elem.parent('*[data-masonry]:first').scope(),
                 update = master.update,
                 removeBrick = master.removeBrick,
                 appendBricks = master.appendBricks;
+                console.log(master);
             if (update) {
                 imagesLoaded( elem.eq(0), update);
                 elem.ready(update);

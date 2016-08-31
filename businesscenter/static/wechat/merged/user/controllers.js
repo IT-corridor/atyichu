@@ -57,6 +57,8 @@ angular.module('user.controllers', ['user.services', 'auth.services'])
 '$location', '$translate', '$route', 'User',
     function($scope, $rootScope, $http, $location, $translate, $route, User) {
 
+        User.me();
+
         $scope.wait = false;
         $scope.data = {};
         $scope.change_password = function(){
@@ -75,4 +77,69 @@ angular.module('user.controllers', ['user.services', 'auth.services'])
         };
     }
 
-]);;
+])
+.controller('CtrlWechatSetPassword', ['$scope', '$rootScope','$http',
+'$location', '$translate', '$route', 'User',
+    function($scope, $rootScope, $http, $location, $translate, $route, User) {
+
+        $scope.wait = false;
+        $scope.step = 0;
+        $scope.data = {};
+        $scope.set_password = function(){
+            if ($scope.step == 2){
+                $scope.wait = true;
+                User.wechat_phone($scope.data, function(success){
+                        $translate('SUCCESS').then(function (msg) {
+                            console.log('hello');
+                            $rootScope.alerts.push({ type: 'success', msg:  msg});
+                        });
+                        $scope.wait = false;
+                        $location.path('/me');
+                    },
+                    function(error){
+                        $scope.wait = false;
+                        $scope.error = error.data;
+                    }
+                );
+            }
+        };
+
+        $scope.send_code = function(phone){
+            /* Sends a random code to the phone */
+            if ($scope.step == 0){
+                $scope.wait = true;
+                User.send_code({phone: phone}, function(success){
+                    $scope.step = 1;
+                    $scope.wait = false;
+                },
+                error_handler);
+            }
+        };
+
+        $scope.verify_code = function(code){
+            /* Send code to compare on the backend side */
+            if ($scope.step == 1){
+                $scope.wait = true;
+                User.verify_code({code: code}, function(success){
+                    $scope.step = 2;
+                    $scope.wait = false;
+                },
+                error_handler);
+            }
+
+        };
+
+        function error_handler (error) {
+            if (error.data instanceof Object){
+                $scope.error = error.data;
+            }
+            else{
+                $translate('ERROR').then(function (msg) {
+                    $scope.detail = msg;
+                });
+            }
+            $scope.wait = false;
+        }
+    }
+
+]);

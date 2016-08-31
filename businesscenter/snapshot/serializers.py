@@ -204,9 +204,9 @@ class PhotoCropSerializer(serializers.ModelSerializer):
         photo = obj
         if photo and photo.original:
             photo = photo.original
-        if photo and photo.crop.name:
+        if photo and photo.thumb.name:
             request = self.context.get('request', None)
-            url = photo.crop.url
+            url = photo.thumb.url
             if request is not None:
                 return request.build_absolute_uri(url)
             return url
@@ -289,7 +289,7 @@ class GroupListSerializer(GroupSerializer):
     overview = serializers.SerializerMethodField(read_only=True)
 
     def get_overview(self, obj):
-        qs = obj.photo_set.all()[1:8]
+        qs = obj.photo_set.all()[0:7]
         serializer = PhotoCropSerializer(instance=qs, many=True)
         return serializer.data
 
