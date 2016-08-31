@@ -993,13 +993,15 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         """ Follow the group by the customer """
         obj = self.get_object()
 
-        try:
-            if not FollowGroup.objects.filter(follower_id=request.user.id,
-                                              group_id=obj.id):
-                FollowGroup.objects.create(follower_id=request.user.id,
-                                           group_id=obj.id)
-
-            follow_count = FollowGroup.objects.filter(group_id=obj.id).count()
+        if obj.owner == request.user:
+            data = {'error': _('You cannot follow your group!')}
+            status = 400
+        elif FollowGroup.objects.filter(follower=request.user, group=obj):
+            data = {'error': _('You have followed it already!')}
+            status = 400
+        else:
+            FollowGroup.objects.create(follower=request.user, group=obj)
+            follow_count = FollowGroup.objects.filter(group=obj).count()
             data = {'follow_count': follow_count}
             status = 200
 
@@ -1009,10 +1011,6 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
             trigger_notification('nf_channel_{}'.format(obj.owner.id),
                                  'new_notification', msg)
-
-        except IntegrityError:
-            data = {'error': _('You have followed it already!')}
-            status = 400
 
         return Response(data, status)
 

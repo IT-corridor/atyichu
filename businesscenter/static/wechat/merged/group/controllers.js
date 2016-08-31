@@ -210,13 +210,13 @@ angular.module('group.controllers', ['group.services', 'group.directives',
         };
 
         $scope.follow = function(group_id, group) {
-            group.is_followed = true;
             Group.follow({pk: group_id},
                 function(success){
+                    group.is_followed = true;
                     // $scope.r.results[index].like_count = success.like_count;
                 },
                 function(error){
-                    $rootScope.alerts.push({ type: 'danger', msg: 'You have followed it already!'});
+                    $rootScope.alerts.push({ type: 'danger', msg: error.data.error});
                 }
             );
             console.log($rootScope.visitor.pk);
