@@ -257,6 +257,7 @@ class ProfileViewSet(viewsets.GenericViewSet):
             'send_code': PhoneSerializer,
             'verify_code': CodeSerializer,
             'wechat_phone': VisitorProfileSerializer,
+            'reset_password': UserSetPasswordSerializer,
         }
         return serializer_map[self.action]
 
@@ -272,6 +273,8 @@ class ProfileViewSet(viewsets.GenericViewSet):
 
     @list_route(methods=['get'])
     def me(self, request):
+        """ Retrieve information about own profile (visitor).
+        Works only for authenticated user."""
         queryset = self.get_queryset()
         visitor = get_object_or_404(queryset, pk=request.user.id)
         serializer = self.get_serializer(visitor)
@@ -325,6 +328,7 @@ class ProfileViewSet(viewsets.GenericViewSet):
     @list_route(methods=['post'])
     def login(self, request):
         """
+        Simple login handler without any special checking.
         Handles login visitor by phone number
         """
         # TODO: Add verification code handling
@@ -346,8 +350,12 @@ class ProfileViewSet(viewsets.GenericViewSet):
     @list_route(methods=['post'])
     def login_start(self, request):
         """
-                Handles login visitor by phone number
-                """
+        Signing in with sms verification (2 factor auth)
+        Handles login visitor by phone number.
+        Works only with chinese phones.
+        Can`t be tested from swagger.
+        Currently not used.
+        """
         # TODO: Add verification code handling
         status = 400
         s = self.get_serializer(data=self.request.data)
@@ -394,14 +402,26 @@ class ProfileViewSet(viewsets.GenericViewSet):
     @list_route(methods=['post'])
     def send_code(self, request):
         """ Sending code to the phone. Required for the SIGN UP.
-        SIGN UP: Step 1 """
-        # TODO: remove sms from login
+        SIGN UP: Step 1
+         Optional request.data parameter -- is_exists.
+         If this parameter sent with request,
+         with value that can be interpreted as true.
+         We assume that it phone should be existed, in any other case,
+         we assume that this is a new phone and we should not have
+         related record with it.
+        """
+        is_exists = request.data.pop('is_exists', False)
         serializer = PhoneSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         phone = serializer.data['phone']
-        if Visitor.objects.filter(phone=phone).exists():
+
+        if not is_exists and Visitor.objects.filter(phone=phone).exists():
             raise ValidationError({'phone':
                                        [_('This phone is registered.')]})
+
+        if is_exists and not Visitor.objects.filter(phone=phone).exists():
+            raise ValidationError({'phone':
+                                       [_('This phone is not registered.')]})
         phones_vault = PhonesVault()
         code = phones_vault.add_by_sessionid(request, phone)
         sms_api = TaoSMSAPI(settings.TAO_SMS_KEY, settings.TAO_SMS_SECRET)
@@ -433,6 +453,11 @@ class ProfileViewSet(viewsets.GenericViewSet):
         """Sets the password and phone for existing weixin visitor.
          LOGIC: user can set password after he will verify his phone.
          If user has no phone, then user has no password.
+         This handler uses 2 serializers. UserSetPasswordSerializer and
+         VisitorProfileSerializer.
+
+         Requires sms verification ( send_code and
+        verify_code must be performed before).
          """
 
         user = request.user
@@ -460,7 +485,26 @@ class ProfileViewSet(viewsets.GenericViewSet):
         serializer.save()
         return Response(serializer.data)
 
+    @list_route(methods=['post'])
+    def reset_password(self, request):
+        """ Handler that sets a new password to user identified by his phone.
+        Requires sms verification ( send_code and
+        verify_code must be performed before).
 
+        """
+        sessionid = request.session.session_key
+        phones_vault = PhonesVault()
+        phone = phones_vault.get_verify_by_sessionid(sessionid)
+        if phone is None:
+            raise ValidationError({'code': [_('Can`t find your phone.')]})
 
+        visitor = Visitor.objects.get(phone=phone)
+        user = visitor.user
 
+        serializer = UserSetPasswordSerializer(instance=user,
+                                               data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+        return Response(status=204)
 

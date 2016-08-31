@@ -57,13 +57,7 @@ angular.module('user.controllers', ['user.services', 'auth.services'])
 '$location', '$translate', '$route', 'User',
     function($scope, $rootScope, $http, $location, $translate, $route, User) {
 
-        User.me(function(success){
-            if (success.phone){
-                $translate('SUCCESS').then(function (msg) {
-                    $rootScope.alerts.push({ type: 'success', msg:  msg});
-                });
-            }
-        });
+        User.me();
 
         $scope.wait = false;
         $scope.data = {};
@@ -96,6 +90,7 @@ angular.module('user.controllers', ['user.services', 'auth.services'])
                 $scope.wait = true;
                 User.wechat_phone($scope.data, function(success){
                         $translate('SUCCESS').then(function (msg) {
+                            console.log('hello');
                             $rootScope.alerts.push({ type: 'success', msg:  msg});
                         });
                         $scope.wait = false;
