@@ -18,6 +18,10 @@
         <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/animations.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/grid.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}lib/toastr/toastr.min.css">
+
+        <link rel="stylesheet" href="{{ STATIC_URL }}/chat/libs/stickerpipe/css/stickerpipe.min.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}/chat/css/style.css">
+
         {% verbatim %}
         <title data-ng-bind="site"></title>
         <!--<base href="/app/">-->
@@ -101,5 +105,19 @@
         <script src="{{ STATIC_URL }}store/group/services.js"></script>
         <script src="{{ STATIC_URL }}store/group/directives.js"></script>
         <script src="{{ STATIC_URL }}store/group/controllers.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.6.0/jquery.nicescroll.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.4.1/jquery.timeago.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="{{ STATIC_URL }}/chat/libs/quickblox.min.js"></script>
+        <script src="{{ STATIC_URL }}/chat/libs/stickerpipe/js/stickerpipe.js"></script>
+        <script src="{{ STATIC_URL }}/chat/js/config.js"></script>
+        <script src="{{ STATIC_URL }}/chat/js/connection.js"></script>
+        <script src="{{ STATIC_URL }}/chat/js/messages.js"></script>
+        <script src="{{ STATIC_URL }}/chat/js/stickerpipe.js"></script>
+        <script src="{{ STATIC_URL }}/chat/js/ui_helpers.js"></script>
+        <script src="{{ STATIC_URL }}/chat/js/dialogs.js"></script>
+        <script src="{{ STATIC_URL }}/chat/js/users.js"></script>
+
     </body>
 </html>

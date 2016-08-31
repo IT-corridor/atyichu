@@ -103,6 +103,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             'CHANGE_PASSWORD': 'Change password',
         },
         'ASIDE': {
+            'CHAT': 'Chat',
             'NAV': {
                 'HEADER': 'Navigation'
             },
@@ -350,6 +351,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             'CHANGE_PASSWORD': 'Change password',
         },
         'ASIDE': {
+            'CHAT': 'Chat',
             'NAV': {
                 'HEADER': 'Navigation'
             },

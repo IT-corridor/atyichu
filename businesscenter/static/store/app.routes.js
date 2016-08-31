@@ -19,6 +19,10 @@ angular.module('app.route', [
             templateUrl: PATH + 'dashboard/templates/ui_chart.html',
             controller: 'CtrlFlotChart',
         }).
+        when('/chat/', {
+            templateUrl: PATH + '../chat/index.html',
+            controller: 'CtrlChat',
+        }).
         when('/stores/create/', {
             templateUrl: PATH + 'store/templates/create.html',
             controller: 'CtrlStoreCreate',
