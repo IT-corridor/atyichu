@@ -132,6 +132,10 @@ angular.module('app.route', [
             templateUrl: PATH + 'user/templates/change_password.html',
             controller: 'CtrlChangePassword',
         }).
+        when('/me/bind_phone', {
+            templateUrl: PATH + 'user/templates/wechat_password.html',
+            controller: 'CtrlWechatSetPassword',
+        }).
         when('/error/404/', {
             templateUrl: PATH + 'partials/error/templates/404.html'}).
         otherwise({

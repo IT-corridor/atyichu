@@ -260,6 +260,9 @@ app.config(['$translateProvider', function($translateProvider) {
             },
             'PASSWORD': {
                 'HEADER': 'Change password',
+            },
+            'SET_PASSWORD': {
+                'HEADER': 'Bind phone (and set up the password)'
             }
         }
     });

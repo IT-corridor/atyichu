@@ -28,7 +28,7 @@ from .models import Visitor, VisitorExtra
 from .permissions import IsVisitorSimple, IsVisitorOrReadOnly
 from .extra_handlers import PendingUserVault, PhonesVault
 from .sms import TaoSMSAPI
-from utils.serializers import UserPasswordSerializer
+from utils.serializers import UserPasswordSerializer, UserSetPasswordSerializer
 
 
 @api_view(['POST'])
@@ -256,6 +256,7 @@ class ProfileViewSet(viewsets.GenericViewSet):
             'me': VisitorProfileSerializer,
             'send_code': PhoneSerializer,
             'verify_code': CodeSerializer,
+            'wechat_phone': VisitorProfileSerializer,
         }
         return serializer_map[self.action]
 
@@ -285,7 +286,6 @@ class ProfileViewSet(viewsets.GenericViewSet):
         sessionid = request.session.session_key
         phones_vault = PhonesVault()
         data['phone'] = phones_vault.get_verify_by_sessionid(sessionid)
-        print data['phone']
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         visitor = serializer.save()
@@ -301,6 +301,10 @@ class ProfileViewSet(viewsets.GenericViewSet):
         user = request.user
         # maybe following line is redundant
         self.check_object_permissions(request, user.visitor)
+        if not user.visitor.phone and request.data.get('phone'):
+            raise ValidationError({'phone':
+                                       _('You can`t change phone '
+                                         'before you bind it')})
         serializer = self.get_serializer(instance=user.visitor,
                                          data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -391,9 +395,13 @@ class ProfileViewSet(viewsets.GenericViewSet):
     def send_code(self, request):
         """ Sending code to the phone. Required for the SIGN UP.
         SIGN UP: Step 1 """
+        # TODO: remove sms from login
         serializer = PhoneSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         phone = serializer.data['phone']
+        if Visitor.objects.filter(phone=phone).exists():
+            raise ValidationError({'phone':
+                                       [_('This phone is registered.')]})
         phones_vault = PhonesVault()
         code = phones_vault.add_by_sessionid(request, phone)
         sms_api = TaoSMSAPI(settings.TAO_SMS_KEY, settings.TAO_SMS_SECRET)
@@ -420,6 +428,37 @@ class ProfileViewSet(viewsets.GenericViewSet):
         data = {'status': 'verified'}
         return Response(data, 200)
 
+    @list_route(methods=['post'])
+    def wechat_phone(self, request):
+        """Sets the password and phone for existing weixin visitor.
+         LOGIC: user can set password after he will verify his phone.
+         If user has no phone, then user has no password.
+         """
+
+        user = request.user
+        visitor = user.visitor
+        if visitor.phone and user.password:
+            raise ValidationError({'detail':
+                                       [_('You already have a password.')]})
+        sessionid = request.session.session_key
+        phones_vault = PhonesVault()
+        phone = phones_vault.get_verify_by_sessionid(sessionid)
+        if phone is None:
+            raise ValidationError({'code': [_('Can`t find your phone.')]})
+
+        data = request.data
+        s = UserSetPasswordSerializer(instance=user,
+                                      data=data, partial=True)
+        s.is_valid(raise_exception=True)
+        user = s.save()
+
+        update_session_auth_hash(request, user)
+
+        serializer = self.get_serializer(instance=visitor,
+                                         data={'phone': phone}, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 

@@ -3,7 +3,7 @@
         <span class="sr-only">{{ 'NAVBAR.MODAL.CLOSE' | translate }}</span></button>
     <h3 class="modal-title">{{ 'USER.BAR.LOGIN' | translate }}</h3>
 </div>
-<form class="form-horizontal" data-ng-submit="authenticate()">
+<form data-ng-if="!sent" class="form-horizontal" data-ng-submit="auth_step_one()">
     <div class="modal-body">
             <p class="text-danger">{{ detail }}</p>
             <table class="table">
@@ -24,6 +24,26 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" type="submit"><i class="fa fa-sign-in"></i>
+            {{ 'FORM.SUBMIT' | translate }}</button>
+    </div>
+</form>
+
+<form data-ng-if="sent" class="form-horizontal" data-ng-submit="auth_step_two()">
+    <div class="modal-body">
+            <p class="text-danger">{{ detail }}</p>
+            <table class="table">
+                <tr>
+                    <td><input type="text" data-ng-model="data_two.code" class="form-control" autocomplete="off"
+                               placeholder="{{ 'USER.FORM.CODE' | translate }}" required>
+                        <p class="text-danger" data-ng-repeat="e in error.code">{{ e }}</p>
+                    </td>
+                </tr>
+                <tr>
+
+            </table>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-info" type="submit"><i class="fa fa-check"></i>
             {{ 'FORM.SUBMIT' | translate }}</button>
     </div>
 </form>

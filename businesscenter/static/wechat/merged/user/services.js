@@ -14,5 +14,6 @@ angular.module('user.services', ['ngResource'])
             login_end: {method: 'POST', params: {action: 'login_end'}, responseType: 'json'},
             send_code: {method: 'POST', params: {action: 'send_code'}, responseType: 'json'},
             verify_code: {method: 'POST', params: {action: 'verify_code'}, responseType: 'json'},
+            wechat_phone: {method: 'POST', params: {action: 'wechat_phone'}, responseType: 'json'},
     });
 }]);
