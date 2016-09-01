@@ -61,12 +61,17 @@
                 <div class="photo-detail-heading">
                     <div class="photo-detail-title">
                         <h4 data-ng-if="photo.title" class="m-t-none d-p-title">{{ photo.title }} </h4>
-                        <h4 data-ng-if="!photo.title && photo.origin.title" class="m-t-none">{{ photo.origin.title }}</h4>
+                        <h4 data-ng-if="!photo.title && photo.article.title" class="m-t-none">{{ photo.article.title }}</h4>
+                        <h4 data-ng-if="!photo.title && !photo.article.title && photo.origin.title" class="m-t-none">{{ photo.origin.title }}</h4>
+
                         <div class="clear"></div>
                         <div data-ng-if="photo.description">
                             <p class="photo-detail-description">{{ photo.description }}</p>
                         </div>
-                        <div data-ng-if="!photo.description && photo.origin.description">
+                        <div data-ng-if="!photo.description && photo.article.descr">
+                            <p class="photo-detail-description" ng-bind-html="photo.article.descr"></p>
+                        </div>
+                        <div data-ng-if="!photo.description && !photo.article.descr && photo.origin.description">
                             <p class="photo-detail-description">{{ photo.origin.description }}</p>
                         </div>
                     </div>
