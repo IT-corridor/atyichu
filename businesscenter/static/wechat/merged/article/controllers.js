@@ -32,12 +32,7 @@ angular.module('article.controllers', ['article.services', 'common.services'])
 .controller('CtrlArticleList', ['$scope', '$rootScope','$http', '$window',
 '$location', '$routeParams', 'Article',
     function($scope, $rootScope, $http, $window, $location, $routeParams, Article) {
-        $scope.r = Article.query($routeParams,
-            function(success){
-            },
-            function(error){
-            }
-        );
+        $scope.r = Article.query($routeParams);
     }
 ])
 .controller('CtrlArticleDetail', ['$scope', '$rootScope','$http', '$window',

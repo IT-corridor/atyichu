@@ -271,7 +271,6 @@ class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
         photos in data in form [23,43,242]
         '''
         data = request.data
-        # PEP 8 Dan
         article = Article.objects.create(title=data['title'],
                                          description=data['description'],
                                          author=request.user)
@@ -387,8 +386,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         qs = Photo.p_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store',
                                             'group')
-        # qs = qs.filter(Q(group__is_private=False))\
-        qs = qs.filter(Q(article__isnull=False)).distinct()
+        qs = qs.filter(article__isnull=False).distinct()
         qs = self.filter_queryset(qs)
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
