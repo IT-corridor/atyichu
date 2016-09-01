@@ -40,13 +40,13 @@ class LinkSerializer(serializers.ModelSerializer):
 
 class GroupShortSerializer(serializers.ModelSerializer):
     """ Simple short serializer of Group for other serializers."""
+
     class Meta:
         model = models.Group
         fields = ('id', 'title')
 
 
 class MirrorSerializer(serializers.ModelSerializer):
-
     is_online = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -56,13 +56,12 @@ class MirrorSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-
     author_data = serializers.SerializerMethodField(read_only=True)
 
     def get_author_data(self, obj):
         if hasattr(obj.author, 'visitor'):
             serializer = VisitorSerializer(instance=obj.author.visitor,
-                                          read_only=True)
+                                           read_only=True)
             return serializer.data
         elif hasattr(obj.author, 'vendor'):
             serializer = StoreShortSerializer(instance=obj.author.vendor.store,
@@ -77,12 +76,17 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class PhotoSerializer(serializers.ModelSerializer):
     """ A simple photo serializer for creating and editing """
+    cover = serializers.SerializerMethodField(read_only=True)
+
+    def get_cover(self, obj):
+        cover = obj.cover or obj.original.cover
+        return cover.url
+
     class Meta:
         model = models.Photo
 
 
 class PhotoOriginalSerializer(serializers.ModelSerializer):
-
     descr = serializers.SerializerMethodField(read_only=True)
     group = GroupShortSerializer(read_only=True)
     owner = serializers.SerializerMethodField(read_only=True)
@@ -185,7 +189,7 @@ class PhotoDetailSerializer(PhotoListSerializer):
         request = self.context.get('request', None)
         if request:
             user = request.user
-            return models.Like.objects.filter(visitor_id=user.pk, photo=obj)\
+            return models.Like.objects.filter(visitor_id=user.pk, photo=obj) \
                 .exists()
 
     class Meta:
@@ -216,17 +220,16 @@ class PhotoCropSerializer(serializers.ModelSerializer):
         model = models.Photo
         fields = ('id', 'crop')
 
+
 # Group serializers started
 
 
 class TagSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = models.Tag
 
 
 class MemberSerializer(serializers.ModelSerializer):
-
     username = serializers.CharField(source='visitor', read_only=True)
     thumb = serializers.SerializerMethodField(read_only=True)
 
@@ -255,7 +258,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
     def get_is_owner_followed(self, obj):
         if self.context.get('request'):
-            return models.FollowUser\
+            return models.FollowUser \
                 .objects.filter(user=obj.owner,
                                 follower=self.context['request'].user).exists()
         return False
@@ -263,7 +266,7 @@ class GroupSerializer(serializers.ModelSerializer):
     def get_is_followed(self, obj):
         # TODO: BAD REQUEST, it repeats for many times
         # this action run for the eact item of the queryset
-        fgs = [item.follower for item in obj.followgroup_set.all()]        
+        fgs = [item.follower for item in obj.followgroup_set.all()]
         if self.context.get('request'):
             return self.context['request'].user in fgs
         return False
@@ -285,7 +288,6 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class GroupListSerializer(GroupSerializer):
-
     overview = serializers.SerializerMethodField(read_only=True)
 
     def get_overview(self, obj):
@@ -298,7 +300,6 @@ class GroupListSerializer(GroupSerializer):
 
 
 class GroupDetailSerializer(GroupSerializer):
-
     members = MemberSerializer(source='member_set', many=True, read_only=True)
     tags = TagSerializer(source='tag_set', many=True, read_only=True)
 

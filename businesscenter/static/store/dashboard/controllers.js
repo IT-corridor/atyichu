@@ -18,7 +18,6 @@ angular.module('dashboard.controllers', ['dashboard.services', 'ui.load', 'ui.jq
             $scope.date_change = function () {
                 refresh();
             }
-
             refresh();
 
             function refresh() {
