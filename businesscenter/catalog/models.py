@@ -96,26 +96,47 @@ class Commodity(models.Model):
     modify_date = models.DateTimeField(_('Date modified'), auto_now=True)
     kind = models.ForeignKey(Kind, verbose_name=_('Kind'))
     brand = models.ForeignKey(Brand, verbose_name=_('Brand'))
+    store = models.ForeignKey('account.Store', verbose_name=_('Store'))
+    colors = models.ManyToManyField(Color, through='Stock',
+                                    verbose_name=_('Colors'))
+    sizes = models.ManyToManyField(Size, through='Stock',
+                                   verbose_name=_('Sizes'))
+
+    def __unicode__(self):
+        # BRAND+KIND+YEAR
+        """String representation of the commodity instance."""
+        return self.title if self.title else \
+            '{}+{}+{}'.format(self.brand, self.kind, self.year)
+
+    class Meta:
+        verbose_name = _('Commodity')
+        verbose_name_plural = _('Commodities')
+        ordering = ('id',)
+
+
+class Stock(models.Model):
+    """ Represents a sub-item of the :model:`catalog.Commodity`
+    with different color, size and amount. """
+    commodity = models.ForeignKey(Commodity, verbose_name=_('Commodity'))
     color = models.ForeignKey(Color, verbose_name=_('Color'),
                               blank=True, null=True)
     size = models.ForeignKey(Size, verbose_name=_('Size'))
-    store = models.ForeignKey('account.Store', verbose_name=_('Store'))
+
     color_extra = models.CharField(_('Extra color'), max_length=50, blank=True,
                                    help_text=_('Useful if vendor did not '
                                                'find required color'))
     color_pic = models.ImageField(_('Sample of color'), blank=True, null=True,
                                   upload_to='colors')
+    amount = models.PositiveIntegerField(_('Amount'), default=0)
 
-    def __unicode__(self):
-        # BRAND+COLOR+KIND+SIZE+YEAR
-        """String representation of the commodity instance."""
-        return self.title if self.title else \
-            '{}+{}+{}+{}+{}'.format(self.brand, self.color, self.kind,
-                                    self.size, self.year)
+    def get_title(self):
+        c = self.commodity
+        return '{}+{}+{}+{}+{}'.format(c.brand, self.color, c.kind,
+                                       self.size, self.year)
 
     class Meta:
-        verbose_name = _('Commodity')
-        verbose_name_plural = _('Commodities')
+        verbose_name = _('Stock')
+        verbose_name_plural = _('Stocks')
         ordering = ('id',)
 
 

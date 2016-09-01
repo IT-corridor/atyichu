@@ -115,12 +115,13 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
     filter_class = CommodityFilter
     ordering_fields = ('id', 'title',)
     search_fields = ('title', 'kind__title', 'kind__category__title',
-                     'brand__title', 'color__title',
-                     'size__title', 'tag__title')
+                     'colors__title', 'sizes__title',
+                     'brand__title', 'tag__title')
 
     def get_queryset(self):
         qs = super(CommodityViewSet, self).get_queryset()
-        qs = qs.select_related('brand', 'kind__category', 'color', 'size')
+        qs = qs.select_related('brand', 'kind__category',)
+        qs = qs.prefetch_related('colors', 'sizes')
         if self.request.method == 'GET' and self.kwargs.get('pk', None):
             qs = qs.prefetch_related('gallery_set', 'tag_set')
         return qs
