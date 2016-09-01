@@ -66,7 +66,12 @@ class Color(AbsCategory):
 
 
 class Size(AbsCategory):
-    """ Size for the :model:`catalog.Commodity`"""
+    """ Size for the :model:`catalog.Commodity`.
+    Optionally can contain :model:`catalog.Commodity` foreign key.
+    Because some categories, like shoes, can have different size system """
+    category = models.ForeignKey(Category, verbose_name=_('Category'),
+                                 blank=True, null=True)
+
     class Meta:
         verbose_name = _('Size')
         verbose_name_plural = _('Sizes')
