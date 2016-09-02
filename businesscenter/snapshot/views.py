@@ -568,6 +568,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                 'visitor': request.user.pk,
                 'group': request.data['group'],
                 'title': title,
+                'article': obj.article,
                 'description': description}
 
         serializer = self.serializer_class(data=data)
