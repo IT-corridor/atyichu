@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.db.models import Q
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.filters import DjangoFilterBackend, \
@@ -11,7 +11,7 @@ from rest_framework.response import Response
 
 from . import serializers, models
 from .filters import CommodityFilter
-from .permissions import IsCommodityPhotoOwnerOrReadOnly
+from .permissions import IsCommodityNestedOwnerOrReadOnly
 from utils import permissions
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin
 from utils.parsing import parse_json_data
@@ -63,7 +63,7 @@ class ColorViewSet(viewsets.ModelViewSet):
 
 class GalleryViewSet(viewsets.ModelViewSet):
     # TODO: implement permissions
-    permission_classes = (IsCommodityPhotoOwnerOrReadOnly,)
+    permission_classes = (IsCommodityNestedOwnerOrReadOnly,)
     serializer_class = serializers.GallerySerializer
     pagination_class = None
     queryset = models.Gallery.objects.select_related('commodity')
@@ -189,3 +189,13 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
             raise ValidationError({'error': _('{} parameter is required').
                                   format(e.message)})
         return Response(serializer.data)
+
+
+class StockViewSet(mixins.CreateModelMixin,
+                   mixins.UpdateModelMixin,
+                   mixins.DestroyModelMixin,
+                   viewsets.GenericViewSet):
+    """ Currently provide 'CREATE'. 'UPDATE', 'DELETE'. Without 'READ'."""
+    serializer_class = serializers.StockSerializer
+    queryset = models.Stock.objects.all()
+    permission_classes = (IsCommodityNestedOwnerOrReadOnly,)
