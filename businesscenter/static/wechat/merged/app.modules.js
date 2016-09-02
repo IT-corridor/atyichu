@@ -45,6 +45,15 @@ app.run(['$rootScope','$q','Visitor', function($rootScope, $q, Visitor) {
 
     var unwatch = $rootScope.$watch('visitor', function(newValue, oldValue) {
         if (newValue) {
+            var pusher = new Pusher('4c8e6d909a1f7ccc44ed');
+            var notificationsChannel = pusher.subscribe('nf_channel_'+newValue.pk);
+
+            notificationsChannel.bind('new_notification', function(notification){
+                var message = notification.message;
+                toastr.success(message);
+                $rootScope.add_notification(message);
+            });
+
             if (newValue.hasOwnProperty('$promise')) {
                 newValue.$promise.then(function(success) {
                     $rootScope.following = Visitor.get_follow_users(

@@ -50,11 +50,6 @@
             <div data-ng-if="visitor_resolved === true" data-ng-view class="view-frame"></div>
         </div>
         <div data-ng-if="visitor_resolved === true" data-d-footer></div>
-        <script>
-            // It is used in notification_wechat.js
-            // I am not sure how to avoid this.
-            var user_id = '{{user.id}}';
-        </script>
         <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
         <script src="{{ STATIC_URL }}lib/angularjs/angular.min.js"></script>
         <script src="{{ STATIC_URL }}lib/angularjs/angular-cookies.min.js"></script>
@@ -73,7 +68,6 @@
         <script src="{{ STATIC_URL }}lib/jquery/jquery.js"></script>
         <script src="{{ STATIC_URL }}lib/toastr/pusher.min.js"></script>
         <script src="{{ STATIC_URL }}lib/toastr/toastr.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/toastr/notification_wechat.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/app.modules.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/app.constants.js"></script>
         <script src="{{ STATIC_URL }}wechat/merged/app.routes.js"></script>
