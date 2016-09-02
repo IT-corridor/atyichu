@@ -295,6 +295,9 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'EXTRA_COLOR': 'Extra color',
                 'COLOR_PIC': 'Sample of color',
                 'FILES': 'Photos',
+                'AMOUNT': 'Amount',
+                'STOCKS': 'Stocks',
+                'ANOTHER_STOCK': 'Add another Stock',
             },
             'SEASONS': {
                 'WINTER': 'Winter',

@@ -72,7 +72,9 @@ class StoreViewSet(OwnerCreateMixin,
         """
         obj = self.get_object_by_owner_or_404()
         select = cat_models.Commodity.objects.filter(store=obj)\
-            .select_related('brand', 'kind__category', 'color', 'size')
+            .select_related('brand', 'kind__category',)
+
+        select = select.prefetch_related('colors', 'sizes')
 
         return self.get_list_response(select,
                                       cat_srlzrs.CommodityListVerboseSerializer)
