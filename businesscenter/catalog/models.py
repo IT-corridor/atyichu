@@ -138,6 +138,7 @@ class Stock(models.Model):
         verbose_name = _('Stock')
         verbose_name_plural = _('Stocks')
         ordering = ('id',)
+        unique_together = (('commodity', 'color', 'size'),)
 
 
 class Gallery(models.Model):
