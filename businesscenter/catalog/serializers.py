@@ -75,16 +75,7 @@ class CommodityListSerializer(serializers.ModelSerializer):
     cover = serializers.SerializerMethodField(read_only=True)
     category = serializers.PrimaryKeyRelatedField(source='kind.category',
                                                   read_only=True)
-    stock_set = StockSerializer(many=True, allow_null=True)
-
-    def create(self, validated_data):
-        stock_set = validated_data.pop('stock_set')
-        commodity = self.Meta.model.objects.create(**validated_data)
-        models.Stock.objects.bulk_create(
-            (models.Stock(commodity=commodity, **data) for data in stock_set)
-        )
-
-        return commodity
+    stock_set = StockSerializer(read_only=True, many=True)
 
     def get_cover(self, obj):
         gallery = obj.gallery_set.first()

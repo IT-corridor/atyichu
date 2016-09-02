@@ -8,11 +8,13 @@ from rest_framework.decorators import list_route, detail_route
 from rest_framework.filters import DjangoFilterBackend, \
     OrderingFilter, SearchFilter
 from rest_framework.response import Response
+
 from . import serializers, models
 from .filters import CommodityFilter
 from .permissions import IsCommodityPhotoOwnerOrReadOnly
 from utils import permissions
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin
+from utils.parsing import parse_json_data
 
 
 class ReferenceMixin(OwnerCreateMixin, OwnerUpdateMixin):
@@ -144,15 +146,25 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
         commodity = serializer.save()
         files = self.request.FILES.copy()
         files.pop('color_pic', None)
-        serializer_class = serializers.GallerySerializer
         photo_limit = 5
         for n, k in enumerate(files.keys()):
             if n > photo_limit:
                 break
             data = {'commodity': commodity.id, 'photo': files[k]}
-            serializer = serializer_class(data=data)
+            serializer = serializers.GallerySerializer(data=data)
             serializer.is_valid(True)
             serializer.save()
+
+        stock_set = self.request.data.get('stock_set')
+        if stock_set:
+            if isinstance(stock_set, unicode):
+                stock_set = parse_json_data(stock_set)
+
+            for stock_data in stock_set:
+                stock_data['commodity'] = commodity.id
+                serializer = serializers.StockSerializer(data=stock_data)
+                serializer.is_valid(True)
+                serializer.save()
 
     @list_route(methods=['get'])
     def my(self, request, *args, **kwargs):
@@ -165,7 +177,7 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
             raise ValidationError({'error': _('{} parameter is required').
                                   format('"q"')})
         try:
-            request.query_params['q']
+            # request.query_params['q']
             photo = request.query_params['photo']
             queryset = self.get_queryset().filter(Q(store_id=request.user.pk),
                                                   ~Q(link__photo_id=photo))
