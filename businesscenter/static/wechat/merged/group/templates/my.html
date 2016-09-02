@@ -3,13 +3,13 @@
 <div class="my-wardrobes-header">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-9">
+			<div class="col-xs-9 col-md-9">
 				<i class="ti-angle-left" aria-hidden="true" data-ng-click="back()" role="button" tabindex="0"></i>
 				<div class="my-wardrobes-header-title">
 					<a data-ng-href="#" class="m-r-sm ng-binding" href="#">{{ 'GROUP.MY.HEADER' | translate }} ({{ r.count }})</a>
 				</div>
 			</div>
-			<div class="col-md-3">
+			<div class="col-xs-3 col-md-3">
 				<div class="create-wardrobe-plus">
 					<a data-ng-href="#!/group/create"><i class="ti-plus"></i></a>
 				</div>
@@ -101,8 +101,8 @@
 
 				<!-- footer -->
 				<div class="row wardrobe-group-footer">
-					<div class="col-xs-11 col-sm-11 col-lg-11 wardrobe-group-description">{{ group.description }}</div>
-					<div class="col-xs-1 col-sm-1 col-lg-1 wardrobe-group-description-edit">
+					<div class="col-xs-10 col-sm-11 col-lg-11 wardrobe-group-description">{{ group.description }}</div>
+					<div class="col-xs-2 col-sm-1 col-lg-1 wardrobe-group-description-edit">
 						<a data-ng-href="#!/group/{{ group.id }}/manage"><i class="icon-pencil"></i></a>
 					</div>
 				</div>
