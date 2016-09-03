@@ -8,10 +8,10 @@ from django.utils import timezone
 from visitor.models import Visitor
 from utils.utils import UploadPath
 from utils.validators import SizeValidator
+from vutils.notification import trigger_notification
 
 
 class MirrorQuerySet(models.query.QuerySet):
-
     def lock(self):
         return self.update(is_locked=True, lock_date=timezone.now(),
                            last_login=timezone.now())
@@ -21,7 +21,6 @@ class MirrorQuerySet(models.query.QuerySet):
 
 
 class MirrorManager(models.Manager):
-
     def get_queryset(self):
         return MirrorQuerySet(self.model, using=self._db)
 
@@ -35,10 +34,10 @@ class MirrorManager(models.Manager):
         # IT IS NOT MY QUERY
         sql = "SELECT * FROM (SELECT id,longitude,latitude, " \
               "is_locked, owner_id, " \
-               "ROUND(6378.138*2*ASIN(SQRT(POW(SIN((%s*PI()/" \
+              "ROUND(6378.138*2*ASIN(SQRT(POW(SIN((%s*PI()/" \
               "180-latitude*PI()/180)/2),2)+COS(%s*PI()/180)" \
               "*COS(latitude*PI()/180)" \
-               "*POW(SIN((%s*PI()/180-longitude*PI()/180)/2),2)))*1000) " \
+              "*POW(SIN((%s*PI()/180-longitude*PI()/180)/2),2)))*1000) " \
               "AS distance FROM snapshot_mirror ORDER BY distance LIMIT 10) s " \
               "WHERE  distance < 500"
         return self.raw(sql, [lat, lat, lon])
@@ -117,7 +116,7 @@ class Mirror(models.Model):
         # It checks only locked mirrors, so maybe in this
         # condition you have to remove "mirror.is_locked"
         if self.is_locked and \
-                timezone.now() < (self.modify_date + timedelta(minutes=1)):
+                        timezone.now() < (self.modify_date + timedelta(minutes=1)):
             return True
         return False
 
@@ -127,7 +126,7 @@ class Mirror(models.Model):
     class Meta:
         verbose_name = _('Mirror')
         verbose_name_plural = _('Mirrors')
-        ordering = ('-modify_date', )
+        ordering = ('-modify_date',)
 
 
 class Stamp(models.Model):
@@ -158,7 +157,7 @@ class Article(models.Model):
     class Meta:
         verbose_name = _('Article')
         verbose_name_plural = _('Articles')
-            
+
 
 class Photo(models.Model):
     """Model representing a photo record with extra data.
@@ -218,7 +217,6 @@ class Photo(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-
         if not self.creator:
             self.creator = self.visitor
 
@@ -264,7 +262,6 @@ class Comment(models.Model):
     like = models.PositiveIntegerField(_('Like counter'), default=0)
 
     def __unicode__(self):
-
         return '{}:{}:{}'.format(self.photo, self.id, self.author)
 
     class Meta:
@@ -436,8 +433,12 @@ class Notification(models.Model):
     status = models.CharField(max_length=20, default='new')
 
     def __unicode__(self):
-        return '{}: {}'.format(self.owner, self. message)
+        return '{}: {}'.format(self.owner, self.message)
+
+    def save(self):
+        super(Notification, self).save()
+        trigger_notification('nf_channel_{}'.format(self.id),
+                             'new_notification', self.message, self.type, self.id)
 
     class Meta:
         ordering = ('pk',)
-

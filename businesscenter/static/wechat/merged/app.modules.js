@@ -48,9 +48,14 @@ app.run(['$rootScope','$q','Visitor', function($rootScope, $q, Visitor) {
             var notificationsChannel = pusher.subscribe('nf_channel_'+newValue.pk);
 
             notificationsChannel.bind('new_notification', function(notification){
+                $rootScope.add_notification(notification);
                 var message = notification.message;
-                toastr.success(message);
-                $rootScope.add_notification(message);
+                if (notification.type == 'success')
+                    toastr.success(message);
+                else
+                    toastr.warning(message);
+                // reply notification
+                Visitor.reply_notifications({pk:notification.id});
             });
 
             $rootScope.notifications = Visitor.get_notifications();

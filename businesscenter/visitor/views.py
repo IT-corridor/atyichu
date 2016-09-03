@@ -20,8 +20,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, list_route
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
-from .serializers import VisitorSerializer, VisitorExtraSerializer,\
-    VisitorCreateSerializer, VisitorProfileSerializer, VisitorLoginSerializer,\
+from .serializers import VisitorSerializer, VisitorExtraSerializer, \
+    VisitorCreateSerializer, VisitorProfileSerializer, VisitorLoginSerializer, \
     PhoneSerializer, CodeSerializer
 from .oauth2 import WeixinBackend, WeixinQRBackend
 from .models import Visitor, VisitorExtra
@@ -29,6 +29,8 @@ from .permissions import IsVisitorSimple, IsVisitorOrReadOnly
 from .extra_handlers import PendingUserVault, PhonesVault
 from .sms import TaoSMSAPI
 from utils.serializers import UserPasswordSerializer, UserSetPasswordSerializer
+from snapshot.models import Notification
+from vutils.notification import trigger_notification
 
 
 @api_view(['POST'])
@@ -154,7 +156,7 @@ def openid(request):
                 'refresh_token': token_data['refresh_token'],
                 'backend': backend,
             }
-    }
+            }
 
     try:
         extra = VisitorExtra.objects.get(openid=token_data['openid'],
@@ -224,6 +226,8 @@ def get_me(request):
     """ Provides personal user data, username and thumb """
     visitor = request.user.visitor
     serializer = VisitorSerializer(instance=visitor)
+    check_unread_notification(request.user)
+
     return Response(data=serializer.data)
 
 
@@ -508,3 +512,12 @@ class ProfileViewSet(viewsets.GenericViewSet):
         serializer.save()
         return Response(status=204)
 
+
+def check_unread_notification(user):
+    """
+    resend unread notifications for the user
+    """
+    for nf in Notification.objects.filter(owner=user, status='new'):
+        trigger_notification('nf_channel_{}'.format(user.id),
+                             'new_notification',
+                             nf.message, nf.type, nf.id)
