@@ -45,6 +45,12 @@ class GroupShortSerializer(serializers.ModelSerializer):
         model = models.Group
         fields = ('id', 'title')
 
+class NotificationSerializer(serializers.ModelSerializer):
+    """ Simple short serializer of Notification."""
+
+    class Meta:
+        model = models.Notification
+        fields = ('message',)
 
 class MirrorSerializer(serializers.ModelSerializer):
     is_online = serializers.BooleanField(read_only=True)

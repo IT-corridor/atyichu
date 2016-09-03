@@ -21,7 +21,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from .models import Mirror, Photo, Comment, Tag, Member, Group, Like, Link, \
-    FollowUser, FollowGroup, Article
+    FollowUser, FollowGroup, Article, Notification
 
 from . import serializers
 from .permissions import IsOwnerOrMember, MemberCanServe, \
@@ -358,10 +358,11 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         content = {'photo_id': photo.id}
         # SENDING A request for nitification to pusher service,
         # which will push the ANDROID APP.
+        msg = 'New photo ({}) is created!'.format(photo.id)
         send_json, receive_info = trigger_notification('nf_channel_{}'.format(visitor.id),
                                                        'new_notification',
-                                                       'New photo ({}) is created!'.format(photo.id))
-
+                                                       msg)
+        Notification.objects.create(message=msg, owner=visitor)
         # log.info('umeng json: {}, {}'.format(send_json, receive_info))
         return Response(data={'id': photo.id}, status=201)
 
@@ -483,6 +484,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             trigger_notification('nf_channel_{}'.format(obj.visitor_id),
                                  'new_notification', msg)
 
+            Notification.objects.create(message=msg, owner=obj.visitor)
             data = {'like_count': like_count}
             status = 200
             # Like count is useless
@@ -507,6 +509,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
             trigger_notification('nf_channel_{}'.format(obj.visitor_id),
                                  'new_notification', msg)
+            Notification.objects.create(message=msg, owner=obj.visitor)
             return Response(status=204)
         except Exception:
             raise ValidationError({'detail': _('You can dislike it.')})
@@ -562,6 +565,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             .format(get_nickname(request.user), obj.title)
         trigger_notification('nf_channel_{}'.format(obj.visitor_id),
                              'new_notification', msg)
+        Notification.objects.create(message=msg, owner=obj.visitor)
 
         data = {'original': original,
                 'creator': creator,
@@ -700,6 +704,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             .format(get_nickname(request.user), photo.title)
         trigger_notification('nf_channel_{}'.format(photo.visitor_id),
                              'new_notification', msg)
+        Notification.objects.create(message=msg, owner=photo.visitor)
 
         return Response(serializer.data, status=201, headers=headers)
 
@@ -1010,6 +1015,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
             trigger_notification('nf_channel_{}'.format(obj.owner.id),
                                  'new_notification', msg)
+            Notification.objects.create(message=msg, owner=obj.owner)
 
         return Response(data, status)
 
@@ -1032,6 +1038,7 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
             trigger_notification('nf_channel_{}'.format(obj.owner.id),
                                  'new_notification', msg)
+            Notification.objects.create(message=msg, owner=obj.owner)
 
         except IntegrityError:
             data = {'error': _('You have followed it already!')}
@@ -1052,14 +1059,12 @@ class GroupPhotoViewSet(mixins.UpdateModelMixin,
 
 
 class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
-    """ Dan`s Job."""
+    """ Follow and following logic"""
     queryset = FollowUser.objects.all()
 
     @list_route(methods=['get'])
     def follow_users(self, request, *args, **kwargs):
-        # TODO: Simplify, I am not sure about all purposes
-        # in which this handler used
-        # We can return just a simple list with pk
+        # return users who the visitor follows
         visitor = self.request.user
         qs_follow = FollowUser.objects.filter(follower=visitor)
         user_ids = [item.user.id for item in qs_follow]
@@ -1072,8 +1077,7 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
         data = v_serializer.data + v_store.data
         status = 200
-        # TODO: it is not neccassary to create data in the dict
-        # 'results' is redundand'
+
         return Response(data={'results': data}, status=status)
 
     @list_route(methods=['get'])
@@ -1117,6 +1121,7 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
             trigger_notification('nf_channel_{}'.format(kwargs['pk']),
                                  'new_notification', msg)
+            Notification.objects.create(message=msg, owner_id=int(kwargs['pk']))
 
         except IntegrityError:
             data = {'error': _('You have followed the user already!')}
@@ -1126,7 +1131,7 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @detail_route(methods=['get'])
     def unfollow_user(self, request, *args, **kwargs):
-        """ Handler that increments likes """
+        """ Handler that decreases likes """
         try:
             FollowUser.objects.get(follower_id=request.user.id,
                                    user_id=kwargs['pk']).delete()
@@ -1140,12 +1145,25 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
             trigger_notification('nf_channel_{}'.format(kwargs['pk']),
                                  'new_notification', msg)
+            Notification.objects.create(message=msg, owner_id=int(kwargs['pk']))
 
         except IntegrityError:
             data = {'error': _('You have followed the user already!')}
             status = 400
 
         return Response(data, status)
+
+
+    @list_route(methods=['get'])
+    def notifications(self, request, *args, **kwargs):
+        # return the user's notifications
+        visitor = self.request.user
+        print visitor.id
+        nfs = Notification.objects.filter(owner=request.user, status='read')
+        s_nfs = serializers.NotificationSerializer(nfs, many=True)
+        status = 200
+
+        return Response(data=s_nfs.data, status=status)
 
 
 class AnalyticsViewSet(viewsets.ViewSet):

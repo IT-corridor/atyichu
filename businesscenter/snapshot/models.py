@@ -423,3 +423,21 @@ class FollowUser(models.Model):
         unique_together = (('user', 'follower'),)
         ordering = ('pk',)
 
+
+class Notification(models.Model):
+    """
+    Representation of notification
+    """
+    type = models.CharField(max_length=50, default='success')
+    message = models.CharField(max_length=500)
+    create_date = models.DateTimeField(auto_now=True)
+    owner = models.ForeignKey('auth.User', verbose_name=_('User'),
+                              on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, default='new')
+
+    def __unicode__(self):
+        return '{}: {}'.format(self.owner, self. message)
+
+    class Meta:
+        ordering = ('pk',)
+

@@ -32,7 +32,6 @@ app.run(['$rootScope','$q','Visitor', function($rootScope, $q, Visitor) {
     $rootScope.THEME = '/static/theme/';
     $rootScope.PATH = '/static/wechat/merged/';
     $rootScope.alerts = [];
-    $rootScope.notifications = [];
 
     $rootScope.add_notification = function (notification) {
         $rootScope.notifications.push(notification);
@@ -53,6 +52,8 @@ app.run(['$rootScope','$q','Visitor', function($rootScope, $q, Visitor) {
                 toastr.success(message);
                 $rootScope.add_notification(message);
             });
+
+            $rootScope.notifications = Visitor.get_notifications();
 
             if (newValue.hasOwnProperty('$promise')) {
                 newValue.$promise.then(function(success) {
