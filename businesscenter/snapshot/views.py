@@ -47,6 +47,9 @@ log = logging.getLogger(__name__)
 
 
 class MirrorViewSet(viewsets.GenericViewSet):
+    """ **Important**
+        Currently not used.
+    """
     serializer_class = serializers.MirrorSerializer
     permission_classes = [IsVisitor]
 
@@ -292,6 +295,8 @@ class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
 
 
 class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
+    """ All about photos.
+    """
     model = Photo
     serializer_class = serializers.PhotoDetailSerializer
     permission_classes = [IsPhotoOwnerOrReadOnly]
@@ -367,7 +372,9 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         """
-        get all photo order by time desc. USED FOR SEARCH!
+        Get all photo order by time (id) desc.
+        Can be used for search (and it is used).
+        q -- Search parameter.
         """
         qs = Photo.p_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store',
@@ -434,6 +441,8 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         return Response(data=serializer.data)
 
     def destroy(self, request, *args, **kwargs):
+        """ Because of clonning photo this handler does not delete photo.
+         It is only unbinds from the group."""
         instance = self.get_object()
         if instance.photo and instance.photo.name:
             instance.group = None
@@ -513,7 +522,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def newest(self, request, *args, **kwargs):
-        """ Providing a newest list of public groups photos """
+        """ Providing a list of the public groups newest photos """
         qs = Photo.a_objects.select_related('original', 'visitor__visitor',
                                             'visitor__vendor__store', 'group')
         qs = qs.filter(Q(group__is_private=False) &
@@ -538,7 +547,9 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def clone(self, request, *args, **kwargs):
-        """ Make a duplicate from existing photo record. GroupID required."""
+        """ Make a duplicate from existing photo record.
+        Currently Swagger presents wrong scheme.
+        group -- ID of the group where are you going to place cloned photo. """
         if 'group' not in request.data:
             raise ValidationError({'group': _('This parameter is required.')})
 
@@ -578,7 +589,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def liked_list(self, request, *args, **kwargs):
-        """ Providing a photo list of liked photos """
+        """ Providing a photo list of liked photos. """
         qs = Photo.p_objects.select_related('original', 'visitor__visitor')
         qs = qs.filter(like__visitor_id=request.user.id)
 
@@ -635,8 +646,11 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def remove_link(self, request, *args, **kwargs):
-        """ This handler is here to use a photo permissions.
-        It is important."""
+        """ This handler is here to same permissions as this viewset has.
+        Removes a commodity link from photo instance.
+        It is important.
+        link -- ID of the Link instance bound to the photo.
+        """
         self.get_object()
         try:
             Link.objects.get(id=request.data['link']).delete()
@@ -821,8 +835,11 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def member_add(self, request, *args, **kwargs):
-        """ Add visitor to the group by username.
-         It is necessary to perform self.get_object to check permission. """
+        """
+        Add visitor to the group by username.
+        It is necessary to perform self.get_object to check permission.
+        username -- username of the collaborator to add.
+         """
         pk = self.get_object().id
         status = 400
         try:
@@ -843,10 +860,13 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def member_vendor_add(self, request, *args, **kwargs):
-        """ Add visitor (VENDOR!) to the group by store`s brand name.
-         It is necessary to perform self.get_object to check permission.
-          Warning: it is not programatically restricted that members of the
-          vendor(store) group can instances of the vendor. """
+        """
+        Add visitor (VENDOR!) to the group by store`s brand name.
+        It is necessary to perform self.get_object to check permission.
+        Warning: it is not programatically restricted that members of the
+        vendor(store) group can instances of the vendor.
+        username -- username of the collaborator to add.
+        """
         # TODO: implement restriction.
 
         pk = self.get_object().id
@@ -871,7 +891,9 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def member_remove(self, request, *args, **kwargs):
-        """ Remove member from group."""
+        """ Remove member from group.
+        member -- ID of the member (collaborator)
+        """
         status = 400
         try:
             member_id = request.data['member']
@@ -1262,7 +1284,12 @@ class AnalyticsViewSet(viewsets.ViewSet):
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def get_signature(request):
-    """ Previously it was mirror and photos views pages. Now it is API. """
+    """
+    **Context**
+    This handler used for wechat js library purpose.
+    For example for getting user location
+    I need to set up a signature (on that page) before.
+    """
     # TODO: replace file serving with redis
     # HOOK for ANGULARJS APP for wxlib purpose
     location = request.query_params.get('location', None)
