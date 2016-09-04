@@ -4,14 +4,14 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-9 col-md-9">
-				<i class="ti-angle-left" aria-hidden="true" data-ng-click="back()" role="button" tabindex="0"></i>
+				<i class="icon-ti ti-angle-left" aria-hidden="true" data-ng-click="back()" role="button" tabindex="0"></i>
 				<div class="my-wardrobes-header-title">
 					<a data-ng-href="#" class="m-r-sm ng-binding" href="#">{{ 'GROUP.MY.HEADER' | translate }} ({{ r.count }})</a>
 				</div>
 			</div>
 			<div class="col-xs-3 col-md-3">
-				<div class="create-wardrobe-plus">
-					<a data-ng-href="#!/group/create"><i class="ti-plus"></i></a>
+				<div class="my-wardrobes-header-plus">
+					<a data-ng-href="#!/group/create"><i class="icon-ti ti-plus"></i></a>
 				</div>
 			</div>
 		</div>
@@ -33,7 +33,6 @@
 					<div class="col-xs-4 col-sm-4 col-md-4">
 						<div class="wardrobe-group-dots" data-uib-dropdown style="position: relative;">
 							<a href id="group-dropdown{{ group.id }}" data-uib-dropdown-toggle>
-								<!-- <i class="fa fa-ellipsis-h"></i> -->
 								<span class="icon-dot"></span>
 								<span class="icon-dot"></span>
 								<span class="icon-dot"></span>
@@ -49,55 +48,39 @@
 				</div>
 
 				<!-- main -->
-<!-- 				<div class="row">
-					<ul class="img-group list-unstyled">
-						<li class="img-group-item" data-ng-repeat="item in group.overview">
-							<img class="img-center img-responsive" data-ng-src="{{ item.crop }}" alt="...">
-						</li>
-					</ul>
-				</div> -->
-
-
 				<div class="container">
-				    <div class="row">
+					<div class="row">
 
-				         <div class="masonry-layout-panel masonry-layout-cluster masonry-layout-cluster--vertical">
+						<div class="wardrobe-group-row">
 
-				          <div class="masonry-layout-cluster__segment masonry-layout-cluster__segment--column col-1">
-				            <div class="masonry-layout-panel masonry-layout-cluster__segment" data-ng-repeat="item in group.overview">
-				              <div class="masonry-layout-panel__content">
-				                <img class="img-center img-responsive" data-ng-src="{{ item.crop }}" alt="...">
-				              </div>
-				            </div>
-				          </div>
+							<div class="wardrobe-group-column col-1">
+								<div class="wardrobe-group-segment" data-ng-repeat="item in group.overview">
+									<div class="wardrobe-group-content">
+										<img class="img-responsive" data-ng-src="{{ item.crop }}" alt="...">
+									</div>
+								</div>
+							</div>
 
-				          <div class="masonry-layout-cluster__segment masonry-layout-cluster__segment--column col-2">
+							<div class="wardrobe-group-column col-2">
+								<div class="wardrobe-group-segment" data-ng-repeat="item in group.overview">
+									<div class="wardrobe-group-content">
+										<img class="img-responsive" data-ng-src="{{ item.crop }}" alt="...">
+									</div>
+								</div>
+							</div>
 
-				            <div class="masonry-layout-panel masonry-layout-cluster__segment" data-ng-repeat="item in group.overview">
-				              <div class="masonry-layout-panel__content">
-				                <img class="img-center img-responsive" data-ng-src="{{ item.crop }}" alt="...">
-				              </div>
-				            </div>
+							<div class="wardrobe-group-column col-3">
+								<div class="wardrobe-group-segment" data-ng-repeat="item in group.overview">
+									<div class="wardrobe-group-content">
+										<img class="img-responsive" data-ng-src="{{ item.crop }}" alt="...">
+									</div>
+								</div>
+							</div>
 
-				          </div>
+						</div> <!-- wardrobe-group-row -->
 
-				          <div class="masonry-layout-cluster__segment masonry-layout-cluster__segment--column col-3">
-
-				            <div class="masonry-layout-panel masonry-layout-cluster__segment" data-ng-repeat="item in group.overview">
-				              <div class="masonry-layout-panel__content">
-				                <img class="img-center img-responsive" data-ng-src="{{ item.crop }}" alt="...">
-				              </div>
-				            </div>
-
-				          </div>
-
-				        </div> 
-
-				    </div> <!-- row -->
+					</div> <!-- row -->
 				</div> <!-- container -->
-
-
-
 
 				<!-- footer -->
 				<div class="row wardrobe-group-footer">
