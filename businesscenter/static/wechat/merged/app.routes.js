@@ -6,6 +6,7 @@ angular.module('app.route', [
     'user.controllers',
     'group.controllers',
     'article.controllers',
+    'notification.controllers',
 ])
 .config(['$routeProvider','PATH',
     function($routeProvider, PATH) {
@@ -61,8 +62,8 @@ angular.module('app.route', [
             }
         }).
         when('/notifications', {
-            templateUrl: PATH + 'common/templates/notifications.html',
-            controller: 'CtrlDummy'
+            templateUrl: PATH + 'notification/templates/notifications.html',
+            controller: 'CtrlNotification'
         }).
         when('/photo/:pk', {
             templateUrl: PATH + 'photo/templates/detail_new.html',

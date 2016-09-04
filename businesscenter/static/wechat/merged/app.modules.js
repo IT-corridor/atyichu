@@ -16,7 +16,7 @@ var app = angular.module('app.main', [
     'grid',
     'user.directives',
     'group.services',
-
+    'notification.services',
 ]);
 app.factory('httpRequestInterceptor', function() {
     return {
@@ -26,13 +26,12 @@ app.factory('httpRequestInterceptor', function() {
         }
     };
 });
-app.run(['$rootScope','$q','Visitor', function($rootScope, $q, Visitor) {
+app.run(['$rootScope','$q','Visitor', 'Notification', function($rootScope, $q, Visitor, Notification) {
     /*Initialization*/
     $rootScope.site = '哎特衣橱';
     $rootScope.THEME = '/static/theme/';
     $rootScope.PATH = '/static/wechat/merged/';
     $rootScope.alerts = [];
-    $rootScope.notifications = [];
 
     $rootScope.add_notification = function (notification) {
         $rootScope.notifications.push(notification);
@@ -45,6 +44,22 @@ app.run(['$rootScope','$q','Visitor', function($rootScope, $q, Visitor) {
 
     var unwatch = $rootScope.$watch('visitor', function(newValue, oldValue) {
         if (newValue) {
+            var pusher = new Pusher('4c8e6d909a1f7ccc44ed');
+            var notificationsChannel = pusher.subscribe('nf_channel_'+newValue.pk);
+
+            notificationsChannel.bind('new_notification', function(notification){
+                $rootScope.add_notification(notification);
+                var message = notification.message;
+                if (notification.type == 'success')
+                    toastr.success(message);
+                else
+                    toastr.warning(message);
+                // reply notification
+                Notification.reply_notification({pk: notification.id});
+            });
+
+            $rootScope.notifications = Notification.me();
+
             if (newValue.hasOwnProperty('$promise')) {
                 newValue.$promise.then(function(success) {
                     $rootScope.following = Visitor.get_follow_users(
