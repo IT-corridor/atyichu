@@ -45,12 +45,18 @@ class GroupShortSerializer(serializers.ModelSerializer):
         model = models.Group
         fields = ('id', 'title')
 
+
 class NotificationSerializer(serializers.ModelSerializer):
     """ Simple short serializer of Notification."""
+    time = serializers.SerializerMethodField(read_only=True)
+
+    def get_time(self, object):
+        return object.create_date.strftime('%Y-%m-%d %H:%M:%S')
 
     class Meta:
         model = models.Notification
-        fields = ('message',)
+        fields = ('message', 'id', 'type', 'time')
+
 
 class MirrorSerializer(serializers.ModelSerializer):
     is_online = serializers.BooleanField(read_only=True)

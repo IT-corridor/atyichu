@@ -520,4 +520,4 @@ def check_unread_notification(user):
     for nf in Notification.objects.filter(owner=user, status='new'):
         trigger_notification('nf_channel_{}'.format(user.id),
                              'new_notification',
-                             nf.message, nf.type, nf.id)
+                             nf.message, nf.type, nf.id, nf.create_date)

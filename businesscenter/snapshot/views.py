@@ -308,7 +308,6 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                      Comment.objects.select_related('author__visitor'))
         qs = qs.prefetch_related(p)
         if self.request.method == 'GET' and self.kwargs.get('pk'):
-
             qs = qs.prefetch_related('link_set__commodity__kind',
                                      'link_set__commodity__color')
         return qs
@@ -610,7 +609,6 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             sliced = commodities[:lim]
             response_data = []
             for n, i in enumerate(sliced):
-
                 data = {'commodity': i, 'photo': pk}
                 serializer = serializers.LinkSerializer(data=data)
                 serializer.is_valid(True)
@@ -742,14 +740,14 @@ class GroupViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         """ Pretty complex queryset for retreiving groups """
         visitor = self.request.user
-        qs = Group.objects.select_related('owner__visitor').\
+        qs = Group.objects.select_related('owner__visitor'). \
             prefetch_related('tag_set', 'member_set',
                              'followgroup_set')
         if self.request.method == 'GET' and not self.kwargs.get('pk', None):
             prefetch = Prefetch('photo_set',
                                 queryset=Photo.objects.
                                 select_related('original__group',
-                                               'original__visitor',))
+                                               'original__visitor', ))
 
             qs = qs.prefetch_related(prefetch)
             qs = qs.filter(Q(is_private=False) | Q(owner=visitor) |
@@ -1127,22 +1125,28 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
         return Response(data, status)
 
 
+class NotificationViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
+    """ Notification logic"""
+    queryset = Notification.objects.all()
+
+    @detail_route(methods=['get'])
+    def reply_notification(self, request, *args, **kwargs):
+        # reply the user's notification
+        instance = self.get_object()
+        instance.status = 'read'
+        instance.save()
+
+        status = 200
+        return Response(data='success', status=status)
+
     @list_route(methods=['get'])
-    def notifications(self, request, *args, **kwargs):
-        # return the user's notifications
+    def me(self, request):
+        # return the user's read notifications
         nfs = Notification.objects.filter(owner=request.user, status='read')
         s_nfs = serializers.NotificationSerializer(nfs, many=True)
         status = 200
 
         return Response(data=s_nfs.data, status=status)
-
-
-    @list_route(methods=['get'])
-    def reply_notifications(self, request, *args, **kwargs):
-        # reply the user's notification
-        nfs = Notification.objects.filter(owner=request.user, id=int(kwargs['pk']), status='new').update(status='read')
-        status = 200
-        return Response(data='success', status=status)
 
 
 class AnalyticsViewSet(viewsets.ViewSet):
@@ -1160,7 +1164,7 @@ class AnalyticsViewSet(viewsets.ViewSet):
 
         data_sum = []
         follows_sum = 0
-        for day in range(1, last_day+1):
+        for day in range(1, last_day + 1):
             date = datetime.date(year, month, day)
             follows = FollowUser.objects. \
                 filter(follow_date__date=date, user=request.user).count()
@@ -1187,7 +1191,7 @@ class AnalyticsViewSet(viewsets.ViewSet):
         for group in groups:
             data_sum = []
             followers_sum = 0
-            for day in range(1, last_day+1):
+            for day in range(1, last_day + 1):
                 date = datetime.date(year, month, day)
                 follows = FollowGroup.objects. \
                     filter(follow_date__date=date, group=group).count()
@@ -1302,5 +1306,6 @@ def index(request):
 def get_nickname(user):
     if hasattr(user, 'vendor'):
         return user.vendor.store.brand_name or user.username
-    else:
+    elif hasattr(user, 'visitor'):
         return user.visitor.username or user.username
+    return None

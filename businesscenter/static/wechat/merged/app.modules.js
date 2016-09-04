@@ -16,7 +16,7 @@ var app = angular.module('app.main', [
     'grid',
     'user.directives',
     'group.services',
-
+    'notification.services',
 ]);
 app.factory('httpRequestInterceptor', function() {
     return {
@@ -26,7 +26,7 @@ app.factory('httpRequestInterceptor', function() {
         }
     };
 });
-app.run(['$rootScope','$q','Visitor', function($rootScope, $q, Visitor) {
+app.run(['$rootScope','$q','Visitor', 'Notification', function($rootScope, $q, Visitor, Notification) {
     /*Initialization*/
     $rootScope.site = '哎特衣橱';
     $rootScope.THEME = '/static/theme/';
@@ -55,10 +55,10 @@ app.run(['$rootScope','$q','Visitor', function($rootScope, $q, Visitor) {
                 else
                     toastr.warning(message);
                 // reply notification
-                Visitor.reply_notifications({pk:notification.id});
+                Notification.reply_notification({pk: notification.id});
             });
 
-            $rootScope.notifications = Visitor.get_notifications();
+            $rootScope.notifications = Notification.me();
 
             if (newValue.hasOwnProperty('$promise')) {
                 newValue.$promise.then(function(success) {
