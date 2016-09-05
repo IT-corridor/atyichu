@@ -190,7 +190,8 @@ def openid(request):
 @api_view(['POST'])
 @permission_classes((IsVisitorSimple,))
 def update_visitor(request):
-    """ Updating user data from weixin. Sync """
+    """ Updating user data from weixin. Sync.
+    Only for authenticated wechat visitor """
     # TODO: TEST
     qr = request.data.get('qr', None)
     if qr:
