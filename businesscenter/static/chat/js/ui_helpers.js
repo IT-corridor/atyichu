@@ -48,7 +48,7 @@ function buildDialogHtml(dialogId, dialogUnreadMessagesCount, dialogIcon, dialog
   var isMessageSticker = stickerpipe.isSticker(dialogLastMessage);
 
   var dialogHtml =
-      '<a href="#" class="list-group-item inactive" id='+'"'+dialogId+'"'+' onclick="triggerDialog('+"'"+dialogId+"'"+')">'+
+      '<a href="javascript:;" class="list-group-item inactive" id='+'"'+dialogId+'"'+' onclick="triggerDialog('+"'"+dialogId+"'"+')">'+
                    (dialogUnreadMessagesCount === 0 ? UnreadMessagesCountHide : UnreadMessagesCountShow)+
         '<h4 class="list-group-item-heading">'+ dialogIcon+'&nbsp;&nbsp;&nbsp;' +
             '<span>'+dialogName+'</span>' +
@@ -74,7 +74,7 @@ function buildTypingUserHtml(userId, userLogin) {
 
 // build html for users list
 function buildUserHtml(userLogin, userId, isNew) {
-  var userHtml = "<a href='#' id='" + userId;
+  var userHtml = "<a href='javascript:;' id='" + userId;
   if(isNew){
     userHtml += "_new'";
   }else{

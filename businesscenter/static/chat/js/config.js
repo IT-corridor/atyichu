@@ -30,7 +30,8 @@ var config = {
 
 var currentUser = {
     login: 'user_b',
-    pass: 'newfirst'
+    pass: 'newfirst',
+    full_name: 'User B'
 };
 
 QB.init(QBApp.appId, QBApp.authKey, QBApp.authSecret, config);

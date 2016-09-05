@@ -1041,7 +1041,9 @@ class VisitorViewSet(OwnerCreateMixin, viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def follow_users(self, request, *args, **kwargs):
-        # return users who the visitor follows
+        """
+        return users who the visitor follows
+        """
         visitor = self.request.user
         qs_follow = FollowUser.objects.filter(follower=visitor)
         user_ids = [item.user.id for item in qs_follow]
@@ -1308,4 +1310,4 @@ def get_nickname(user):
         return user.vendor.store.brand_name or user.username
     elif hasattr(user, 'visitor'):
         return user.visitor.username or user.username
-    return None
+    return user.username

@@ -185,7 +185,7 @@ function setupUsersScrollHandler() {
             // get and show users
             retrieveUsersForDialogCreation(function (users) {
                 $.each(users, function (index, item) {
-                    showUsers(this.user.login, this.user.id);
+                    showUsers(this.user.full_name, this.user.id);
                 });
             });
         }
@@ -213,7 +213,7 @@ function showNewDialogPopup() {
             return;
         }
         $.each(users, function (index, item) {
-            showUsers(this.user.login, this.user.id);
+            showUsers(this.user.full_name, this.user.id);
         });
     });
 
@@ -247,10 +247,10 @@ function createNewDialog() {
     var dialogType;
 
     if (usersIds.length > 1) {
-        if (usersNames.indexOf(currentUser.login) > -1) {
+        if (usersNames.indexOf(currentUser.full_name) > -1) {
             dialogName = usersNames.join(', ');
         } else {
-            dialogName = currentUser.login + ', ' + usersNames.join(', ');
+            dialogName = currentUser.full_name + ', ' + usersNames.join(', ');
         }
         dialogOccupants = usersIds;
         dialogType = 2;
@@ -450,7 +450,7 @@ function setupDialogInfoPopup(occupantsIds, name) {
             }
 
             $.each(users, function (index, item) {
-                var userHtml = buildUserHtml(this.user.login, this.user.id, true);
+                var userHtml = buildUserHtml(this.user.full_name, this.user.id, true);
                 $('#add_new_occupant').append(userHtml);
             });
         });
@@ -469,7 +469,7 @@ function setupScrollHandlerForNewOccupants() {
                     return;
                 }
                 $.each(users, function (index, item) {
-                    var userHtml = buildUserHtml(this.user.login, this.user.id, false);
+                    var userHtml = buildUserHtml(this.user.full_name, this.user.id, false);
                     $('#add_new_occupant').append(userHtml);
                 });
             });

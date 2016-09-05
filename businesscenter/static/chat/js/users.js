@@ -68,9 +68,10 @@ function mergeUsers(usersItems){
 }
 
 function getUserLoginById(byId) {
+    // change into full name
 	var userLogin;
 	if (users[byId]) {
-		userLogin = users[byId].login;
+		userLogin = users[byId].full_name;
 		return userLogin;
 	}
 }
