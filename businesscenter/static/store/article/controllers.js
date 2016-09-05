@@ -1,4 +1,4 @@
-angular.module('article.controllers', ['article.services', 'common.services', 'checklist-model', 'ui.tinymce'])
+angular.module('article.controllers', ['article.services', 'common.services', 'checklist-model'])
 .controller('CtrlArticleCreate', ['$scope', '$rootScope','$http',
 '$location', '$translate', '$routeParams', 'Photo', 'Article',
     function($scope, $rootScope, $http, $location, $translate, $routeParams, Photo, Article) {
@@ -16,17 +16,6 @@ angular.module('article.controllers', ['article.services', 'common.services', 'c
                 }
             );
         };
-
-        $scope.tinymceOptions = {
-            height: 270,
-            plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table contextmenu paste code'
-            ],
-            toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-            menubar: false
-        };        
     }
 ])
 .controller('CtrlArticleUpdate', ['$scope', '$rootScope','$http',
@@ -34,12 +23,13 @@ angular.module('article.controllers', ['article.services', 'common.services', 'c
     function($scope, $rootScope, $http, $location, $translate, $routeParams, $window, Photo, Article,$sce) {
 
         $scope.wait = false;
-        $scope.r = Photo.my({}, function(success) {});
 
         $scope.data = Article.detail({pk: $routeParams.pk},
             function(success) {
                 $scope.description = $sce.trustAsHtml(success.description);
-                $scope.r.results = $scope.r.results.concat(success.photos);
+                $scope.r = Photo.my({}, function(success_sub) {
+                    success_sub.results = success_sub.results.concat(success.photos);
+                });
             }
         );        
 
@@ -62,7 +52,6 @@ angular.module('article.controllers', ['article.services', 'common.services', 'c
         };
 
         $scope.update = function() {
-            console.log('@@@@@@@');
             Article.update({pk: $routeParams.pk}, $scope.data, function(success) {
                     $location.path('/article/'+ $routeParams.pk);
                 },
@@ -73,17 +62,6 @@ angular.module('article.controllers', ['article.services', 'common.services', 'c
                 }
             );
         };
-
-        $scope.tinymceOptions = {
-            height: 270,
-            plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table contextmenu paste code'
-            ],
-            toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-            menubar: false
-        };        
     }
 ])
 .controller('CtrlArticleList', ['$scope', '$rootScope','$http', '$window',
