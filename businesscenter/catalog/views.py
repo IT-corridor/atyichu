@@ -190,6 +190,30 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
                                   format(e.message)})
         return Response(serializer.data)
 
+    @detail_route(methods=['patch'])
+    def update_stocks(self, request, *args, **kwargs):
+        """ Creates new stocks for commodity or updates existed. """
+
+        obj = self.get_object()
+        response_data = []
+        data = request.data
+        for i in data:
+            i['color_id'] = i.pop('color')
+            i['size_id'] = i.pop('size')
+            i.pop('commodity', None)
+            if 'id' in i:
+                stock = models.Stock.objects.get(id=i['id'])
+                for key, value in i.iteritems():
+                    setattr(stock, key, value)
+                stock.save()
+            else:
+                stock = models.Stock.objects.create(commodity=obj,**i)
+
+            serializer = serializers.StockSerializer(stock)
+            response_data.append(serializer.data)
+
+        return Response(response_data, status=200)
+
 
 class StockViewSet(mixins.CreateModelMixin,
                    mixins.UpdateModelMixin,

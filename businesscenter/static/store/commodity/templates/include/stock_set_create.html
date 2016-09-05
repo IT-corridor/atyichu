@@ -23,7 +23,7 @@
             <td>
 
                 <select class="form-control rounded" data-ng-model="stock.size" required data-ng-change="refresh_stock_set()">
-                    <option style="background-color: {{ item.html }}" data-ng-repeat="item in size_list" data-ng-value="{{ item.id }}">
+                    <option data-ng-repeat="item in size_list" data-ng-value="{{ item.id }}">
                         {{ item.title }}</option>
                     <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
                 </select>

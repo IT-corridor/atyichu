@@ -13,6 +13,7 @@ var app = angular.module('app.main', [
     'alert',
     'selfie',
     'grid',
+    'common.directives',
 ]);
 app.factory('httpRequestInterceptor', function () {
     return {

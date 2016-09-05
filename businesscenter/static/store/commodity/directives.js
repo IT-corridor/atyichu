@@ -6,7 +6,7 @@ angular.module('commodity.directives', ['commodity.services'])
                 scope: {
                     stockstr: '=',
                 },
-                templateUrl: PATH + 'commodity/templates/include/stock_set.html',
+                templateUrl: PATH + 'commodity/templates/include/stock_set_create.html',
                 controller: function($scope, Color, Size) {
                     $scope.size_list = Size.query();
                     $scope.color_list = Color.query();
@@ -21,8 +21,7 @@ angular.module('commodity.directives', ['commodity.services'])
                             len = data.length,
                             i = 0;
                         for (i; i < len; i++) {
-                            if (data[i]['size'] == null) {
-                                console.log('splice');
+                            if (data[i]['size'] == null && data[i]['color'] == null) {
                                 data.splice(i, 1);
                             }
                         }
@@ -36,6 +35,69 @@ angular.module('commodity.directives', ['commodity.services'])
                             size: null,
                             amount: 0
                         });
+                    };
+                }
+            }
+        }
+
+    ])
+    .directive('stockSetUpdate', ['PATH', 'Color', 'Size', 'Commodity', 'Stock',
+        function(PATH) {
+            return {
+                restrict: 'AC',
+                scope: {
+                    stockset: '=',
+                    commodity: '=',
+                },
+                templateUrl: PATH + 'commodity/templates/include/stock_set_update.html',
+                controller: function($scope, Color, Size, Commodity, Stock) {
+                    $scope.size_list = Size.query();
+                    $scope.color_list = Color.query();
+
+                    $scope.add_stock = function() {
+                        $scope.stockset.push({
+                            color: null,
+                            size: null,
+                            amount: 0
+                        });
+                    };
+
+                    $scope.update = function() {
+                        // TODO: Write error handler
+                        var data = $scope.stockset,
+                            len = data.length,
+                            i = 0;
+                        for (i; i < len; i++) {
+                            if (data[i]['size'] == null && data['color'] == null) {
+                                data.splice(i, 1);
+                            }
+                        }
+
+                        Commodity.update_stocks({
+                                pk: $scope.commodity
+                            }, data,
+                            function(success) {
+                                console.log('SUCCESS');
+                            }
+                        );
+
+                    };
+
+                    $scope.remove = function(index) {
+                        stock = $scope.stockset[index];
+                        if (stock.hasOwnProperty('id')) {
+                            Stock.remove({
+                                    pk: stock.id
+                                },
+                                function(success) {
+                                    $scope.stockset.splice(index, 1);
+                                }
+                            );
+
+                        } else {
+                            $scope.stockset.splice(index, 1);
+                        }
+
                     };
                 }
             }

@@ -1,124 +1,123 @@
 <!DOCTYPE html>
 <html xmlns:ng="http://angularjs.org" data-ng-app="app.main">
-    <head>
-        <meta charset="utf-8">
-        <meta name="fragment" content="!" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="description" content="Atyichu">
-        {% load i18n %}
-        {% load static from staticfiles %}
-        <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap.min.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}lib/font-awesome/css/font-awesome.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}lib/assets/animate/animate.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}lib/assets/simple-line-icons/css/simple-line-icons.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/font.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/app.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/md.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/style.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/animations.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/grid.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}lib/toastr/toastr.min.css">
 
-        <link rel="stylesheet" href="{{ STATIC_URL }}/chat/libs/stickerpipe/css/stickerpipe.min.css">
-        <link rel="stylesheet" href="{{ STATIC_URL }}/chat/css/style.css">
+<head>
+    <meta charset="utf-8">
+    <meta name="fragment" content="!" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Atyichu"> {% load i18n %} {% load static from staticfiles %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}lib/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}lib/assets/animate/animate.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}lib/assets/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/font.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/app.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}theme/css/md.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/style.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/animations.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/grid.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}lib/toastr/toastr.min.css">
 
-        {% verbatim %}
-        <title data-ng-bind="site"></title>
-        <!--<base href="/app/">-->
+    <link rel="stylesheet" href="{{ STATIC_URL }}/chat/libs/stickerpipe/css/stickerpipe.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}/chat/css/style.css"> {% verbatim %}
+    <title data-ng-bind="site"></title>
+    <!--<base href="/app/">-->
 
-        {% endverbatim %}
-    </head>
-    <body class="app" style="padding: 0">
-          <div class="app" id="app" data-ng-class="{'app-header-fixed':app.headerFixed, 'app-aside-fixed':app.asideFixed,
+    {% endverbatim %}
+</head>
+
+<body class="app" style="padding: 0">
+    <div class="app" id="app" data-ng-class="{'app-header-fixed':app.headerFixed, 'app-aside-fixed':app.asideFixed,
           'app-aside-folded':app.asideFolded, 'app-aside-dock':app.asideDock, 'container':app.container}">
 
-            <div data-d-navbar></div>
-            <!-- menu -->
-                <div data-ng-include="PATH + 'partials/aside/templates/aside.html' "
-                     class="app-aside hidden-xs bg-black {{ app.asideColor }}"
-                     data-ng-class="{'off-screen': app.hideAside }">
-                </div>
-            <!-- / menu -->
-            <div class="app-content" >
-                <div data-ng-if="!visitor_resolved">
-                    <h1 class="text-center" data-translate="AUTHENTICATION.REQUIRED"></h1>
-                </div>
-                <div class="app-content-body fade-in-up" data-ng-view data-ng-if="visitor_resolved"></div>
-            </div>
+        <div data-d-navbar></div>
+        <!-- menu -->
+        <div data-ng-include="PATH + 'partials/aside/templates/aside.html' " class="app-aside hidden-xs bg-black {{ app.asideColor }}" data-ng-class="{'off-screen': app.hideAside }">
         </div>
-        <noscript><h4 class="text-danger">{% trans 'This site requires JavaScript to be enabled' %}</h4></noscript>
-        <script>
-            // It is used in notification_wechat.js
-            // I am not sure how to avoid this.
-            var user_id = '{{user.id}}';
-        </script>
-        <script src="{{ STATIC_URL }}lib/jquery/jquery.js"></script>
-        <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-        <script src="{{ STATIC_URL }}lib/angularjs/angular.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/angularjs/angular-cookies.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/angularjs/angular-route.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/angularjs/angular-resource.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/angularjs/angular-sanitize.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/angularjs/angular-animate.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/angularjs/angular-aria.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/angularjs/angular-touch.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/angularjs/ui-bootstrap-tpls.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/angularjs/other/angular-translate.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/angularjs/other/ngStorage.js"></script>
-        <script src="{{ STATIC_URL }}lib/masonry.pkgd.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/imagesloaded.pkgd.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/checklist-model.js"></script>
-        <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>
+        <!-- / menu -->
+        <div class="app-content">
+            <div data-ng-if="!visitor_resolved">
+                <h1 class="text-center" data-translate="AUTHENTICATION.REQUIRED"></h1>
+            </div>
+            <div class="app-content-body fade-in-up" data-ng-view data-ng-if="visitor_resolved"></div>
+        </div>
+    </div>
+    <noscript>
+        <h4 class="text-danger">{% trans 'This site requires JavaScript to be enabled' %}</h4></noscript>
+    <script>
+        // It is used in notification_wechat.js
+        // I am not sure how to avoid this.
+        var user_id = '{{user.id}}';
+    </script>
+    <script src="{{ STATIC_URL }}lib/jquery/jquery.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="{{ STATIC_URL }}lib/angularjs/angular.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/angularjs/angular-cookies.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/angularjs/angular-route.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/angularjs/angular-resource.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/angularjs/angular-sanitize.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/angularjs/angular-animate.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/angularjs/angular-aria.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/angularjs/angular-touch.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/angularjs/ui-bootstrap-tpls.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/angularjs/other/angular-translate.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/angularjs/other/ngStorage.js"></script>
+    <script src="{{ STATIC_URL }}lib/masonry.pkgd.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/imagesloaded.pkgd.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/checklist-model.js"></script>
+    <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>
 
-        <script src="{{ STATIC_URL }}lib/tinymce/tinymce.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/tinymce/tinymce.src.js"></script>
-        <script src="{{ STATIC_URL }}lib/toastr/pusher.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/toastr/toastr.min.js"></script>
-        <script src="{{ STATIC_URL }}lib/toastr/notification_web.js"></script>
+    <script src="{{ STATIC_URL }}lib/tinymce/tinymce.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/tinymce/tinymce.src.js"></script>
+    <script src="{{ STATIC_URL }}lib/toastr/pusher.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/toastr/toastr.min.js"></script>
+    <script src="{{ STATIC_URL }}lib/toastr/notification_web.js"></script>
 
-        <script src="{{ STATIC_URL }}store/app.modules.js"></script>
-        <script src="{{ STATIC_URL }}store/app.routes.js"></script>
-        <script src="{{ STATIC_URL }}store/app.constants.js"></script>
-        <script src="{{ STATIC_URL }}store/partials/asyncload/services.js"></script>
-        <script src="{{ STATIC_URL }}store/partials/alert/directives.js"></script>
-        <script src="{{ STATIC_URL }}store/partials/auth/services.js"></script>
-        <script src="{{ STATIC_URL }}store/partials/common/services.js"></script>
-        <script src="{{ STATIC_URL }}store/partials/footer/directives.js"></script>
-        <script src="{{ STATIC_URL }}store/partials/navbar/directives.js"></script>
-        <script src="{{ STATIC_URL }}store/partials/selfie/directives.js"></script>
-        <script src="{{ STATIC_URL }}store/partials/tencent/directives.js"></script>
-        <script src="{{ STATIC_URL }}store/partials/grid/directives.js"></script>
-        <script src="{{ STATIC_URL }}store/common/controllers.js"></script>
-        <script src="{{ STATIC_URL }}store/store/controllers.js"></script>
-        <script src="{{ STATIC_URL }}store/store/services.js"></script>
-        <script src="{{ STATIC_URL }}store/article/controllers.js"></script>
-        <script src="{{ STATIC_URL }}store/article/services.js"></script>
-        <script src="{{ STATIC_URL }}store/dashboard/controllers.js"></script>
-        <script src="{{ STATIC_URL }}store/dashboard/ui-jq.js"></script>
-        <script src="{{ STATIC_URL }}store/dashboard/ui-load.js"></script>
-        <script src="{{ STATIC_URL }}store/dashboard/services.js"></script>
-        <script src="{{ STATIC_URL }}store/commodity/controllers.js"></script>
-        <script src="{{ STATIC_URL }}store/commodity/directives.js"></script>
-        <script src="{{ STATIC_URL }}store/commodity/services.js"></script>
-        <script src="{{ STATIC_URL }}store/photo/services.js"></script>
-        <script src="{{ STATIC_URL }}store/photo/controllers.js"></script>
-        <script src="{{ STATIC_URL }}store/photo/directives.js"></script>
-        <script src="{{ STATIC_URL }}store/group/services.js"></script>
-        <script src="{{ STATIC_URL }}store/group/directives.js"></script>
-        <script src="{{ STATIC_URL }}store/group/controllers.js"></script>
+    <script src="{{ STATIC_URL }}store/app.modules.js"></script>
+    <script src="{{ STATIC_URL }}store/app.routes.js"></script>
+    <script src="{{ STATIC_URL }}store/app.constants.js"></script>
+    <script src="{{ STATIC_URL }}store/partials/asyncload/services.js"></script>
+    <script src="{{ STATIC_URL }}store/partials/alert/directives.js"></script>
+    <script src="{{ STATIC_URL }}store/partials/auth/services.js"></script>
+    <script src="{{ STATIC_URL }}store/partials/common/services.js"></script>
+    <script src="{{ STATIC_URL }}store/partials/common/directives.js"></script>
+    <script src="{{ STATIC_URL }}store/partials/footer/directives.js"></script>
+    <script src="{{ STATIC_URL }}store/partials/navbar/directives.js"></script>
+    <script src="{{ STATIC_URL }}store/partials/selfie/directives.js"></script>
+    <script src="{{ STATIC_URL }}store/partials/tencent/directives.js"></script>
+    <script src="{{ STATIC_URL }}store/partials/grid/directives.js"></script>
+    <script src="{{ STATIC_URL }}store/common/controllers.js"></script>
+    <script src="{{ STATIC_URL }}store/store/controllers.js"></script>
+    <script src="{{ STATIC_URL }}store/store/services.js"></script>
+    <script src="{{ STATIC_URL }}store/article/controllers.js"></script>
+    <script src="{{ STATIC_URL }}store/article/services.js"></script>
+    <script src="{{ STATIC_URL }}store/dashboard/controllers.js"></script>
+    <script src="{{ STATIC_URL }}store/dashboard/ui-jq.js"></script>
+    <script src="{{ STATIC_URL }}store/dashboard/ui-load.js"></script>
+    <script src="{{ STATIC_URL }}store/dashboard/services.js"></script>
+    <script src="{{ STATIC_URL }}store/commodity/controllers.js"></script>
+    <script src="{{ STATIC_URL }}store/commodity/directives.js"></script>
+    <script src="{{ STATIC_URL }}store/commodity/services.js"></script>
+    <script src="{{ STATIC_URL }}store/photo/services.js"></script>
+    <script src="{{ STATIC_URL }}store/photo/controllers.js"></script>
+    <script src="{{ STATIC_URL }}store/photo/directives.js"></script>
+    <script src="{{ STATIC_URL }}store/group/services.js"></script>
+    <script src="{{ STATIC_URL }}store/group/directives.js"></script>
+    <script src="{{ STATIC_URL }}store/group/controllers.js"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.6.0/jquery.nicescroll.min.js" type="text/javascript"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.4.1/jquery.timeago.min.js" type="text/javascript"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="{{ STATIC_URL }}/chat/libs/quickblox.min.js"></script>
-        <script src="{{ STATIC_URL }}/chat/libs/stickerpipe/js/stickerpipe.js"></script>
-        <script src="{{ STATIC_URL }}/chat/js/config.js"></script>
-        <script src="{{ STATIC_URL }}/chat/js/connection.js"></script>
-        <script src="{{ STATIC_URL }}/chat/js/messages.js"></script>
-        <script src="{{ STATIC_URL }}/chat/js/stickerpipe.js"></script>
-        <script src="{{ STATIC_URL }}/chat/js/ui_helpers.js"></script>
-        <script src="{{ STATIC_URL }}/chat/js/dialogs.js"></script>
-        <script src="{{ STATIC_URL }}/chat/js/users.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.6.0/jquery.nicescroll.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.4.1/jquery.timeago.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}/chat/libs/quickblox.min.js"></script>
+    <script src="{{ STATIC_URL }}/chat/libs/stickerpipe/js/stickerpipe.js"></script>
+    <script src="{{ STATIC_URL }}/chat/js/config.js"></script>
+    <script src="{{ STATIC_URL }}/chat/js/connection.js"></script>
+    <script src="{{ STATIC_URL }}/chat/js/messages.js"></script>
+    <script src="{{ STATIC_URL }}/chat/js/stickerpipe.js"></script>
+    <script src="{{ STATIC_URL }}/chat/js/ui_helpers.js"></script>
+    <script src="{{ STATIC_URL }}/chat/js/dialogs.js"></script>
+    <script src="{{ STATIC_URL }}/chat/js/users.js"></script>
 
-    </body>
+</body>
+
 </html>
