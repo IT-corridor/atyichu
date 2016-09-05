@@ -2,17 +2,19 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.db.models import Q
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.filters import DjangoFilterBackend, \
     OrderingFilter, SearchFilter
 from rest_framework.response import Response
+
 from . import serializers, models
 from .filters import CommodityFilter
-from .permissions import IsCommodityPhotoOwnerOrReadOnly
+from .permissions import IsCommodityNestedOwnerOrReadOnly
 from utils import permissions
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin
+from utils.parsing import parse_json_data
 
 
 class ReferenceMixin(OwnerCreateMixin, OwnerUpdateMixin):
@@ -61,7 +63,7 @@ class ColorViewSet(viewsets.ModelViewSet):
 
 class GalleryViewSet(viewsets.ModelViewSet):
     # TODO: implement permissions
-    permission_classes = (IsCommodityPhotoOwnerOrReadOnly,)
+    permission_classes = (IsCommodityNestedOwnerOrReadOnly,)
     serializer_class = serializers.GallerySerializer
     pagination_class = None
     queryset = models.Gallery.objects.select_related('commodity')
@@ -115,12 +117,13 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
     filter_class = CommodityFilter
     ordering_fields = ('id', 'title',)
     search_fields = ('title', 'kind__title', 'kind__category__title',
-                     'brand__title', 'color__title',
-                     'size__title', 'tag__title')
+                     'colors__title', 'sizes__title',
+                     'brand__title', 'tag__title')
 
     def get_queryset(self):
         qs = super(CommodityViewSet, self).get_queryset()
-        qs = qs.select_related('brand', 'kind__category', 'color', 'size')
+        qs = qs.select_related('brand', 'kind__category',)
+        qs = qs.prefetch_related('colors', 'sizes')
         if self.request.method == 'GET' and self.kwargs.get('pk', None):
             qs = qs.prefetch_related('gallery_set', 'tag_set')
         return qs
@@ -143,15 +146,25 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
         commodity = serializer.save()
         files = self.request.FILES.copy()
         files.pop('color_pic', None)
-        serializer_class = serializers.GallerySerializer
         photo_limit = 5
         for n, k in enumerate(files.keys()):
             if n > photo_limit:
                 break
             data = {'commodity': commodity.id, 'photo': files[k]}
-            serializer = serializer_class(data=data)
+            serializer = serializers.GallerySerializer(data=data)
             serializer.is_valid(True)
             serializer.save()
+
+        stock_set = self.request.data.get('stock_set')
+        if stock_set:
+            if isinstance(stock_set, unicode):
+                stock_set = parse_json_data(stock_set)
+
+            for stock_data in stock_set:
+                stock_data['commodity'] = commodity.id
+                serializer = serializers.StockSerializer(data=stock_data)
+                serializer.is_valid(True)
+                serializer.save()
 
     @list_route(methods=['get'])
     def my(self, request, *args, **kwargs):
@@ -164,7 +177,7 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
             raise ValidationError({'error': _('{} parameter is required').
                                   format('"q"')})
         try:
-            request.query_params['q']
+            # request.query_params['q']
             photo = request.query_params['photo']
             queryset = self.get_queryset().filter(Q(store_id=request.user.pk),
                                                   ~Q(link__photo_id=photo))
@@ -176,3 +189,37 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
             raise ValidationError({'error': _('{} parameter is required').
                                   format(e.message)})
         return Response(serializer.data)
+
+    @detail_route(methods=['patch'])
+    def update_stocks(self, request, *args, **kwargs):
+        """ Creates new stocks for commodity or updates existed. """
+
+        obj = self.get_object()
+        response_data = []
+        data = request.data
+        for i in data:
+            i['color_id'] = i.pop('color')
+            i['size_id'] = i.pop('size')
+            i.pop('commodity', None)
+            if 'id' in i:
+                stock = models.Stock.objects.get(id=i['id'])
+                for key, value in i.iteritems():
+                    setattr(stock, key, value)
+                stock.save()
+            else:
+                stock = models.Stock.objects.create(commodity=obj,**i)
+
+            serializer = serializers.StockSerializer(stock)
+            response_data.append(serializer.data)
+
+        return Response(response_data, status=200)
+
+
+class StockViewSet(mixins.CreateModelMixin,
+                   mixins.UpdateModelMixin,
+                   mixins.DestroyModelMixin,
+                   viewsets.GenericViewSet):
+    """ Currently provide 'CREATE'. 'UPDATE', 'DELETE'. Without 'READ'."""
+    serializer_class = serializers.StockSerializer
+    queryset = models.Stock.objects.all()
+    permission_classes = (IsCommodityNestedOwnerOrReadOnly,)

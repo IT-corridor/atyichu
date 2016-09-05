@@ -13,6 +13,7 @@ var app = angular.module('app.main', [
     'alert',
     'selfie',
     'grid',
+    'common.directives',
 ]);
 app.factory('httpRequestInterceptor', function () {
     return {
@@ -295,6 +296,9 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'EXTRA_COLOR': 'Extra color',
                 'COLOR_PIC': 'Sample of color',
                 'FILES': 'Photos',
+                'AMOUNT': 'Amount',
+                'STOCKS': 'Stocks',
+                'ANOTHER_STOCK': 'Add another Stock',
             },
             'SEASONS': {
                 'WINTER': 'Winter',

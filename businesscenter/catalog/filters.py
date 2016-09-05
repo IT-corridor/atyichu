@@ -11,4 +11,4 @@ class CommodityFilter(filters.FilterSet):
     class Meta:
         model = models.Commodity
         fields = ('title', 'year', 'season', 'kind', 'category', 'brand',
-                  'color', 'size', 'store')
+                  'store')

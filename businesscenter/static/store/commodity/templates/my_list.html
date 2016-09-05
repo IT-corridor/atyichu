@@ -48,7 +48,7 @@
                         <ul class="list-inline">
                             <li><a data-ng-href="#!/commodities/{{ item.id }}" class="btn btn-sm btn-primary input-sm"><i class="fa fa-eye"></i></a></li>
                             <li><a data-ng-href="#!/commodities/{{ item.id }}/edit" class="btn btn-sm btn-info input-sm"><i class="fa fa-edit"></i></a></li>
-                            <li><button class="btn btn-sm btn-danger input-sm"><i class="fa fa-times"></i></button></li>
+                            <li><button data-ng-click="remove_commodity($index)" class="btn btn-sm btn-danger input-sm"><i class="fa fa-times"></i></button></li>
                         </ul>
                     </td>
                 </tr>

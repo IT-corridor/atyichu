@@ -12,6 +12,7 @@ catalog_router.register(r'sizes', views.SizeViewSet, 'size')
 catalog_router.register(r'commodities', views.CommodityViewSet, 'commodity')
 catalog_router.register(r'galleries', views.GalleryViewSet, 'gallery')
 catalog_router.register(r'tags', views.TagViewSet, 'tag')
+catalog_router.register(r'stocks', views.StockViewSet, 'stock')
 
 
 urlpatterns = catalog_router.urls

@@ -5,7 +5,7 @@ from rest_framework import permissions
 from utils.permissions import IsStoreOwnerOrReadOnly
 
 
-class IsCommodityPhotoOwnerOrReadOnly(IsStoreOwnerOrReadOnly):
+class IsCommodityNestedOwnerOrReadOnly(IsStoreOwnerOrReadOnly):
     """ This permissions ONLY for GalleryViewSet."""
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
