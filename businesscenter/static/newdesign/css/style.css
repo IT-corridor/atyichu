@@ -554,6 +554,8 @@ left: 4% !important;
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
+	padding: 2px;
+	padding-left: 0;
 }
 .col-1 .wardrobe-group-segment{
 	height: 210px;
