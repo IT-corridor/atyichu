@@ -303,10 +303,10 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
     search_fields = ('title', 'stamps__title')
 
     # TODO: test delete
-    # TODO: TEST retrieve somehow
     # TODO: maybe it is necessary to turn off pagination
 
     def get_queryset(self):
+        # TODO: optimize
         qs = Photo.p_objects.select_related('original',
                                             'visitor__visitor')
         p = Prefetch('comment_set',
@@ -314,7 +314,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         qs = qs.prefetch_related(p)
         if self.request.method == 'GET' and self.kwargs.get('pk'):
             qs = qs.prefetch_related('link_set__commodity__kind',
-                                     'link_set__commodity__color')
+                                     'link_set__commodity__colors')
         return qs
 
     def get_serializer_class(self):
@@ -541,6 +541,8 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         """ Make a duplicate from existing photo record.
         Currently Swagger presents wrong scheme.
         group -- ID of the group where are you going to place cloned photo. """
+
+        # TODO: optimize
         if 'group' not in request.data:
             raise ValidationError({'group': _('This parameter is required.')})
 
@@ -667,6 +669,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             This view is not tested yet.
         """
         obj = self.get_object()
+        # TODO: optimize querysets
         mc = 15  # minimal confidence
         stamp_ids = obj.stamps.filter(photostamp__confidence__gte=mc) \
             .order_by('-pk') \

@@ -90,9 +90,13 @@
                             </div>
                             <div class="media-body">
                                 <h4 class="media-heading">{{ link.data.title }}</h4>
-                                <p>{{ 'COMMODITY.FORM.COLOR' | translate }}:
-                                    <span style="border: 3px solid {{ link.data.color.html }}">
-                            {{ link.data.color.title }}</span></p>
+                                <ul class="list-inline">
+                                    <li>{{ 'COMMODITY.FORM.COLOR' | translate }}</li>
+                                    <li data-ng-repeat="item in link.data.colors track by item.id">
+                                        <span style="border: 3px solid {{ item.html }}">
+                                            {{ item.title }}</span>
+                                    </li>
+                                </ul>
                                 <p>{{ 'COMMODITY.FORM.KIND' | translate }}:
                                     <span class="text-info">{{ link.data.kind.title }}</span></p>
                             </div>
