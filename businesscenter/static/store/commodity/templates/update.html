@@ -49,7 +49,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.CATEGORY' | translate }}</label>
                         <div class="col-sm-10">
-                            <select class="form-control rounded" data-ng-model="commodity.category">
+                            <select class="form-control rounded" data-ng-model="commodity.category" data-convert-to-number>
                                 <option data-ng-repeat="item in category_list" data-ng-selected="item.id == commodity.category" data-ng-value="{{ item.id }}">{{ item.title }}</option>
                                 <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
                             </select>
@@ -60,8 +60,8 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.KIND' | translate }}</label>
                         <div class="col-sm-10">
-                            <select class="form-control rounded" data-ng-model="commodity.kind">
-                                <option data-ng-repeat="item in kind_list" data-ng-selected="item.id == commodity.kind" data-ng-value="{{ item.id }}">{{ item.title }}</option>
+                            <select class="form-control rounded" data-ng-model="commodity.kind" data-convert-to-number>
+                                <option data-ng-repeat="item in kind_list" value="{{ item.id }}">{{ item.title }}</option>
                                 <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
                             </select>
                             <p class="text-danger" data-ng-repeat="e in error.kind">{{ e }}</p>
@@ -71,8 +71,8 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'COMMODITY.FORM.BRAND' | translate }}</label>
                         <div class="col-sm-10">
-                            <select class="form-control rounded" data-ng-model="commodity.brand" required>
-                                <option data-ng-repeat="item in brand_list" data-ng-selected="item.id == commodity.brand" data-ng-value="{{ item.id }}">{{ item.title }}</option>
+                            <select class="form-control rounded" data-ng-model="commodity.brand" data-convert-to-number required>
+                                <option data-ng-repeat="item in brand_list" value="{{ item.id }}">{{ item.title }}</option>
                                 <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
                             </select>
                             <p class="text-danger" data-ng-repeat="e in error.brand">{{ e }}</p>

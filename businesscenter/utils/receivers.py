@@ -52,6 +52,12 @@ def create_crop_photo_100(sender, **kwargs):
         create_crop(instance, 'photo', 100)
 
 
+def create_crop_photo_120(sender, **kwargs):
+    instance = kwargs.get('instance', None)
+    if instance:
+        create_crop(instance, 'photo', 120)
+
+
 def cleanup_files_avatar(sender, **kwargs):
     # Pass false so FileField doesn't save the model.
     instance = kwargs.get('instance', None)
