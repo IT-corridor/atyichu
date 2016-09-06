@@ -63,4 +63,11 @@ angular.module('store.services', ['ngResource'])
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
     });
+}])
+.factory('Commodity', ['$resource', 'catalog_path',
+    function($resource, catalog_path){
+        return $resource(catalog_path + 'commodities/:pk/:action/', {}, {
+            query: {method:'GET', params:{pk: null, action: null}, responseType:'json'},
+            verbose: {method: 'GET', params: {action: 'verbose'}, responseType: 'json'},
+    });
 }]);

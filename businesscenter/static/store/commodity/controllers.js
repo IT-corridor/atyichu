@@ -252,17 +252,8 @@ angular.module('commodity.controllers', ['commodity.services', 'common.services'
 '$location', '$routeParams', '$translate', 'Commodity',
     function($scope, $rootScope, $http, $location, $routeParams, $translate,
     Commodity) {
-        $scope.commodity = Commodity.verbose({pk: $routeParams.pk},
-            function(success){
-                if (success.gallery_set.length > 0){
-                    $scope.set_current_photo(success.gallery_set[0]);
-                }
-            }
-        );
+        $scope.commodity = Commodity.verbose({pk: $routeParams.pk});
 
-        $scope.set_current_photo = function(photo){
-            $scope.current_photo = photo.photo;
-        }
     }
 ])
 .controller('CtrlCommodityList', ['$scope', '$rootScope','$http', '$window',

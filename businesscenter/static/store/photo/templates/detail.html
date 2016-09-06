@@ -61,7 +61,7 @@
                                 <img class="media-object" style="width: 50px;" data-ng-src="{{ link.data.crop }}" alt="{{ link.data.title }}">
                             </div>
                             <div class="media-body">
-                                <h4 class="media-heading">{{ link.data.title }}</h4>
+                                <h4 class="media-heading"><a data-ng-href="#!/commodities/{{ link.commodity }}/">{{ link.data.title }}</a></h4>
                                 <ul class="list-inline">
                                     <li>{{ 'COMMODITY.FORM.COLOR' | translate }}</li>
                                     <li data-ng-repeat="item in link.data.colors track by item.id">

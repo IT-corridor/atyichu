@@ -89,6 +89,8 @@ class Commodity(models.Model):
         ('3', _('Autumn')),
     )
     title = models.CharField(_('Title'), max_length=100, blank=True)
+    description = models.TextField(_('Description'), null=True,
+                                   blank=True, max_length=5000)
     # Better use regex field for year.
     year = models.CharField(_('Year'), max_length=4)
     season = models.CharField(_('Season'), choices=SEASONS, max_length=1)
