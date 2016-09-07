@@ -18,12 +18,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'GROUP.FORM.DESCRIPTION' | translate }}</label>
                         <div class="col-sm-10">
-                            <textarea name="description"
-                                      ui-tinymce="tinymceOptions"
-                                      data-ng-model="data.description"
-                                      class="form-control" required=""></textarea>
-                            <p class="text-danger"
-                               data-ng-repeat="e in error.description">{{ e }}</p>
+                            <textarea required ng-model="data.description" data-ck-editor></textarea>
                         </div>
                     </div>
                     <div class="line line-dashed b-b line-lg pull-in"></div>
@@ -37,6 +32,7 @@
                                     <a data-ng-href="#!/photo/{{ photo.id }}">
                                         <img data-ng-if="!photo.original && photo.thumb" data-ng-src="{{ photo.thumb }}" alt="{{ photo.title }}" class="img-pin">
                                         <img data-ng-if="photo.original && !photo.thumb" data-ng-src="{{ photo.origin.thumb }}" alt="{{ photo.title }}" class="img-pin">
+                                        <img data-ng-if="photo.original && !photo.thumb && !photo.origin" data-ng-src="{{ photo.cover }}" alt="{{ photo.title }}" class="img-pin">
                                         <div data-ng-if="!photo.original && !photo.thumb">
                                             <div class="text-center purple-50 r r-3x b b-light empty-cover-xs empty-cover-md"></div>
                                         </div>
