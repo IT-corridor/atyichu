@@ -106,6 +106,9 @@ class Store(models.Model):
                              null=True, blank=True)
     photo = models.ImageField(_('Logo'), upload_to='stores',
                               blank=True, null=True)
+    post = models.ImageField(_('Post'), upload_to='stores/post',
+                              blank=True, null=True)
+    name = models.CharField(_('Store name'), max_length=150, unique=True)
 
     def get_location(self):
         """ It is not a field --- it is a method. It returns an address string,
@@ -116,3 +119,24 @@ class Store(models.Model):
 
     def __unicode__(self):
         return self.brand_name
+
+
+class Event(models.Model):
+    store = models.ForeignKey('account.Store', verbose_name=_('Store'))
+    create_date = models.DateTimeField(auto_now=True)
+    type = models.CharField(_('Event Type'), max_length=50)
+    description = models.TextField(_('Description'))
+
+    def __unicode__(self):
+        return self.store.name
+
+
+class Promotion(models.Model):
+    store = models.ForeignKey('account.Store', verbose_name=_('Store'))
+    create_date = models.DateTimeField(auto_now=True)
+    post = models.ImageField(_('Post'), upload_to='promotions',
+                             blank=True, null=True)
+    description = models.TextField(_('Description'))
+
+    def __unicode__(self):
+        return self.store.name
