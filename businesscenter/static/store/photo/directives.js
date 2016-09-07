@@ -34,4 +34,45 @@ return {
         };
     }
 }
+}])
+.directive('commodityGrid', ['PATH', 'Commodity', function(PATH, Commodity) {
+return {
+  restrict: 'E',
+  replace: true,
+  templateUrl: PATH + 'photo/templates/commodity_grid.html',
+  scope: {member:'=', placeholder:'=', commodities: '=', lim: '=', photo: '='},
+  controller: function($scope, PATH, Commodity){
+        $scope.page = 1;
+
+        $scope.get_results = function (text) {
+            if (text !== ''){
+                var params = {q: text, photo: $scope.photo, page: $scope.page};
+                $scope.r = Commodity.my(params, function(success){
+
+                    $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
+                    });
+            }
+        };
+
+        $scope.get_more = function(text){
+            $scope.page += 1;
+            var params = {q: $scope.commodity, photo: $scope.photo, page: $scope.page};
+            Commodity.my(params, function(success){
+                    $scope.r.results = $scope.r.results.concat(success.results);
+                    $scope.enough = ($scope.page >= $scope.r.total) ? true : false;
+                }
+            );
+        }
+
+        $scope.select_item = function (index) {
+            if ($scope.r.results.length > 0) {
+                if ($scope.lim > $scope.commodities.length){
+                    $scope.commodities.push($scope.r.results[index]);
+                    $scope.r.results.splice(index, 1);
+
+                }
+            }
+        };
+    }
+}
 }]);

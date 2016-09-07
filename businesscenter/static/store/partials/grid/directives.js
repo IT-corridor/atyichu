@@ -52,7 +52,6 @@ angular.module('grid', []).directive('masonry', ['$timeout', function($timeout) 
                 update = master.update,
                 removeBrick = master.removeBrick,
                 appendBricks = master.appendBricks;
-                console.log(master);
             if (update) {
                 imagesLoaded( elem.eq(0), update);
                 elem.ready(update);

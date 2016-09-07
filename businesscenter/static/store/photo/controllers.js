@@ -34,6 +34,7 @@ angular.module('photo.controllers', ['photo.services', 'photo.directives',
                 }
             );
         }
+
         WindowScroll($scope, $scope.get_more);
 
         $scope.like = function(index, photo_id){

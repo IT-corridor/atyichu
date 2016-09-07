@@ -53,7 +53,7 @@ angular.module('commodity.services', ['ngResource'])
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
             verbose: {method: 'GET', params: {action: 'verbose'}, responseType: 'json'},
-            my: {method: 'GET', params: {action: 'my'}, responseType: 'json', isArray: true},
+            my: {method: 'GET', params: {action: 'my'}, responseType: 'json'},
             update_stocks: {method: 'PATCH', params:{action: 'update_stocks'}, responseType:'json', isArray: true,},
 
     });

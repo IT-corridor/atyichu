@@ -13,7 +13,7 @@ from . import serializers, models
 from .filters import CommodityFilter
 from .permissions import IsCommodityNestedOwnerOrReadOnly
 from utils import permissions
-from utils.views import OwnerCreateMixin, OwnerUpdateMixin
+from utils.views import OwnerCreateMixin, OwnerUpdateMixin, PaginationMixin
 from utils.parsing import parse_json_data
 
 
@@ -110,7 +110,7 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = models.Tag.objects.all()
 
 
-class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
+class CommodityViewSet(ReferenceMixin, PaginationMixin, viewsets.ModelViewSet):
     # TODO: Add filter
     model = models.Commodity
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
@@ -171,7 +171,7 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
         """ It is a list of commodities owned by vendor(store).
         ID of the store received from request.user.
         So it will not depend on authentication backend.
-        Important: this view do not provide pagination. """
+        Important: this view provide pagination. """
 
         if not request.query_params.get('q', None):
             raise ValidationError({'error': _('{} parameter is required').
@@ -181,14 +181,14 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
             photo = request.query_params['photo']
             queryset = self.get_queryset().filter(Q(store_id=request.user.pk),
                                                   ~Q(link__photo_id=photo))
-            queryset = self.filter_queryset(queryset)[:10]
+            queryset = self.filter_queryset(queryset)
 
-            serializer = serializers.CommodityLinkSerializer(queryset,
-                                                             many=True)
+            serializer_class = serializers.CommodityLinkSerializer
         except KeyError as e:
             raise ValidationError({'error': _('{} parameter is required').
                                   format(e.message)})
-        return Response(serializer.data)
+
+        return self.get_list_response(queryset, serializer_class)
 
     @detail_route(methods=['patch'])
     def update_stocks(self, request, *args, **kwargs):
@@ -207,7 +207,7 @@ class CommodityViewSet(ReferenceMixin, viewsets.ModelViewSet):
                     setattr(stock, key, value)
                 stock.save()
             else:
-                stock = models.Stock.objects.create(commodity=obj,**i)
+                stock = models.Stock.objects.create(commodity=obj, **i)
 
             serializer = serializers.StockSerializer(stock)
             response_data.append(serializer.data)
