@@ -520,7 +520,7 @@ function onDialogUpdate() {
     $('.users_form').removeClass("active");
 }
 
-// delete currend dialog
+// delete current dialog
 function onDialogDelete() {
     if (confirm("Are you sure you want remove the dialog?")) {
         QB.chat.dialog.delete(currentDialog._id, function (err, res) {

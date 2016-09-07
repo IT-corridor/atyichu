@@ -70,8 +70,8 @@ var navbar = angular.module('navbar', ['auth.services'])
     };
 }]);
 
-navbar.controller('ModalInstanceCtrl', ['$scope','$rootScope', '$uibModalInstance' , 'Login', 'Auth',
-                                        function ($scope, $rootScope, $uibModalInstance, Login, Auth) {
+navbar.controller('ModalInstanceCtrl', ['$scope','$rootScope', '$uibModalInstance' , 'Login', 'Auth', '$window',
+                                        function ($scope, $rootScope, $uibModalInstance, Login, Auth, $window) {
 
     $scope.authenticate = function(u, p){
         var promise = Auth.login(u, p);
@@ -83,6 +83,30 @@ navbar.controller('ModalInstanceCtrl', ['$scope','$rootScope', '$uibModalInstanc
                 $scope.error = null;
                 Auth.set(success);
                 $uibModalInstance.close(Auth);
+
+                // configuration for chat and notification
+                $window.currentUser = {
+                    login: success.username,
+                    pass: 'atyichu@3212',
+                    full_name: success.brand_name
+                };
+                connectToChat(currentUser);
+
+                var pusher = new Pusher('4c8e6d909a1f7ccc44ed');
+                var notificationsChannel = pusher.subscribe('nf_channel_' + success.pk);
+
+                notificationsChannel.bind('new_notification', function (notification) {
+                    // show notification toaster
+                    var message = notification.message;
+                    toastr.success(message);
+                    // increase the notification number
+                    var nf_num = parseInt($('#id_nf_num').text(), 10);
+                    $('#id_nf_num').text(nf_num + 1);
+
+                    $('#id_nf_group').prepend('<a href class="list-group-item"><span class="clear block m-b-none">'
+                                      +notification.message + '<br><small class="text-muted">notification</small></span></a>'
+                    );
+                });
             },
             function(error){
                 $scope.error = error.data.error;
