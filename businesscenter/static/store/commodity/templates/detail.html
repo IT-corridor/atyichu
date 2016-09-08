@@ -7,8 +7,9 @@
     <div class="row m-b-md">
         <div class="col-md-12">
             <div>
-            <div uib-carousel active="0">
-              <div uib-slide ng-repeat="item in commodity.gallery_set track by item.id" index="$index">
+            <div uib-carousel active="0" template-url="/static/store/partials/carousel/carousel.html">
+              <div uib-slide ng-repeat="item in commodity.gallery_set track by item.id" index="$index"
+                template-url="/static/store/partials/carousel/slide.html">
                 <img ng-src="{{ item.thumb }}" style="margin:auto; max-height: 500px;" class="img-responsive">
               </div>
             </div>

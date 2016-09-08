@@ -5,9 +5,7 @@
     <meta charset="utf-8">
     <meta name="fragment" content="!" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Atyichu">
-    {% load i18n %}
-    {% load static from staticfiles %}
+    <meta name="description" content="Atyichu"> {% load i18n %} {% load static from staticfiles %}
     <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}lib/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}lib/assets/animate/animate.css">
@@ -41,11 +39,11 @@
             <div data-ng-if="!visitor_resolved">
                 <h1 class="text-center" data-translate="AUTHENTICATION.REQUIRED"></h1>
             </div>
+            <div data-d-alerts></div>
             <div class="app-content-body fade-in-up" data-ng-view data-ng-if="visitor_resolved"></div>
         </div>
     </div>
-    <noscript>
-        <h4 class="text-danger">{% trans 'This site requires JavaScript to be enabled' %}</h4></noscript>
+    <noscript><h4 class="text-danger">{% trans 'This site requires JavaScript to be enabled' %}</h4></noscript>
 
     <script src="{{ STATIC_URL }}lib/jquery/jquery.js"></script>
     <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>

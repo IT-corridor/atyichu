@@ -19,3 +19,4 @@ class CatalogConfig(AppConfig):
         pre_delete.connect(receivers.cleanup_files_photo, sender=Gallery)
         post_save.connect(receivers.create_thumb_photo_500, sender=Gallery)
         post_save.connect(receivers.create_crop_photo_120, sender=Gallery)
+        post_save.connect(receivers.create_cover_photo_900, sender=Gallery)

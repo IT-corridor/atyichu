@@ -5,11 +5,21 @@ angular.module('commodity.directives', ['commodity.services'])
                 restrict: 'AC',
                 scope: {
                     stockstr: '=',
+                    category: '=',
                 },
                 templateUrl: PATH + 'commodity/templates/include/stock_set_create.html',
                 controller: function($scope, Color, Size) {
-                    $scope.size_list = Size.query();
+
                     $scope.color_list = Color.query();
+
+                    $scope.$watch('category',
+                        function(newValue, oldValue) {
+                            if (newValue){
+                                $scope.size_list = Size.query({category: $scope.category});
+                            }
+                        }
+                    );
+
                     $scope.placeholder_list = [{
                         color: null,
                         size: null,
@@ -48,11 +58,22 @@ angular.module('commodity.directives', ['commodity.services'])
                 scope: {
                     stockset: '=',
                     commodity: '=',
+                    category: '=',
                 },
                 templateUrl: PATH + 'commodity/templates/include/stock_set_update.html',
                 controller: function($scope, Color, Size, Commodity, Stock) {
-                    $scope.size_list = Size.query();
                     $scope.color_list = Color.query();
+
+
+                    $scope.$watch('category',
+                        function(newValue, oldValue) {
+                            if (newValue){
+                                $scope.size_list = Size.query({category: $scope.category});
+                            }
+                        }
+                    );
+
+
 
                     $scope.add_stock = function() {
                         $scope.stockset.push({

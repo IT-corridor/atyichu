@@ -4,7 +4,7 @@ import os
 import imghdr
 import requests
 from io import BytesIO
-from PIL import Image, ImageOps, ExifTags
+from PIL import Image, ImageOps, ExifTags, ImageColor
 from django.core.files import File
 from django.utils.deconstruct import deconstructible
 from django.core.files.base import ContentFile
@@ -108,6 +108,10 @@ def cleanup_files(instance, fieldname):
     if crop and hasattr(crop, 'name'):
         crop.delete(save=False)
 
+    cover = getattr(instance, 'cover', None)
+    if cover and hasattr(cover, 'name'):
+        cover.delete(save=False)
+
 
 def cleanup_if_none(instance, fieldname):
     """If main picture is None, remove others (crop, and thumb)"""
@@ -170,4 +174,52 @@ def create_crop(instance, input_field, m=100, output_field='crop'):
         output = BytesIO()
         cropped.save(output, ext)
         crop_field.save(n_fn, File(output), save=True)
+        output.close()
+
+
+def create_cover(instance, input_field, m, output_field='cover', fill=None):
+    dest_field = getattr(instance, output_field)
+    input_field = getattr(instance, input_field)
+
+    if input_field and not dest_field.name:
+
+        filename = input_field.path
+
+        img = Image.open(filename)
+        img = rotate_image(img)
+        w, h = img.size
+        w, h = default_ratio(w, h, m)
+
+        img = img.resize((w, h), Image.ANTIALIAS)
+
+        # New box
+
+        if w < m:
+            x1 = int((m - w) / 2)
+            x2 = int(((m - w) / 2) + w)
+        else:
+            x1 = 0
+            x2 = w
+
+        if h < m:
+            y1 = int((m - h) / 2)
+            y2 = int(((m - h) / 2) + h)
+        else:
+            y1 = 0
+            y2 = h
+
+        box = (x1, y1, x2, y2)
+
+        if fill is None:
+            fill = ImageColor.getcolor('white', img.mode)
+        base_img = Image.new(img.mode, (m, m), fill)
+        base_img.paste(img, box)
+
+        filepath, _ = os.path.splitext(input_field.name)
+        name = filepath.split('/')[-1]
+        ext = imghdr.what(filename)
+        n_fn = name + '_' + output_field + '.' + ext
+        output = BytesIO()
+        base_img.save(output, ext)
+        dest_field.save(n_fn, File(output), save=True)
         output.close()

@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from .utils import create_thumb, create_crop, cleanup_files, cleanup_if_none, \
-    max_ratio
+    max_ratio, create_cover
 
 
 def create_thumb_avatar(sender, **kwargs):
@@ -56,6 +56,12 @@ def create_crop_photo_120(sender, **kwargs):
     instance = kwargs.get('instance', None)
     if instance:
         create_crop(instance, 'photo', 120)
+
+
+def create_cover_photo_900(sender, **kwargs):
+    instance = kwargs.get('instance', None)
+    if instance:
+        create_cover(instance, 'photo', 900)
 
 
 def cleanup_files_avatar(sender, **kwargs):
