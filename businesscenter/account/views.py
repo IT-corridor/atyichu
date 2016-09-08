@@ -43,12 +43,26 @@ class StoreViewSet(OwnerCreateMixin,
 
     @detail_route(methods=['patch'])
     def update_photo(self, request, *args, **kwargs):
-        """ Used to update only the cover of the store.
+        """ Used to update only the logo of the store.
         Nothing more guarantied."""
         if 'photo' not in request.data:
             raise ValidationError({'photo': _('This parameter is required.')})
         obj = self.get_object()
-        print (request.data)
+        serializer = self.serializer_class(instance=obj, data=request.data,
+                                           partial=True)
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(data=serializer.data)
+
+    @detail_route(methods=['patch'])
+    def update_post(self, request, *args, **kwargs):
+        """
+        Update the post of the store.
+        """
+        if 'post' not in request.data:
+            raise ValidationError({'post': _('This parameter is required.')})
+        obj = self.get_object()
         serializer = self.serializer_class(instance=obj, data=request.data,
                                            partial=True)
 
@@ -72,7 +86,9 @@ class StoreViewSet(OwnerCreateMixin,
         """
         obj = self.get_object_by_owner_or_404()
         select = cat_models.Commodity.objects.filter(store=obj)\
-            .select_related('brand', 'kind__category', 'color', 'size')
+            .select_related('brand', 'kind__category',)
+
+        select = select.prefetch_related('colors', 'sizes')
 
         return self.get_list_response(select,
                                       cat_srlzrs.CommodityListVerboseSerializer)

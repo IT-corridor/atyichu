@@ -7,6 +7,7 @@ angular.module('app.route', [
     'group.controllers',
     'article.controllers',
     'notification.controllers',
+    'store.controllers',
 ])
 .config(['$routeProvider','PATH',
     function($routeProvider, PATH) {
@@ -136,6 +137,9 @@ angular.module('app.route', [
             templateUrl: PATH + 'user/templates/wechat_password.html',
             controller: 'CtrlWechatSetPassword',
         }).
+        when('/commodities/:pk/', {
+            templateUrl: PATH + 'store/templates/commodity_detail.html',
+            controller: 'CtrlCommodityDetail'}).
         when('/error/404/', {
             templateUrl: PATH + 'partials/error/templates/404.html'}).
         otherwise({

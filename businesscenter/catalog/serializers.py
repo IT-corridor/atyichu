@@ -29,6 +29,12 @@ class BrandSerializer(serializers.ModelSerializer):
         model = models.Brand
 
 
+class PromotionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Promotion
+
+
 class ColorSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -53,6 +59,13 @@ class TagSerializer(serializers.ModelSerializer):
         model = models.Tag
 
 
+class StockSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Stock
+        extra_kwargs = {'commodity': {'allow_null': True, 'required': False}}
+
+
 # COMMODITY Serializers
 
 class CommodityListSerializer(serializers.ModelSerializer):
@@ -60,7 +73,7 @@ class CommodityListSerializer(serializers.ModelSerializer):
     # TODO: set parent serializers read-only and add its ids,
     # because of issues with creating/updating)
     # TODO: add store serializer (avatar of the store needed)
-    tags = TagSerializer(many=True, read_only=True, source='tag_set')
+    tags = TagSerializer(source='tag_set', many=True, read_only=True)
     name = serializers.CharField(source='__unicode__', read_only=True)
     season_text = serializers.CharField(source='get_season_display',
                                         read_only=True)
@@ -68,6 +81,7 @@ class CommodityListSerializer(serializers.ModelSerializer):
     cover = serializers.SerializerMethodField(read_only=True)
     category = serializers.PrimaryKeyRelatedField(source='kind.category',
                                                   read_only=True)
+    stock_set = StockSerializer(read_only=True, many=True)
 
     def get_cover(self, obj):
         gallery = obj.gallery_set.first()
@@ -86,8 +100,8 @@ class CommodityListSerializer(serializers.ModelSerializer):
 class CommodityListVerboseSerializer(CommodityListSerializer):
     kind = KindVerboseSerializer(read_only=True)
     brand = BrandSerializer(read_only=True)
-    color = ColorSerializer(read_only=True)
-    size = SizeSerializer(read_only=True)
+    colors = ColorSerializer(read_only=True, many=True)
+    sizes = SizeSerializer(read_only=True, many=True)
 
 
 class CommodityDetailSerializer(CommodityListSerializer):
@@ -102,7 +116,7 @@ class CommodityLinkSerializer(serializers.ModelSerializer):
     """ This serializer is used to present nested data in the
     :model:`snapshot.Link` serializer """
     kind = KindSerializer(read_only=True)
-    color = ColorSerializer(read_only=True)
+    colors = ColorSerializer(read_only=True, many=True)
     crop = serializers.SerializerMethodField(read_only=True)
 
     def get_crop(self, obj):
@@ -117,4 +131,10 @@ class CommodityLinkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Commodity
-        fields = ('pk', 'color', 'crop', 'kind', 'title')
+        fields = ('pk', 'colors', 'crop', 'kind', 'title')
+
+
+class EventSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Event

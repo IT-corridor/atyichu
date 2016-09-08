@@ -458,12 +458,17 @@ left: 4% !important;
 
 /*========= Wardrobe ==============*/
 .my-wardrobes-header{
-	font: 32px/2.6 'Open Sans Regular', sans-serif;
+	font: 32px 'Open Sans Regular', sans-serif;
 	border-top: 1px solid #ececec;
 	border-bottom: 1px solid #ececec;
 	height: 92px;
 	color: #212121;
 	position: relative;
+	line-height: 2;
+}
+.my-wardrobes-header-left{
+	display: inline-block;
+	padding-top: 10px;
 }
 .icon-ti{
 	display: inline;
@@ -549,6 +554,8 @@ left: 4% !important;
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
+	padding: 2px;
+	padding-left: 0;
 }
 .col-1 .wardrobe-group-segment{
 	height: 210px;
@@ -630,9 +637,9 @@ left: 4% !important;
 	text-align: justify;
 }
 .wardrobe-group-description-edit {
-	font-size: 22px;
+	font-size: 16px;
 	text-align: center;
-	padding-top: 14px;
+	padding-top: 18px;
 	color: #212121;
 }
 .wardrobe-group-bottom {
@@ -721,8 +728,11 @@ left: 4% !important;
 @media only screen and (min-width : 320px) {
 	.my-wardrobes-header {
 		font-size: 20px;
-		line-height: 2.2;
+		line-height: 2;
 	    height: 50px;
+	}
+	.my-wardrobes-header-left{
+		padding-top: 0;
 	}
 	.icon-ti {
 		float: none;
@@ -741,17 +751,19 @@ left: 4% !important;
 		border-radius: 50%;
 		text-align: center;
 		margin-top: 3px;
-		line-height: 2;
 	}
 	.my-wardrobes-header-plus .icon-ti{
 		font-size: 20px;
 	}
 	.wardrobe-group-title{
-		font-size: 20px;
+		font-size: 18px;
 		line-height: 1;
 	}
+	.wardrobe-group-dots {
+	    padding: 30px 14px 30px;
+	}
 	.wardrobe-group-title-span{
-		font-size: 18px;
+		font-size: 16px;
 	}
 	.wardrobe-group-description{
 		font-size: 16px;
@@ -776,14 +788,27 @@ left: 4% !important;
 	.wardrobe-group-column{
 		height: 170px;
 	}
-	.col-1 .wardrobe-group-segment{
+	.wardrobe-group-column.col-1 > .wardrobe-group-segment{
 		height: 34%;
+		overflow: hidden;
 	}
-	.col-2 .wardrobe-group-segment{
+	.wardrobe-group-column.col-2 > .wardrobe-group-segment{
 		height: 50%;
+		overflow: hidden;
+	}
+	.wardrobe-group-column.col-3 > .wardrobe-group-segment:nth-child(3){
+		height: 60%;
+		overflow: hidden;
+	}
+	.wardrobe-group-column.col-3 > .wardrobe-group-segment:nth-child(6){
+		height: 40%;
+		overflow: hidden;
 	}
 }
 @media only screen and (min-width : 480px) {
+	.my-wardrobes-header-left{
+		padding-top: 2px;
+	}
 	.my-wardrobes-header-plus{
 		margin-right: 15px;
 	}
@@ -814,7 +839,7 @@ left: 4% !important;
 @media only screen and (min-width : 768px) {
 	.my-wardrobes-header {
 		font-size: 32px;
-		line-height: 2.6;
+		line-height: 2;
 	    height: 92px;
 	}
 	.icon-ti {

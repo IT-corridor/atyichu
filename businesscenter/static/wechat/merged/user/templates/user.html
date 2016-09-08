@@ -1,3 +1,5 @@
+<wx-self data-visitor="visitor"></wx-self>
+
 <div class="container">
     <div class="row">
         <div class="col-md-12 col-xs-12">
@@ -21,8 +23,8 @@
                 </li>
                 <li>
                     <button class="btn btn-primary" data-ng-click="sync-profile()">
-                    {{ 'USER.ME.CONNECT' | translate }}
-                </button>
+                        {{ 'USER.ME.CONNECT' | translate }}
+                    </button>
                 </li>
             </ul>
 
@@ -37,16 +39,15 @@
                         <tr>
                             <td><img class="img-center img-responsive" data-ng-src="{{ me.thumb + '?' + random }}" alt="{{ me.username }}">
                                 <label>{{ 'USER.FORM.AVATAR' | translate }}
-                                <input id="avatar" type="file" name="avatar" data-ng-disabled="wait">
-                            </label>
+                                    <input id="avatar" type="file" name="avatar" data-ng-disabled="wait">
+                                </label>
                                 <p class="text-danger" data-ng-repeat="e in error.avatar">{{ e }}</p>
                             </td>
                         </tr>
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" type="submit" data-ng-disabled="wait"><i class="fa fa-check"></i>
-                        {{ 'FORM.SUBMIT' | translate }}
+                    <button class="btn btn-primary" type="submit" data-ng-disabled="wait"><i class="fa fa-check"></i> {{ 'FORM.SUBMIT' | translate }}
                     </button>
                 </div>
             </form>
@@ -59,33 +60,30 @@
                     <p class="text-danger">{{ error.detail }}</p>
                     <table class="table">
                         <tr>
-                            <td><input type="text" data-ng-model="me.username" name="username" class="form-control" data-ng-disabled="wait"
-                                       placeholder="{{ 'USER.FORM.USERNAME' | translate }}" required>
+                            <td>
+                                <input type="text" data-ng-model="me.username" name="username" class="form-control" data-ng-disabled="wait" placeholder="{{ 'USER.FORM.USERNAME' | translate }}" required>
                                 <p class="text-danger" data-ng-repeat="e in error.username">{{ e }}</p>
                             </td>
                         </tr>
                         <tr data-ng-if="me.phone">
-                            <td><input type="text" data-ng-model="me.phone" name="phone" class="form-control" data-ng-disabled="wait"
-                                       placeholder="{{ 'USER.FORM.PHONE' | translate }}" required>
+                            <td>
+                                <input type="text" data-ng-model="me.phone" name="phone" class="form-control" data-ng-disabled="wait" placeholder="{{ 'USER.FORM.PHONE' | translate }}" required>
                                 <p class="text-danger" data-ng-repeat="e in error.phone">{{ e }}</p>
                             </td>
                         </tr>
                         <tr>
-                            <td><input type="text" data-ng-model="me.email" name="email" class="form-control" data-ng-disabled="wait"
-                                       placeholder="{{ 'USER.FORM.EMAIL' | translate }}">
+                            <td>
+                                <input type="text" data-ng-model="me.email" name="email" class="form-control" data-ng-disabled="wait" placeholder="{{ 'USER.FORM.EMAIL' | translate }}">
                                 <p class="text-danger" data-ng-repeat="e in error.email">{{ e }}</p>
                             </td>
                         </tr>
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" type="submit" data-ng-disabled="wait"><i class="fa fa-check"></i>
-                        {{ 'FORM.SUBMIT' | translate }}
+                    <button class="btn btn-primary" type="submit" data-ng-disabled="wait"><i class="fa fa-check"></i> {{ 'FORM.SUBMIT' | translate }}
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-

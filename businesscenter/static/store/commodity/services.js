@@ -27,6 +27,15 @@ angular.module('commodity.services', ['ngResource'])
             remove: {method: 'DELETE'},
     });
 }])
+.factory('Promotion', ['$resource', 'catalog_path',
+    function($resource, catalog_path){
+        return $resource(catalog_path + 'promotions/:pk/:action/', {}, {
+            query: {method:'GET', params:{pk: null, action: null}, responseType:'json', isArray: true},
+            update: {method: 'PATCH'},
+            save: {method: 'POST'},
+            remove: {method: 'DELETE'},
+    });
+}])
 .factory('Size', ['$resource', 'catalog_path',
     function($resource, catalog_path){
         return $resource(catalog_path + 'sizes/:pk/:action/', {}, {
@@ -53,7 +62,8 @@ angular.module('commodity.services', ['ngResource'])
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
             verbose: {method: 'GET', params: {action: 'verbose'}, responseType: 'json'},
-            my: {method: 'GET', params: {action: 'my'}, responseType: 'json', isArray: true},
+            my: {method: 'GET', params: {action: 'my'}, responseType: 'json'},
+            update_stocks: {method: 'PATCH', params:{action: 'update_stocks'}, responseType:'json', isArray: true,},
 
     });
 }])
@@ -65,5 +75,14 @@ angular.module('commodity.services', ['ngResource'])
             save: {method: 'POST'},
             remove: {method: 'DELETE'},
             save_many: {method: 'POST', params:{pk: null, action: 'save_many'}, responseType:'json', isArray: true,},
+    });
+}])
+.factory('Stock', ['$resource', 'catalog_path',
+    function($resource, catalog_path){
+        return $resource(catalog_path + 'stocks/:pk/:action/', {}, {
+            query: {method:'GET', params:{pk: null, action: null}, responseType:'json', isArray: true},
+            update: {method: 'PATCH', params: {action: null}},
+            save: {method: 'POST'},
+            remove: {method: 'DELETE'},
     });
 }]);

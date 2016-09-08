@@ -1,4 +1,4 @@
-angular.module('commodity.controllers', ['commodity.services', 'common.services'])
+angular.module('commodity.controllers', ['commodity.services', 'common.services', 'commodity.directives'])
 .controller('CtrlCommodityCreate', ['$scope', '$rootScope','$http',
 '$location', '$translate', 'MultipartForm', 'Store', 'Category', 'Kind', 'Size', 'Color',
     function($scope, $rootScope, $http, $location, $translate, MultipartForm,
@@ -8,8 +8,8 @@ angular.module('commodity.controllers', ['commodity.services', 'common.services'
 
         $scope.category_list = Category.query();
         $scope.brand_list = Store.my_brands();
-        $scope.size_list = Size.query();
-        $scope.color_list = Color.query();
+        $scope.stock_set = ''; // this is a json string;
+
         $scope.year = 2016;
 
 
@@ -225,14 +225,14 @@ angular.module('commodity.controllers', ['commodity.services', 'common.services'
             );
         }
 
-        $scope.remove_commodity = function(commodity){
+        $scope.remove_commodity = function(index){
             $translate('CONFIRM').then(function (msg) {
                 $scope.confirm = $window.confirm(msg);
                 if ($scope.confirm){
+                    commodity = $scope.r.results[index];
                     Commodity.remove({pk: commodity.id},
                         function(success){
-                            var index = $scope.r.indexOf(commodity);
-                            $scope.r.splice(index, 1);
+                            $scope.r.results.splice(index, 1);
                         },
                         error_handler
                     );
@@ -252,17 +252,8 @@ angular.module('commodity.controllers', ['commodity.services', 'common.services'
 '$location', '$routeParams', '$translate', 'Commodity',
     function($scope, $rootScope, $http, $location, $routeParams, $translate,
     Commodity) {
-        $scope.commodity = Commodity.verbose({pk: $routeParams.pk},
-            function(success){
-                if (success.gallery_set.length > 0){
-                    $scope.set_current_photo(success.gallery_set[0]);
-                }
-            }
-        );
+        $scope.commodity = Commodity.verbose({pk: $routeParams.pk});
 
-        $scope.set_current_photo = function(photo){
-            $scope.current_photo = photo.photo;
-        }
     }
 ])
 .controller('CtrlCommodityList', ['$scope', '$rootScope','$http', '$window',

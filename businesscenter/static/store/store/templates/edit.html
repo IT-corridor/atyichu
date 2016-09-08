@@ -2,7 +2,6 @@
     <div class="row">
         <div class="col-md-offset-3 col-md-6">
             <img class="img-center img-responsive" data-ng-src="{{ r.thumb }}" alt="{{ r.brand_name }}">
-            tralalal
         </div>
     </div>
     <div class="wrapper-md" data-ng-if="visitor.store">
@@ -11,10 +10,9 @@
                 {{'STORE.UPDATE.HEADER' | translate }}
             </div>
             <div class="panel-body">
-                <p>{{ 'STORE.UPDATE.UPDATE_PHOTO' | translate }}</p>
                 <form data-ng-submit="update_photo()" class="m-b" id="photo_form">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">{{ 'STORE.FORM.PHOTO' | translate }}</label>
+                        <label class="col-sm-2 control-label">{{ 'STORE.FORM.LOGO' | translate }}</label>
                         <div class="col-md-5">
                             <input type="file" name="photo" required aria-required="true">
                             <p class="text-danger"
@@ -27,8 +25,32 @@
                     </div>
                 </form>
                 <div class="line line-dashed b-b line-lg pull-in"></div>
-                <p>{{ 'STORE.UPDATE.UPDATE_DATA' | translate }}</p>
+                <form data-ng-submit="update_post()" class="m-b" id="post_form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{ 'STORE.FORM.POST' | translate }}</label>
+                        <div class="col-md-5">
+                            <input type="file" name="post" required aria-required="true">
+                            <p class="text-danger"
+                               data-ng-repeat="e in error.post">{{ e }}</p>
+                        </div>
+                        <div class="col-md-5">
+                            <button data-ng-disabled="wait" type="submit" class="btn btn-primary">{{ 'STORE.FORM.SUBMIT' | translate }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div class="line line-dashed b-b line-lg pull-in"></div>
                 <form data-ng-submit="update()" name="form" id="store_form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{ 'STORE.FORM.STORE_NAME' | translate }}</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="name" data-ng-model="r.name"
+                                   class="form-control rounded">
+                            <p class="text-danger"
+                               data-ng-repeat="e in error.store_name">{{ e }}</p>
+                        </div>
+                    </div>
+                    <div class="line line-dashed b-b line-lg pull-in"></div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'STORE.FORM.BRAND_NAME' | translate }}</label>
                         <div class="col-sm-10">

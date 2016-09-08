@@ -17,20 +17,28 @@ class GalleryInline(admin.TabularInline):
     extra = 0
 
 
+class StockInline(admin.TabularInline):
+    model = models.Stock
+    extra = 0
+
+
 class CommodityAdmin(admin.ModelAdmin):
     # TODO: Optimize queries
 
     list_display = ('title', 'brand', 'kind', 'season', 'year', 'store')
     list_filter = ('brand', 'kind', 'season', 'year', 'store')
-    inlines = (TagInline, GalleryInline)
+    inlines = (StockInline, TagInline, GalleryInline)
     # list_select_related = True
 
 admin.site.register(models.Category)
 admin.site.register(models.Kind)
 admin.site.register(models.Brand)
+admin.site.register(models.Promotion)
+admin.site.register(models.Event)
 admin.site.register(models.Color)
 admin.site.register(models.Size)
 admin.site.register(models.Gallery)
+admin.site.register(models.Stock)
 admin.site.register(models.Commodity, CommodityAdmin)
 
 

@@ -18,4 +18,4 @@ class CatalogConfig(AppConfig):
         post_migrate.connect(receiver=add_vendor_catalog_perms, sender=self)
         pre_delete.connect(receivers.cleanup_files_photo, sender=Gallery)
         post_save.connect(receivers.create_thumb_photo_500, sender=Gallery)
-        post_save.connect(receivers.create_crop_photo_100, sender=Gallery)
+        post_save.connect(receivers.create_crop_photo_120, sender=Gallery)

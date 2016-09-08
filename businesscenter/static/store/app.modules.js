@@ -13,6 +13,7 @@ var app = angular.module('app.main', [
     'alert',
     'selfie',
     'grid',
+    'common.directives',
 ]);
 app.factory('httpRequestInterceptor', function () {
     return {
@@ -149,6 +150,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             },
             'FORM': {
                 'BRAND_NAME': 'Brand name',
+                'STORE_NAME': 'Store Name',
                 'STATE': 'State',
                 'CITY': 'City',
                 'DISTRICT': 'District',
@@ -157,18 +159,24 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'BUILD_NAME': 'Building name',
                 'BUILD_NO': 'Building number',
                 'APT': 'Apartments',
-                'PHOTO': 'Photo',
+                'LOGO': 'Logo',
+                'POST': 'Post',
                 'CROP': 'Crop',
                 'SUBMIT': 'Submit',
                 'CANCEL': 'Cancel',
                 'LOCATION': 'Location',
                 'NO_PHOTO': 'No photo',
+                'POSTER': 'Poster',
+                'DESCRIPTION': 'Description',
+                'START_DATE': 'Start date'
             },
             'MY': {
                 'HEADER': 'Your store overview',
                 'ADD_BRAND': 'Add a brand',
+                'ADD_PROMOTION': 'Add a promotion',
                 'ADD_COLOR': 'Add a color',
                 'ADD_SIZE': 'Add a size',
+                'ADD_PROMOTION': 'Add a promotion'
             },
             'MODAL': {
                 'TITLE_PLACE': 'Enter a title',
@@ -289,12 +297,18 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'KIND': 'Kind',
                 'BRAND': 'Brand',
                 'COLOR': 'Color',
+                'COLORS': 'Colors',
                 'SIZE': 'Size',
+                'SIZES': 'Sizes',
                 'SEASON': 'Season',
                 'YEAR': 'Year',
                 'EXTRA_COLOR': 'Extra color',
                 'COLOR_PIC': 'Sample of color',
                 'FILES': 'Photos',
+                'AMOUNT': 'Amount',
+                'STOCKS': 'Stocks',
+                'ANOTHER_STOCK': 'Add another Stock',
+                'DESCRIPTION': 'Description',
             },
             'SEASONS': {
                 'WINTER': 'Winter',
@@ -390,6 +404,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             },
             'FORM': {
                 'BRAND_NAME': 'Brand name',
+                'STORE_NAME': 'Store Name',
                 'STATE': 'State',
                 'CITY': 'City',
                 'DISTRICT': 'District',
@@ -398,18 +413,24 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'BUILD_NAME': 'Building name',
                 'BUILD_NO': 'Building number',
                 'APT': 'Apartments',
-                'PHOTO': 'Photo',
+                'LOGO': 'Logo',
+                'POST': 'Post',
                 'CROP': 'Crop',
                 'SUBMIT': 'Submit',
                 'CANCEL': 'Cancel',
                 'LOCATION': 'Location',
                 'NO_PHOTO': 'No photo',
+                'POSTER': 'Poster',
+                'DESCRIPTION': 'Description',
+                'START_DATE': 'Start date'
             },
             'MY': {
                 'HEADER': 'Your store overview',
                 'ADD_BRAND': 'Add a brand',
+                'ADD_PROMOTION': 'Add a promotion',
                 'ADD_COLOR': 'Add a color',
                 'ADD_SIZE': 'Add a size',
+                'ADD_PROMOTION': 'Add a promotion'
             },
             'MODAL': {
                 'TITLE_PLACE': 'Enter a title',
@@ -530,12 +551,18 @@ app.config(['$translateProvider', function ($translateProvider) {
                 'KIND': 'Kind',
                 'BRAND': 'Brand',
                 'COLOR': 'Color',
+                'COLORS': 'Colors',
                 'SIZE': 'Size',
+                'SIZES': 'Sizes',
                 'SEASON': 'Season',
                 'YEAR': 'Year',
                 'EXTRA_COLOR': 'Extra color',
                 'COLOR_PIC': 'Sample of color',
                 'FILES': 'Photos',
+                'AMOUNT': 'Amount',
+                'STOCKS': 'Stocks',
+                'ANOTHER_STOCK': 'Add another Stock',
+                'DESCRIPTION': 'Description',
             },
             'SEASONS': {
                 'WINTER': 'Winter',

@@ -191,7 +191,10 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
 
                         success['owner_followed'] = IsMember($rootScope.following.results, success.visitor, 'pk');
                         success['creator_followed'] = IsMember($rootScope.following.results, success.creator, 'pk');
-                        success['article']['descr'] = $sce.trustAsHtml(success['article']['descr']);
+                        if (success['article']){
+                            success['article']['descr'] = $sce.trustAsHtml(success['article']['descr']);
+                        }
+
 
                         var title = (success.title) ? success.title : '品味和格调兼具';
                         var photo_desc = (success.description) ? success.description : '大家快来看，秀出你的品味和格调!';
