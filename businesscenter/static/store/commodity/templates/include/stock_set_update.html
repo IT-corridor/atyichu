@@ -11,8 +11,7 @@
             </tr>
             <tr data-ng-repeat="stock in stockset">
                 <td>
-                    <select class="form-control rounded" style="background-color: {{ item.html }}" data-ng-model="stock.color" data-convert-to-number>
-                        <option data-ng-repeat="item in color_list" value="{{item.id}}">{{ item.title }}</option>
+                    <select class="form-control rounded" style="background-color: {{ item.html }}" data-ng-model="stock.color" data-ng-options="item.id as item.title for item in color_list">
                         <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
                     </select>
                 </td>
@@ -22,8 +21,7 @@
 
                 </td>
                 <td>
-                    <select class="form-control rounded" data-ng-model="stock.size" data-convert-to-number>
-                        <option data-ng-repeat="item in size_list" value="{{item.id}}">{{ item.title }}</option>
+                    <select class="form-control rounded" data-ng-model="stock.size" data-ng-options="item.id as item.title for item in size_list">
                         <option value="">{{ 'COMMODITY.FORM.EMPTY' | translate }}</option>
                     </select>
                 </td>

@@ -14,7 +14,7 @@ angular.module('commodity.controllers', ['commodity.services', 'common.services'
 
 
         $scope.get_kind_list = function(){
-            $scope.kind_list = Kind.query({category: $scope.category.id});
+            $scope.kind_list = Kind.query({category: $scope.category});
         }
 
         $translate(['COMMODITY.SEASONS.WINTER',
@@ -94,11 +94,14 @@ angular.module('commodity.controllers', ['commodity.services', 'common.services'
         };
 
 
-        $scope.get_kind_list = function(){
+        $scope.get_kind_list = function(clear){
             if ($scope.commodity.category){
                 $scope.kind_list = Kind.query({category: $scope.commodity.category});
+                if (clear){
+                    $scope.commodity.kind = null;
+                };
             }
-        }
+        };
 
         $translate(['COMMODITY.SEASONS.WINTER',
                     'COMMODITY.SEASONS.SPRING',
@@ -136,12 +139,22 @@ angular.module('commodity.controllers', ['commodity.services', 'common.services'
         };
 
         $scope.update = function (){
+            $scope.wait = true;
+            if ($scope.error){
+                $scope.error = [];
+            }
             $scope.commodity = Commodity.update({pk: $routeParams.pk},
             $scope.commodity, function(success){
                 $translate('COMMODITY.UPDATE.SUCCESS').then(function (msg) {
                     $rootScope.alerts.push({ type: 'info', msg:  msg});
                 });
-            });
+                $scope.wait = false;
+            },
+            function(error){
+                $scope.error = error.data;
+                $scope.wait = false;
+            }
+            );
         };
 
         $scope.remove_photo = function(photo){
