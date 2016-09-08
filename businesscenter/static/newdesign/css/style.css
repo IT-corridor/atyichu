@@ -456,17 +456,132 @@ left: 4% !important;
 	}
 }
 
+/*======= сomodity page ===========*/
+.commodity .header{
+	border-bottom: none;
+}
+.header-title-h2{
+	display: inline-block;
+	font-size: 32px;
+	margin: 0;
+}
+.header-icons{
+	float: right;
+	margin-top: 15px;
+}
+.header-icons span + span {
+	padding-left: 41px;
+}
+/*======= сomodity page - carousel ===========*/
+.carousel {
+    height: 648px;
+    border-bottom: 1px solid #ececec;
+}
+.carousel-inner{
+	height: 590px;
+	width: 900px;
+	overflow: hidden;
+	margin: 0 auto;
+}
+.carousel-indicators .active {
+    width: 23px;
+    height: 23px;
+    margin: 0 16px 0 0;
+    background-color: #fe8a71;
+}
+.carousel-indicators li {
+    width: 23px;
+    height: 23px;
+    margin: 0 16px 0 0;
+    background-color: #c1c1c1;
+    border: 0;
+    border-radius: 50%;
+}
+.carousel-control.right, .carousel-control.left{
+	background-image: none;
+}
+.carousel > .carousel-control{
+	/*display: none;*/
+}
+.carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 60px;
+    font-size: 20px;
+    color: #fff;
+    text-align: center;
+    text-shadow: none;
+    background-color: rgba(64,64,76,0.6);
+    filter: alpha(opacity=60);
+    opacity: 1;
+}
+.carousel-control:focus, .carousel-control:hover {
+	opacity: 1;
+}
+.carousel-control .glyphicon-chevron-left,
+.carousel-control .glyphicon-chevron-right,
+.carousel-control .icon-next,
+.carousel-control .icon-prev {
+    /*display: none;*/
+}
+.carousel-control.left{
+	left: 15px;
+}
+.carousel-control.right{
+	right: 15px;
+}
+.carousel-control .ti-angle-left,
+.carousel-control .ti-angle-right,
+.carousel-control .icon-next,
+.carousel-control .icon-prev {
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+    display: inline-block;
+    transform: translateY(-50%);
+}
+.carousel-control .ti-angle-left{
+	left: 3px;
+}
+.carousel-control .ti-angle-right{
+	right: 3px;
+}
+/*====== сomodity-main ============*/
+.main-h1{
+	font: 30px 'Open Sans Regular', sans-serif;
+	color: #212121;
+	text-transform: uppercase;
+}
+.main-h2{
+	font: 20px 'Open Sans Regular', sans-serif;
+	color: #212121;
+	text-transform: none;
+}
+.main-h3{
+	font: 20px/1.455 'Open Sans Regular', sans-serif;
+	color: #212121;
+	text-transform: none;
+}
+.main-p{
+	font: 21px/1.455 'Open Sans Light', sans-serif;
+	color: #212121;
+	padding: 14px 0 4px 20px;
+	text-align: justify;
+}
 /*========= Wardrobe ==============*/
-.my-wardrobes-header{
+.header{
 	font: 32px 'Open Sans Regular', sans-serif;
 	border-top: 1px solid #ececec;
 	border-bottom: 1px solid #ececec;
-	height: 92px;
 	color: #212121;
 	position: relative;
 	line-height: 2;
 }
-.my-wardrobes-header-left{
+.header-left{
 	display: inline-block;
 	padding-top: 10px;
 }
@@ -474,7 +589,7 @@ left: 4% !important;
 	display: inline;
 	vertical-align: middle;
 }
-.my-wardrobes-header-title {
+.header-title {
 	display: inline;
 	vertical-align: middle;
 }
@@ -726,12 +841,12 @@ left: 4% !important;
 
 /*==== media for column-count way ====*/
 @media only screen and (min-width : 320px) {
-	.my-wardrobes-header {
+	.header {
 		font-size: 20px;
 		line-height: 2;
 	    height: 50px;
 	}
-	.my-wardrobes-header-left{
+	.header-left{
 		padding-top: 0;
 	}
 	.icon-ti {
@@ -741,7 +856,7 @@ left: 4% !important;
 		font-size: 26px;
 		vertical-align: middle;
 	}
-	.my-wardrobes-header-plus {
+	.header-plus {
 		float: right;
 		display: inline-block;
 		width: 42px;
@@ -752,7 +867,7 @@ left: 4% !important;
 		text-align: center;
 		margin-top: 3px;
 	}
-	.my-wardrobes-header-plus .icon-ti{
+	.header-plus .icon-ti{
 		font-size: 20px;
 	}
 	.wardrobe-group-title{
@@ -806,10 +921,10 @@ left: 4% !important;
 	}
 }
 @media only screen and (min-width : 480px) {
-	.my-wardrobes-header-left{
+	.header-left{
 		padding-top: 2px;
 	}
-	.my-wardrobes-header-plus{
+	.header-plus{
 		margin-right: 15px;
 	}
 	.wardrobe-group-row{
@@ -837,21 +952,24 @@ left: 4% !important;
 	}
 }
 @media only screen and (min-width : 768px) {
-	.my-wardrobes-header {
+	/*======== header =======*/
+	.header {
 		font-size: 32px;
-		line-height: 2;
-	    height: 92px;
+	    height: 91px;
+	}
+	.header-left {
+	    padding-top: 10px;
 	}
 	.icon-ti {
 		font-size: 32px;
 	}
-	.my-wardrobes-header-plus {
+	.header-plus {
 		width: 68px;
 		height: 68px;
 		margin-top: 10px;
 		margin-right: 0;
 	}
-	.my-wardrobes-header-plus .icon-ti{
+	.header-plus .icon-ti{
 		font-size: 32px;
 	}
 	.wardrobe-group-title{
@@ -882,6 +1000,10 @@ left: 4% !important;
 	}
 	.wardrobe-group-column{
 		height: 420px;
+	}
+	/*======= carousel =======*/
+	.carousel-indicators {
+	    bottom: 0px;
 	}
 }
 @media only screen and (min-width : 992px) {
