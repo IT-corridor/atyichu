@@ -13,7 +13,7 @@ from . import serializers, models
 from .filters import CommodityFilter
 from .permissions import IsCommodityNestedOwnerOrReadOnly
 from utils import permissions
-from utils.views import OwnerCreateMixin, OwnerUpdateMixin
+from utils.views import OwnerCreateMixin, OwnerUpdateMixin, PaginationMixin
 from utils.parsing import parse_json_data
 
 
@@ -41,11 +41,26 @@ class KindViewSet(viewsets.ModelViewSet):
     queryset = models.Kind.objects.all()
 
 
-class SizeViewSet(viewsets.ModelViewSet):
+class SizeViewSet(PaginationMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.IsAdminOrReadOnly,)
     serializer_class = serializers.SizeSerializer
     pagination_class = None
     queryset = models.Size.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        """ Some sizes can depends on category.
+        So first thing first we check the category param.
+        If it provided and if corresponding queryset exists,
+        then we apply this queryset. In other case, we make a queryset
+        with category == null."""
+        category = request.query_params.get('category')
+        qs = self.get_queryset()
+
+        if category and qs.filter(category_id=category).exists():
+            qs = qs.filter(category_id=category)
+        else:
+            qs = qs.filter(category__isnull=True)
+        return self.get_list_response(qs, self.serializer_class)
 
 
 class BrandViewSet(ReferenceMixin, viewsets.ModelViewSet):

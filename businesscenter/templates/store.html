@@ -5,9 +5,7 @@
     <meta charset="utf-8">
     <meta name="fragment" content="!" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Atyichu">
-    {% load i18n %}
-    {% load static from staticfiles %}
+    <meta name="description" content="Atyichu"> {% load i18n %} {% load static from staticfiles %}
     <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}lib/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}lib/assets/animate/animate.css">
@@ -40,6 +38,13 @@
         <div class="app-content">
             <div data-ng-if="!visitor_resolved">
                 <h1 class="text-center" data-translate="AUTHENTICATION.REQUIRED"></h1>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-xs-12 fixed-alerts">
+                        <div data-d-alerts></div>
+                    </div>
+                </div>
             </div>
             <div class="app-content-body fade-in-up" data-ng-view data-ng-if="visitor_resolved"></div>
         </div>
