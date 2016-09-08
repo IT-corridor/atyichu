@@ -15,6 +15,7 @@ class TagInline(admin.TabularInline):
 class GalleryInline(admin.TabularInline):
     model = models.Gallery
     extra = 0
+    readonly_fields = ('thumb', 'cover', 'crop',)
 
 
 class StockInline(admin.TabularInline):
