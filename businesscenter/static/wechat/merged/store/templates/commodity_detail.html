@@ -27,9 +27,9 @@
             <div class="row">
                 <div class="col-md-12">
 
-                     <div uib-carousel active="0">
-                      <div uib-slide ng-repeat="item in commodity.gallery_set track by item.id" index="$index">
-                        <img ng-src="{{ item.thumb }}" class="img-responsive">
+                     <div uib-carousel active="0" template-url="/static/wechat/merged/partials/carousel/carousel.html">
+                      <div uib-slide ng-repeat="item in commodity.gallery_set track by item.id" index="$index" template-url="/static/wechat/merged/partials/carousel/slide.html">
+                        <img ng-src="{{ item.cover }}" class="img-responsive">
                       </div>
                     </div>
 
