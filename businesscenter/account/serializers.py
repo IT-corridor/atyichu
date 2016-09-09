@@ -133,8 +133,10 @@ class StoreSerializer(serializers.ModelSerializer):
         return Photo.objects.filter(visitor_id=obj.vendor_id).count()
 
     def get_newest_promotion(self, obj):
-        promotion = Promotion.objects.order_by('-id').first()
-        return promotion.post.url
+        promotion = obj.promotion_set.first()
+        if promotion:
+            return promotion.post.url
+        return None
 
     def check_key_title(self, key, **kwargs):
         if 'title' not in kwargs:
