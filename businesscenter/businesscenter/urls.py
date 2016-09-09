@@ -30,6 +30,7 @@ urlpatterns = [
         name='store'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^admin/django-rq/', include('django_rq.urls')),
     url(r'^docs/', include('rest_framework_swagger.urls')),
     url(r'^business_center/', site.urls),
     url(r'^api-auth/',
@@ -38,6 +39,7 @@ urlpatterns = [
     url(r'^catalog/', include('catalog.urls', namespace='catalog')),
     url(r'^visitor/', include('visitor.urls', namespace='visitor')),
     url(r'^api/v1/', include('snapshot.urls', namespace='snapshot')),
+
 ]
 
 
