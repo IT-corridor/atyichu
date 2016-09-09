@@ -92,7 +92,9 @@ class StoreSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         with transaction.atomic():
             district_args = validated_data.pop('district', None)
-            validated_data.pop('vendor')
+
+            if 'vendor' in validated_data:
+                validated_data.pop('vendor')
 
             for k, v in validated_data.items():
                 setattr(instance, k, v)
