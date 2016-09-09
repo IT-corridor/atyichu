@@ -17,4 +17,4 @@ class SnapshotConfig(AppConfig):
         post_save.connect(receivers.create_max_thumb_photo_500, sender=Photo)
         post_save.connect(receivers.create_crop_photo_100, sender=Photo)
         post_save.connect(receivers.create_cover_photo_320, sender=Photo)
-        #post_save.connect(fetch_tags, sender=Photo)
+        post_save.connect(fetch_tags, sender=Photo)
