@@ -13,4 +13,5 @@ docutils
 django-debug-toolbar
 pusher
 pytz
+rq
 

@@ -2,6 +2,7 @@ import os
 import json
 from .base import *
 from .mailgun import *
+from .rq_settings import *
 
 config_path = os.path.join(BASE_DIR, 'config.json')
 with open(config_path, 'r') as f:
@@ -11,6 +12,26 @@ SECRET_KEY = data['SECRET_KEY']
 # RESOURCE_DIR = os.path.join(os.path.dirname(BASE_DIR), 'a-static')
 
 DEBUG = False
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.admindocs',
+    'rest_framework',
+    'rest_framework_swagger',
+    'settings',
+    'account',
+    'catalog',
+    'vendor_admin',
+    'visitor',
+    'snapshot',
+    'utils',
+    'django_rq'
+]
 
 ALLOWED_HOSTS = ['.atyichu.com']
 USE_X_FORWARDED_HOST = True
@@ -65,7 +86,13 @@ CACHES = {
             'DB': 3,
         },
     },
-
+    'redis-cache': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '/var/run/redis/redis.sock',
+        'OPTIONS': {
+            'DB': 4,
+        },
+    }
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
