@@ -15,6 +15,7 @@ from .permissions import IsCommodityNestedOwnerOrReadOnly
 from utils import permissions
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin, PaginationMixin
 from utils.parsing import parse_json_data
+from catalog.models import Event
 
 
 class ReferenceMixin(OwnerCreateMixin, OwnerUpdateMixin):
@@ -27,7 +28,7 @@ class ReferenceMixin(OwnerCreateMixin, OwnerUpdateMixin):
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAdminOrReadOnly, )
+    permission_classes = (permissions.IsAdminOrReadOnly,)
     serializer_class = serializers.CategorySerializer
     pagination_class = None
     queryset = models.Category.objects.all()
@@ -67,6 +68,26 @@ class BrandViewSet(ReferenceMixin, viewsets.ModelViewSet):
     serializer_class = serializers.BrandSerializer
     pagination_class = None
     model = models.Brand
+
+
+class PromotionViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.PromotionSerializer
+    pagination_class = None
+    model = models.Promotion
+
+    def get_queryset(self):
+        return models.Promotion.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        models.Promotion.objects.create(post=data['post'],
+                                        store_id=int(data['store_id']),
+                                        description=data['description'],
+                                        start_date=data['start_date'])
+        models.Event.objects.create(store_id=int(data['store_id']),
+                                    type='promotion',
+                                    description='New promotion will start on {}!'.format(data['start_date']))
+        return Response(data='success')
 
 
 class ColorViewSet(viewsets.ModelViewSet):
@@ -137,7 +158,7 @@ class CommodityViewSet(ReferenceMixin, PaginationMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super(CommodityViewSet, self).get_queryset()
-        qs = qs.select_related('brand', 'kind__category',)
+        qs = qs.select_related('brand', 'kind__category', )
         qs = qs.prefetch_related('colors', 'sizes')
         if self.request.method == 'GET' and self.kwargs.get('pk', None):
             qs = qs.prefetch_related('gallery_set', 'tag_set')
@@ -180,6 +201,10 @@ class CommodityViewSet(ReferenceMixin, PaginationMixin, viewsets.ModelViewSet):
                 serializer = serializers.StockSerializer(data=stock_data)
                 serializer.is_valid(True)
                 serializer.save()
+
+        Event.objects.create(store_id=self.request.user.id,
+                             type='commodity',
+                             description='New commodity({}) is created!'.format(commodity.title))
 
     @list_route(methods=['get'])
     def my(self, request, *args, **kwargs):

@@ -181,3 +181,31 @@ class Tag(models.Model):
         verbose_name = _('Tag')
         verbose_name_plural = _('Tags')
         ordering = ('id',)
+
+
+class Event(models.Model):
+    store = models.ForeignKey('account.Store', verbose_name=_('Store'))
+    create_date = models.DateTimeField(auto_now=True)
+    type = models.CharField(_('Event Type'), max_length=50)
+    description = models.TextField(_('Description'))
+
+    def __unicode__(self):
+        return self.store.name
+
+    class Meta:
+        ordering = ('-id',)
+
+
+class Promotion(models.Model):
+    store = models.ForeignKey('account.Store', verbose_name=_('Store'))
+    create_date = models.DateTimeField(auto_now=True)
+    start_date = models.DateTimeField(null=True)
+    post = models.ImageField(_('Post'), upload_to='promotions',
+                             blank=True, null=True)
+    description = models.TextField(_('Description'))
+
+    def __unicode__(self):
+        return self.store.name
+
+    class Meta:
+        ordering = ('-id',)

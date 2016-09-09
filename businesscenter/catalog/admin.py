@@ -34,6 +34,8 @@ class CommodityAdmin(admin.ModelAdmin):
 admin.site.register(models.Category)
 admin.site.register(models.Kind)
 admin.site.register(models.Brand)
+admin.site.register(models.Promotion)
+admin.site.register(models.Event)
 admin.site.register(models.Color)
 admin.site.register(models.Size)
 admin.site.register(models.Gallery)

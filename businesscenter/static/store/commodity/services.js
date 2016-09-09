@@ -27,6 +27,15 @@ angular.module('commodity.services', ['ngResource'])
             remove: {method: 'DELETE'},
     });
 }])
+.factory('Promotion', ['$resource', 'catalog_path',
+    function($resource, catalog_path){
+        return $resource(catalog_path + 'promotions/:pk/:action/', {}, {
+            query: {method:'GET', params:{pk: null, action: null}, responseType:'json', isArray: true},
+            update: {method: 'PATCH'},
+            save: {method: 'POST'},
+            remove: {method: 'DELETE'},
+    });
+}])
 .factory('Size', ['$resource', 'catalog_path',
     function($resource, catalog_path){
         return $resource(catalog_path + 'sizes/:pk/:action/', {}, {

@@ -7,7 +7,9 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from . import models
-from snapshot.models import Photo
+from snapshot.models import Photo, FollowUser, Photo
+from catalog.models import Promotion
+from catalog.serializers import EventSerializer
 
 
 class StateSerializer(serializers.ModelSerializer):
@@ -59,6 +61,10 @@ class StoreSerializer(serializers.ModelSerializer):
     district_title = serializers.CharField(source='district.title')
     city_title = serializers.CharField(source='district.city.title')
     state_title = serializers.CharField(source='district.city.state.title')
+    follower_count = serializers.SerializerMethodField(read_only=True)
+    photo_count = serializers.SerializerMethodField(read_only=True)
+    newest_promotion = serializers.SerializerMethodField(read_only=True)
+    events = EventSerializer(source='event_set', many=True, read_only=True)
 
     def create(self, validated_data):
         with transaction.atomic():
@@ -86,7 +92,9 @@ class StoreSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         with transaction.atomic():
             district_args = validated_data.pop('district', None)
-            validated_data.pop('vendor')
+
+            if 'vendor' in validated_data:
+                validated_data.pop('vendor')
 
             for k, v in validated_data.items():
                 setattr(instance, k, v)
@@ -117,6 +125,16 @@ class StoreSerializer(serializers.ModelSerializer):
             instance.save()
 
         return instance
+
+    def get_follower_count(self, obj):
+        return FollowUser.objects.filter(user_id=obj.vendor_id).count()
+
+    def get_photo_count(self, obj):
+        return Photo.objects.filter(visitor_id=obj.vendor_id).count()
+
+    def get_newest_promotion(self, obj):
+        promotion = Promotion.objects.order_by('-id').first()
+        return promotion.post.url
 
     def check_key_title(self, key, **kwargs):
         if 'title' not in kwargs:

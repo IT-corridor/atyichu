@@ -29,6 +29,12 @@ class BrandSerializer(serializers.ModelSerializer):
         model = models.Brand
 
 
+class PromotionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Promotion
+
+
 class ColorSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -126,3 +132,9 @@ class CommodityLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Commodity
         fields = ('pk', 'colors', 'crop', 'kind', 'title')
+
+
+class EventSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Event
