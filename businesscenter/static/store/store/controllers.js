@@ -126,8 +126,8 @@ angular.module('store.controllers', ['store.services', 'common.services', 'auth.
             };
 
             $scope.getLocation = function (val) {
-                return $http.get('http://apis.map.qq.com/ws/place/v1/suggestion', {
-                // return $http.get('http://localhost:8000/static/res.json', {
+                // return $http.get('http://apis.map.qq.com/ws/place/v1/suggestion', {
+                return $http.get('/static/res.json', {
                     params: {
                         region: $scope.r.state_title,
                         keyword: val,

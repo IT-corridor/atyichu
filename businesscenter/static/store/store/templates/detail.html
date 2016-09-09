@@ -37,7 +37,7 @@
             <div class="clear" style="height: 250px;" data-map-address data-address="r.location"
                  data-title="r.brand_name"
                  data-img="r.crop"></div>
-            <img data-ng-src="{{ r.newest_promotion }}" class="w-full">
+            <img nf-if="{{ r.newest_promotion }}" data-ng-src="{{ r.newest_promotion }}" class="w-full">
             <div class="hbox hbox-auto-xs hbox-auto-sm timeline-center">
                 <!-- .col -->
                 <div class="col">
