@@ -35,6 +35,9 @@ def get_qb_token():
     return res_json['session']['token']
 
 
+def is_ascii(s):
+    return all(ord(c) < 128 for c in s)
+
 def user_signup_qb(user):
     token = get_qb_token()
     url = 'http://api.quickblox.com/users.json'
@@ -42,15 +45,18 @@ def user_signup_qb(user):
               "Content-Type": "application/json"}
 
     full_name = get_nickname(user)
+    login = user.username
+    if not is_ascii(user.username):
+        login = user.username.encode("hex")
+
     if full_name:
         params = {'user': {
-            'login': user.username,
+            'login': login,
             'password': 'atyichu@3212',
             'full_name': full_name}}
 
         res = requests.post(url=url, headers=header, data=json.dumps(params))
         # res_json = res.json()
-        print res.json()
-
+        print login, '@@', full_name, '===', res.json()
 
 

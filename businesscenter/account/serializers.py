@@ -136,7 +136,6 @@ class StoreSerializer(serializers.ModelSerializer):
         promotion = obj.promotion_set.first()
         if promotion:
             return promotion.post.url
-        return None
 
     def check_key_title(self, key, **kwargs):
         if 'title' not in kwargs:
