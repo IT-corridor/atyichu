@@ -126,12 +126,14 @@ angular.module('store.controllers', ['store.services', 'common.services', 'auth.
             };
 
             $scope.getLocation = function (val) {
-                // return $http.get('http://apis.map.qq.com/ws/place/v1/suggestion', {
-                return $http.get('/static/res.json', {
+                return $http.jsonp('http://apis.map.qq.com/ws/place/v1/suggestion', {
+                // return $http.get('/static/res.json', {
                     params: {
                         region: $scope.r.state_title,
                         keyword: val,
                         key: 'NY6BZ-2IB35-AMFIV-QMWBJ-RKC2Z-6BFDG',
+                        output: 'jsonp',
+                        callback: 'JSON_CALLBACK',
                     }
                 }).then(function (response) {
                     return response.data.data.map(function (item) {
