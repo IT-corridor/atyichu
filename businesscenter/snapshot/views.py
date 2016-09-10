@@ -685,7 +685,8 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                                             'visitor__vendor__store',
                                             'group')
         qs = qs.filter(Q(group__is_private=False) &
-                       ~Q(pk=pk) & Q(stamps__id__in=stamp_ids)) \
+                       ~Q(pk=pk) & Q(stamps__id__in=stamp_ids) &
+                       Q(photostamp__confidence__gte=mc)) \
             .order_by('-pk').distinct()
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
