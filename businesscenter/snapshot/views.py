@@ -675,6 +675,8 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             This view is not tested yet.
         """
         obj = self.get_object()
+        if obj.original:
+            obj = obj.original
         # TODO: optimize querysets
         mc = 15  # minimal confidence
         stamp_ids = obj.stamps.filter(photostamp__confidence__gte=mc) \
