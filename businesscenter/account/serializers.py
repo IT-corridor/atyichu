@@ -264,11 +264,17 @@ class VendorBriefSerializer(serializers.ModelSerializer):
     store = serializers.PrimaryKeyRelatedField(read_only=True)
     avatar = serializers.ImageField(source='store.photo', read_only=True)
     thumb = serializers.ImageField(source='store.crop', read_only=True)
+    chat_login = serializers.SerializerMethodField(read_only=True)
+
+    def get_chat_login(self, obj):
+        if all(ord(c) < 128 for c in obj.user.username):
+            return obj.user.username
+        return obj.user.username.encode("hex")
 
     class Meta:
         model = models.Vendor
         fields = ('pk', 'thumb', 'avatar', 'username', 'brand_name',
-                  'group_count', 'photo_count', 'store')
+                  'group_count', 'photo_count', 'store', 'chat_login')
 
 
 class PhotoCropSerializer(serializers.ModelSerializer):

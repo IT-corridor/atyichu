@@ -16,7 +16,6 @@ function connectToChat(user) {
                     console.log(err);
                 } else {
                     chat_initialized = true;
-                    console.log(roster);
 
                     // setup scroll stickerpipe module
                     //
@@ -24,7 +23,7 @@ function connectToChat(user) {
 
                     // load chat dialogs
                     //
-                    retrieveChatDialogs();
+                    // retrieveChatDialogs();
 
                     // setup message listeners
                     //

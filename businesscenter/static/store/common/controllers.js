@@ -11,16 +11,16 @@ angular.module('common.controllers', ['auth.services', 'ngCookies'])
     function($scope, $rootScope, $http, $cookies, $location, $route, $window, Auth, Logout) {
         if (chat_initialized) {
             // setup scroll stickerpipe module
-            setupStickerPipe();
+            // setupStickerPipe();
 
             // load chat dialogs
             retrieveChatDialogs();
 
             // setup message listeners
-            setupAllListeners();
+            // setupAllListeners();
 
             // setup scroll events handler
-            setupMsgScrollHandler();
+            // setupMsgScrollHandler();
         }
     }
 ]);
