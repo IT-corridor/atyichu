@@ -1,5 +1,6 @@
 var app = angular.module('app.main', [
     'ngAnimate',
+    'ngSanitize',
     'ngAria',
     'ngTouch',
     'ui.bootstrap',

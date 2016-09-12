@@ -10,7 +10,6 @@ angular.module('store.controllers', ['store.services', 'common.services',])
             }
         );
         $scope.prev_slide = function(){
-            console.log('click');
             if ($scope.carousel.index > 1){
                 $scope.carousel.index -= 1;
                 console.log($scope.carousel.index);
@@ -30,5 +29,5 @@ angular.module('store.controllers', ['store.services', 'common.services',])
             console.log($scope.carousel.index);
         };
     }
-])
+]);
 

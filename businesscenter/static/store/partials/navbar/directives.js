@@ -86,7 +86,7 @@ navbar.controller('ModalInstanceCtrl', ['$scope','$rootScope', '$uibModalInstanc
 
                 // configuration for chat and notification
                 $window.currentUser = {
-                    login: success.username,
+                    login: success.chat_login,
                     pass: 'atyichu@3212',
                     full_name: success.brand_name
                 };

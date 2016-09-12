@@ -1,26 +1,15 @@
 <div class="container">
     <div class="row">
-        <div class="col-md-12">
-            <div class="text-center wrapper-md">
-                <a class="btn btn-info" data-ng-href="#!/stores/my/edit">{{ 'STORE.UPDATE.HEADER' | translate }}</a>
-                <button class="btn btn-primary"
-                        data-ng-click="open_modal('brand')">{{ 'STORE.MY.ADD_BRAND' | translate }}</button>
-                <button class="btn btn-info"
-                        data-ng-click="open_modal('promotion')">{{ 'STORE.MY.ADD_PROMOTION' | translate }}</button>
-            </div>
-        </div>
-    </div>
-    <div class="row">
         <div class="col-md-offset-2 col-md-8">
             <img data-ng-src="{{ r.post }}" class="w-full" alt="{{ r.name }}">
             <div class="clear m-t-n-xxl" style="position: relative;">
-                <div class="pull-left pull-none-xs text-center m-l-xxl">
+                <div class="pull-left text-center m-l-xs">
                     <a href class="m-b-md inline m btn btn-md btn-success btn-rounded">
-                        <span class="h3 block font-bold">{{ r.follower_count }}</span>
+                        <span class="h4 block font-bold">{{ r.follower_count }}</span>
                         <small>Follower(s)</small>
                     </a>
                     <a href class="m-b-md inline m btn btn-md btn-success btn-rounded">
-                        <span class="h3 block font-bold">{{ r.photo_count }}</span>
+                        <span class="h4 block font-bold">{{ r.photo_count }}</span>
                         <small>Photo(s)</small>
                     </a>
                 </div>

@@ -154,9 +154,10 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
     .controller('CtrlPhotoDetail', ['$scope', '$rootScope', '$http', '$routeParams',
         '$window', '$location', '$translate', 'Photo', 'Comment',
         'WXI', 'Store', 'WindowScroll',
-        'Visitor', 'IsMember', 'RemoveItem', 'ProcessExtraData', '$sce',
+        'Visitor', 'IsMember', 'RemoveItem', 'ProcessExtraData', '$sce', '$uibModal', 'PATH',
         function($scope, $rootScope, $http, $routeParams, $window, $location, $translate,
-            Photo, Comment, WXI, Store, WindowScroll, Visitor, IsMember, RemoveItem, ProcessExtraData, $sce) {
+            Photo, Comment, WXI, Store, WindowScroll, Visitor, IsMember, RemoveItem, ProcessExtraData,
+                 $sce, $uibModal, PATH) {
 
             $scope.is_owner = false;
             $scope.new_message = null;
@@ -210,6 +211,30 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                 $location.path('/article/' + article_id);
             }
 
+            $scope.open_modal = function (resource) {
+                var modalInstance = $uibModal.open({
+                    animation: $scope.animationsEnabled,
+                    templateUrl: PATH + 'photo/templates/modal_' + resource + '.html',
+                    controller: 'PhotoModalInstanceCtrl',
+                    size: 'md',
+                    resolve: {
+                        photo: function () {
+                            return $scope.photo;
+                        },
+                        name: function () {
+                            return resource;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(
+                    function (success) {
+                        $translate('SUCCESS').then(function (msg) {
+                            $rootScope.alerts.push({type: 'info', msg: msg});
+                        });
+                    }
+                );
+            };
             /* "Similar photos block. Need to be cleaned */
 
             $scope.enough = false;
@@ -504,4 +529,53 @@ angular.module('photo.controllers', ['photo.services', 'group.services',
                 );
             }
         }
-    ]);
+    ])
+    .controller('PhotoModalInstanceCtrl',
+        ['$scope', '$rootScope', '$uibModalInstance', 'name', 'photo', '$translate', '$route', '$http', 'Photo', '$location',
+            function ($scope, $rootScope, $uibModalInstance, name, photo, $translate, $route, $http, Photo, $location) {
+                $scope.dict_data = {name: name};
+                $scope.photo = photo;
+
+                $scope.getLocation = function (val) {
+                    return $http.jsonp('http://apis.map.qq.com/ws/place/v1/suggestion', {
+                        params: {
+                            keyword: val,
+                            key: 'NY6BZ-2IB35-AMFIV-QMWBJ-RKC2Z-6BFDG',
+                            output: 'jsonp',
+                            callback: 'JSON_CALLBACK',
+                        }
+                    }).then(function (response) {
+                        return response.data.data.map(function (item) {
+                            return item.address;
+                        });
+                    });
+                };
+
+                function handle_error(error) {
+                    $rootScope.alerts.push({
+                        type: 'danger',
+                        msg: error.data.error
+                    });
+                }
+
+                $scope.update_address = function () {
+                    data = {address: photo.address}
+                    Photo.edit({
+                            pk: photo.id
+                        }, data,
+                        function(success) {
+                            $rootScope.alerts.push({
+                                type: 'info',
+                                msg: 'Data has been updated.'
+                            });
+                            // $location.path('/photo/' + $routeParams.pk);
+                            $uibModalInstance.dismiss('cancel');
+                        },
+                        handle_error
+                    );
+                }
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                }
+            }
+        ]);

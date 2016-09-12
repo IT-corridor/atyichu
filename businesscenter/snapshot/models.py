@@ -204,6 +204,8 @@ class Photo(models.Model):
     stamps = models.ManyToManyField(Stamp, through='PhotoStamp', blank=True)
     article = models.ForeignKey('snapshot.Article', null=True, blank=True,
                                 on_delete=models.SET_NULL)
+    address = models.CharField(_('Address'), max_length=300,
+                               blank=True, null=True)
     objects = models.Manager()
     p_objects = PhotoManager()
     a_objects = ActivePhotoManager()
