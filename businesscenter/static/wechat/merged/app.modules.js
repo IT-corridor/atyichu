@@ -18,6 +18,7 @@ var app = angular.module('app.main', [
     'user.directives',
     'group.services',
     'notification.services',
+    'angular-carousel',
 ]);
 app.factory('httpRequestInterceptor', function() {
     return {

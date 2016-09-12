@@ -3,7 +3,31 @@ angular.module('store.controllers', ['store.services', 'common.services',])
         '$location', '$routeParams', '$translate', 'Commodity', '$uibModal', 'PATH',
         function ($scope, $rootScope, $http, $location, $routeParams, $translate,
                   Commodity, $uibModal, PATH) {
-            $scope.commodity = Commodity.verbose({pk: $routeParams.pk});
+            $scope.carousel = {index: 0};
+            $scope.commodity = Commodity.verbose({pk: $routeParams.pk},
+                function (success) {
+                    $scope.slides = success.gallery_set;
+                }
+            );
+            $scope.prev_slide = function () {
+                if ($scope.carousel.index > 1) {
+                    $scope.carousel.index -= 1;
+                    console.log($scope.carousel.index);
+                }
+
+            };
+            $scope.next_slide = function () {
+
+                if ($scope.carousel.index < $scope.slides.length - 1) {
+                    $scope.carousel.index += 1;
+                    console.log($scope.carousel.index);
+                }
+
+            };
+            $scope.set_index = function (index) {
+                $scope.carousel.index = index;
+                console.log($scope.carousel.index);
+            };
             $scope.open_modal = function (resource) {
                 var modalInstance = $uibModal.open({
                     animation: $scope.animationsEnabled,
@@ -34,7 +58,6 @@ angular.module('store.controllers', ['store.services', 'common.services',])
         '$location', '$translate', '$uibModal', '$log', 'PATH', 'Store', '$routeParams',
         function ($scope, $rootScope, $http, $location, $translate, $uibModal, $log, PATH,
                   Store, $routeParams) {
-
             $scope.r = Store.query({pk: $routeParams.pk});
 
             $scope.event_type = function (type) {
@@ -49,7 +72,6 @@ angular.module('store.controllers', ['store.services', 'common.services',])
             $scope.toggleAnimation = function () {
                 $scope.animationsEnabled = !$scope.animationsEnabled;
             };
-
         }
     ])
     .controller('StoreModalInstanceCtrl',
@@ -69,3 +91,4 @@ angular.module('store.controllers', ['store.services', 'common.services',])
                 }
             }
         ]);
+

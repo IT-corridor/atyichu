@@ -678,7 +678,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
         if obj.original:
             obj = obj.original
         # TODO: optimize querysets
-        mc = 15  # minimal confidence
+        mc = 25  # minimal confidence
         stamp_ids = obj.stamps.filter(photostamp__confidence__gte=mc) \
             .order_by('-pk') \
             .values_list('id', flat=True)

@@ -3,7 +3,7 @@
     <div class="header">
         <div class="container">
             <div class="row">
-                <div class="col-xs-9 col-md-9">
+                <div class="col-xs-8 col-md-8">
                     <div class="header-left">
                         <i class="icon-ti ti-angle-left" aria-hidden="true" data-ng-click="back()" role="button" tabindex="0"></i>
                         <div class="header-title">
@@ -11,7 +11,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-3 col-md-3">
+                <div class="col-xs-4 col-md-4">
                     <div class="header-icons">
                             <span><a data-ng-href="#!/photo/{{ photo.id }}/share/"><i class="fa fa-floppy-o"></i></a></span>
                             <span><i class="icon-share"></i></span>
@@ -22,24 +22,23 @@
         </div>
     </div>
 
-    <div class="slider">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
+    <div class="container">
+        <div class="row">
+            <div data-ng-if="slides"  class="col-md-12">
+                index: <input type="number" class="tiny" data-ng-model="carousel.index">
+                <ul rn-carousel rn-carousel-controls rn-carousel-index="carousel.index"   class="image text-center" style="height: 200px;">
+                      <li ng-repeat="slide in slides track by slide.id">
+                            <img class="" data-ng-src="{{ slide.photo }}">
+                        </li>
+                </ul>
+                <div rn-carousel-indicators  slides="slides" rn-carousel-index="carousel.index" class="text-center"></div>
+            </div>
+        </div>
 
-                     <div uib-carousel active="0" template-url="/static/wechat/merged/partials/carousel/carousel.html">
-                      <div uib-slide ng-repeat="item in commodity.gallery_set track by item.id" index="$index" template-url="/static/wechat/merged/partials/carousel/slide.html">
-                        <img ng-src="{{ item.cover }}" class="img-responsive">
-                      </div>
-                    </div>
-
-                        <!-- Controls -->
-<!--                         <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-                          <span class="icon-ti ti-angle-left"></span>
-                        </a>
-                        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-                          <span class="icon-ti ti-angle-right"></span>
-                        </a> -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="rn-carousel-indicator custom-indicator text-center">
+                    <span ng-repeat="slide in slides" ng-class="{active: $index == carousel.index}" ng-click="set_index($index)">★</span>
                 </div>
             </div>
         </div>
@@ -54,24 +53,25 @@
                     <p class="main-p" data-ng-if="commodity.description">{{ commodity.description }}</p>
 
                     <h3 class="main-h3">{{ 'COMMODITY.FORM.COLORS' | translate }}:</h3>
-                    <ul class="list-inline">
+                    <ul class="list-inline list-circle">
                         <li data-ng-repeat="item in commodity.colors track by item.id">
-                            <span style="color: {{ item.html }}" class="fa-stack">
-                              <i class="fa fa-circle fa-stack-2x"></i>
+                            <span style="color: {{ item.html }}" class="fa-stack fa-stack-size">
+                              <i class="fa fa-circle"></i>
                             </span>
                         </li>
                     </ul>
 
                     <h3 class="main-h3">{{ 'COMMODITY.FORM.SIZES' | translate }}:</h3>
-
-                    <ul class="list-inline">
+                    <ul class="list-inline list-circle">
                         <li data-ng-repeat="item in commodity.sizes track by item.id">
-                            <span class="fa-stack">
+<!--                             <span class="fa-stack fa-stack-size">
                               <i class="fa fa-circle fa-stack-2x" style="color: #fff;"></i>
                                 <span class="fa-stack-1x">{{ item.title }}</span>
-                            </span>
+                            </span> -->
+                             <span class="list-circle-size">{{ item.title }}</span>
                         </li>
                     </ul>
+                    <span class="main-span">List of nearby stores having Lancel Brand</span>
                     <h3 class="main-h3">{{ 'COMMODITY.FORM.BRAND' | translate }}: {{ commodity.brand.title }}</h3>
                     <h3 class="main-h3">{{ 'COMMODITY.FORM.CATEGORY' | translate }}: {{ commodity.kind.category.title }}</h3>
                     <h3 class="main-h3">{{ 'COMMODITY.FORM.KIND' | translate }}: {{ commodity.kind.title }}</h3>
@@ -80,6 +80,4 @@
             </div>
         </div>
     </div>
-
-
 </div>
