@@ -2,11 +2,18 @@ from __future__ import unicode_literals
 
 import os
 from django.conf import settings
+import django_rq
 from .models import Stamp, PhotoStamp
 from utils.api import ImaggaAPI
 
 
 def fetch_tags(sender, instance, created, **kwargs):
+    """ Putting task of fetching tags into django_rq queue """
+    if not settings.DEBUG:
+        django_rq.enqueue(tags_task, instance, created)
+
+
+def tags_task(instance, created):
     """ Used with Photo model to receive tags from Imagga by image file."""
     if instance and created:
         if not instance.thumb:

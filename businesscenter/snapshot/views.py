@@ -35,7 +35,7 @@ from visitor.serializers import VisitorShortSerializer
 from visitor.models import Visitor
 from account.models import Vendor, Store
 from account.serializers import VendorStoreSerializer, StoreShortSerializer
-from catalog.models import Commodity
+from catalog.models import Commodity, Event
 from vutils.wzhifuSDK import JsApi_pub
 from vutils.utils import get_last_day_of_month
 
@@ -276,8 +276,14 @@ class ArticleViewSet(PaginationMixin, viewsets.ModelViewSet):
         article = Article.objects.create(title=data['title'],
                                          description=data['description'],
                                          author=request.user)
-        for photo in data['photos']:
-            Photo.objects.filter(id=photo).update(article=article)
+        if 'photos' in data:
+            for photo in data['photos']:
+                Photo.objects.filter(id=photo).update(article=article)
+
+        Event.objects.create(store_id=request.user.id,
+                             type='article',
+                             description='New article({}) is posted!'.format(data['title']))
+
         return Response(data={'id': article.id}, status=201)
 
     def update(self, request, *args, **kwargs):
@@ -669,8 +675,10 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             This view is not tested yet.
         """
         obj = self.get_object()
+        if obj.original:
+            obj = obj.original
         # TODO: optimize querysets
-        mc = 15  # minimal confidence
+        mc = 25  # minimal confidence
         stamp_ids = obj.stamps.filter(photostamp__confidence__gte=mc) \
             .order_by('-pk') \
             .values_list('id', flat=True)
@@ -680,7 +688,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                                             'group')
         qs = qs.filter(Q(group__is_private=False) &
                        ~Q(pk=pk) & Q(stamps__id__in=stamp_ids) &
-                       Q(stamps__photostamp__confidence__gte=mc)) \
+                       Q(photostamp__confidence__gte=mc)) \
             .order_by('-pk').distinct()
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)

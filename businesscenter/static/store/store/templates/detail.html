@@ -3,29 +3,25 @@
         <div class="col-md-12">
             <div class="text-center wrapper-md">
                 <a class="btn btn-info" data-ng-href="#!/stores/my/edit">{{ 'STORE.UPDATE.HEADER' | translate }}</a>
+                <button class="btn btn-primary"
+                        data-ng-click="open_modal('brand')">{{ 'STORE.MY.ADD_BRAND' | translate }}</button>
+                <button class="btn btn-info"
+                        data-ng-click="open_modal('promotion')">{{ 'STORE.MY.ADD_PROMOTION' | translate }}</button>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <p class="text-center">
-                <button class="btn btn-primary"
-                        data-ng-click="open_modal('brand')">{{ 'STORE.MY.ADD_BRAND' | translate }}</button>
-            </p>
-        </div>
-    </div>
-    <div class="row">
         <div class="col-md-offset-2 col-md-8">
-            <img data-ng-src="{{ r.crop }}" class="w-full" style="height: 240px;">
+            <img data-ng-src="{{ r.post }}" class="w-full" alt="{{ r.name }}">
             <div class="clear m-t-n-xxl" style="position: relative;">
                 <div class="pull-left pull-none-xs text-center m-l-xxl">
                     <a href class="m-b-md inline m btn btn-md btn-success btn-rounded">
-                        <span class="h3 block font-bold">12</span>
-                        <small>Followers</small>
+                        <span class="h3 block font-bold">{{ r.follower_count }}</span>
+                        <small>Follower(s)</small>
                     </a>
                     <a href class="m-b-md inline m btn btn-md btn-success btn-rounded">
-                        <span class="h3 block font-bold">25</span>
-                        <small>Photos</small>
+                        <span class="h3 block font-bold">{{ r.photo_count }}</span>
+                        <small>Photo(s)</small>
                     </a>
                 </div>
                 <a href class="thumb-lg pull-right m-r">
@@ -38,10 +34,10 @@
                     This is the most famous brand in this area. It leads the fashion and gets fantastic reputations.
                 </p>
             </div>
-            <div class="clear" style="height: 250px;" data-map-address data-address="r.location"
+            <div class="clear" style="height: 250px;" data-map-address data-address="r.address"
                  data-title="r.brand_name"
                  data-img="r.crop"></div>
-            <img data-ng-src="{{ r.photo }}" class="w-full" style="height: 240px;">
+            <img nf-if="{{ r.newest_promotion }}" data-ng-src="{{ r.newest_promotion }}" class="w-full">
             <div class="hbox hbox-auto-xs hbox-auto-sm timeline-center">
                 <!-- .col -->
                 <div class="col">
@@ -50,77 +46,13 @@
                             <li class="tl-header">
                                 <div class="btn btn-info">Now</div>
                             </li>
-                            <li class="tl-item">
-                                <div class="tl-wrap b-info">
-                                    <span class="tl-date">5s ago</span>
-                                    <div class="tl-content">
-                                        Just a title
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="tl-item">
-                                <div class="tl-wrap">
-                                    <span class="tl-date">2h ago</span>
-                                    <div class="tl-content panel padder b-a">
-                                        <span class="arrow left pull-up"></span>
-                                        <div>Content in a panel</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="tl-item tl-left">
-                                <div class="tl-wrap b-success">
-                                    <span class="tl-date">7:30 am</span>
-                                    <div class="tl-content panel bg-success padder">
-                                        <span class="arrow arrow-success left pull-up hidden-left"></span>
-                                        <span class="arrow arrow-success right pull-up visible-left"></span>
-                                        <div class="text-lt">Oh! Colorful</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="tl-item">
-                                <div class="tl-wrap b-primary">
-                                    <span class="tl-date">04.2014</span>
-                                    <div class="tl-content panel padder b-a w-md w-auto-xs">
-                                        <span class="arrow left pull-up"></span>
-                                        <div class="text-lt m-b-sm">With Title</div>
-                                        <div class="panel-body pull-in b-t b-light">
-                                            <a href="" class="thumb pull-right m-l m-t-xs avatar">
-                                                <img src="http://localhost/themeforest/src/img/a4.jpg" alt="...">
-                                                <i class="on md b-white bottom"></i>
-                                            </a>
-                                            <div class="clear">
-                                                <a href="" class="text-primary block m-b-xs">@Mike Mcalidek <i
-                                                        class="icon-twitter"></i></a>
-                                                <a href="" class="btn btn-addon btn-sm btn-primary m-t-xs"><i
-                                                        class="fa fa-eye"></i> Follow</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="tl-header">
-                                <div class="btn btn-sm btn-default btn-rounded">2014</div>
-                            </li>
-                            <li class="tl-item">
-                                <div class="tl-wrap">
-                                    <span class="tl-date">10.08.2013</span>
+                            <li class="tl-item" ng-repeat="event in r.events">
+                                <div class="tl-wrap" ng-class="event_type(event.type)">
+                                    <span class="tl-date">{{ event.create_date | date:'yyyy.MM.dd' }}</span>
                                     <div class="tl-content panel padder b-a">
                                         <span class="arrow left pull-up hidden-left"></span>
                                         <span class="arrow right pull-up visible-left"></span>
-                                        <div class="text-lt">A good story to hear.</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="tl-header">
-                                <div class="btn btn-icon btn-rounded btn-default"><i class="fa fa-twitter"></i></div>
-                            </li>
-                            <li class="tl-item tl-left">
-                                <div class="tl-wrap b-white">
-                                    <span class="tl-date">5.07.2013</span>
-                                    <div class="tl-content panel padder b-a">
-                                        <span class="arrow left pull-up hidden-left"></span>
-                                        <span class="arrow right pull-up visible-left"></span>
-                                        <div class="text-lt">Yesterday is History</div>
+                                        <div class="text-lt">{{ event.description }}</div>
                                     </div>
                                 </div>
                             </li>

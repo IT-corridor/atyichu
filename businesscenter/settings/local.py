@@ -1,8 +1,29 @@
 from .base import *
+from .rq_settings import *
 
 SECRET_KEY = 'g%vsow(2i!3k_*+o=$1rp5hm=9+ivwpqbk0grvs8=pgo=4c$vh'
 DEBUG = True
 ALLOWED_HOSTS = []
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.admindocs',
+    #'debug_toolbar',
+    'rest_framework',
+    'rest_framework_swagger',
+    'settings',
+    'account',
+    'catalog',
+    'vendor_admin',
+    'visitor',
+    'snapshot',
+    'utils',
+]
 
 LANGUAGE_CODE = 'en-US'
 
@@ -37,7 +58,8 @@ CACHES = {
     'verify_phones': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': os.path.join(BASE_DIR, 'tmp', 'verify_phones'),
-    }
+    },
+
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
@@ -50,8 +72,8 @@ WEIXIN_SECRET = '392aad4be93c5bf2a535d5b932186b7b'
 WEIXIN_QR_APP_ID = 'wx6ad4cd8923e9ea5e'
 WEIXIN_QR_SECRET = 'a385ba5adf67452659c3ff7615e86198'
 
-IMAGGA_KEY = ''
-IMAGGA_SECRET = ''
+IMAGGA_KEY = 'acc_60524b660772546'
+IMAGGA_SECRET = 'b8a7133f5990d04038ce468c7321d82c'
 IMAGGA_LANG = 'zh_chs'
 
 TAO_SMS_KEY = '23438643'

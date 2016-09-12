@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from utils.validators import SizeValidator, phone_regex
 from utils.fields import EmailNullField, CharNullField
 
+
 # Create your models here.
 
 
@@ -54,6 +55,7 @@ class AbsLocation(models.Model):
 class State(AbsLocation):
     """Representation of state. It has own model to avoid data duplication.
     Also it can be useful for the search."""
+
     class Meta:
         verbose_name = _('State')
         verbose_name_plural = _('States')
@@ -90,22 +92,36 @@ class District(AbsLocation):
 
 
 class Store(models.Model):
-
     """ Representation of the store."""
     district = models.ForeignKey(District, verbose_name=_('District'))
-    street = models.CharField(_('Street'), max_length=100)
-    street_no = models.CharField(_('Street number'), max_length=100)
+
+    address = models.CharField(_('Address'), max_length=300,
+                               blank=True, null=True)
+    lat = models.CharField(_('Latitude'), max_length=50,
+                           blank=True, null=True)
+    lng = models.CharField(_('Longitude'), max_length=50,
+                           blank=True, null=True)
+
+    street = models.CharField(_('Street'), max_length=100,
+                           blank=True, null=True)
+    street_no = models.CharField(_('Street number'), max_length=100,
+                           blank=True, null=True)
     build_name = models.CharField(_('Building name'), max_length=50,
                                   blank=True)
-    build_no = models.CharField(_('Building number'), max_length=5)
-    apt = models.CharField(_('Apartments'), max_length=5)
+    build_no = models.CharField(_('Building number'), max_length=5,
+                           blank=True, null=True)
+    apt = models.CharField(_('Apartments'), max_length=5,
+                           blank=True, null=True)
     brand_name = models.CharField(_('Brand name'), max_length=50, unique=True)
     vendor = models.OneToOneField(Vendor, on_delete=models.CASCADE,
-                                 verbose_name=_('Owner'), primary_key=True)
+                                  verbose_name=_('Owner'), primary_key=True)
     crop = models.ImageField(_('Crop'), upload_to='stores/crops',
                              null=True, blank=True)
     photo = models.ImageField(_('Logo'), upload_to='stores',
                               blank=True, null=True)
+    post = models.ImageField(_('Post'), upload_to='stores/post',
+                             blank=True, null=True)
+    name = models.CharField(_('Store name'), max_length=150)
 
     def get_location(self):
         """ It is not a field --- it is a method. It returns an address string,
