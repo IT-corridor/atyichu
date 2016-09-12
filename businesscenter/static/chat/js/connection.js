@@ -23,7 +23,7 @@ function connectToChat(user) {
 
                     // load chat dialogs
                     //
-                    // retrieveChatDialogs();
+                    retrieveChatDialogs();
 
                     // setup message listeners
                     //

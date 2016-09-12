@@ -66,7 +66,7 @@ angular.module('tencent', [])
                 render_map();
             });
 
-            unwatch();
+            // unwatch();
           }
       });
       function render_map(){
@@ -91,9 +91,12 @@ angular.module('tencent', [])
         var info = new qq.maps.InfoWindow({
           map: map
         });
-        info.open();
-        info.setContent('<span style="color: darkred; padding: 10px;"> <img style="width: 48px; height: auto; margin-right: 5px;" src="'+scope.img+ '"> ' +scope.title + '</span>');
-        info.setPosition(marker.getPosition());
+
+        if (scope.title) {
+          info.open();
+          info.setContent('<span style="color: darkred; padding: 10px;"> <img style="width: 48px; height: auto; margin-right: 5px;" src="'+scope.img+ '"> ' +scope.title + '</span>');
+          info.setPosition(marker.getPosition());
+        }
         scope.$apply();
 
         });

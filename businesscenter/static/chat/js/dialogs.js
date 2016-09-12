@@ -110,13 +110,15 @@ function showOrUpdateDialogInUI(itemRes, updateHtml) {
         dialogName = 'Dialog with ' + opponentLogin;
     }
 
-    if (updateHtml === true) {
+    if (updateHtml === true && $('#'+dialogId).length < 1) {
         var updatedDialogHtml = buildDialogHtml(dialogId, dialogUnreadMessagesCount, dialogIcon, dialogName, dialogLastMessage);
         $('#dialogs-list').prepend(updatedDialogHtml);
+        console.log('116@@@');
         $('.list-group-item.active .badge').text(0).hide(0);
     } else {
         var dialogHtml = buildDialogHtml(dialogId, dialogUnreadMessagesCount, dialogIcon, dialogName, dialogLastMessage);
         $('#dialogs-list').append(dialogHtml);
+        console.log('121@@@');
     }
 }
 
@@ -313,8 +315,11 @@ function joinToNewDialogAndShow(itemDialog) {
     }
 
     // show it
-    var dialogHtml = buildDialogHtml(dialogId, dialogUnreadMessagesCount, dialogIcon, dialogName, dialogLastMessage);
-    $('#dialogs-list').prepend(dialogHtml);
+    if ($('#'+dialogId).length < 1) {
+        var dialogHtml = buildDialogHtml(dialogId, dialogUnreadMessagesCount, dialogIcon, dialogName, dialogLastMessage);
+        $('#dialogs-list').prepend(dialogHtml);
+        console.log('320@@@');
+    }
 }
 
 //
@@ -524,10 +529,10 @@ function onDialogUpdate() {
 function onDialogDelete() {
     if (confirm("Are you sure you want remove the dialog?")) {
         QB.chat.dialog.delete(currentDialog._id, function (err, res) {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log("Dialog removed");
+            // if (err) {
+            //     console.log(err);
+            // } else {
+                console.log("Dialog removed"+currentDialog._id);
                 $('#' + currentDialog._id).remove();
 
                 // remove from storage
@@ -538,7 +543,7 @@ function onDialogDelete() {
                     triggerDialog(dialogs[Object.keys(dialogs)[0]]._id);
                 }
 
-            }
+            // }
         });
 
         $("#update_dialog").modal("hide");

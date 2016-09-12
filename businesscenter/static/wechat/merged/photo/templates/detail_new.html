@@ -106,11 +106,24 @@
             </div>
         </div>
     </div>
+    <div data-ng-if="photo.is_store === false && !photo.address" class="row">
+        <div class="col-xs-6">
+            <button class="btn btn-default" ng-click="open_modal('address')">
+                <img src="/static/theme/images/map_pin.jpg" class="img-circle thumb-xs">
+                <span style="margin-left: 10px;">Add Map Location </span>
+            </button>
+        </div>
+    </div>
+    <div data-ng-if="photo.is_store === false && photo.address" class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 detail-half">
+            <div style="height: 150px;" data-map-address data-address="photo.address"></div>
+        </div>
+    </div>
     <div data-ng-if="photo.is_store === true && store.$resolved === true" class="row panel wrapper-md m-t-sm">
         <div class="wrapper-sm">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 detail-half">
                 <h5>Photo Location</h5>
-                <div style="height: 150px;" data-map-address data-address="store.location" data-title="store.brand_name" data-img="store.crop"></div>
+                <div style="height: 150px;" data-map-address data-address="store.address" data-title="store.name" data-img="store.photo"></div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 detail-half">
                 <h5>Photo's at the same location</h5>

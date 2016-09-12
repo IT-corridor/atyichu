@@ -675,6 +675,8 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
             This view is not tested yet.
         """
         obj = self.get_object()
+        if obj.original:
+            obj = obj.original
         # TODO: optimize querysets
         mc = 15  # minimal confidence
         stamp_ids = obj.stamps.filter(photostamp__confidence__gte=mc) \
@@ -686,7 +688,7 @@ class PhotoViewSet(PaginationMixin, viewsets.ModelViewSet):
                                             'group')
         qs = qs.filter(Q(group__is_private=False) &
                        ~Q(pk=pk) & Q(stamps__id__in=stamp_ids) &
-                       Q(stamps__photostamp__confidence__gte=mc)) \
+                       Q(photostamp__confidence__gte=mc)) \
             .order_by('-pk').distinct()
 
         return self.get_list_response(qs, serializers.PhotoListSerializer)
