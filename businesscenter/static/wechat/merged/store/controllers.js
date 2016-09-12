@@ -1,9 +1,33 @@
 angular.module('store.controllers', ['store.services', 'common.services',])
     .controller('CtrlCommodityDetail', ['$scope', '$rootScope', '$http',
-        '$location', '$routeParams', '$translate', 'Commodity',
+        '$location', '$routeParams', '$translate', 'Commodity', '$uibModal', 'PATH',
         function ($scope, $rootScope, $http, $location, $routeParams, $translate,
-                  Commodity) {
+                  Commodity, $uibModal, PATH) {
             $scope.commodity = Commodity.verbose({pk: $routeParams.pk});
+            $scope.open_modal = function (resource) {
+                var modalInstance = $uibModal.open({
+                    animation: $scope.animationsEnabled,
+                    templateUrl: PATH + 'store/templates/modal_' + resource + '.html',
+                    controller: 'StoreModalInstanceCtrl',
+                    size: 'md',
+                    resolve: {
+                        commodity: function () {
+                            return $scope.commodity;
+                        },
+                        name: function () {
+                            return resource;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(
+                    function (success) {
+                        $translate('SUCCESS').then(function (msg) {
+                            $rootScope.alerts.push({type: 'info', msg: msg});
+                        });
+                    }
+                );
+            };
         }
     ])
     .controller('CtrlStoreDetail', ['$scope', '$rootScope', '$http',
@@ -27,4 +51,21 @@ angular.module('store.controllers', ['store.services', 'common.services',])
             };
 
         }
-    ]);
+    ])
+    .controller('StoreModalInstanceCtrl',
+        ['$scope', '$uibModalInstance', 'name', 'commodity', '$translate', '$route', 'Commodity', '$location',
+            function ($scope, $uibModalInstance, name, commodity, $translate, $route, Commodity, $location) {
+                $scope.dict_data = {name: name};
+                $scope.commodity = commodity;
+
+                $scope.nearby_stores = Commodity.nearby_stores({pk: $scope.commodity.id});
+
+                $scope.store_profile = function (id) {
+                    $location.path('/store/' + id);
+                    $uibModalInstance.dismiss('cancel');
+                }
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                }
+            }
+        ]);

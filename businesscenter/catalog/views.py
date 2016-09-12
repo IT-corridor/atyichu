@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.db.models import Q
+from django.forms.models import model_to_dict
 from rest_framework import viewsets, mixins
 from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import list_route, detail_route
@@ -16,7 +17,8 @@ from utils import permissions
 from utils.views import OwnerCreateMixin, OwnerUpdateMixin, PaginationMixin
 from utils.parsing import parse_json_data
 from catalog.models import Event
-
+from vutils.calc_direct_distance import haversine
+from account.models import Store
 
 class ReferenceMixin(OwnerCreateMixin, OwnerUpdateMixin):
     """ Only vendor can see his commodities and references """
@@ -175,6 +177,24 @@ class CommodityViewSet(ReferenceMixin, PaginationMixin, viewsets.ModelViewSet):
         serializer = serializers.CommodityVerboseSerializer(instance)
         return Response(serializer.data)
 
+    @detail_route(methods=['get'])
+    def nearby_stores(self, request, *args, **kwargs):
+        instance = self.get_object()
+        stores = Store.objects.filter(brand__title=instance.brand.title)
+        stores_ = []
+        for store in stores:
+            if store.lat and store.lng:
+                distance = haversine(store.lng, store.lat,\
+                                     instance.store.lng, instance.store.lat)
+                if distance < 10:
+                    store_ = model_to_dict(store, fields=['name', 'address', 'lat', 'lng'])
+                    store_['id'] = store.vendor.user.id
+                    store_['distance'] = distance
+                    store_['photo'] = store.photo.url
+                    stores_.append(store_)
+
+        return Response(sorted(stores_, key=get_distance))
+
     def perform_create(self, serializer):
         """ First of all we creating a new commodity.
         After this we create photos for it. After it we add to five (5) bounded
@@ -263,3 +283,7 @@ class StockViewSet(mixins.CreateModelMixin,
     serializer_class = serializers.StockSerializer
     queryset = models.Stock.objects.all()
     permission_classes = (IsCommodityNestedOwnerOrReadOnly,)
+
+
+def get_distance(item):
+    return item['distance']

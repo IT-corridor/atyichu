@@ -38,6 +38,7 @@ def get_qb_token():
 def is_ascii(s):
     return all(ord(c) < 128 for c in s)
 
+
 def user_signup_qb(user):
     token = get_qb_token()
     url = 'http://api.quickblox.com/users.json'
@@ -45,7 +46,11 @@ def user_signup_qb(user):
               "Content-Type": "application/json"}
 
     full_name = get_nickname(user)
-    login = user.username
+    login = user.username.replace(' ', '')
+
+    if not is_ascii(full_name) and len(full_name) < 3:
+        full_name += '_' * (3-len(full_name))
+
     if not is_ascii(user.username):
         login = user.username.encode("hex")
 

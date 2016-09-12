@@ -40,11 +40,6 @@
                         <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
                           <span class="icon-ti ti-angle-right"></span>
                         </a> -->
-
-
-
-
-
                 </div>
             </div>
         </div>
@@ -80,6 +75,7 @@
                     <h3 class="main-h3">{{ 'COMMODITY.FORM.BRAND' | translate }}: {{ commodity.brand.title }}</h3>
                     <h3 class="main-h3">{{ 'COMMODITY.FORM.CATEGORY' | translate }}: {{ commodity.kind.category.title }}</h3>
                     <h3 class="main-h3">{{ 'COMMODITY.FORM.KIND' | translate }}: {{ commodity.kind.title }}</h3>
+                    <button class="btn btn-default" ng-click="open_modal('nearby_stores')">Nearby Stores</button>
                 </div>
             </div>
         </div>
