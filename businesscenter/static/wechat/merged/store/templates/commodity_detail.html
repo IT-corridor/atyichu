@@ -22,30 +22,25 @@
         </div>
     </div>
 
-    <div class="slider">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
+    <div class="container">
+        <div class="row">
+            <div data-ng-if="slides"  class="col-md-12">
+                index: <input type="number" class="tiny" data-ng-model="carousel.index">
+                <ul rn-carousel rn-carousel-controls rn-carousel-index="carousel.index"   class="image text-center" style="height: 200px;">
+                      <li ng-repeat="slide in slides track by slide.id">
+                            <img class="" data-ng-src="{{ slide.photo }}">
+                        </li>
+                </ul>
+                <div rn-carousel-indicators  slides="slides" rn-carousel-index="carousel.index" class="text-center"></div>
+            </div>
+        </div>
 
-                     <div uib-carousel active="0" template-url="/static/wechat/merged/partials/carousel/carousel.html">
-                      <div uib-slide ng-repeat="item in commodity.gallery_set track by item.id" index="$index" template-url="/static/wechat/merged/partials/carousel/slide.html">
-                        <img ng-src="{{ item.cover }}" class="img-responsive">
-                      </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="rn-carousel-indicator custom-indicator text-center">
+                        <span ng-repeat="slide in slides" ng-class="{active: $index == carousel.index}" ng-click="set_index($index)">★</span>
                     </div>
 
-                        <!-- Controls -->
-<!--                         <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-                          <span class="icon-ti ti-angle-left"></span>
-                        </a>
-                        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-                          <span class="icon-ti ti-angle-right"></span>
-                        </a> -->
-
-
-
-
-
-                </div>
             </div>
         </div>
     </div>
