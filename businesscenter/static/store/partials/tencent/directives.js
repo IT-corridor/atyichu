@@ -79,6 +79,8 @@ angular.module('tencent', [])
         map = new qq.maps.Map(container, {
           center: result.detail.location,
           zoom: 16,
+          zoomControl: false,
+          panControl: false,
         });
 
         marker = new qq.maps.Marker({

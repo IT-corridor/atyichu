@@ -140,6 +140,9 @@ angular.module('app.route', [
         when('/commodities/:pk/', {
             templateUrl: PATH + 'store/templates/commodity_detail.html',
             controller: 'CtrlCommodityDetail'}).
+        when('/store/:pk/', {
+            templateUrl: PATH + 'store/templates/detail.html',
+            controller: 'CtrlStoreDetail'}).
         when('/error/404/', {
             templateUrl: PATH + 'partials/error/templates/404.html'}).
         otherwise({
