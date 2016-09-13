@@ -8,7 +8,7 @@ from utils.api import ImaggaAPI
 
 def fetch_tags(sender, instance, created, **kwargs):
     """ Putting task of fetching tags into django_rq queue """
-    if settings.DEBUG:
+    if not settings.DEBUG:
         import django_rq
         django_rq.enqueue(tags_task, instance, created)
 
