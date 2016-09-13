@@ -1348,4 +1348,3 @@ def get_nickname(user):
         return user.vendor.store.brand_name or user.username
     elif hasattr(user, 'visitor'):
         return user.visitor.username or user.username
-    return user.username

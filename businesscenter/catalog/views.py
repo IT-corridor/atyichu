@@ -190,7 +190,7 @@ class CommodityViewSet(ReferenceMixin, PaginationMixin, viewsets.ModelViewSet):
                     store_ = model_to_dict(store, fields=['name', 'address', 'lat', 'lng'])
                     store_['id'] = store.vendor.user.id
                     store_['distance'] = distance
-                    store_['photo'] = store.photo.url
+                    store_['photo'] = store.post.url
                     stores_.append(store_)
 
         return Response(sorted(stores_, key=get_distance))

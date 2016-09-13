@@ -101,7 +101,8 @@ class Store(models.Model):
                            blank=True, null=True)
     lng = models.CharField(_('Longitude'), max_length=50,
                            blank=True, null=True)
-
+    introduction = models.TextField(_('Introduction of the store'), blank=True,
+                                    null=True)
     street = models.CharField(_('Street'), max_length=100,
                            blank=True, null=True)
     street_no = models.CharField(_('Street number'), max_length=100,

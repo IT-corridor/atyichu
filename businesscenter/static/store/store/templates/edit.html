@@ -1,9 +1,4 @@
 <div class="container" style="position: relative;">
-    <div class="row">
-        <div class="col-md-offset-3 col-md-6">
-            <img class="img-center img-responsive" data-ng-src="{{ r.thumb }}" alt="{{ r.brand_name }}">
-        </div>
-    </div>
     <div class="wrapper-md" data-ng-if="visitor.store">
         <div class="panel panel-default">
             <div class="panel-heading font-bold">
@@ -43,6 +38,16 @@
                 </form>
                 <div class="line line-dashed b-b line-lg pull-in"></div>
                 <form data-ng-submit="update()" name="form" id="store_form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{ 'STORE.FORM.INTRODUCTION' | translate }}</label>
+                        <div class="col-sm-10">
+                            <textarea name="name" data-ng-model="r.introduction"
+                                   class="form-control"></textarea>
+                            <p class="text-danger"
+                               data-ng-repeat="e in error.introduction">{{ e }}</p>
+                        </div>
+                    </div>
+                    <div class="line line-dashed b-b line-lg pull-in"></div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">{{ 'STORE.FORM.STORE_NAME' | translate }}</label>
                         <div class="col-sm-10">
