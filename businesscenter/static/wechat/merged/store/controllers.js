@@ -1,8 +1,21 @@
 angular.module('store.controllers', ['store.services', 'common.services',])
-.controller('CtrlCommodityDetail', ['$scope', '$rootScope','$http',
+.controller('CtrlCommodityDetail', ['$scope', '$rootScope','$http', '$window',
 '$location', '$routeParams', '$translate', 'Commodity',
-    function($scope, $rootScope, $http, $location, $routeParams, $translate,
+    function($scope, $rootScope, $http, $window, $location, $routeParams, $translate,
     Commodity) {
+
+        var body = document.body,
+            html = document.documentElement;
+
+        $scope.height = Math.max(body.scrollHeight, body.offsetHeight,
+        html.clientHeight, html.scrollHeight, html.offsetHeight );
+
+        $scope.width = Math.max(body.scrollWidth, body.offsetWidth,
+        html.clientWidth, html.scrollWidth, html.offsetWidth );
+
+        console.log($scope.width);
+        console.log($scope.height);
+
         $scope.carousel = {index:0};
         $scope.commodity = Commodity.verbose({pk: $routeParams.pk},
             function(success){
