@@ -54,6 +54,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
+                    <pre>{{ s_height | json}}</pre>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                     <h1 class="main-h1">{{ commodity.name }}</h1>
                     <h2 class="main-h2">{{ commodity.season_text }}&nbsp; {{ commodity.year }}</h2>
                     <p class="main-p" data-ng-if="commodity.description">{{ commodity.description }}</p>
