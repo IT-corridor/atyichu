@@ -22,12 +22,10 @@
         </div>
     </div>
 
-    <div class="container">
-        <div class="row">
-            <div data-ng-if="slides"  class="col-md-12">
-                <!-- index: <input type="number" class="tiny" data-ng-model="carousel.index"> -->
+
+            <div data-ng-if="slides" class="slides">
                 <div class="carousel">
-                    <ul rn-carousel rn-carousel-controls rn-carousel-index="carousel.index" class="image text-center" style="height: 100%;">
+                    <ul rn-carousel rn-carousel-controls rn-carousel-index="carousel.index" class="image text-center" style="height: {{ height / 2.3 }}px; width: {{ width - 100 }}px;">
                           <li ng-repeat="slide in slides track by slide.id">
                               <div class="slide-div">
                                   <img class="" data-ng-src="{{ slide.cover }}">
@@ -37,13 +35,11 @@
                     </ul>
                 </div>
                 <div rn-carousel-indicators  slides="slides" rn-carousel-index="carousel.index" class="text-center"></div>
-            </div>
-        </div>
-        <div class="row">
+<!--         <div class="row">
             <div class="col-md-12">
                 <p style="height: {{ height / 10 }}px; width: {{ width / 10 }}px; background-color: green;"></p>
             </div>
-        </div>
+        </div> -->
 
 <!--         <div class="row">
             <div class="col-md-12">
