@@ -15,7 +15,6 @@ angular.module('store.controllers', ['store.services', 'common.services', ])
             $scope.carousel = {
                 index: 0
             };
-            $scope.s_height = [body.offsetHeight, html.clientHeight, html.offsetHeight];
 
             $scope.commodity = Commodity.verbose({
                     pk: $routeParams.pk
