@@ -34,13 +34,11 @@ ul[rn-carousel] {
       height: 100%;
       width: 100%;
       overflow: hidden;
-/*      display: flex;
-      justify-content: center;*/
       border: 1px solid #e0e0e0;
     }
     ul[rn-carousel] > li > .slide-div > img {
       height: 100%;
-      border: 1px solid #e2e2e2;
+      border: 1px solid #ff4343;
     }
 /* prevent flickering when moving buffer */
 ul[rn-carousel-buffered] > li {
@@ -57,7 +55,7 @@ div.rn-carousel-indicator{
 }
 div.rn-carousel-indicator span {
   cursor: pointer;
-  color: #c1c1c1;
+  color: transparent;
   font-size: 2px;
   line-height: 1;
   width: 23px;
@@ -67,7 +65,7 @@ div.rn-carousel-indicator span {
   display: inline-block;
   margin: 0 7px;}
   div.rn-carousel-indicator span.active {
-    color: #fe8a71;
+    color: transparent;
     background-color: #fe8a71; }
 
 /* prev/next controls */
