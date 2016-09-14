@@ -6,11 +6,11 @@ angular.module('store.controllers', ['store.services', 'common.services', ])
             var body = document.body,
                 html = document.documentElement;
 
-            $scope.height = Math.max(body.scrollHeight, body.offsetHeight,
-                html.clientHeight, html.scrollHeight, html.offsetHeight);
+            $scope.height = Math.max(body.offsetHeight,
+                html.clientHeight, html.offsetHeight);
 
-            $scope.width = Math.max(body.scrollWidth, body.offsetWidth,
-                html.clientWidth, html.scrollWidth, html.offsetWidth);
+            $scope.width = Math.max(body.offsetWidth,
+                html.clientWidth, html.offsetWidth);
 
             $scope.carousel = {
                 index: 0
