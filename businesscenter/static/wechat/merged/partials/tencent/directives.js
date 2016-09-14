@@ -81,6 +81,7 @@ angular.module('tencent', [])
           zoom: 16,
           zoomControl: false,
           panControl: false,
+          mapTypeControl: false,
         });
 
         marker = new qq.maps.Marker({

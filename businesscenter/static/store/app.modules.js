@@ -152,6 +152,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             'FORM': {
                 'BRAND_NAME': 'Brand name',
                 'STORE_NAME': 'Store Name',
+                'INTRODUCTION': 'Introduction',
                 'STATE': 'State',
                 'CITY': 'City',
                 'DISTRICT': 'District',
@@ -409,6 +410,7 @@ app.config(['$translateProvider', function ($translateProvider) {
             'FORM': {
                 'BRAND_NAME': 'Brand name',
                 'STORE_NAME': 'Store Name',
+                'INTRODUCTION': 'Introduction',
                 'STATE': 'State',
                 'CITY': 'City',
                 'DISTRICT': 'District',

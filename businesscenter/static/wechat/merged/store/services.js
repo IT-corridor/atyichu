@@ -69,5 +69,6 @@ angular.module('store.services', ['ngResource'])
         return $resource(catalog_path + 'commodities/:pk/:action/', {}, {
             query: {method:'GET', params:{pk: null, action: null}, responseType:'json'},
             verbose: {method: 'GET', params: {action: 'verbose'}, responseType: 'json'},
+            nearby_stores: {method: 'GET', params: {action: 'nearby_stores'}, responseType: 'json', isArray: true},
     });
 }]);

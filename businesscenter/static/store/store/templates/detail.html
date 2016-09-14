@@ -31,12 +31,12 @@
             </div>
             <div style="font-size: 20px;  padding: 20px;" class="m-t-n-xxl bg-info lter">
                 <p class="m-t-lg">
-                    This is the most famous brand in this area. It leads the fashion and gets fantastic reputations.
+                    {{ r.introduction }}
                 </p>
             </div>
             <div class="clear" style="height: 250px;" data-map-address data-address="r.address"
                  data-title="r.name"
-                 data-img="r.crop"></div>
+                 data-img="r.photo"></div>
             <img nf-if="{{ r.newest_promotion }}" data-ng-src="{{ r.newest_promotion }}" class="w-full">
             <div class="hbox hbox-auto-xs hbox-auto-sm timeline-center">
                 <!-- .col -->
