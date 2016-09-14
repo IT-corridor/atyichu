@@ -889,10 +889,10 @@ left: 4% !important;
 		font-size: 20px;
 	}
 	.header-icons {
-	    margin-top: 5px;
+		margin-top: 5px;
 	}
 	.header-icons span + span {
-	    padding-left: 21px;
+		padding-left: 21px;
 	}
 	.main-h1{
 		font-size: 20px;
@@ -908,21 +908,21 @@ left: 4% !important;
 		line-height: 1.4;
 	}
 	.list-circle {
-	    padding-left: 6px;
-	    margin: 0 10px 3px 10px;
-	    font: 14px/36px 'Open Sans Light', sans-serif;
+		padding-left: 6px;
+		margin: 0 10px 3px 10px;
+		font: 14px/36px 'Open Sans Light', sans-serif;
 	}
 	.fa-stack.fa-stack-size {
-	    width: 36px;
-	    height: 36px;
+		width: 36px;
+		height: 36px;
 	}
 	.fa-stack-size > .fa {
-	    font-size: 42px;
-	    line-height: 0.89;
+		font-size: 42px;
+		line-height: 0.89;
 	}
 	.list-circle-size {
-	    width: 36px;
-	    height: 36px;
+		width: 36px;
+		height: 36px;
 	}
 	/*===== commodity slider =======*/
 		.slides{
@@ -930,7 +930,7 @@ left: 4% !important;
 		}
 		.carousel {
 			width: 100%;
-		    overflow: hidden;
+			overflow: hidden;
 		}
 		ul[rn-carousel] {
 		  width: 200px;
@@ -1048,10 +1048,10 @@ left: 4% !important;
 		font-size: 32px;
 	}
 	.header-icons {
-	    margin-top: 15px;
+		margin-top: 15px;
 	}
 	.header-icons span + span {
-	    padding-left: 41px;
+		padding-left: 41px;
 	}
 	.main-h1{
 		font-size: 30px;
@@ -1067,23 +1067,22 @@ left: 4% !important;
 		line-height: 1.455;
 	}
 	.list-circle {
-	    padding-left: 6px;
-	    margin-bottom: 3px;
-	    font: 17px/52px 'Open Sans Light', sans-serif;
+		padding-left: 6px;
+		margin-bottom: 3px;
+		font: 17px/52px 'Open Sans Light', sans-serif;
 	}
 	.fa-stack.fa-stack-size {
-	    width: 52px;
-	    height: 52px;
+		width: 52px;
+		height: 52px;
 	}
 	.fa-stack-size > .fa {
-	    font-size: 59px;
-	    line-height: 0.9;
+		font-size: 59px;
+		line-height: 0.9;
 	}
 	.list-circle-size {
-	    width: 52px;
-	    height: 52px;
+		width: 52px;
+		height: 52px;
 	}
-
 }
 @media only screen and (min-width : 992px) {
 	.col-1{
@@ -1111,11 +1110,11 @@ left: 4% !important;
 	}
 	/*===== commodity slider =======*/
 	.slides{
-		width: 1200px;
+		width: 900px;
 		margin: 0 auto;
 	}
 	ul[rn-carousel]{
-		width: 1100px !important;
+		width: 800px !important;
 	}
 	/*===== and commodity ====*/
 }
