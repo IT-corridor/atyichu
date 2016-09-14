@@ -24,6 +24,7 @@
 
 
     <div data-ng-if="slides" class="slides">
+        <pre>{{ s_height | json}}</pre>
         <div class="carousel">
             <ul rn-carousel rn-carousel-controls rn-carousel-index="carousel.index" class="image text-center" style="height: {{ height / 2.3 }}px; width: {{ width - 100 }}px;">
                 <li ng-repeat="slide in slides track by slide.id">
@@ -52,11 +53,6 @@
 
     <div class="main">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <pre>{{ s_height | json}}</pre>
-                </div>
-            </div>
             <div class="row">
                 <div class="col-md-12">
                     <h1 class="main-h1">{{ commodity.name }}</h1>
