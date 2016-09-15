@@ -1,5 +1,5 @@
 from .base import *
-from .rq_settings import *
+from .local_rq_settings import *
 
 SECRET_KEY = 'g%vsow(2i!3k_*+o=$1rp5hm=9+ivwpqbk0grvs8=pgo=4c$vh'
 DEBUG = True
@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'visitor',
     'snapshot',
     'utils',
+    'django_rq',
 ]
 
 LANGUAGE_CODE = 'en-US'

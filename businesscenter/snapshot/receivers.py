@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import os
+import django_rq
 from django.conf import settings
 from .models import Stamp, PhotoStamp
 from utils.api import ImaggaAPI
@@ -8,9 +9,7 @@ from utils.api import ImaggaAPI
 
 def fetch_tags(sender, instance, created, **kwargs):
     """ Putting task of fetching tags into django_rq queue """
-    if not settings.DEBUG:
-        import django_rq
-        django_rq.enqueue(tags_task, instance, created)
+    django_rq.enqueue(tags_task, instance, created)
 
 
 def tags_task(instance, created):
