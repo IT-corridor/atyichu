@@ -46,9 +46,9 @@ ADMINS = ((data['ADMIN'], data['ADMIN_EMAIL']),
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': data['DB_NAME'],
-        'USER': data['DB_USER'],
-        'PASSWORD': data['DB_PASSWORD'],
+        'NAME': 'db_atyichu',
+        'USER': 'db_atyichu',
+        'PASSWORD': 'atyichu1qaz',
         'HOST': 'rm-2ze8182fmzl45fh0r.mysql.rds.aliyuncs.com',
         'PORT': 3306,
         'TEST': {
