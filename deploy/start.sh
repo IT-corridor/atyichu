@@ -7,7 +7,7 @@ DJANGODIR="${BASEDIR}/${NAME}/businesscenter"
 SOCKFILE="/tmp/${NAME}.sock"
 NUM_WORKERS=3
 DJANGO_WSGI_MODULE="businesscenter.wsgi"
-GUNICORN=gunicorn
+GUNICORN=${ENVDIR}/bin/gunicorn
 
 cd $DJANGODIR
 source "${ENVDIR}/bin/activate"
