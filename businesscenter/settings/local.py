@@ -30,14 +30,12 @@ LANGUAGE_CODE = 'en-US'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'atyichu_mall',
-        'USER': 'atyichu_mall',
-        'PASSWORD': 'senioRvk12',
-        'HOST': 'rm-2ze851zi768k30shf.pg.rds.aliyuncs.com',
-        'PORT': 3433,
-
-        #'ATOMIC_REQUESTS': True,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db_.sqlite3'),
+        'TEST': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'test_db.sqlite3'),
+        }
     }
 }
 
