@@ -49,10 +49,10 @@ DATABASES = {
         'NAME': data['DB_NAME'],
         'USER': data['DB_USER'],
         'PASSWORD': data['DB_PASSWORD'],
-        'HOST': 'localhost',
-        'PORT': '',
+        'HOST': 'rm-2ze851zi768k30shf.pg.rds.aliyuncs.com',
+        'PORT': 3433,
         'TEST': {
-            'NAME': 'db_atyichu_test',
+            'NAME': 'atyichu_mall_test',
         }
         #'ATOMIC_REQUESTS': True,
     }
