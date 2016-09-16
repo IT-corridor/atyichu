@@ -187,7 +187,7 @@ def openid(request):
     return response
 
 
-@api_view(['GET', 'POST'])
+@api_view(['POST'])
 def openid_api(request):
     """ To continue authentication via Wecha / weixin you need pass a code
     code -- A code from wexin (to obtain access_token).
@@ -195,7 +195,10 @@ def openid_api(request):
     Important to use same API KEY and SECRET as We use at django app.
     :return: visitor data.
     """
-    code = request.GET.get("code", None)
+    if request.user.is_authenticated():
+        return Response({'error': _('Already authenticated.')}, 400)
+
+    code = request.data.get("code", None)
 
     if not code:
         return Response({'error': _('You don`t have weixin code.')}, 400)
