@@ -20,15 +20,21 @@
         <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/animations.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}custom/css/grid.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}newdesign/css/style.css">
+
+        <link rel="stylesheet" href="{{ STATIC_URL }}newdesign/css/style-new.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}newdesign/css/style-media.css">
+
         <link rel="stylesheet" href="{{ STATIC_URL }}lib/toastr/toastr.min.css">
         <link rel="stylesheet" href="{{ STATIC_URL }}lib/angular-carousel/angular-carousel.css">
+
+
         {% verbatim %}
         <title data-ng-bind="site"></title>
         <!--<base href="/app/">-->
 
         {% endverbatim %}
     </head>
-    <body id="app" class="app purple-50">
+    <body id="app" class="app">
         <div data-d-navbar></div>
         <noscript><h4 class="text-danger">{% trans 'This site requires JavaScript to be enabled' %}</h4></noscript>
         <div class="container">
