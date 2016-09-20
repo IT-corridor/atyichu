@@ -224,7 +224,8 @@ class CommodityViewSet(ReferenceMixin, PaginationMixin, viewsets.ModelViewSet):
 
         Event.objects.create(store_id=self.request.user.id,
                              type='commodity',
-                             description='New commodity({}) is created!'.format(commodity.title))
+                             description='New commodity({}) is created!'
+                             .format(commodity.title))
 
     @list_route(methods=['get'])
     def my(self, request, *args, **kwargs):

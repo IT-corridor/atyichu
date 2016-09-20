@@ -13,35 +13,27 @@
                 </div>
                 <div class="col-xs-4 col-md-4">
                     <div class="header-icons">
-                            <span><a data-ng-href="#!/photo/{{ photo.id }}/share/"><i class="fa fa-floppy-o"></i></a></span>
-                            <span><i class="icon-share"></i></span>
-                            <span data-ng-click="read_article(photo.article.pk)" data-ng-if="photo.article" class="btn btn-default btn-sm" style="margin-left:10px; margin-top:-3px;"><b>Read it</b></span>
+                        <span><a data-ng-href="#!/photo/{{ photo.id }}/share/"><i class="fa fa-floppy-o"></i></a></span>
+                        <span><i class="icon-share"></i></span>
+                        <span data-ng-click="read_article(photo.article.pk)" data-ng-if="photo.article" class="btn btn-default btn-sm" style="margin-left:10px; margin-top:-3px;"><b>Read it</b></span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <div class="row">
-            <div data-ng-if="slides"  class="col-md-12">
-                index: <input type="number" class="tiny" data-ng-model="carousel.index">
-                <ul rn-carousel rn-carousel-controls rn-carousel-index="carousel.index"   class="image text-center" style="height: 200px;">
-                      <li ng-repeat="slide in slides track by slide.id">
-                            <img class="" data-ng-src="{{ slide.photo }}">
-                        </li>
-                </ul>
-                <div rn-carousel-indicators  slides="slides" rn-carousel-index="carousel.index" class="text-center"></div>
-            </div>
-        </div>
+    <div data-ng-if="slides" class="slides">
+        <div class="carousel">
+            <ul rn-carousel rn-carousel-controls rn-carousel-index="carousel.index" class="image text-center" style="height: {{ height / 2.3 }}px; width: {{ width - 100 }}px;">
+                <li ng-repeat="slide in slides track by slide.id">
+                    <div class="slide-div">
+                        <img class="" data-ng-src="{{ slide.cover }}">
+                    </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="rn-carousel-indicator custom-indicator text-center">
-                    <span ng-repeat="slide in slides" ng-class="{active: $index == carousel.index}" ng-click="set_index($index)">★</span>
-                </div>
-            </div>
+                </li>
+            </ul>
         </div>
+        <div rn-carousel-indicators slides="slides" rn-carousel-index="carousel.index" class="text-center"></div>
     </div>
 
     <div class="main">
@@ -64,11 +56,7 @@
                     <h3 class="main-h3">{{ 'COMMODITY.FORM.SIZES' | translate }}:</h3>
                     <ul class="list-inline list-circle">
                         <li data-ng-repeat="item in commodity.sizes track by item.id">
-<!--                             <span class="fa-stack fa-stack-size">
-                              <i class="fa fa-circle fa-stack-2x" style="color: #fff;"></i>
-                                <span class="fa-stack-1x">{{ item.title }}</span>
-                            </span> -->
-                             <span class="list-circle-size">{{ item.title }}</span>
+                            <span class="list-circle-size">{{ item.title }}</span>
                         </li>
                     </ul>
                     <span class="main-span">List of nearby stores having Lancel Brand</span>
