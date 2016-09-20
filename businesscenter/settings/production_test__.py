@@ -45,14 +45,14 @@ ADMINS = ((data['ADMIN'], data['ADMIN_EMAIL']),
 # NEED to set a user and a password before deployment
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': data['DB_NAME'],
-        'USER': data['DB_USER'],
-        'PASSWORD': data['DB_PASSWORD'],
-        'HOST': 'rm-2ze851zi768k30shf.pg.rds.aliyuncs.com',
-        'PORT': 3433,
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'db_atyichu',
+        'USER': 'db_atyichu',
+        'PASSWORD': 'atyichu1qaz',
+        'HOST': 'rm-2ze8182fmzl45fh0r.mysql.rds.aliyuncs.com',
+        'PORT': 3306,
         'TEST': {
-            'NAME': 'atyichu_mall_test',
+            'NAME': 'db_atyichu_test',
         }
         #'ATOMIC_REQUESTS': True,
     }

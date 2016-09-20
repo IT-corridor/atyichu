@@ -188,6 +188,74 @@ def openid(request):
 
 
 @api_view(['POST'])
+def openid_api(request):
+    """ To continue authentication via Wecha / weixin you need pass a code
+    code -- A code from wexin (to obtain access_token).
+    So you need a code.
+    Important to use same API KEY and SECRET as We use at django app.
+    :return: visitor data.
+    """
+    if request.user.is_authenticated():
+        return Response({'error': _('Already authenticated.')}, 400)
+
+    code = request.data.get("code", None)
+
+    if not code:
+        return Response({'error': _('You don`t have weixin code.')}, 400)
+
+    weixin_oauth = WeixinBackend()
+    backend = 'weixin'
+    try:
+        token_data = weixin_oauth.get_access_token(code)
+    except TypeError:
+        return Response({'error': _('You got error trying to get openid')},
+                        400)
+
+    user_info = weixin_oauth.get_user_info(token_data['access_token'],
+                                           token_data['openid'])
+    data = {'avatar_url': user_info.get('headimgurl'),
+            'nickname': user_info.get('nickname'),
+            'unionid': token_data['unionid'],
+            'extra': {
+                'openid': token_data['openid'],
+                'access_token': token_data['access_token'],
+                'expires_in': token_data['expires_in'],
+                'refresh_token': token_data['refresh_token'],
+                'backend': backend,
+            }
+    }
+
+    try:
+        extra = VisitorExtra.objects.get(openid=token_data['openid'],
+                                         backend=backend)
+        s = VisitorExtraSerializer(instance=extra, data=data['extra'],
+                                   partial=True)
+        s.is_valid(raise_exception=True)
+        s.save()
+        visitor = extra.weixin.visitor
+        # Remove after WIPE
+        visitor_data = {'nickname': data['nickname'],
+                        'unionid': data['unionid']}
+
+        visitor_s = VisitorSerializer(instance=visitor, data=visitor_data,
+                                      partial=True)
+        visitor_s.is_valid(raise_exception=True)
+        visitor = visitor_s.save()
+    except VisitorExtra.DoesNotExist:
+        visitor_s = VisitorSerializer(data=data)
+        visitor_s.is_valid(raise_exception=True)
+        visitor = visitor_s.save()
+        extra = None
+
+    if not extra:
+        extra = visitor.weixin.visitorextra_set.get(backend=backend)
+    user = authenticate(weixin=extra.openid, backend=backend)
+    login(request, user)
+
+    return Response(visitor_s.data)
+
+
+@api_view(['POST'])
 @permission_classes((IsVisitorSimple,))
 def update_visitor(request):
     """ Updating user data from weixin. Sync.
