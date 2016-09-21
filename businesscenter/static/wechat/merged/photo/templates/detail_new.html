@@ -20,8 +20,8 @@
 
 			<div class="col-xs-2 col-md-2">
 				<div class="header-right">
-					<span data-ng-if="!photo.owner_followed" data-ng-click="follow_user_main(photo.owner.pk, $index)" class="header-right-follow"><img src="/static/theme/svg/follow.svg" alt=""> <!-- <i class="icon-user-follow"></i> --></span>
-					<span data-ng-if="photo.owner_followed" data-ng-click="unfollow_user_main(photo.owner.pk, $index)" class="header-right-follow"><img src="/static/theme/svg/follow-active.svg" alt=""><!-- <i class="icon-user-following"></i> --></span>
+					<span data-ng-if="!photo.owner_followed" data-ng-click="follow_user_main(photo.owner.pk, $index)" class="header-right-follow"><img src="/res/theme/svg/follow.svg" alt=""> <!-- <i class="icon-user-follow"></i> --></span>
+					<span data-ng-if="photo.owner_followed" data-ng-click="unfollow_user_main(photo.owner.pk, $index)" class="header-right-follow"><img src="/res/theme/svg/follow-active.svg" alt=""><!-- <i class="icon-user-following"></i> --></span>
 				</div>
 			</div>
 
@@ -92,9 +92,6 @@
 
 		<div class="row">
 			<div class="col-md-12">
-				<div>
-					<p class="main-photo-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum at molestie tortor. Quisque nec justo sed elit ultrices convallis sed a purus. Nunc euismod risus metus, id consectetur orci efficitur id. Phasellus lobortis non augue et hendrerit. Curabitur eu luctus lorem, in maximus sapien. Nulla sodales mi id blandit malesuada. Mauris felis arcu, sollicitudin at dictum id, dapibus nec massa. Mauris scelerisque placerat augue, et mollis lacus blandit non.</p>
-				</div>
 				<div data-ng-if="photo.description">
 					<p class="main-photo-description">{{ photo.description }}</p>
 				</div>
@@ -133,7 +130,7 @@
 		<div data-ng-if="photo.is_store === false && !photo.address" class="row">
 			<div class="col-xs-6">
 				<button class="btn btn-default" ng-click="open_modal('address')">
-					<img src="/static/theme/images/map_pin.jpg" class="img-circle thumb-xs">
+					<img src="//res/theme/images/map_pin.jpg" class="img-circle thumb-xs">
 					<span style="margin-left: 10px;">Add Map Location </span>
 				</button>
 			</div>
