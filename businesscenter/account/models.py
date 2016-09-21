@@ -122,7 +122,7 @@ class Store(models.Model):
                               blank=True, null=True)
     post = models.ImageField(_('Post'), upload_to='stores/post',
                              blank=True, null=True)
-    name = models.CharField(_('Store name'), max_length=150)
+    name = models.CharField(_('Store name'), max_length=50, unique=True)
 
     def get_location(self):
         """ It is not a field --- it is a method. It returns an address string,

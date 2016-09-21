@@ -38,6 +38,8 @@ from account.serializers import VendorStoreSerializer, StoreShortSerializer
 from catalog.models import Commodity, Event
 from vutils.wzhifuSDK import JsApi_pub
 from vutils.utils import get_last_day_of_month
+from vutils.utils import get_nickname
+
 
 log = logging.getLogger(__name__)
 
@@ -1341,10 +1343,3 @@ def index(request):
     """ A simple view, which presents only a starting template.
      It is an entry. Later should be migrate to static service like Nginx."""
     return render(request, 'index.html')
-
-
-def get_nickname(user):
-    if hasattr(user, 'vendor'):
-        return user.vendor.store.brand_name or user.username
-    elif hasattr(user, 'visitor'):
-        return user.visitor.username or user.username
